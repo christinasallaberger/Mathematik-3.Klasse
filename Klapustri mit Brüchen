@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KlaPuStri mit Brüchen und Dezimalzahlen</title>
+<style>
+  :root {
+    --violett: #7b3f83;
+    --blau: #254f8e;
+    --gruen: #198754;
+    --rot: #c2363d;
+    --orange: #b56b16;
+    --text: #203047;
+    --rahmen: #cad5e5;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 20px; background: #eef2f8; color: var(--text); font-family: Arial, sans-serif; }
+  main { max-width: 900px; margin: auto; padding: 24px; background: white; border-radius: 18px; box-shadow: 0 6px 24px #0002; }
+  h1 { color: var(--violett); margin-top: 0; }
+  h2 { color: var(--blau); }
+  p { line-height: 1.55; }
+  .name-box { padding: 12px; margin: 16px 0; background: #f4f6fb; border-radius: 10px; }
+  .name-box input { width: 280px; max-width: 100%; text-align: left; }
+  .progress-frame { height: 12px; background: #dbe3f0; border-radius: 8px; overflow: hidden; }
+  #progress { height: 100%; width: 0; background: var(--violett); transition: width .25s; }
+
+  .task { margin: 22px 0; padding: 24px; border: 2px solid #e3d4e6; border-radius: 14px; background: #fbf4fb; font-size: 28px; text-align: center; line-height: 2; overflow-x: auto; }
+  .fraction { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; min-width: 32px; line-height: 1.2; }
+  .fraction-top { padding: 3px 8px; border-bottom: 2px solid currentColor; }
+  .fraction-bottom { padding: 3px 8px; }
+  .signed, .mixed { display: inline-flex; align-items: center; gap: 5px; }
+  .tok { display: inline-block; vertical-align: middle; margin: 0 3px; }
+
+  .way { padding: 12px 14px; background: #f2f6fb; border-radius: 10px; margin-bottom: 14px; overflow-x: auto; }
+  .way-title { font-size: 15px; color: #536981; margin: 0 0 4px; }
+  .line { font-size: 22px; line-height: 2.3; white-space: nowrap; }
+  .line.past { color: #6a7d95; font-size: 19px; }
+  .line .eq { display: inline-block; width: 26px; color: #6a7d95; }
+  .part { background: #fff1c9; border-bottom: 3px solid var(--orange); border-radius: 6px; padding: 2px 4px; }
+  .past .part { background: transparent; border-bottom: 2px solid #b9c6d8; }
+  .op-btn { font: inherit; font-size: 24px; color: var(--text); background: #eef3fb; border: 2px dashed #8fa6c6; border-radius: 8px; padding: 0 10px; margin: 0 4px; cursor: pointer; line-height: 1.5; }
+  .op-btn:hover, .op-btn:focus { background: #dfe9fb; border-style: solid; outline: none; }
+
+  .step { margin-top: 18px; padding: 18px; border: 1px solid var(--rahmen); border-radius: 12px; }
+  .tip { padding: 12px; background: #f8f1f9; border-left: 5px solid var(--violett); border-radius: 6px; line-height: 1.6; }
+  .entry { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 12px; margin: 22px 0; font-size: 24px; }
+  .factor-row { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 5px; }
+  input, select { width: 70px; padding: 8px; border: 2px solid #9baec7; border-radius: 7px; font-size: 18px; text-align: center; background: white; color: var(--text); }
+  input:focus, select:focus { outline: 3px solid #c5d9fc; }
+  button { padding: 11px 16px; border: none; border-radius: 8px; color: white; background: var(--blau); font-size: 16px; cursor: pointer; margin: 4px; }
+  button:disabled { opacity: .65; cursor: default; }
+  .skip { background: var(--orange); }
+  .ok { color: var(--gruen); }
+  .bad { color: var(--rot); }
+  #message { min-height: 25px; font-weight: bold; }
+  .solution, .summary { padding: 15px; background: #f2f6fb; border-radius: 10px; line-height: 2; overflow-x: auto; }
+  .notice { padding: 12px; margin: 16px 0; background: #fff4e5; border-left: 5px solid var(--orange); border-radius: 6px; }
+  .table-wrapper { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: .95rem; }
+  td, th { padding: 8px; border: 1px solid var(--rahmen); text-align: left; vertical-align: top; }
+  th { background: #e7edf7; }
+  .skipped-status { color: #a65300; font-weight: bold; }
+  .completed-status { color: #167447; font-weight: bold; }
+  details { margin: 12px 0; }
+  [hidden] { display: none !important; }
+  @media (max-width: 650px) {
+    body { padding: 0; }
+    main { padding: 16px; border-radius: 0; }
+    .task { font-size: 23px; padding: 16px 10px; }
+    .line { font-size: 19px; }
+    input, select { width: 60px; }
+  }
+  @media print {
+    body { background: white; padding: 0; }
+    main { box-shadow: none; max-width: none; }
+    button, .name-box, .progress-frame { display: none; }
+    details { display: block; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>KlaPuStri mit Brüchen und Dezimalzahlen</h1>
+  <p>
+    Alle Zahlen stehen mit Vorzeichen in Klammern, z.&nbsp;B. (+3/4) oder (−2/3).
+    Zuerst Dezimalzahlen in Brüche umwandeln. Dann immer den nächsten
+    Rechenteil anklicken: Klammern zuerst, dann Punkt vor Strich,
+    sonst von links nach rechts. Jeden Teil rechnest du Schritt für Schritt.
+  </p>
+
+  <div class="name-box">
+    <label for="studentName">Name:</label>
+    <input id="studentName" placeholder="Vor- und Nachname">
+  </div>
+
+  <p id="counter"></p>
+  <div class="progress-frame"><div id="progress"></div></div>
+
+  <div id="work">
+    <div class="task" id="task"></div>
+    <section class="step">
+      <div class="way">
+        <p class="way-title">Rechenweg</p>
+        <div id="way"></div>
+      </div>
+      <h2 id="stepTitle"></h2>
+      <div id="stepInfo"></div>
+      <div class="entry" id="entry"></div>
+      <button id="checkButton">Überprüfen</button>
+      <button class="skip" id="skipButton">Ganze Aufgabe überspringen</button>
+      <p id="message" aria-live="polite"></p>
+    </section>
+  </div>
+
+  <section id="taskFinished" hidden>
+    <h2>Geschafft!</h2>
+    <div class="solution" id="solution"></div>
+    <p><button id="nextButton">Nächste Aufgabe</button></p>
+  </section>
+
+  <section id="endScreen" hidden>
+    <h2>Lehrerübersicht</h2>
+    <div class="summary" id="summary"></div>
+    <p>
+      <button id="restartButton">Noch einmal üben</button>
+      <button id="printButton">Übersicht drucken</button>
+    </p>
+  </section>
+  <p id="techError" class="bad" hidden></p>
+  <noscript>JavaScript ist deaktiviert. Bitte diese Datei herunterladen und im Browser öffnen.</noscript>
+</main>
+
+<script>
+'use strict';
+/*
+  Aufgaben als Text:
+  Zahlen mit Vorzeichen in Klammern: (+3/4), (-2/3), (+0,5), (-1,25)
+  Malzeichen *, Divisionszeichen :, Klammern ( ) und [ ]
+*/
+const tasks = [
+  "[(+3/4) - (-1/2)] * (-2/5) + (+1/3) : (-2/3)",
+  "[(-3/5) + (+1/2)] : [(+1/3) - (+2/5)] - (-1,2)",
+  "[(+3/4) - ((+0,5) - (+2/3))] * [(+1,2) - (+3/5)] - (+1/3) : (-2/3)"
+];
+
+const CATEGORIES = {
+  convert: "Dezimalzahl umwandeln",
+  select: "Reihenfolge (KlaPuStri)",
+  sign: "Vorzeichen",
+  cross: "Über Kreuz multiplizieren",
+  long: "Langer Bruchstrich / Kehrwert",
+  reduce: "Kürzen",
+  calc: "Berechnung",
+  mixed: "Gemischte Zahl"
+};
+
+const $ = id => document.getElementById(id);
+
+/* ---------- Bruchrechnung ---------- */
+function gcd(a, b) { a = Math.abs(a); b = Math.abs(b); while (b) { [a, b] = [b, a % b]; } return a; }
+function frac(n, d) {
+  if (d < 0) { n = -n; d = -d; }
+  const g = gcd(n, d) || 1;
+  return { n: n / g, d: d / g };
+}
+function compute(a, op, b) {
+  if (op === "+") return frac(a.n * b.d + b.n * a.d, a.d * b.d);
+  if (op === "-") return frac(a.n * b.d - b.n * a.d, a.d * b.d);
+  if (op === "*") return frac(a.n * b.n, a.d * b.d);
+  return frac(a.n * b.d, a.d * b.n);
+}
+const isNum = t => typeof t === "object" && t !== null;
+const isOp = t => t === "+" || t === "-" || t === "*" || t === ":";
+const rankOf = op => (op === "*" || op === ":") ? 1 : 0;
+
+function parseNumberText(s) {
+  let sign = 1;
+  if (s[0] === "+") s = s.slice(1);
+  else if (s[0] === "-") { sign = -1; s = s.slice(1); }
+  if (s.includes("/")) {
+    const [n, d] = s.split("/").map(Number);
+    return frac(sign * n, d);
+  }
+  if (s.includes(",")) {
+    const [w, f] = s.split(",");
+    const x = frac(sign * Number(w + f), 10 ** f.length);
+    x.dec = (sign < 0 ? "−" : "") + w + "," + f;
+    return x;
+  }
+  return frac(sign * Number(s), 1);
+}
+
+function lex(text) {
+  const s = text.replace(/\s+/g, "");
+  const tokens = [];
+  let i = 0;
+  while (i < s.length) {
+    const rest = s.slice(i);
+    let m = rest.match(/^\(([+-]?\d+(?:\/\d+|,\d+)?)\)/);
+    if (m) { tokens.push(parseNumberText(m[1])); i += m[0].length; continue; }
+    m = rest.match(/^\d+(?:\/\d+|,\d+)?/);
+    if (m) { tokens.push(parseNumberText(m[0])); i += m[0].length; continue; }
+    if ("[]()+-*:".includes(s[i])) { tokens.push(s[i]); i++; continue; }
+    throw new Error("Unbekanntes Zeichen in Aufgabe: " + text);
+  }
+  return tokens;
+}
+
+function compact(t) {
+  t = [...t];
+  let again = true;
+  while (again) {
+    again = false;
+    for (let j = 0; j < t.length - 2; j++) {
+      if (((t[j] === "[" && t[j + 2] === "]") || (t[j] === "(" && t[j + 2] === ")")) && isNum(t[j + 1])) {
+        t.splice(j, 3, t[j + 1]);
+        again = true;
+        break;
+      }
+    }
+  }
+  return t;
+}
+
+const countOps = t => t.filter(isOp).length;
+
+/* Für jedes Token: Index der innersten offenen Klammer (-1 = außen) */
+function parents(t) {
+  const stack = [], parent = [];
+  t.forEach((x, j) => {
+    if (x === ")" || x === "]") stack.pop();
+    parent[j] = stack.length ? stack[stack.length - 1] : -1;
+    if (x === "(" || x === "[") stack.push(j);
+  });
+  return parent;
+}
+
+/* Prüft, ob der Operator an Stelle j als Nächstes gerechnet werden darf */
+function judgeOperator(t, j) {
+  const parent = parents(t);
+  const g = parent[j];
+  const hasInnerBracket = t.some((x, k) => (x === "(" || x === "[") && parent[k] === g);
+  if (hasInnerBracket) return "Zuerst muss die Klammer ausgerechnet werden – innen vor außen.";
+  const groupOps = t.map((x, k) => k).filter(k => isOp(t[k]) && parent[k] === g);
+  const maxRank = Math.max(...groupOps.map(k => rankOf(t[k])));
+  if (rankOf(t[j]) < maxRank) return "Punkt vor Strich! Zuerst wird multipliziert oder dividiert.";
+  if (isOp(t[j - 2]) && parent[j - 2] === g && rankOf(t[j - 2]) === rankOf(t[j])) {
+    return "Gleichrangige Rechnungen von links nach rechts.";
+  }
+  return null;
+}
+
+function validOperators(t) {
+  return t.map((x, j) => j).filter(j => isOp(t[j]) && judgeOperator(t, j) === null);
+}
+
+/* ---------- Anzeige ---------- */
+function signSymbol(sign) { return sign === "-" ? "−" : "+"; }
+function fraction(top, bottom) {
+  return `<span class="fraction"><span class="fraction-top">${top}</span><span class="fraction-bottom">${bottom}</span></span>`;
+}
+function signedFraction(sign, top, bottom) {
+  return `<span class="signed"><span>${signSymbol(sign)}</span>${fraction(top, bottom)}</span>`;
+}
+function plainFraction(x) {
+  /* Betrag als Bruch bzw. ganze Zahl */
+  const n = Math.abs(x.n);
+  return x.d === 1 ? String(n) : fraction(n, x.d);
+}
+/* Alle Zahlen mit Vorzeichen in Klammern: (+3/4), (−2/3) */
+function numberHTML(x) {
+  if (x.dec) return x.n < 0 ? `(${x.dec})` : `(+${x.dec})`;
+  return `<span class="signed">(${x.n < 0 ? "−" : "+"}${plainFraction(x)})</span>`;
+}
+function numberText(x) {
+  if (x.dec) return x.n < 0 ? `(${x.dec})` : `(+${x.dec})`;
+  const t = x.d === 1 ? String(Math.abs(x.n)) : `${Math.abs(x.n)}/${x.d}`;
+  return `(${x.n < 0 ? "−" : "+"}${t})`;
+}
+function opSymbol(op) { return op === "*" ? "·" : op === "-" ? "−" : op; }
+
+function lineHTML(t, options = {}) {
+  const { clickable = false, mark = null } = options;
+  let html = "";
+  t.forEach((x, j) => {
+    if (mark && j === mark[0]) html += '<span class="part">';
+    if (isNum(x)) html += `<span class="tok">${numberHTML(x)}</span>`;
+    else if (isOp(x) && clickable) html += `<button type="button" class="op-btn" data-j="${j}" aria-label="Rechenzeichen ${opSymbol(x)} wählen">${opSymbol(x)}</button>`;
+    else html += `<span class="tok">${opSymbol(x)}</span>`;
+    if (mark && j === mark[1]) html += "</span>";
+  });
+  return html;
+}
+function lineText(t) {
+  return t.map(x => isNum(x) ? numberText(x) : opSymbol(x)).join(" ")
+    .replace(/([\[(]) /g, "$1").replace(/ ([\])])/g, "$1");
+}
+
+/* ---------- Eingabefelder (wie in den anderen Übungen) ---------- */
+function numberInput(id, label) {
+  return `<input id="${id}" type="number" min="0" step="1" aria-label="${label}">`;
+}
+function signInput(id = "sign") {
+  return `<select id="${id}" aria-label="Vorzeichen"><option value="">?</option><option value="+">+</option><option value="-">−</option></select>`;
+}
+function factorInputs() {
+  return signInput() + fraction(
+    `<span class="factor-row">${numberInput("a", "Erster Zählerfaktor")}<span>·</span>${numberInput("c", "Zweiter Zählerfaktor")}</span>`,
+    `<span class="factor-row">${numberInput("b", "Erster Nennerfaktor")}<span>·</span>${numberInput("d", "Zweiter Nennerfaktor")}</span>`
+  );
+}
+function resultInputs(sign) {
+  return signedFraction(sign, numberInput("numerator", "Zähler"), numberInput("denominator", "Nenner"));
+}
+
+/* ---------- Zustand ---------- */
+let taskIndex = 0;
+let stepQueue = [];
+let stepIndex = 0;
+let current = {};
+let currentRecord = {};
+let records = [];
+let locked = false;
+let startTime = null;
+
+function startTask() {
+  const tokens = lex(tasks[taskIndex]);
+  current = {
+    tokens: tokens,
+    lines: [],          /* bereits fertige Zeilen des Rechenwegs */
+    op: null,           /* aktuell gewählter Rechenteil */
+    totalOps: countOps(tokens),
+    doneOps: 0,
+    mixedDone: false
+  };
+  currentRecord = {
+    number: taskIndex + 1,
+    task: lineText(tokens),
+    errors: [],
+    skipped: false,
+    remaining: []
+  };
+  stepQueue = [];
+  tokens.forEach((x, j) => {
+    if (isNum(x) && x.dec) stepQueue.push({ kind: "convert", title: `Dezimalzahl ${x.dec} umwandeln`, j: j });
+  });
+  if (stepQueue.length) current.lines.push(lineHTML(tokens));
+  stepIndex = 0;
+  $("task").innerHTML = lineHTML(tokens);
+  $("work").hidden = false;
+  $("taskFinished").hidden = true;
+  showStep();
+}
+
+function updateCounter() {
+  const opInfo = current.totalOps ? ` · Rechenoperation ${Math.min(current.doneOps + 1, current.totalOps)} von ${current.totalOps}` : "";
+  $("counter").textContent = `Aufgabe ${taskIndex + 1} von ${tasks.length}${opInfo}`;
+  $("progress").style.width = `${(taskIndex + current.doneOps / Math.max(current.totalOps, 1)) / tasks.length * 100}%`;
+}
+
+/* Wenn die Schrittliste leer ist: nächsten Teil planen */
+function planNext() {
+  if (current.op) {
+    applyOperation();
+  }
+  const t = current.tokens;
+  const ops = countOps(t);
+  if (ops === 0) {
+    const r = t[0];
+    if (!current.mixedDone && r.d > 1 && Math.abs(r.n) > r.d) {
+      current.mixedDone = true;
+      stepQueue.push({ kind: "mixed", title: "Als gemischte Zahl schreiben" });
+      return true;
+    }
+    return false;
+  }
+  if (ops === 1) {
+    chooseOperation(t.findIndex(isOp));
+    current.autoChosen = true;
+  } else {
+    current.autoChosen = false;
+    stepQueue.push({ kind: "select", title: "Welche Rechnung kommt als Nächstes?" });
+  }
+  return true;
+}
+
+function chooseOperation(j) {
+  const t = current.tokens;
+  const a = t[j - 1], b = t[j + 1], op = t[j];
+  const o = { j: j, start: j - 1, end: j + 1, a: a, b: b, op: op };
+  current.op = o;
+  const firstNew = stepQueue.length;
+
+  if (op === "+" || op === "-") {
+    /* Vorzeichen zusammenfassen: a ± |b| */
+    const negB = b.n < 0; /* + (−) und − (+) ergeben −, sonst + */
+    o.eff = (op === "+") !== negB ? "+" : "-";
+    o.absB = { n: Math.abs(b.n), d: b.d };
+    o.signA = a.n < 0 ? "-" : "+";
+    o.absA = { n: Math.abs(a.n), d: a.d };
+    stepQueue.push({ kind: "sign", title: "Vorzeichen auflösen – noch nicht ausrechnen" });
+    if (a.d !== b.d) {
+      /* über Kreuz: a/b ± c/d = (a·d ± c·b) / (b·d) */
+      o.D = o.absA.d * o.absB.d;
+      o.p1 = o.absA.n * o.absB.d;
+      o.p2 = o.absB.n * o.absA.d;
+      stepQueue.push(
+        { kind: "cross", title: "Über Kreuz multiplizieren" },
+        { kind: "crossmul", title: "Produkte ausrechnen" }
+      );
+    } else {
+      /* gleiche Nenner: Nenner bleibt, Zähler zusammenrechnen */
+      o.D = a.d;
+      o.p1 = o.absA.n;
+      o.p2 = o.absB.n;
+    }
+    stepQueue.push({ kind: "combine", title: "Zähler zusammenrechnen" });
+  } else {
+    /* Multiplikation bzw. Division mit dem Kehrwert */
+    const second = op === ":" ? { n: b.d, d: Math.abs(b.n) } : { n: Math.abs(b.n), d: b.d };
+    o.f = { a: Math.abs(a.n), b: a.d, c: second.n, d: second.d };
+    o.sign = (a.n < 0) === (b.n < 0) ? "+" : "-";
+    stepQueue.push(
+      { kind: "long", title: op === ":" ? "Langer Bruchstrich – mit dem Kehrwert multiplizieren" : "Langer Bruchstrich" },
+      { kind: "reduce", title: "Einmal kürzen – Kürzzahl notieren" },
+      { kind: "multiply", title: "Faktoren multiplizieren" }
+    );
+  }
+  o.result = compute(a, op, b);
+  stepQueue[firstNew].first = true;
+}
+
+function applyOperation() {
+  const o = current.op;
+  const before = current.tokens;
+  current.lines.push(lineHTML(before, { mark: [o.start, o.end] }));
+  const t = [...before];
+  t.splice(o.start, 3, o.result);
+  current.tokens = compact(t);
+  current.doneOps++;
+  current.op = null;
+}
+
+/* ---------- Schritte anzeigen ---------- */
+function showWay(clickable) {
+  const step = stepQueue[stepIndex];
+  let html = current.lines.map((l, k) => `<div class="line past"><span class="eq">${k ? "=" : ""}</span>${l}</div>`).join("");
+  const mark = current.op ? [current.op.start, current.op.end] : (step && step.kind === "convert" ? [step.j, step.j] : null);
+  html += `<div class="line"><span class="eq">${current.lines.length ? "=" : ""}</span>${lineHTML(current.tokens, { clickable: clickable, mark: mark })}</div>`;
+  $("way").innerHTML = html;
+  if (clickable) {
+    $("way").querySelectorAll(".op-btn").forEach(btn => {
+      btn.onclick = () => selectOperator(Number(btn.dataset.j));
+    });
+  }
+}
+
+function setMessage(text, correct) {
+  $("message").textContent = text;
+  $("message").className = correct ? "ok" : "bad";
+}
+function setButtonsDisabled(disabled) {
+  $("checkButton").disabled = disabled;
+  $("skipButton").disabled = disabled;
+}
+
+function showStep() {
+  locked = false;
+  setButtonsDisabled(false);
+  while (stepIndex >= stepQueue.length) {
+    if (!planNext()) { showTaskSolution(); return; }
+  }
+  updateCounter();
+
+  const step = stepQueue[stepIndex];
+  const o = current.op;
+  let info = "", entry = "";
+  $("checkButton").hidden = step.kind === "select";
+
+  if (step.kind === "convert") {
+    const x = current.tokens[step.j];
+    const digits = x.dec.split(",")[1].length;
+    info = `<div class="tip">Schreibe die Nachkommastellen als Zehnerbruch (Nenner ${10 ** digits}) und kürze vollständig.</div>
+      <p>${numberHTML(x)} = ?</p>`;
+    entry = x.n < 0
+      ? `<span>−</span>${fraction(numberInput("numerator", "Zähler"), numberInput("denominator", "Nenner"))}`
+      : fraction(numberInput("numerator", "Zähler"), numberInput("denominator", "Nenner"));
+  }
+
+  if (step.kind === "select") {
+    info = `<div class="tip">
+        <strong>Kla</strong>mmern zuerst (innen vor außen),
+        dann <strong>Pu</strong>nkt vor <strong>Stri</strong>ch,
+        gleichrangige Rechnungen von links nach rechts.<br>
+        Klicke im Rechenweg auf das Rechenzeichen, das du als Nächstes rechnest.
+      </div>`;
+  }
+
+  if (step.kind === "sign") {
+    info = `<p>${numberHTML(o.a)} ${opSymbol(o.op)} ${numberHTML(o.b)}</p>
+      <div class="tip">Rechenzeichen und Vorzeichen zusammenfassen:<br>
+        + (+) wird zu +, &nbsp; − (−) wird zu +<br>
+        + (−) wird zu −, &nbsp; − (+) wird zu −<br>
+        Die Klammern verschwinden dabei.</div>`;
+    entry = `${o.signA === "-" ? "<span>−</span>" : ""}${plainFraction(o.absA)} ${signInput("eff")} ${plainFraction(o.absB)}`;
+  }
+
+  if (step.kind === "cross") {
+    const minusA = o.signA === "-" ? "−" : "";
+    info = `<p>${minusA}${fraction(o.absA.n, o.absA.d)} ${opSymbol(o.eff)} ${fraction(o.absB.n, o.absB.d)}</p>
+      <div class="tip">Über Kreuz multiplizieren:<br>
+        oben: erster Zähler · zweiter Nenner ${opSymbol(o.eff)} zweiter Zähler · erster Nenner<br>
+        unten: Nenner · Nenner
+        ${o.a.d === 1 || o.b.d === 1 ? "<br>Eine ganze Zahl hat den Nenner 1." : ""}</div>`;
+    entry = fraction(
+      `<span class="factor-row">${minusA ? "<span>−</span>" : ""}${numberInput("a", "Erster Zähler")}<span>·</span>${numberInput("d", "Zweiter Nenner")}<span>${opSymbol(o.eff)}</span>${numberInput("c", "Zweiter Zähler")}<span>·</span>${numberInput("b", "Erster Nenner")}</span>`,
+      `<span class="factor-row">${numberInput("b2", "Erster Nenner")}<span>·</span>${numberInput("d2", "Zweiter Nenner")}</span>`
+    );
+  }
+
+  if (step.kind === "crossmul") {
+    const minusA = o.signA === "-" ? "−" : "";
+    info = `<p>${fraction(`${minusA}${o.absA.n} · ${o.absB.d} ${opSymbol(o.eff)} ${o.absB.n} · ${o.absA.d}`, `${o.absA.d} · ${o.absB.d}`)} = ?</p>
+      <div class="tip">Rechne die beiden Produkte oben und das Produkt unten aus. Noch nicht zusammenrechnen.</div>`;
+    entry = fraction(
+      `<span class="factor-row">${minusA ? "<span>−</span>" : ""}${numberInput("p1", "Erstes Produkt")}<span>${opSymbol(o.eff)}</span>${numberInput("p2", "Zweites Produkt")}</span>`,
+      numberInput("denominator", "Nenner")
+    );
+  }
+
+  if (step.kind === "combine") {
+    info = `<p>${fraction(`${o.signA === "-" ? "−" : ""}${o.p1} ${opSymbol(o.eff)} ${o.p2}`, o.D)} = ?</p>
+      <div class="tip">Der Nenner bleibt gleich. Rechne oben zusammen und überlege, welches Vorzeichen das Ergebnis hat.</div>`;
+    entry = signInput() + fraction(numberInput("numerator", "Zähler"), numberInput("denominator", "Nenner"));
+  }
+
+  if (step.kind === "long") {
+    info = `<p>${numberHTML(o.a)} ${opSymbol(o.op)} ${numberHTML(o.b)}</p>`;
+    if (o.op === ":") {
+      info += `<div class="tip">Bei einer Division wird der zweite Bruch umgedreht: ${fraction(o.f.d, o.f.c)} wird zu ${fraction(o.f.c, o.f.d)}. Danach wird multipliziert.</div>`;
+    }
+    if (o.a.d === 1 || o.b.d === 1) info += `<div class="tip">Eine ganze Zahl hat den Nenner 1.</div>`;
+    info += "<p>Vorzeichen bestimmen und die Faktoren auf den langen Bruchstrich eintragen.</p>";
+    entry = factorInputs();
+  }
+
+  if (step.kind === "reduce") {
+    info = `<div class="tip">Kürze genau ein Zähler-Nenner-Paar durch dieselbe Zahl.
+        Über Kreuz oder innerhalb eines Bruchs ist erlaubt.
+        Die anderen beiden Faktoren bleiben unverändert.<br>
+        Falls nichts kürzbar ist, trage als Kürzzahl 1 ein.</div>
+      <p>${signedFraction(o.sign, `${o.f.a} · ${o.f.c}`, `${o.f.b} · ${o.f.d}`)} = ?</p>`;
+    entry = `<label>gekürzt durch ${numberInput("divisor", "Kürzzahl")}</label>${factorInputs()}`;
+  }
+
+  if (step.kind === "multiply") {
+    const r = o.reduced;
+    info = `<div class="tip">Du hast durch ${o.divisor} gekürzt.<br>
+        Multipliziere oben ${r.a} · ${r.c} und unten ${r.b} · ${r.d}.</div>
+      <p>${signedFraction(o.sign, `${r.a} · ${r.c}`, `${r.b} · ${r.d}`)} = ?</p>`;
+    entry = resultInputs(o.sign);
+  }
+
+  if (step.kind === "final") {
+    info = `<p>${signedFraction(o.resultSign, o.rawN, o.rawD)} = ?</p>
+      <div class="tip">Kürze den Ergebnisbruch vollständig und notiere die Kürzzahl.</div>`;
+    entry = `<label>gekürzt durch ${numberInput("divisor", "Kürzzahl")}</label>${resultInputs(o.resultSign)}`;
+  }
+
+  if (step.kind === "mixed") {
+    const r = current.tokens[0];
+    const s = r.n < 0 ? "-" : "+";
+    info = `<p>${signedFraction(s, Math.abs(r.n), r.d)} = ?</p>
+      <div class="tip">Teile den Zähler durch den Nenner. Der Rest wird zum Zähler des Bruchteils.</div>`;
+    entry = `<span>${signSymbol(s)}</span>${numberInput("whole", "Ganze Zahl")}${fraction(numberInput("numerator", "Restzähler"), numberInput("denominator", "Nenner"))}`;
+  }
+
+  showWay(step.kind === "select");
+  let title = step.title;
+  if (o && current.autoChosen && (step.first)) {
+    title += " (nur noch eine Rechnung übrig)";
+  }
+  $("stepTitle").textContent = title;
+  $("stepInfo").innerHTML = info;
+  $("entry").innerHTML = entry;
+  $("message").textContent = "";
+  const first = $("entry").querySelector("input, select");
+  if (first && stepIndex > 0) first.focus({ preventScroll: true });
+}
+
+/* ---------- Prüfen ---------- */
+function readInputs() {
+  const fields = [...$("entry").querySelectorAll("input, select")];
+  if (fields.some(f => f.value.trim() === "")) { setMessage("Bitte fülle alle Felder aus.", false); return null; }
+  if (fields.filter(f => f.tagName === "INPUT").some(f => {
+    const v = Number(f.value);
+    return !Number.isInteger(v) || v < 0;
+  })) { setMessage("Bitte ganze, nicht negative Zahlen eintragen.", false); return null; }
+  return Object.fromEntries(fields.map(f => [f.id, f.tagName === "SELECT" ? f.value : Number(f.value)]));
+}
+
+function validSingleReduction(o, v) {
+  const original = [o.f.a, o.f.b, o.f.c, o.f.d];
+  const entered = [v.a, v.b, v.c, v.d];
+  const pairs = [[0, 1], [0, 3], [2, 1], [2, 3]];
+  const g = v.divisor;
+  if (!Number.isInteger(g) || g < 1) return false;
+  const possible = pairs.some(([x, y]) => gcd(original[x], original[y]) > 1);
+  if (g === 1) return !possible && original.every((z, k) => z === entered[k]);
+  return pairs.some(([x, y]) => {
+    if (original[x] % g || original[y] % g) return false;
+    const r = [...original];
+    r[x] /= g; r[y] /= g;
+    return r.every((z, k) => z === entered[k]);
+  });
+}
+
+function fail(step, category, text, values) {
+  currentRecord.errors.push({ step: step.title, category: category, input: JSON.stringify(values) });
+  setMessage(text, false);
+}
+
+function succeed(text) {
+  setMessage(text || "Richtig!", true);
+  locked = true;
+  setButtonsDisabled(true);
+  stepIndex++;
+  setTimeout(showStep, 450);
+}
+
+function selectOperator(j) {
+  if (locked) return;
+  mark();
+  const step = stepQueue[stepIndex];
+  const problem = judgeOperator(current.tokens, j);
+  if (problem) {
+    fail(step, "select", problem, { gewählt: opSymbol(current.tokens[j]), zeile: lineText(current.tokens) });
+    return;
+  }
+  chooseOperation(j);
+  succeed("Richtig gewählt!");
+}
+
+function mark() { if (!startTime) startTime = Date.now(); }
+
+function checkAnswer() {
+  if (locked) return;
+  mark();
+  const step = stepQueue[stepIndex];
+  const v = readInputs();
+  if (!v) return;
+  const o = current.op;
+
+  if (step.kind === "convert") {
+    const x = current.tokens[step.j];
+    const value = frac((x.n < 0 ? -1 : 1) * v.numerator, v.denominator || 1);
+    if (v.denominator === 0 || value.n !== x.n || value.d !== x.d) {
+      return fail(step, "convert", "Noch nicht richtig. Prüfe den Zehnerbruch.", v);
+    }
+    if (v.denominator !== x.d) {
+      return fail(step, "reduce", "Wertmäßig richtig – bitte noch vollständig kürzen.", v);
+    }
+    current.tokens[step.j] = { n: x.n, d: x.d };
+    return succeed();
+  }
+
+  if (step.kind === "sign") {
+    if (v.eff !== o.eff) return fail(step, "sign", "Vorzeichen noch nicht richtig. Nur zusammenfassen, nicht ausrechnen.", v);
+    return succeed();
+  }
+
+  if (step.kind === "cross") {
+    if (v.b2 !== o.absA.d || v.d2 !== o.absB.d) return fail(step, "cross", "Unten stehen die beiden Nenner: Nenner · Nenner.", v);
+    if (v.a !== o.absA.n || v.d !== o.absB.d || v.c !== o.absB.n || v.b !== o.absA.d) {
+      return fail(step, "cross", "Oben noch nicht richtig. Erster Zähler mal zweiter Nenner, zweiter Zähler mal erster Nenner.", v);
+    }
+    return succeed();
+  }
+
+  if (step.kind === "crossmul") {
+    if (v.p1 !== o.p1 || v.p2 !== o.p2) return fail(step, "calc", "Ein Produkt im Zähler stimmt noch nicht.", v);
+    if (v.denominator !== o.D) return fail(step, "calc", "Das Produkt im Nenner stimmt noch nicht.", v);
+    return succeed();
+  }
+
+  if (step.kind === "combine") {
+    const n1 = (o.signA === "-" ? -1 : 1) * o.p1;
+    const n2 = (o.eff === "-" ? -1 : 1) * o.p2;
+    const raw = n1 + n2;
+    if (v.denominator !== o.D) return fail(step, "calc", `Der Nenner bleibt ${o.D}. Noch nicht kürzen.`, v);
+    if (v.numerator !== Math.abs(raw)) return fail(step, "calc", "Der Zähler stimmt noch nicht.", v);
+    if (v.sign !== (raw < 0 ? "-" : "+")) return fail(step, "sign", "Der Zähler stimmt, aber das Vorzeichen nicht.", v);
+    o.resultSign = raw < 0 ? "-" : "+";
+    o.rawN = Math.abs(raw);
+    o.rawD = o.D;
+    if (gcd(o.rawN, o.rawD) > 1) stepQueue.splice(stepIndex + 1, 0, { kind: "final", title: "Ergebnis vollständig kürzen" });
+    return succeed();
+  }
+
+  if (step.kind === "long") {
+    const f = o.f;
+    if (v.a !== f.a || v.b !== f.b || v.c !== f.c || v.d !== f.d) {
+      return fail(step, "long", o.op === ":" ? "Faktoren noch nicht richtig. Hast du den zweiten Bruch umgedreht?" : "Faktoren noch nicht richtig. Zähler nach oben, Nenner nach unten.", v);
+    }
+    if (v.sign !== o.sign) return fail(step, "sign", "Faktoren richtig, aber das Vorzeichen stimmt nicht.", v);
+    return succeed();
+  }
+
+  if (step.kind === "reduce") {
+    if (v.sign !== o.sign) return fail(step, "sign", "Das Vorzeichen stimmt nicht.", v);
+    if (!validSingleReduction(o, v)) return fail(step, "reduce", "Kürzung noch nicht richtig. Genau ein Zähler-Nenner-Paar durch die Kürzzahl teilen.", v);
+    o.reduced = { a: v.a, b: v.b, c: v.c, d: v.d };
+    o.divisor = v.divisor;
+    return succeed();
+  }
+
+  if (step.kind === "multiply") {
+    const r = o.reduced;
+    if (v.numerator !== r.a * r.c || v.denominator !== r.b * r.d) return fail(step, "calc", "Noch nicht richtig. Oben mal oben, unten mal unten.", v);
+    o.resultSign = o.sign;
+    o.rawN = v.numerator;
+    o.rawD = v.denominator;
+    if (gcd(o.rawN, o.rawD) > 1) stepQueue.splice(stepIndex + 1, 0, { kind: "final", title: "Ergebnis vollständig kürzen" });
+    return succeed();
+  }
+
+  if (step.kind === "final") {
+    const g = gcd(o.rawN, o.rawD);
+    if (v.numerator * o.rawD !== v.denominator * o.rawN) return fail(step, "reduce", "Der Bruch hat sich beim Kürzen verändert. Zähler und Nenner durch dieselbe Zahl teilen.", v);
+    if (v.divisor !== g || v.numerator !== o.rawN / g) return fail(step, "reduce", "Noch nicht vollständig gekürzt. Nimm die größte mögliche Kürzzahl.", v);
+    return succeed();
+  }
+
+  if (step.kind === "mixed") {
+    const r = current.tokens[0];
+    const n = Math.abs(r.n);
+    if (v.whole !== Math.floor(n / r.d) || v.numerator !== n % r.d || v.denominator !== r.d) {
+      return fail(step, "mixed", "Noch nicht richtig. Wie oft passt der Nenner in den Zähler, und welcher Rest bleibt?", v);
+    }
+    return succeed();
+  }
+}
+
+/* ---------- Abschluss einer Aufgabe ---------- */
+function resultText(r, withMixed) {
+  let html = `<span class="signed">${r.n < 0 ? "−" : "+"}${plainFraction(r)}</span>`;
+  const n = Math.abs(r.n);
+  if (withMixed && r.d > 1 && n > r.d) {
+    html += ` = ${r.n < 0 ? "−" : "+"}<span class="mixed">${Math.floor(n / r.d)} ${fraction(n % r.d, r.d)}</span>`;
+  }
+  return html;
+}
+
+function showTaskSolution() {
+  $("work").hidden = true;
+  $("taskFinished").hidden = false;
+  const lines = [...current.lines];
+  const html = lines.map((l, k) => `<div class="line"><span class="eq">${k ? "=" : ""}</span>${l}</div>`).join("")
+    + `<div class="line"><span class="eq">=</span>${resultText(current.tokens[0], true)}</div>`;
+  $("solution").innerHTML = html;
+  $("nextButton").textContent = taskIndex === tasks.length - 1 ? "Zur Lehrerübersicht" : "Nächste Aufgabe";
+  $("progress").style.width = `${(taskIndex + 1) / tasks.length * 100}%`;
+}
+
+function advance() {
+  records.push(currentRecord);
+  taskIndex++;
+  if (taskIndex < tasks.length) startTask();
+  else showSummary();
+}
+
+function skipTask() {
+  if (locked) return;
+  currentRecord.skipped = true;
+  const open = countOps(current.tokens);
+  const decimals = current.tokens.filter(t => isNum(t) && t.dec).length;
+  const remaining = [];
+  if (decimals) remaining.push(`${decimals} Dezimalzahl(en) nicht umgewandelt`);
+  if (open) remaining.push(`${open} von ${current.totalOps} Rechenoperationen offen`);
+  if (stepQueue[stepIndex]) remaining.push(`abgebrochen bei: ${stepQueue[stepIndex].title}`);
+  currentRecord.remaining = remaining;
+  advance();
+}
+
+/* ---------- Lehrerübersicht ---------- */
+function showSummary() {
+  $("work").hidden = true;
+  $("taskFinished").hidden = true;
+  $("endScreen").hidden = false;
+  $("progress").style.width = "100%";
+  $("counter").textContent = "Übung abgeschlossen";
+
+  const name = $("studentName").value.trim() || "ohne Namen";
+  const skipped = records.filter(r => r.skipped);
+  const total = records.reduce((s, r) => s + r.errors.length, 0);
+  const minutes = startTime ? Math.round((Date.now() - startTime) / 60000) : 0;
+
+  const byCategory = {};
+  Object.keys(CATEGORIES).forEach(k => byCategory[k] = 0);
+  records.forEach(r => r.errors.forEach(e => byCategory[e.category]++));
+
+  const rows = records.map(r => `<tr>
+      <td>${r.number}</td>
+      <td>${escapeHTML(r.task)}</td>
+      <td class="${r.skipped ? "skipped-status" : "completed-status"}">${r.skipped ? "Übersprungen / nicht vollständig" : "Vollständig bearbeitet"}</td>
+      <td>${r.errors.length}${r.errors.length ? "<br>" + [...new Set(r.errors.map(e => CATEGORIES[e.category]))].map(escapeHTML).join("<br>") : ""}</td>
+      <td>${r.remaining.map(escapeHTML).join("<br>")}</td>
+    </tr>`).join("");
+
+  const categoryRows = Object.keys(CATEGORIES).map(k => `<tr><td>${CATEGORIES[k]}</td><td>${byCategory[k]}</td></tr>`).join("");
+
+  const details = records.filter(r => r.errors.length).map(r => `<details>
+      <summary>Aufgabe ${r.number}: falsche Eingaben</summary>
+      ${r.errors.map(e => `<p>${escapeHTML(e.step)} (${escapeHTML(CATEGORIES[e.category])}): ${escapeHTML(e.input)}</p>`).join("")}
+    </details>`).join("");
+
+  $("summary").innerHTML = `
+    <p>Name: <strong>${escapeHTML(name)}</strong><br>
+      Abschluss: ${escapeHTML(new Date().toLocaleString("de-AT"))}<br>
+      Vollständig bearbeitet: ${tasks.length - skipped.length} von ${tasks.length}<br>
+      Übersprungen: <strong>${skipped.length} von ${tasks.length}</strong><br>
+      Übersprungene Aufgabennummern: ${skipped.map(r => r.number).join(", ") || "keine"}<br>
+      Fehlversuche gesamt: ${total}<br>
+      Dauer einschließlich Pausen: ca. ${minutes} Minuten</p>
+    ${skipped.length ? '<div class="notice">Übersprungene Aufgaben gelten nicht als richtig gelöst. 0 Fehlversuche bedeutet bei übersprungenen Aufgaben nicht, dass sie richtig bearbeitet wurden.</div>' : ""}
+    <h3>Fehlversuche nach Bereich</h3>
+    <div class="table-wrapper"><table><tr><th>Bereich</th><th>Fehlversuche</th></tr>${categoryRows}</table></div>
+    <h3>Aufgaben</h3>
+    <div class="table-wrapper"><table>
+      <tr><th>Nr.</th><th>Aufgabe</th><th>Status</th><th>Fehlversuche</th><th>Nicht bearbeitet</th></tr>
+      ${rows}
+    </table></div>
+    ${details}
+    <p>Die Übersicht wird nicht automatisch an die Lehrkraft gesendet. Bitte bei Bedarf drucken oder als PDF sichern. Neuladen löscht die Daten.</p>`;
+}
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+}
+
+/* ---------- Start ---------- */
+$("checkButton").onclick = checkAnswer;
+$("skipButton").onclick = skipTask;
+$("nextButton").onclick = advance;
+$("restartButton").onclick = () => location.reload();
+$("printButton").onclick = () => window.print();
+$("entry").addEventListener("keydown", e => { if (e.key === "Enter") checkAnswer(); });
+window.addEventListener("error", e => { $("techError").hidden = false; $("techError").textContent = "Technischer Fehler: " + e.message; });
+startTask();
+</script>
+</body>
+</html>
