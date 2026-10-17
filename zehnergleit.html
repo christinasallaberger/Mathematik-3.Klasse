@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Zehnerpotenzen und Gleitkommadarstellung üben</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fraunces:opsz,wght@9..144,600;9..144,800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F7F9FC; --grid:#DCE6F2; --ink:#1B2F6B; --text:#1E2533; --muted:#5B6578;
+  --card:#FFFFFF; --line:#C9D5E6; --ok:#217A4B; --okbg:#E3F4EA; --bad:#B3261E; --badbg:#FBE7E5;
+  --mark:#FFE873; --field:#FFFFFF; --info:#EAF1FB;
+  color-scheme: light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#111827; --grid:#1C2638; --ink:#A9C1FF; --text:#E6EAF2; --muted:#9AA4B8;
+    --card:#172033; --line:#2C3A55; --ok:#5FD08E; --okbg:#173326; --bad:#FF8A80; --badbg:#3A1C1C;
+    --mark:#6B5A12; --field:#0F1726; --info:#1A2740; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#111827; --grid:#1C2638; --ink:#A9C1FF; --text:#E6EAF2; --muted:#9AA4B8;
+  --card:#172033; --line:#2C3A55; --ok:#5FD08E; --okbg:#173326; --bad:#FF8A80; --badbg:#3A1C1C;
+  --mark:#6B5A12; --field:#0F1726; --info:#1A2740; color-scheme: dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0; color:var(--text); font-family:"Atkinson Hyperlegible",system-ui,"Segoe UI",Arial,sans-serif;
+  font-size:1.0625rem; line-height:1.5;
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+}
+.wrap{max-width:60rem;margin:0 auto;padding:1.5rem 1rem 4rem}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:1rem;margin:1rem 0 2rem}
+h1{font-family:Fraunces,Georgia,serif;font-weight:800;color:var(--ink);font-size:clamp(2.4rem,7vw,4rem);line-height:1;margin:0;letter-spacing:-.01em}
+h1 sup{font-size:.5em;display:inline-block;transform-origin:left bottom;animation:hop 1.2s ease-out .3s 1}
+@keyframes hop{0%{transform:translateY(0)}30%{transform:translateY(-.4em) rotate(-8deg)}60%{transform:translateY(0)}80%{transform:translateY(-.1em)}100%{transform:none}}
+@media (prefers-reduced-motion: reduce){h1 sup{animation:none}}
+.sub{color:var(--muted);margin:.5rem 0 0}
+.top{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
+.score{font-weight:700;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:999px;padding:.35rem .9rem}
+button{font:inherit;cursor:pointer;border-radius:.5rem;border:2px solid var(--ink);background:var(--ink);color:var(--paper);padding:.45rem .9rem;font-weight:700}
+button.ghost{background:transparent;color:var(--ink)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--mark);outline-offset:2px}
+section{background:var(--card);border:2px solid var(--line);border-radius:.75rem;padding:1.25rem 1.25rem 1rem;margin:0 0 1.5rem}
+.head{display:flex;gap:.8rem;align-items:baseline}
+.num{font-family:Fraunces,Georgia,serif;font-weight:800;font-size:1.6rem;color:var(--ink);min-width:1.4em}
+h2{font-size:1.15rem;margin:0}
+.tasks{display:grid;grid-template-columns:repeat(auto-fill,minmax(19rem,1fr));gap:.6rem 1.5rem;margin:1rem 0}
+.task{display:flex;align-items:center;flex-wrap:wrap;gap:.45rem;padding:.4rem .5rem;border-radius:.5rem;border:2px solid transparent}
+.task.ok{background:var(--okbg);border-color:var(--ok)}
+.task.bad{background:var(--badbg);border-color:var(--bad)}
+.lbl{font-weight:700;color:var(--ink);width:1.6em}
+.expr{font-size:1.2rem;white-space:nowrap}
+.pw sup{font-size:.68em;margin-left:.05em}
+input{font:inherit;font-size:1.1rem;color:var(--text);background:var(--field);border:2px solid var(--line);border-radius:.4rem;padding:.2rem .4rem}
+input.prod{width:12rem;max-width:100%}
+input.val{width:6.5rem}
+.pin{display:inline-flex;align-items:flex-start}
+.pin .b{width:3rem;text-align:center}
+.pin .e{width:2.4rem;font-size:.85rem;text-align:center;margin-top:-.6rem;margin-left:.1rem;padding:.1rem .2rem}
+.eq{color:var(--muted)}
+.sign{display:inline-flex;border:2px solid var(--line);border-radius:.4rem;overflow:hidden}
+.sign button{border:0;border-radius:0;background:var(--field);color:var(--text);padding:.2rem .65rem;font-size:1.1rem}
+.sign button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.sol{flex-basis:100%;font-size:.95rem;padding-left:2.1em;display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+.sol.ok{color:var(--ok);font-weight:700}.sol.bad{color:var(--bad)}.sol.shown{color:var(--muted)}
+.task.shown{border-color:var(--line);border-style:dashed}
+button.mini{font-size:.85rem;padding:.1rem .55rem;background:transparent;color:var(--ink);border-width:1.5px}
+.actions{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}
+.res{color:var(--muted);font-weight:700}
+.hint{color:var(--muted);font-size:.95rem;margin:.4rem 0 0}
+.info{background:var(--info);border-left:6px solid var(--ink);border-radius:.5rem;padding:.8rem 1rem;margin:.9rem 0 0}
+.info p{margin:.2rem 0}
+.info .pos{color:var(--ok);font-weight:700}.info .neg{color:var(--bad);font-weight:700}
+.finish{display:flex;justify-content:center;margin:0 0 1.5rem}
+#summary{border-color:var(--ink);border-width:3px}
+.summsg{font-size:1.2rem;font-weight:700;color:var(--ink);margin:.6rem 0 1rem}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:30rem}
+th,td{text-align:left;padding:.4rem .6rem;border-bottom:1px solid var(--line)}
+td:not(:first-child),th:not(:first-child){text-align:center}
+tfoot td{font-weight:700;border-bottom:0;border-top:2px solid var(--ink)}
+#sumShown{margin-top:1rem;color:var(--muted)}
+#sumShown ul{margin:.3rem 0 0;padding-left:1.2rem}
+.tasks.one{grid-template-columns:1fr}
+.pin10{display:inline-flex;align-items:flex-start;font-size:1.2rem}
+.pin10 .e{width:2.6rem;font-size:.85rem;text-align:center;margin-top:-.55rem;margin-left:.1rem;padding:.1rem .2rem}
+input.num{width:11rem;max-width:100%}
+input.v{width:2.8rem;text-align:center}
+input.m{width:4.5rem;text-align:center}
+.word{font-style:italic}
+.info .big{font-size:1.2rem}
+.vz{color:#B0367C;font-weight:700}
+.zp{color:var(--ink);font-weight:700}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .vz{color:#F59AC9}}
+:root[data-theme="dark"] .vz{color:#F59AC9}
+.ordering{width:100%}
+.pool,.seq{display:flex;flex-wrap:wrap;gap:.45rem;align-items:center;margin:.3rem 0}
+.seq{min-height:2.8rem;border-top:2px dashed var(--line);padding-top:.6rem;margin-top:.6rem}
+.tile{background:var(--field);color:var(--text);border:2px solid var(--line);font-weight:400;font-size:1.15rem;padding:.25rem .7rem}
+.tile:disabled{opacity:.3;cursor:default}
+.tile.placed{border-color:var(--ink)}
+.slot{display:inline-block;width:3.2rem;height:2.2rem;border-bottom:2px solid var(--muted)}
+.lt{color:var(--muted);font-size:1.2rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Zehnerpotenzen<sup>n</sup></h1>
+      <p class="sub">Jede Aufgabe wird sofort kontrolliert, sobald du sie fertig hast (Enter oder weiterklicken). Ist sie falsch, versuch es einfach nochmal. Große Zahlen darfst du mit Leerzeichen schreiben, z. B. 10 000.</p>
+    </div>
+    <div class="top">
+      <span class="score" id="score">0 von 0 richtig</span>
+      <button id="newAll">Neue Aufgaben</button>
+    </div>
+  </header>
+
+  <section id="s1">
+    <div class="head"><span class="num">1</span><h2>Schreibe als Zehnerpotenz!</h2></div>
+    <p class="hint">Die Hochzahl sagt dir, wie viele Nullen nach der 1 stehen.</p>
+    <div class="tasks"></div>
+    <div class="actions"><button class="ghost" data-check>Alle überprüfen</button><span class="res"></span></div>
+  </section>
+
+  <section id="s2">
+    <div class="head"><span class="num">2</span><h2>Schreibe als natürliche Zahl an!</h2></div>
+    <div class="tasks"></div>
+    <div class="actions"><button class="ghost" data-check>Alle überprüfen</button><span class="res"></span></div>
+  </section>
+
+  <section id="s3">
+    <div class="head"><span class="num">3</span><h2>Schreibe als natürliche Zahl und als Zehnerpotenz!</h2></div>
+    <div class="tasks one"></div>
+    <div class="actions"><button class="ghost" data-check>Alle überprüfen</button><span class="res"></span></div>
+  </section>
+
+  <section id="s4">
+    <div class="head"><span class="num">4</span><h2>Ordne die Zahlen der Größe nach! Beginne mit der kleinsten Zahl!</h2></div>
+    <p class="hint">Tippe die Zahlen der Reihe nach an. Antippen in der unteren Reihe nimmt eine Zahl wieder heraus.</p>
+    <div class="tasks one"></div>
+    <div class="actions"><button class="ghost" data-check>Überprüfen</button><span class="res"></span></div>
+  </section>
+
+  <section id="s5">
+    <div class="head"><span class="num">5</span><h2>Schreibe mit Vorzahl und Zehnerpotenz!</h2></div>
+    <div class="info">
+      <p>Große Zahlen können mit Hilfe einer Zehnerpotenz angeschrieben werden:</p>
+      <p class="big">6 000 = 6 · 1 000 = <b class="vz">6</b> · <b class="zp">10<sup>3</sup></b></p>
+      <p><span class="vz">Vorzahl</span> und <span class="zp">Zehnerpotenz</span></p>
+    </div>
+    <div class="tasks"></div>
+    <div class="actions"><button class="ghost" data-check>Alle überprüfen</button><span class="res"></span></div>
+  </section>
+
+  <section id="s6">
+    <div class="head"><span class="num">6</span><h2>Schreibe als natürliche Zahl an!</h2></div>
+    <div class="tasks"></div>
+    <div class="actions"><button class="ghost" data-check>Alle überprüfen</button><span class="res"></span></div>
+  </section>
+
+  <section id="s7">
+    <div class="head"><span class="num">7</span><h2>Schreibe mit Hilfe der Gleitkommadarstellung!</h2></div>
+    <div class="info">
+      <p class="big">35 000 000 = 3,5 · 10 000 000 = 3,5 · 10<sup>7</sup></p>
+      <p>7 Stellen nach dem Komma verschoben → Hochzahl 7</p>
+      <p>Bei der Gleitkommadarstellung ist die Vorzahl eine Dezimalzahl mit <b>genau einer Ziffer (≠ 0) vor dem Komma</b>.</p>
+    </div>
+    <p class="hint">Komma als „,“ eingeben, z. B. 3,5</p>
+    <div class="tasks"></div>
+    <div class="actions"><button class="ghost" data-check>Alle überprüfen</button><span class="res"></span></div>
+  </section>
+
+  <section id="s8">
+    <div class="head"><span class="num">8</span><h2>Schreibe als natürliche Zahl!</h2></div>
+    <div class="tasks"></div>
+    <div class="actions"><button class="ghost" data-check>Alle überprüfen</button><span class="res"></span></div>
+  </section>
+
+  <div class="finish"><button class="ghost" id="showSum">Auswertung anzeigen</button></div>
+
+  <section id="summary" hidden>
+    <div class="head"><h2 id="sumTitle">Auswertung</h2></div>
+    <p id="sumMsg" class="summsg"></p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Übung</th><th>richtig</th><th>beim 1. Versuch</th><th>Lösung angesehen</th><th>offen</th></tr></thead>
+      <tbody id="sumBody"></tbody>
+      <tfoot id="sumFoot"></tfoot>
+    </table></div>
+    <div id="sumShown"></div>
+    <div class="actions" style="margin-top:1rem"><button id="newAll2">Neue Aufgaben</button></div>
+  </section>
+</div>
+
+<script>
+const LBL='abcdefghijkl';
+const NN='\u202F';
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const shuffle=arr=>{for(let i=arr.length-1;i>0;i--){const j=rnd(0,i);[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;};
+const range=(a,b)=>Array.from({length:b-a+1},(_,i)=>a+i);
+function exps(pool,count){let out=shuffle(pool.slice()).slice(0,count);while(out.length<count)out.push(pool[rnd(0,pool.length-1)]);return out;}
+/* meist Hochzahlen bis 10, höchstens eine größere (mit 50 % Wahrscheinlichkeit) */
+function expsLow(lo,count,high){const es=exps(range(lo,10),count);if(high&&Math.random()<0.5)es[rnd(0,count-1)]=rnd(11,high);return es;}
+const group=s=>s.replace(/\B(?=(\d{3})+(?!\d))/g,NN);
+const pow10=e=>'1'+'0'.repeat(e);
+const pw10=e=>'<span class="pw">10<sup>'+e+'</sup></span>';
+const expIn='<span class="pin10">10<input class="e" data-k="e" inputmode="numeric" aria-label="Hochzahl" autocomplete="off"></span>';
+const numIn='<input class="num" data-k="n" inputmode="numeric" aria-label="Zahl" autocomplete="off">';
+const mantStr=t=>t.digits[0]+(t.digits.length>1?','+t.digits.slice(1):'');
+const floatNum=t=>t.digits+'0'.repeat(t.e-(t.digits.length-1));
+
+/* Eingaben lesen */
+const norm=s=>s.replace(/[−–—]/g,'-').trim();
+function readInt(str){const s=norm(str).replace(/[\s\u202F\u00A0.']/g,'');if(!/^\d+$/.test(s))return null;return s.replace(/^0+(?=\d)/,'');}
+function readExp(str){const s=norm(str).replace(/\s/g,'');return /^\d+$/.test(s)?parseInt(s,10):null;}
+function readMant(str){const s=norm(str).replace(/\s/g,'').replace('.',',');const m=s.match(/^(\d+)(?:,(\d*))?$/);if(!m)return null;return {int:m[1].replace(/^0+(?=\d)/,''),frac:(m[2]||'').replace(/0+$/,'')};}
+const val=(el,k)=>el.querySelector('[data-k='+k+']').value;
+const put=(el,k,v)=>{el.querySelector('[data-k='+k+']').value=v;};
+
+/* Generatoren */
+const WORDS=[['zehn',1],['hundert',2],['tausend',3],['zehntausend',4],['hunderttausend',5],['eine Million',6],['zehn Millionen',7],['hundert Millionen',8],['eine Milliarde',9],['zehn Milliarden',10],['hundert Milliarden',11],['eine Billion',12]];
+function genFloat(n){
+  return exps(range(3,10),n).map(e=>{
+    const len=rnd(2,3);let d=String(rnd(1,9));
+    for(let k=1;k<len;k++)d+=(k===len-1?rnd(1,9):rnd(0,9));
+    return {digits:d,e};
+  });
+}
+
+const sections={
+  s1:{name:'1 Als Zehnerpotenz',gen:()=>expsLow(1,8,12).map(e=>({e})),
+    row:t=>'<span class="expr">'+group(pow10(t.e))+'</span><span class="eq">=</span>'+expIn,
+    check:(t,el)=>readExp(val(el,'e'))===t.e,
+    solve:(t,el)=>put(el,'e',t.e), task:t=>group(pow10(t.e)), solText:t=>pw10(t.e)},
+  s2:{name:'2 Zehnerpotenz → Zahl',gen:()=>expsLow(0,8,12).map(e=>({e})),
+    row:t=>'<span class="expr">'+pw10(t.e)+'</span><span class="eq">=</span>'+numIn,
+    check:(t,el)=>readInt(val(el,'n'))===pow10(t.e),
+    solve:(t,el)=>put(el,'n',group(pow10(t.e))), task:t=>pw10(t.e), solText:t=>group(pow10(t.e))},
+  s3:{name:'3 Zahlwörter',gen:()=>{const low=shuffle(WORDS.filter(x=>x[1]<=10)).slice(0,6);if(Math.random()<0.5){const h=rnd(11,12);low[rnd(0,5)]=WORDS.find(x=>x[1]===h);}return low.map(([w,e])=>({w,e}));},
+    row:t=>'<span class="expr word">'+t.w+'</span><span class="eq">=</span>'+numIn+'<span class="eq">=</span>'+expIn,
+    check:(t,el)=>{const n=readInt(val(el,'n'))===pow10(t.e),e=readExp(val(el,'e'))===t.e;
+      if(n&&!e)return 'Die Zahl stimmt – zähle bei der Zehnerpotenz die Nullen nochmal!';
+      if(!n&&e)return 'Die Zehnerpotenz stimmt – kontrolliere die Zahl!';return n&&e;},
+    solve:(t,el)=>{put(el,'n',group(pow10(t.e)));put(el,'e',t.e);}, task:t=>t.w, solText:t=>group(pow10(t.e))+' = '+pw10(t.e)},
+  s4:{name:'4 Ordnen',order:true,gen:()=>[{es:expsLow(0,8,12)}],
+    row:t=>'<div class="ordering"><div class="pool">'+t.es.map(e=>'<button type="button" class="tile" data-e="'+e+'">'+pw10(e)+'</button>').join('')+'</div><div class="seq" aria-label="Deine Reihenfolge"></div></div>',
+    complete:(t,el)=>(el._seq||[]).length===t.es.length,
+    check:(t,el)=>{const sorted=t.es.slice().sort((a,b)=>a-b);return el._seq.every((e,i)=>e===sorted[i])||'Achte auf die Hochzahl: Je größer die Hochzahl, desto größer die Zahl.';},
+    solve:(t,el)=>{el._seq=t.es.slice().sort((a,b)=>a-b);renderOrder(el);},
+    task:()=>'Reihenfolge', solText:t=>t.es.slice().sort((a,b)=>a-b).map(pw10).join(' &lt; ')},
+  s5:{name:'5 Vorzahl · Zehnerpotenz',gen:()=>exps(range(2,10),8).map(e=>({v:rnd(1,9),e})),
+    row:t=>'<span class="expr">'+group(t.v+'0'.repeat(t.e))+'</span><span class="eq">=</span><input class="v" data-k="v" inputmode="numeric" aria-label="Vorzahl" autocomplete="off"><span class="eq">·</span>'+expIn,
+    check:(t,el)=>{const v=readInt(val(el,'v'));if(v&&v.length>1)return 'Die Vorzahl ist hier nur eine einzige Ziffer.';return v===String(t.v)&&readExp(val(el,'e'))===t.e;},
+    solve:(t,el)=>{put(el,'v',t.v);put(el,'e',t.e);}, task:t=>group(t.v+'0'.repeat(t.e)), solText:t=>t.v+' · '+pw10(t.e)},
+  s6:{name:'6 Vorzahl → Zahl',gen:()=>expsLow(2,8,12).map(e=>({v:rnd(1,9),e})),
+    row:t=>'<span class="expr">'+t.v+' · '+pw10(t.e)+'</span><span class="eq">=</span>'+numIn,
+    check:(t,el)=>readInt(val(el,'n'))===t.v+'0'.repeat(t.e),
+    solve:(t,el)=>put(el,'n',group(t.v+'0'.repeat(t.e))), task:t=>t.v+' · '+pw10(t.e), solText:t=>group(t.v+'0'.repeat(t.e))},
+  s7:{name:'7 Gleitkommadarstellung',gen:()=>genFloat(8),
+    row:t=>'<span class="expr">'+group(floatNum(t))+'</span><span class="eq">=</span><input class="m" data-k="m" inputmode="decimal" aria-label="Vorzahl" autocomplete="off"><span class="eq">·</span>'+expIn,
+    check:(t,el)=>{const m=readMant(val(el,'m'));const e=readExp(val(el,'e'));
+      if(!m)return 'Schreibe die Vorzahl als Dezimalzahl, z. B. 3,5';
+      if(m.int.length!==1||m.int==='0')return 'Vor dem Komma muss genau eine Ziffer stehen, die nicht 0 ist.';
+      const okM=m.int===t.digits[0]&&m.frac===t.digits.slice(1);
+      if(okM&&e!==t.e)return 'Die Vorzahl stimmt – zähle nochmal, um wie viele Stellen das Komma verschoben wurde!';
+      return okM&&e===t.e;},
+    solve:(t,el)=>{put(el,'m',mantStr(t));put(el,'e',t.e);}, task:t=>group(floatNum(t)), solText:t=>mantStr(t)+' · '+pw10(t.e)},
+  s8:{name:'8 Gleitkomma → Zahl',gen:()=>genFloat(8),
+    row:t=>'<span class="expr">'+mantStr(t)+' · '+pw10(t.e)+'</span><span class="eq">=</span>'+numIn,
+    check:(t,el)=>readInt(val(el,'n'))===floatNum(t),
+    solve:(t,el)=>put(el,'n',group(floatNum(t))), task:t=>mantStr(t)+' · '+pw10(t.e), solText:t=>group(floatNum(t))}
+};
+
+/* Ordnen-Aufgabe */
+function renderOrder(el){
+  const seq=el._seq||[];
+  el.querySelectorAll('.pool .tile').forEach(b=>{b.disabled=seq.includes(+b.dataset.e);});
+  const t=state.s4.tasks[0];
+  let h='';
+  for(let i=0;i<t.es.length;i++){
+    if(i>0)h+='<span class="lt">&lt;</span>';
+    h+=i<seq.length?'<button type="button" class="tile placed" data-pos="'+i+'">'+pw10(seq[i])+'</button>':'<span class="slot"></span>';
+  }
+  el.querySelector('.seq').innerHTML=h;
+  el.querySelectorAll('.seq .placed').forEach(b=>b.addEventListener('click',()=>{
+    if(state.s4.results[0]==='shown'||state.s4.results[0]===true)return;
+    el._seq.splice(+b.dataset.pos,1);clearMark('s4',0);renderOrder(el);}));
+}
+
+const state={};
+let summaryRequested=false;
+
+function build(id){
+  const cfg=sections[id],sec=document.getElementById(id),box=sec.querySelector('.tasks');
+  const tasks=cfg.gen();
+  state[id]={tasks,results:tasks.map(()=>null),tries:tasks.map(()=>0)};
+  box.innerHTML=tasks.map((t,i)=>'<div class="task" data-i="'+i+'">'+(cfg.order?'':'<span class="lbl">'+LBL[i]+')</span>')+cfg.row(t)+'</div>').join('');
+  box.querySelectorAll('.task').forEach(el=>{
+    const i=+el.dataset.i;
+    if(cfg.order){
+      el._seq=[];renderOrder(el);
+      el.querySelectorAll('.pool .tile').forEach(b=>b.addEventListener('click',()=>{
+        if(state[id].results[0]==='shown'||state[id].results[0]===true)return;
+        el._seq.push(+b.dataset.e);clearMark(id,0);renderOrder(el);
+        if(cfg.complete(tasks[0],el))checkTask(id,0,false);
+      }));
+      return;
+    }
+    el.querySelectorAll('input').forEach(inp=>inp.addEventListener('input',()=>clearMark(id,i)));
+    el.addEventListener('focusout',()=>setTimeout(()=>{if(!el.contains(document.activeElement))checkTask(id,i,false);},0));
+  });
+  updateSection(id);
+}
+function taskEl(id,i){return document.querySelector('#'+id+' .task[data-i="'+i+'"]');}
+function isComplete(id,el,t){
+  const cfg=sections[id];
+  if(cfg.complete)return cfg.complete(t,el);
+  return ![...el.querySelectorAll('input')].some(inp=>!inp.value.trim());
+}
+function clearMark(id,i){
+  const el=taskEl(id,i);
+  if(state[id].results[i]==='shown')return;
+  el.classList.remove('ok','bad');
+  const s=el.querySelector('.sol');if(s)s.remove();
+  if(state[id].results[i]!==null){state[id].results[i]=null;updateSection(id);}
+}
+function checkTask(id,i,force){
+  const cfg=sections[id],el=taskEl(id,i),st=state[id];
+  if(st.results[i]==='shown'||st.results[i]===true)return;
+  if(!isComplete(id,el,st.tasks[i])){if(force)setMsg(el,'bad',cfg.order?'Ordne zuerst alle Zahlen ein.':'Bitte alle Felder ausfüllen.');return;}
+  const res=cfg.check(st.tasks[i],el),r=res===true,hint=typeof res==='string'?res:null;
+  el.classList.remove('ok','bad');el.classList.add(r?'ok':'bad');
+  if(r){st.results[i]=true;setMsg(el,'ok','Richtig!');}
+  else{
+    st.results[i]=false;st.tries[i]++;
+    const base=st.tries[i]===1?'Leider falsch – versuch es nochmal!':'Noch nicht richtig. Versuch es nochmal oder sieh dir die Lösung an.';
+    setMsg(el,'bad',hint?hint+' '+(st.tries[i]===1?'Versuch es nochmal!':''):base,st.tries[i]>=2);
+  }
+  updateSection(id);
+}
+function setMsg(el,kind,text,offerSolution){
+  let d=el.querySelector('.sol');
+  if(!d){d=document.createElement('div');d.className='sol';el.appendChild(d);}
+  d.className='sol '+kind;d.textContent=text;
+  if(offerSolution){
+    const b=document.createElement('button');b.type='button';b.className='mini';b.textContent='Lösung zeigen';
+    b.addEventListener('click',()=>{
+      const id=el.closest('section').id,i=+el.dataset.i,t=state[id].tasks[i];
+      sections[id].solve(t,el);
+      state[id].results[i]='shown';
+      el.classList.remove('ok','bad');el.classList.add('shown');
+      d.className='sol shown';d.innerHTML='Lösung: '+sections[id].solText(t);
+      updateSection(id);
+    });
+    d.appendChild(b);
+  }
+}
+function updateSection(id){
+  const st=state[id],ok=st.results.filter(r=>r===true).length,n=st.tasks.length;
+  document.querySelector('#'+id+' .res').textContent=n===1?(ok?'Richtig – super!':''):ok+' von '+n+' richtig'+(ok===n?' – super!':'');
+  updateScore();updateSummary();
+}
+function updateScore(){
+  let ok=0,n=0;
+  Object.values(state).forEach(s=>{n+=s.results.length;ok+=s.results.filter(r=>r===true).length;});
+  document.getElementById('score').textContent=ok+' von '+n+' richtig';
+}
+function updateSummary(){
+  const ids=Object.keys(sections);
+  if(ids.some(id=>!state[id]))return;
+  const sum=document.getElementById('summary');
+  const allDone=ids.every(id=>state[id].results.every(r=>r===true||r==='shown'));
+  if(!allDone&&!summaryRequested){sum.hidden=true;return;}
+  let T={ok:0,first:0,shown:0,open:0,n:0},rows='',shownList=[];
+  ids.forEach(id=>{
+    const st=state[id],cfg=sections[id];
+    const ok=st.results.filter(r=>r===true).length;
+    const first=st.results.filter((r,i)=>r===true&&st.tries[i]===0).length;
+    const shown=st.results.filter(r=>r==='shown').length;
+    const open=st.results.length-ok-shown;
+    st.results.forEach((r,i)=>{if(r==='shown')shownList.push('Übung '+id.slice(1)+(cfg.order?'':' '+LBL[i]+')')+': '+cfg.task(st.tasks[i])+' → '+cfg.solText(st.tasks[i]));});
+    T.ok+=ok;T.first+=first;T.shown+=shown;T.open+=open;T.n+=st.results.length;
+    rows+='<tr><td>'+cfg.name+'</td><td>'+ok+' von '+st.results.length+'</td><td>'+first+'</td><td>'+shown+'</td><td>'+open+'</td></tr>';
+  });
+  document.getElementById('sumBody').innerHTML=rows;
+  document.getElementById('sumFoot').innerHTML='<tr><td>Gesamt</td><td>'+T.ok+' von '+T.n+'</td><td>'+T.first+'</td><td>'+T.shown+'</td><td>'+T.open+'</td></tr>';
+  const pct=T.ok/T.n;let msg;
+  if(T.first===T.n)msg='Perfekt! Alle Aufgaben beim ersten Versuch richtig.';
+  else if(pct===1)msg='Super, alle Aufgaben richtig gelöst!';
+  else if(pct>=0.75)msg='Sehr gut gemacht!';
+  else if(pct>=0.5)msg='Gut! Mit ein bisschen Übung klappt der Rest auch.';
+  else msg='Übe noch ein bisschen weiter – klick auf „Neue Aufgaben“ und probier es nochmal.';
+  if(!allDone)msg='Noch nicht alles erledigt: '+T.open+' Aufgabe'+(T.open===1?' ist':'n sind')+' noch offen. '+msg;
+  document.getElementById('sumTitle').textContent=allDone?'Geschafft! Deine Auswertung':'Zwischenstand';
+  document.getElementById('sumMsg').textContent=msg;
+  document.getElementById('sumShown').innerHTML=shownList.length?'Bei diesen Aufgaben hast du die Lösung angesehen – schau sie dir nochmal an:<ul>'+shownList.map(x=>'<li>'+x+'</li>').join('')+'</ul>':'';
+  const wasHidden=sum.hidden;sum.hidden=false;
+  if(wasHidden)setTimeout(()=>sum.scrollIntoView({behavior:'smooth',block:'start'}),300);
+}
+
+Object.keys(sections).forEach(id=>{
+  build(id);
+  const sec=document.getElementById(id);
+  sec.querySelector('[data-check]').addEventListener('click',()=>state[id].tasks.forEach((t,i)=>checkTask(id,i,true)));
+  sec.addEventListener('keydown',e=>{
+    if(e.key!=='Enter'||e.target.tagName!=='INPUT')return;
+    e.preventDefault();
+    const task=e.target.closest('.task'),i=+task.dataset.i;
+    const own=[...task.querySelectorAll('input')];
+    if(own.indexOf(e.target)<own.length-1){own[own.indexOf(e.target)+1].focus();return;}
+    checkTask(id,i,true);
+    if(state[id].results[i]===true){const nt=taskEl(id,i+1);if(nt){const f=nt.querySelector('input');if(f)f.focus();}}
+    else e.target.select();
+  });
+});
+function newAll(){summaryRequested=false;Object.keys(sections).forEach(build);document.getElementById('summary').hidden=true;window.scrollTo({top:0,behavior:'smooth'});}
+document.getElementById('newAll').addEventListener('click',newAll);
+document.getElementById('newAll2').addEventListener('click',newAll);
+document.getElementById('showSum').addEventListener('click',()=>{summaryRequested=true;document.getElementById('summary').hidden=true;updateSummary();});
+</script>
+</body>
+</html>
