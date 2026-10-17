@@ -80,6 +80,16 @@ button.mini{font-size:.85rem;padding:.1rem .55rem;background:transparent;color:v
 .info{background:var(--info);border-left:6px solid var(--ink);border-radius:.5rem;padding:.8rem 1rem;margin:.9rem 0 0}
 .info p{margin:.2rem 0}
 .info .pos{color:var(--ok);font-weight:700}.info .neg{color:var(--bad);font-weight:700}
+.finish{display:flex;justify-content:center;margin:0 0 1.5rem}
+#summary{border-color:var(--ink);border-width:3px}
+.summsg{font-size:1.2rem;font-weight:700;color:var(--ink);margin:.6rem 0 1rem}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:30rem}
+th,td{text-align:left;padding:.4rem .6rem;border-bottom:1px solid var(--line)}
+td:not(:first-child),th:not(:first-child){text-align:center}
+tfoot td{font-weight:700;border-bottom:0;border-top:2px solid var(--ink)}
+#sumShown{margin-top:1rem;color:var(--muted)}
+#sumShown ul{margin:.3rem 0 0;padding-left:1.2rem}
 </style>
 </head>
 <body>
@@ -127,6 +137,20 @@ button.mini{font-size:.85rem;padding:.1rem .55rem;background:transparent;color:v
     <p class="hint">Produkt z. B. als (-2)*(-2)*(-2) eingeben.</p>
     <div class="tasks"></div>
     <div class="actions"><button class="ghost" data-check>Alle überprüfen</button><span class="res"></span></div>
+  </section>
+
+  <div class="finish"><button class="ghost" id="showSum">Auswertung anzeigen</button></div>
+
+  <section id="summary" hidden>
+    <div class="head"><h2 id="sumTitle">Auswertung</h2></div>
+    <p id="sumMsg" class="summsg"></p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Übung</th><th>richtig</th><th>beim 1. Versuch</th><th>Lösung angesehen</th><th>offen</th></tr></thead>
+      <tbody id="sumBody"></tbody>
+      <tfoot id="sumFoot"></tfoot>
+    </table></div>
+    <div id="sumShown"></div>
+    <div class="actions" style="margin-top:1rem"><button id="newAll2">Neue Aufgaben</button></div>
   </section>
 </div>
 
@@ -258,6 +282,8 @@ const sections={
   }
 };
 const state={};
+const NAMES={s1:'1 Als Potenz schreiben',s2:'2 Als Produkt schreiben',s3:'3 Produkt und Wert',s4:'4 Negative Basis'};
+let summaryRequested=false;
 
 function setSign(el,s){el.querySelectorAll('.sign button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.s===s?'true':'false'));}
 
@@ -323,11 +349,47 @@ function updateSection(id){
   const st=state[id],ok=st.results.filter(r=>r===true).length,n=st.tasks.length;
   document.querySelector('#'+id+' .res').textContent=ok+' von '+n+' richtig'+(ok===n?' – super!':'');
   updateScore();
+  updateSummary();
 }
 function updateScore(){
   let ok=0,n=0;
   Object.values(state).forEach(s=>{n+=s.results.length;ok+=s.results.filter(r=>r===true).length;});
   document.getElementById('score').textContent=ok+' von '+n+' richtig';
+}
+
+function updateSummary(){
+  const ids=Object.keys(sections);
+  if(ids.some(id=>!state[id]))return;
+  const sum=document.getElementById('summary');
+  const allDone=ids.every(id=>state[id].results.every(r=>r===true||r==='shown'));
+  if(!allDone&&!summaryRequested){sum.hidden=true;return;}
+  let T={ok:0,first:0,shown:0,open:0,n:0},rows='',shownList=[];
+  ids.forEach(id=>{
+    const st=state[id];
+    const ok=st.results.filter(r=>r===true).length;
+    const first=st.results.filter((r,i)=>r===true&&st.tries[i]===0).length;
+    const shown=st.results.filter(r=>r==='shown').length;
+    const open=st.results.length-ok-shown;
+    st.results.forEach((r,i)=>{if(r==='shown'){const t=st.tasks[i];shownList.push('Übung '+id.slice(1)+' '+LBL[i]+') '+pwHTML(t.b,t.e));}});
+    T.ok+=ok;T.first+=first;T.shown+=shown;T.open+=open;T.n+=st.results.length;
+    rows+='<tr><td>'+NAMES[id]+'</td><td>'+ok+' von '+st.results.length+'</td><td>'+first+'</td><td>'+shown+'</td><td>'+open+'</td></tr>';
+  });
+  document.getElementById('sumBody').innerHTML=rows;
+  document.getElementById('sumFoot').innerHTML='<tr><td>Gesamt</td><td>'+T.ok+' von '+T.n+'</td><td>'+T.first+'</td><td>'+T.shown+'</td><td>'+T.open+'</td></tr>';
+  const pct=T.ok/T.n;
+  let msg;
+  if(T.first===T.n)msg='Perfekt! Alle Aufgaben beim ersten Versuch richtig.';
+  else if(pct===1)msg='Super, alle Aufgaben richtig gelöst!';
+  else if(pct>=0.75)msg='Sehr gut gemacht!';
+  else if(pct>=0.5)msg='Gut! Mit ein bisschen Übung klappt der Rest auch.';
+  else msg='Übe noch ein bisschen weiter – klick auf „Neue Aufgaben“ und probier es nochmal.';
+  if(!allDone)msg='Noch nicht alles erledigt: '+T.open+' Aufgabe'+(T.open===1?' ist':'n sind')+' noch offen. '+msg;
+  document.getElementById('sumTitle').textContent=allDone?'Geschafft! Deine Auswertung':'Zwischenstand';
+  document.getElementById('sumMsg').textContent=msg;
+  document.getElementById('sumShown').innerHTML=shownList.length?'Bei diesen Aufgaben hast du die Lösung angesehen – schau sie dir nochmal an:<ul>'+shownList.map(x=>'<li>'+x+'</li>').join('')+'</ul>':'';
+  const wasHidden=sum.hidden;
+  sum.hidden=false;
+  if(wasHidden)setTimeout(()=>sum.scrollIntoView({behavior:'smooth',block:'start'}),300);
 }
 
 Object.keys(sections).forEach(id=>{
@@ -347,7 +409,11 @@ Object.keys(sections).forEach(id=>{
     }else{e.target.select();}
   });
 });
-document.getElementById('newAll').addEventListener('click',()=>{Object.keys(sections).forEach(build);window.scrollTo({top:0,behavior:'smooth'});});
+function newAll(){summaryRequested=false;Object.keys(sections).forEach(build);document.getElementById('summary').hidden=true;window.scrollTo({top:0,behavior:'smooth'});}
+document.getElementById('newAll').addEventListener('click',newAll);
+document.getElementById('newAll2').addEventListener('click',newAll);
+document.getElementById('showSum').addEventListener('click',()=>{summaryRequested=true;document.getElementById('summary').hidden=true;updateSummary();});
+updateSummary();
 </script>
 </body>
 </html>
