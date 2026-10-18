@@ -90,6 +90,16 @@ td:not(:first-child),th:not(:first-child){text-align:center}
 tfoot td{font-weight:700;border-bottom:0;border-top:2px solid var(--ink)}
 #sumShown{margin-top:1rem;color:var(--muted)}
 #sumShown ul{margin:.3rem 0 0;padding-left:1.2rem}
+button.more.ready{background:var(--ink);color:var(--paper)}
+.round{margin-left:auto;color:var(--muted);font-size:.9rem;border:1.5px solid var(--line);border-radius:999px;padding:.1rem .6rem}
+.rnote{color:var(--muted);font-weight:400;font-size:.9em}
+#start{border-color:var(--ink);border-width:3px}
+.startrow{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.6rem}
+#nameIn{flex:1 1 14rem;max-width:24rem;font-size:1.2rem;padding:.4rem .6rem}
+body.notstarted .wrap>section:not(#start),body.notstarted #secs,body.notstarted .finish,body.notstarted #newAll{display:none}
+.who{font-weight:700;color:var(--ink);display:inline-flex;align-items:center;gap:.4rem}
+.who[hidden]{display:none}
+#sumMeta{color:var(--muted);margin:.3rem 0 0}
 </style>
 </head>
 <body>
@@ -414,6 +424,87 @@ document.getElementById('newAll').addEventListener('click',newAll);
 document.getElementById('newAll2').addEventListener('click',newAll);
 document.getElementById('showSum').addEventListener('click',()=>{summaryRequested=true;document.getElementById('summary').hidden=true;updateSummary();});
 updateSummary();
+
+/* ---------- Weitere Runden pro Übung ---------- */
+const ROUNDS={};
+const roundIds=()=>typeof curIds==='function'?curIds():Object.keys(sections);
+const _build=build;
+build=function(id){if(ROUNDS[id])ROUNDS[id]++;_build(id);};
+const _updateSection=updateSection;
+updateSection=function(id){_updateSection(id);if(ROUNDS[id])refreshRound(id);};
+const _updateSummary=updateSummary;
+updateSummary=function(){
+  _updateSummary();
+  const rows=document.querySelectorAll('#sumBody tr');
+  roundIds().forEach((id,i)=>{const td=rows[i]&&rows[i].firstChild;if(td&&ROUNDS[id]>1)td.innerHTML+=' <span class="rnote">(Runde '+ROUNDS[id]+')</span>';});
+};
+function refreshRound(id){
+  const sec=document.getElementById(id),st=state[id];
+  const r=sec.querySelector('.round'),b=sec.querySelector('[data-more]');if(!r||!b)return;
+  r.textContent='Runde '+ROUNDS[id];
+  const done=st.results.every(x=>x===true||x==='shown');
+  b.classList.toggle('ready',done);
+  b.textContent=done?'Noch eine Runde üben':'Neue Runde';
+}
+Object.keys(sections).forEach(id=>{
+  ROUNDS[id]=1;
+  const act=document.querySelector('#'+id+' .actions');
+  const b=document.createElement('button');b.type='button';b.className='ghost more';b.dataset.more='';b.textContent='Neue Runde';
+  b.title='Diese Übung nochmal mit neuen Zahlen';
+  b.addEventListener('click',()=>{
+    build(id);
+    const sec=document.getElementById(id);
+    sec.scrollIntoView({behavior:'smooth',block:'start'});
+    const f=sec.querySelector('.task input');if(f)setTimeout(()=>f.focus({preventScroll:true}),450);
+  });
+  act.insertBefore(b,act.querySelector('.res'));
+  const r=document.createElement('span');r.className='round';act.appendChild(r);
+  refreshRound(id);
+});
+
+/* ---------- Namenseingabe zu Beginn ---------- */
+let studentName='';
+(function(){
+  const wrap=document.querySelector('.wrap'),header=wrap.querySelector('header');
+  const start=document.createElement('section');start.id='start';
+  start.innerHTML='<div class="head"><h2>Wie heißt du?</h2></div>'+
+    '<p class="hint">Gib deinen Namen ein. Er steht dann am Ende in deiner Auswertung.</p>'+
+    '<div class="startrow"><input id="nameIn" maxlength="40" autocomplete="off" aria-label="Dein Name" placeholder="Vor- und Nachname">'+
+    '<button type="button" id="startBtn">Los geht’s</button></div><p class="sol bad" id="nameErr" hidden>Bitte gib zuerst deinen Namen ein.</p>';
+  header.after(start);
+  const who=document.createElement('span');who.className='who';who.hidden=true;
+  who.innerHTML='<span id="whoName"></span> <button type="button" class="mini" id="nameChange">ändern</button>';
+  document.querySelector('.top').prepend(who);
+  document.body.classList.add('notstarted');
+  const inp=document.getElementById('nameIn');
+  function go(){
+    const n=inp.value.trim().replace(/\s+/g,' ');
+    if(!n){document.getElementById('nameErr').hidden=false;inp.focus();return;}
+    studentName=n;document.getElementById('nameErr').hidden=true;
+    document.getElementById('whoName').textContent=n;who.hidden=false;
+    document.body.classList.remove('notstarted');start.hidden=true;
+    updateSummary();
+    const f=document.querySelector('.wrap section:not([hidden]) .task input');if(f)f.focus();
+  }
+  document.getElementById('startBtn').addEventListener('click',go);
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();go();}});
+  document.getElementById('nameChange').addEventListener('click',()=>{
+    start.hidden=false;document.body.classList.add('notstarted');inp.value=studentName;inp.focus();inp.select();
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+  inp.focus();
+})();
+const _updateSummaryN=updateSummary;
+updateSummary=function(){
+  _updateSummaryN();
+  const sum=document.getElementById('summary');if(sum.hidden||!studentName)return;
+  const t=document.getElementById('sumTitle');
+  t.textContent=t.textContent.replace('Geschafft! Deine Auswertung','Geschafft, '+studentName+'! Deine Auswertung').replace('Zwischenstand','Zwischenstand von '+studentName);
+  let meta=document.getElementById('sumMeta');
+  if(!meta){meta=document.createElement('p');meta.id='sumMeta';t.closest('.head').after(meta);}
+  const now=new Date();
+  meta.textContent=studentName+' · '+document.title+' · '+now.toLocaleDateString('de-AT')+', '+now.toLocaleTimeString('de-AT',{hour:'2-digit',minute:'2-digit'});
+};
 </script>
 </body>
 </html>
