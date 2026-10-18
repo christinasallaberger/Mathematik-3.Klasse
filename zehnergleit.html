@@ -133,7 +133,7 @@ body.notstarted .wrap>section:not(#start),body.notstarted #secs,body.notstarted 
 .kp-grid button:active{transform:translateY(1px)}
 #kpadToggle{position:fixed;right:1rem;bottom:calc(1rem + env(safe-area-inset-bottom,0px));z-index:49;border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,.2)}
 body.kpad-on{padding-bottom:17rem}
-</style>
+#sumTime h3{margin:1.2rem 0 .3rem;font-size:1.05rem}.tnote{font-size:.95rem;color:var(--muted)}.tnote b{color:var(--bad,var(--red,#c62828))}</style>
 </head>
 <body>
 <div class="wrap">
@@ -467,19 +467,19 @@ let studentName='';
   const wrap=document.querySelector('.wrap'),header=wrap.querySelector('header');
   const start=document.createElement('section');start.id='start';
   start.innerHTML='<div class="head"><h2>Wie heißt du?</h2></div>'+
-    '<p class="hint">Gib deinen Namen ein. Er steht dann am Ende in deiner Auswertung.</p>'+
+    '<p class="hint">Gib deinen Namen ein. Er steht dann am Ende in deiner Auswertung und kann danach nicht mehr geändert werden.</p>'+
     '<div class="startrow"><input id="nameIn" maxlength="40" autocomplete="off" aria-label="Dein Name" placeholder="Vor- und Nachname">'+
     '<button type="button" id="startBtn">Los geht’s</button></div><p class="sol bad" id="nameErr" hidden>Bitte gib zuerst deinen Namen ein.</p>';
   header.after(start);
   const who=document.createElement('span');who.className='who';who.hidden=true;
-  who.innerHTML='<span id="whoName"></span> <button type="button" class="mini" id="nameChange">ändern</button>';
+  who.innerHTML='👤 <span id="whoName"></span>';
   document.querySelector('.top').prepend(who);
   document.body.classList.add('notstarted');
   const inp=document.getElementById('nameIn');
   function go(){
     const n=inp.value.trim().replace(/\s+/g,' ');
     if(!n){document.getElementById('nameErr').hidden=false;inp.focus();return;}
-    studentName=n;document.getElementById('nameErr').hidden=true;
+    if(studentName)return;studentName=n;inp.readOnly=true;document.getElementById('nameErr').hidden=true;
     document.getElementById('whoName').textContent=n;who.hidden=false;
     document.body.classList.remove('notstarted');start.hidden=true;
     updateSummary();
@@ -487,10 +487,6 @@ let studentName='';
   }
   document.getElementById('startBtn').addEventListener('click',go);
   inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();go();}});
-  document.getElementById('nameChange').addEventListener('click',()=>{
-    start.hidden=false;document.body.classList.add('notstarted');inp.value=studentName;inp.focus();inp.select();
-    window.scrollTo({top:0,behavior:'smooth'});
-  });
   inp.focus();
 })();
 const _updateSummaryN=updateSummary;
@@ -505,6 +501,44 @@ updateSummary=function(){
   meta.textContent=studentName+' · '+document.title+' · '+now.toLocaleDateString('de-AT')+', '+now.toLocaleTimeString('de-AT',{hour:'2-digit',minute:'2-digit'});
 };
 
+
+
+/* ---------- Bearbeitungszeit ---------- */
+const TIMES={};let tStartAll=null;
+const fmtT=ms=>{const s=Math.max(0,Math.round(ms/1000));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
+function tInit(id){TIMES[id]=state[id].tasks.map(()=>({start:null,ms:null,end:null}));}
+const _buildT=build;build=function(id){_buildT(id);tInit(id);};
+Object.keys(sections).forEach(tInit);
+document.addEventListener('focusin',e=>{
+  const el=e.target.closest&&e.target.closest('.task[data-i]');if(!el)return;
+  const sec=el.closest('section[id]');if(!sec||!TIMES[sec.id])return;
+  const T=TIMES[sec.id][+el.dataset.i];if(!T)return;
+  if(T.start==null)T.start=Date.now();if(!tStartAll)tStartAll=Date.now();
+});
+const _updSecT=updateSection;
+updateSection=function(id){
+  if(TIMES[id]&&state[id])state[id].results.forEach((r,i)=>{const T=TIMES[id][i];
+    if(T&&(r===true||r==='shown')&&T.ms==null){const now=Date.now();if(T.start==null)T.start=now;T.ms=now-T.start;T.end=now;}});
+  _updSecT(id);
+};
+const _updSumT=updateSummary;
+updateSummary=function(){
+  _updSumT();
+  const sum=document.getElementById('summary');if(!sum||sum.hidden)return;
+  const ids=typeof curIds==='function'?curIds():Object.keys(sections);
+  let tot=0,cnt=0,fast=0,last=0,rows='';
+  ids.forEach(id=>{const arr=(TIMES[id]||[]).filter(x=>x.ms!=null);const s=arr.reduce((a,x)=>a+x.ms,0),fz=arr.filter(x=>x.ms<3000).length;
+    arr.forEach(x=>{if(x.end>last)last=x.end;});tot+=s;cnt+=arr.length;fast+=fz;
+    rows+='<tr><td>'+sections[id].name+'</td><td>'+fmtT(s)+'</td><td>'+(arr.length?fmtT(s/arr.length):'–')+'</td><td>'+fz+'</td></tr>';});
+  let box=document.getElementById('sumTime');
+  if(!box){box=document.createElement('div');box.id='sumTime';sum.querySelector('.tablewrap').after(box);}
+  const span=tStartAll&&last?last-tStartAll:0;
+  box.innerHTML='<h3>Bearbeitungszeit</h3><p>Von der ersten bis zur letzten erledigten Aufgabe: <b>'+fmtT(span)+' min</b></p>'+
+    '<div class="tablewrap"><table><thead><tr><th>Übung</th><th>Zeit</th><th>Ø pro Aufgabe</th><th>unter 3 Sek.</th></tr></thead><tbody>'+rows+
+    '</tbody><tfoot><tr><td>Gesamt</td><td>'+fmtT(tot)+'</td><td>'+(cnt?fmtT(tot/cnt):'–')+'</td><td>'+fast+'</td></tr></tfoot></table></div>'+
+    '<p class="tnote">Zeit pro Aufgabe = vom ersten Antippen der Aufgabe bis sie gelöst oder die Lösung angesehen wurde.'+(cnt>=4&&fast/cnt>0.5?' <b>Auffällig: Mehr als die Hälfte der Aufgaben wurde in unter 3 Sekunden gelöst.</b>':'')+'</p>';
+};
+updateSummary();
 
 /* ---------- Bildschirm-Tastatur (Zahlen, Vorzeichen, Rechenzeichen, Buchstaben) ---------- */
 (function(){
