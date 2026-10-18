@@ -130,15 +130,6 @@ body.notstarted .wrap>section:not(#start),body.notstarted #secs,body.notstarted 
 .who{font-weight:700;color:var(--ink);display:inline-flex;align-items:center;gap:.4rem}
 .who[hidden]{display:none}
 #sumMeta{color:var(--muted);margin:.3rem 0 0}
-.startcard{border-color:var(--ink);border-width:3px}
-.startcard h2{font-family:Fraunces,Georgia,serif;font-size:1.5rem;color:var(--ink)}
-#pname{width:16rem;max-width:100%;font-size:1.15rem}
-#startDone{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap}
-.who{font-size:1.1rem}
-#summary .who{margin:.4rem 0 0;color:var(--muted)}
-#summary .who b{color:var(--text)}
-#pnameErr{padding-left:0}
-body.locked section[id]:not(#start):not(#summary),body.locked .finish{opacity:.35;filter:grayscale(.4);pointer-events:none;user-select:none}
 #kpad{position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--card);border-top:3px solid var(--ink);padding:.5rem .6rem calc(.6rem + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 18px rgba(0,0,0,.18)}
 #kpad[hidden],#kpadToggle[hidden]{display:none}
 .kp-inner{max-width:34rem;margin:0 auto}
@@ -171,18 +162,7 @@ body.kpad-on{padding-bottom:17rem}
     </div>
   </header>
 
-  <section id="start" class="startcard">
-    <div id="startAsk">
-      <h2>Wie heißt du?</h2>
-      <p class="hint">Gib zuerst deinen Namen ein. Er steht am Ende in deiner Auswertung.</p>
-      <div class="actions"><input id="pname" placeholder="Vor- und Nachname" autocomplete="name" aria-label="Dein Name"><button id="startBtn" type="button">Los geht’s</button></div>
-      <p class="sol bad" id="pnameErr" hidden>Bitte gib deinen Namen ein.</p>
-    </div>
-    <div id="startDone" hidden>
-      <span class="who">👤 <b id="pnameShow"></b></span>
-      <button type="button" class="mini" id="pnameEdit">Name ändern</button>
-    </div>
-  </section>
+
 
 
   <div id="secs"></div>
@@ -590,44 +570,6 @@ updateSummary=function(){
   meta.textContent=studentName+' · '+document.title+' · '+now.toLocaleDateString('de-AT')+', '+now.toLocaleTimeString('de-AT',{hour:'2-digit',minute:'2-digit'});
 };
 
-/* ---------- Namenseingabe zu Beginn ---------- */
-let PUPIL='';
-const lockables=()=>[...document.querySelectorAll('section[id]:not(#start):not(#summary), .finish')];
-function setLocked(on){
-  document.body.classList.toggle('locked',on);
-  lockables().forEach(el=>{if(on)el.setAttribute('inert','');else el.removeAttribute('inert');});
-}
-function startWithName(){
-  const v=document.getElementById('pname').value.trim().replace(/\s+/g,' ');
-  const err=document.getElementById('pnameErr');
-  if(v.length<2){err.hidden=false;document.getElementById('pname').focus();return;}
-  err.hidden=true;PUPIL=v;
-  document.getElementById('pnameShow').textContent=v;
-  document.getElementById('startAsk').hidden=true;document.getElementById('startDone').hidden=false;
-  setLocked(false);updateSummary();
-  const f=[...document.querySelectorAll('section[id]:not(#start):not(#summary)')].find(s=>!s.hidden);
-  const inp=f&&f.querySelector('.task input');if(inp)inp.focus();
-}
-document.getElementById('startBtn').addEventListener('click',startWithName);
-document.getElementById('pname').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();startWithName();}});
-document.getElementById('pnameEdit').addEventListener('click',()=>{
-  document.getElementById('startAsk').hidden=false;document.getElementById('startDone').hidden=true;
-  const i=document.getElementById('pname');i.focus();i.select();
-});
-/* Name und Zeitpunkt in der Auswertung */
-const _updSumName=updateSummary;
-updateSummary=function(){
-  _updSumName();
-  const sum=document.getElementById('summary');
-  let who=document.getElementById('sumWho');
-  if(!who){who=document.createElement('p');who.id='sumWho';who.className='who';sum.querySelector('.head').after(who);}
-  const now=new Date();
-  const lvl=document.querySelector('.levels [aria-pressed="true"]');
-  who.innerHTML='👤 <b></b> · '+now.toLocaleDateString('de-AT')+', '+now.toLocaleTimeString('de-AT',{hour:'2-digit',minute:'2-digit'})+' Uhr'+(lvl?' · '+lvl.textContent:'');
-  who.querySelector('b').textContent=PUPIL||'(kein Name)';
-};
-setLocked(true);
-document.getElementById('pname').focus();
 
 /* ---------- Bildschirm-Tastatur (Zahlen, Vorzeichen, Rechenzeichen, Buchstaben) ---------- */
 (function(){
