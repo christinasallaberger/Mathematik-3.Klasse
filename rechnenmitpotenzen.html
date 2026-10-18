@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rechnen mit Potenzen üben</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fraunces:opsz,wght@9..144,600;9..144,800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F7F9FC; --grid:#DCE6F2; --ink:#1B2F6B; --text:#1E2533; --muted:#5B6578;
+  --card:#FFFFFF; --line:#C9D5E6; --ok:#217A4B; --okbg:#E3F4EA; --bad:#B3261E; --badbg:#FBE7E5;
+  --mark:#FFE873; --field:#FFFFFF; --info:#EAF1FB;
+  color-scheme: light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#111827; --grid:#1C2638; --ink:#A9C1FF; --text:#E6EAF2; --muted:#9AA4B8;
+    --card:#172033; --line:#2C3A55; --ok:#5FD08E; --okbg:#173326; --bad:#FF8A80; --badbg:#3A1C1C;
+    --mark:#6B5A12; --field:#0F1726; --info:#1A2740; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#111827; --grid:#1C2638; --ink:#A9C1FF; --text:#E6EAF2; --muted:#9AA4B8;
+  --card:#172033; --line:#2C3A55; --ok:#5FD08E; --okbg:#173326; --bad:#FF8A80; --badbg:#3A1C1C;
+  --mark:#6B5A12; --field:#0F1726; --info:#1A2740; color-scheme: dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0; color:var(--text); font-family:"Atkinson Hyperlegible",system-ui,"Segoe UI",Arial,sans-serif;
+  font-size:1.0625rem; line-height:1.5;
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+}
+.wrap{max-width:60rem;margin:0 auto;padding:1.5rem 1rem 4rem}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:1rem;margin:1rem 0 2rem}
+h1{font-family:Fraunces,Georgia,serif;font-weight:800;color:var(--ink);font-size:clamp(2.4rem,7vw,4rem);line-height:1;margin:0;letter-spacing:-.01em}
+h1 sup{font-size:.5em;display:inline-block;transform-origin:left bottom;animation:hop 1.2s ease-out .3s 1}
+@keyframes hop{0%{transform:translateY(0)}30%{transform:translateY(-.4em) rotate(-8deg)}60%{transform:translateY(0)}80%{transform:translateY(-.1em)}100%{transform:none}}
+@media (prefers-reduced-motion: reduce){h1 sup{animation:none}}
+.sub{color:var(--muted);margin:.5rem 0 0}
+.top{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
+.score{font-weight:700;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:999px;padding:.35rem .9rem}
+button{font:inherit;cursor:pointer;border-radius:.5rem;border:2px solid var(--ink);background:var(--ink);color:var(--paper);padding:.45rem .9rem;font-weight:700}
+button.ghost{background:transparent;color:var(--ink)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--mark);outline-offset:2px}
+section{background:var(--card);border:2px solid var(--line);border-radius:.75rem;padding:1.25rem 1.25rem 1rem;margin:0 0 1.5rem}
+.head{display:flex;gap:.8rem;align-items:baseline}
+.num{font-family:Fraunces,Georgia,serif;font-weight:800;font-size:1.6rem;color:var(--ink);min-width:1.4em}
+h2{font-size:1.15rem;margin:0}
+.tasks{display:grid;grid-template-columns:repeat(auto-fill,minmax(19rem,1fr));gap:.6rem 1.5rem;margin:1rem 0}
+.task{display:flex;align-items:center;flex-wrap:wrap;gap:.45rem;padding:.4rem .5rem;border-radius:.5rem;border:2px solid transparent}
+.task.ok{background:var(--okbg);border-color:var(--ok)}
+.task.bad{background:var(--badbg);border-color:var(--bad)}
+.lbl{font-weight:700;color:var(--ink);width:1.6em}
+.expr{font-size:1.2rem;white-space:nowrap}
+.pw sup{font-size:.68em;margin-left:.05em}
+input{font:inherit;font-size:1.1rem;color:var(--text);background:var(--field);border:2px solid var(--line);border-radius:.4rem;padding:.2rem .4rem}
+input.prod{width:12rem;max-width:100%}
+input.val{width:6.5rem}
+.pin{display:inline-flex;align-items:flex-start}
+.pin .b{width:3rem;text-align:center}
+.pin .e{width:2.4rem;font-size:.85rem;text-align:center;margin-top:-.6rem;margin-left:.1rem;padding:.1rem .2rem}
+.eq{color:var(--muted)}
+.sign{display:inline-flex;border:2px solid var(--line);border-radius:.4rem;overflow:hidden}
+.sign button{border:0;border-radius:0;background:var(--field);color:var(--text);padding:.2rem .65rem;font-size:1.1rem}
+.sign button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.sol{flex-basis:100%;font-size:.95rem;padding-left:2.1em;display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+.sol.ok{color:var(--ok);font-weight:700}.sol.bad{color:var(--bad)}.sol.shown{color:var(--muted)}
+.task.shown{border-color:var(--line);border-style:dashed}
+button.mini{font-size:.85rem;padding:.1rem .55rem;background:transparent;color:var(--ink);border-width:1.5px}
+.actions{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}
+.res{color:var(--muted);font-weight:700}
+.hint{color:var(--muted);font-size:.95rem;margin:.4rem 0 0}
+.info{background:var(--info);border-left:6px solid var(--ink);border-radius:.5rem;padding:.8rem 1rem;margin:.9rem 0 0}
+.info p{margin:.2rem 0}
+.info .pos{color:var(--ok);font-weight:700}.info .neg{color:var(--bad);font-weight:700}
+.finish{display:flex;justify-content:center;margin:0 0 1.5rem}
+#summary{border-color:var(--ink);border-width:3px}
+.summsg{font-size:1.2rem;font-weight:700;color:var(--ink);margin:.6rem 0 1rem}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:30rem}
+th,td{text-align:left;padding:.4rem .6rem;border-bottom:1px solid var(--line)}
+td:not(:first-child),th:not(:first-child){text-align:center}
+tfoot td{font-weight:700;border-bottom:0;border-top:2px solid var(--ink)}
+#sumShown{margin-top:1rem;color:var(--muted)}
+#sumShown ul{margin:.3rem 0 0;padding-left:1.2rem}
+.tasks.one{grid-template-columns:1fr}
+.pin10{display:inline-flex;align-items:flex-start;font-size:1.2rem}
+.pin10 .e{width:2.6rem;font-size:.85rem;text-align:center;margin-top:-.55rem;margin-left:.1rem;padding:.1rem .2rem}
+input.num{width:11rem;max-width:100%}
+input.v{width:2.8rem;text-align:center}
+input.m{width:4.5rem;text-align:center}
+.word{font-style:italic}
+.info .big{font-size:1.2rem}
+.vz{color:#B0367C;font-weight:700}
+.zp{color:var(--ink);font-weight:700}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .vz{color:#F59AC9}}
+:root[data-theme="dark"] .vz{color:#F59AC9}
+.ordering{width:100%}
+.pool,.seq{display:flex;flex-wrap:wrap;gap:.45rem;align-items:center;margin:.3rem 0}
+.seq{min-height:2.8rem;border-top:2px dashed var(--line);padding-top:.6rem;margin-top:.6rem}
+.tile{background:var(--field);color:var(--text);border:2px solid var(--line);font-weight:400;font-size:1.15rem;padding:.25rem .7rem}
+.tile:disabled{opacity:.3;cursor:default}
+.tile.placed{border-color:var(--ink)}
+.slot{display:inline-block;width:3.2rem;height:2.2rem;border-bottom:2px solid var(--muted)}
+.lt{color:var(--muted);font-size:1.2rem}
+.levels{display:inline-flex;border:2px solid var(--ink);border-radius:999px;overflow:hidden;margin-top:1rem}
+.levels button{border:0;border-radius:0;background:transparent;color:var(--ink);padding:.45rem 1.1rem}
+.levels button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;font-size:.8em;line-height:1.05;margin:0 .08em}
+.fr>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .15em}
+.pin .b{width:4.6rem}
+input.prod{width:12rem}
+.rule{font-size:1.1rem}
+.rule sup{font-size:.7em}
+section[hidden]{display:none}
+button.more.ready{background:var(--ink);color:var(--paper)}
+.round{margin-left:auto;color:var(--muted);font-size:.9rem;border:1.5px solid var(--line);border-radius:999px;padding:.1rem .6rem}
+.rnote{color:var(--muted);font-weight:400;font-size:.9em}
+#start{border-color:var(--ink);border-width:3px}
+.startrow{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.6rem}
+#nameIn{flex:1 1 14rem;max-width:24rem;font-size:1.2rem;padding:.4rem .6rem}
+body.notstarted .wrap>section:not(#start),body.notstarted #secs,body.notstarted .finish,body.notstarted #newAll{display:none}
+.who{font-weight:700;color:var(--ink);display:inline-flex;align-items:center;gap:.4rem}
+.who[hidden]{display:none}
+#sumMeta{color:var(--muted);margin:.3rem 0 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Rechnen mit Potenzen<sup>n</sup></h1>
+      <p class="sub">Jede Aufgabe wird sofort kontrolliert, sobald du sie fertig hast (Enter oder weiterklicken). Ist sie falsch, versuch es einfach nochmal.</p>
+      <div class="levels" role="group" aria-label="Niveau">
+        <button type="button" data-level="std" aria-pressed="true">Standard</button>
+        <button type="button" data-level="ahs" aria-pressed="false">Standard AHS</button>
+      </div>
+    </div>
+    <div class="top">
+      <span class="score" id="score">0 von 0 richtig</span>
+      <button id="newAll">Neue Aufgaben</button>
+    </div>
+  </header>
+
+  <div id="secs"></div>
+
+  <div class="finish"><button class="ghost" id="showSum">Auswertung anzeigen</button></div>
+
+  <section id="summary" hidden>
+    <div class="head"><h2 id="sumTitle">Auswertung</h2></div>
+    <p id="sumMsg" class="summsg"></p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Übung</th><th>richtig</th><th>beim 1. Versuch</th><th>Lösung angesehen</th><th>offen</th></tr></thead>
+      <tbody id="sumBody"></tbody>
+      <tfoot id="sumFoot"></tfoot>
+    </table></div>
+    <div id="sumShown"></div>
+    <div class="actions" style="margin-top:1rem"><button id="newAll2">Neue Aufgaben</button></div>
+  </section>
+</div>
+
+<script>
+/* ---------- Hilfsfunktionen ---------- */
+const LBL='abcdefghijkl',NN='\u202F';
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[rnd(0,a.length-1)];
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=rnd(0,i);[a[i],a[j]]=[a[j],a[i]];}return a;};
+const group=s=>s.replace(/\B(?=(\d{3})+(?!\d))/g,NN);
+const B=x=>BigInt(x);
+function gcd(a,b){a=a<0n?-a:a;b=b<0n?-b:b;while(b){[a,b]=[b,a%b];}return a;}
+function rat(n,d=1n){if(d<0n){n=-n;d=-d;}const g=gcd(n,d)||1n;return {n:n/g,d:d/g};}
+const rpow=(r,e)=>rat(r.n**B(e),r.d**B(e));
+const req=(a,b)=>a.n*b.d===b.n*a.d;
+const fracH=(n,d)=>'<span class="fr"><span>'+n+'</span><span>'+d+'</span></span>';
+const pw10=e=>'<span class="pw">10<sup>'+e+'</sup></span>';
+const LET=['a','b','m','n','x','y','z','k'];
+
+/* Basen */
+function intB(k){return {s:String(k),plain:k<0?'('+k+')':String(k),html:k<0?'(−'+(-k)+')':String(k),val:rat(B(k))};}
+function varB(x){return {s:x,plain:x,html:'<i>'+x+'</i>',val:null};}
+function fracB(n,d){const s=(n<0?'-':'')+Math.abs(n)+'/'+d;return {s,plain:'('+s+')',html:'('+(n<0?'−':'')+fracH(Math.abs(n),d)+')',val:rat(B(n),B(d))};}
+function decB(str){const neg=str[0]==='-',body=neg?str.slice(1):str,[i,f='']=body.split(',');
+  return {s:str,plain:'('+str+')',html:'('+(neg?'−':'')+body+')',val:rat(B((neg?'-':'')+i+f),10n**B(f.length))};}
+const powH=(b,e)=>e===1?b.html:'<span class="pw">'+b.html+'<sup>'+e+'</sup></span>';
+const potH=(b,m,n)=>'<span class="pw">('+powH(b,m)+')<sup>'+n+'</sup></span>';
+
+/* Eingaben lesen */
+const val=(el,k)=>el.querySelector('[data-k='+k+']').value;
+const put=(el,k,v)=>{el.querySelector('[data-k='+k+']').value=v;};
+const normBase=u=>u.replace(/[−–—]/g,'-').replace(/\s/g,'').replace(/[()]/g,'').replace(/\./g,',').toLowerCase();
+function readExp(str){const s=str.replace(/\s/g,'');return /^\d+$/.test(s)?parseInt(s,10):null;}
+function readRat(str){
+  let s=str.replace(/[−–—]/g,'-').replace(/[\s\u202F\u00A0']/g,'');if(!s)return null;
+  let m=s.match(/^([+-]?)(\d+)\/(\d+)$/);
+  if(m){if(/^0+$/.test(m[3]))return null;return {r:rat(B(m[1]+m[2]),B(m[3])),frac:true,rn:B(m[2]),rd:B(m[3])};}
+  if(s.includes(','))s=s.replace(/\./g,'').replace(',','.');
+  else if(/^[+-]?\d{1,3}(\.\d{3})+$/.test(s))s=s.replace(/\./g,'');
+  m=s.match(/^([+-]?)(\d*)(?:\.(\d+))?$/);if(!m||(!m[2]&&!m[3]))return null;
+  const f=m[3]||'';return {r:rat(B(m[1]+(m[2]||'0')+f),10n**B(f.length)),frac:false};
+}
+function readMant(str){const s=str.replace(/\s/g,'').replace('.',',');const m=s.match(/^(\d+)(?:,(\d*))?$/);if(!m)return null;return {int:m[1].replace(/^0+(?=\d)/,''),frac:(m[2]||'').replace(/0+$/,'')};}
+function ratDec(r){let p=0;while(p<30&&(10n**B(p))%r.d!==0n)p++;const neg=r.n<0n;let s=((neg?-r.n:r.n)*(10n**B(p))/r.d).toString();
+  if(p>0){s=s.padStart(p+1,'0');s=s.slice(0,s.length-p)+','+s.slice(s.length-p);}return (neg?'-':'')+s;}
+function valHTML(t){const r=t.value;if(t.valKind==='dec')return ratDec(r).replace('-','−');
+  const neg=r.n<0n,n=neg?-r.n:r.n;if(r.d===1n)return (neg?'−':'')+group(String(n));return (neg?'−':'')+fracH(n,r.d);}
+function valPlain(t){const r=t.value;if(t.valKind==='dec')return ratDec(r);if(r.d===1n)return String(r.n);return r.n+'/'+r.d;}
+const isPrime=p=>{if(p<2)return false;for(let k=2;k*k<=p;k++)if(p%k===0)return false;return true;};
+function many(count,fn){const out=[],seen=new Set();let g=0;while(out.length<count&&g++<1000){const t=fn(out.length);if(t&&!seen.has(t.html)){seen.add(t.html);out.push(t);}}return shuffle(out);}
+
+const H_ADD='Beim Multiplizieren werden die Hochzahlen addiert, nicht multipliziert.';
+const H_SUB='Beim Dividieren werden die Hochzahlen subtrahiert.';
+const H_MUL='Beim Potenzieren werden die Hochzahlen multipliziert, nicht addiert.';
+const H_BASE='Die Basis bleibt gleich – schreib sie unverändert ab.';
+
+/* ---------- Abschnitt-Typ „Potenz (+ Wert)“ ---------- */
+const powRow=t=>'<span class="expr">'+t.html+'</span><span class="eq">=</span>'+
+  '<span class="pin"><input class="b" data-k="b" aria-label="Basis" autocomplete="off" autocapitalize="off"><input class="e" data-k="e" inputmode="numeric" aria-label="Hochzahl" autocomplete="off"></span>'+
+  (t.value?'<span class="eq">=</span><input class="val" data-k="v" inputmode="decimal" aria-label="Wert" autocomplete="off">':'');
+function powCheck(t,el){
+  const bu=normBase(val(el,'b'));
+  const okB=t.accept?t.accept(bu):bu===normBase(t.base.s);
+  if(!okB)return t.baseHint||H_BASE;
+  const e=readExp(val(el,'e'));
+  if(e!==t.exp)return (e!==null&&t.alt&&t.alt[e])||false;
+  if(t.value){
+    const u=readRat(val(el,'v'));
+    if(!u)return t.valKind==='frac'?'Gib den Wert als Bruch ein, z. B. -1/8':'Gib den Wert als Zahl ein.';
+    if(!req(u.r,t.value)){
+      if(req(rat(-u.r.n,u.r.d),t.value))return 'Fast! Achte auf das Vorzeichen: gerade Hochzahl → positiv, ungerade → negativ.';
+      return 'Die Potenz stimmt – kontrolliere den Wert!';
+    }
+    if(u.frac&&gcd(u.rn,u.rd)>1n)return 'Richtig gerechnet – kürze den Bruch noch!';
+  }
+  return true;
+}
+function powSec(o){return Object.assign({row:powRow,check:powCheck,
+  solve:(t,el)=>{put(el,'b',t.base.plain);put(el,'e',t.exp);if(t.value)put(el,'v',valPlain(t));},
+  task:t=>t.html,
+  solText:t=>powH(t.base,t.exp)+(t.value?' = '+valHTML(t):'')},o);}
+
+/* ---------- Generatoren Standard ---------- */
+function stdBase(i,noTen){const pat=['num','var','ten','num','var','num','var','num'];let k=pat[i%8];if(noTen&&k==='ten')k='num';
+  return k==='num'?intB(rnd(2,9)):k==='ten'?intB(10):varB(pick(LET));}
+function g_mul(i){const b=stdBase(i),m=rnd(2,9),n=rnd(2,9);return {html:powH(b,m)+' · '+powH(b,n),base:b,exp:m+n,alt:{[m*n]:H_ADD}};}
+function g_div(i){const b=stdBase(i);let m,n;if(i===1){m=n=rnd(2,6);}else{m=rnd(3,12);n=rnd(1,m-2);}
+  return {html:powH(b,m)+' : '+powH(b,n),base:b,exp:m-n,alt:{[m+n]:H_SUB}};}
+function g_pot(i){const b=stdBase(i),ten=b.s==='10',m=rnd(2,ten?5:6),n=rnd(2,5);return {html:potH(b,m,n),base:b,exp:m*n,alt:{[m+n]:H_MUL}};}
+function g_val(i){
+  const bb=pick([2,2,3,3,5,10]),max={2:10,3:6,5:5,10:6}[bb],b=intB(bb),kind=['mul','div','pot'][i%3];let t;
+  if(kind==='mul'){const m=rnd(1,max-1),n=rnd(1,max-m);t={html:powH(b,m)+' · '+powH(b,n),exp:m+n,alt:{[m*n]:H_ADD}};}
+  else if(kind==='div'){const n=rnd(1,6),e=rnd(2,max);t={html:powH(b,e+n)+' : '+powH(b,n),exp:e,alt:{[e+2*n]:H_SUB}};}
+  else{let m,n;do{m=rnd(2,5);n=rnd(2,5);}while(m*n>max);t={html:potH(b,m,n),exp:m*n,alt:{[m+n]:H_MUL}};}
+  t.base=b;t.value=rpow(b.val,t.exp);t.valKind='int';return t;
+}
+function g_mix(i){
+  const b=varB(pick(LET)),kind=['mul3','muldiv','pot','potmul'][i%4];
+  if(kind==='mul3'){const p=rnd(2,6),q=rnd(2,6),r=rnd(2,6);return {html:powH(b,p)+' · '+powH(b,q)+' · '+powH(b,r),base:b,exp:p+q+r};}
+  if(kind==='muldiv'){const p=rnd(2,7),q=rnd(2,7),r=rnd(1,p+q-2);return {html:powH(b,p)+' · '+powH(b,q)+' : '+powH(b,r),base:b,exp:p+q-r,alt:{[p+q+r]:H_SUB}};}
+  if(kind==='pot'){const m=rnd(2,6),n=rnd(2,6);return {html:potH(b,m,n),base:b,exp:m*n,alt:{[m+n]:H_MUL}};}
+  const m=rnd(2,4),n=rnd(2,4),p=rnd(2,6);return {html:potH(b,m,n)+' · '+powH(b,p),base:b,exp:m*n+p,alt:{[m+n+p]:'Zuerst potenzieren (Hochzahlen multiplizieren), dann multiplizieren (Hochzahlen addieren).'}};
+}
+
+/* ---------- Generatoren AHS ---------- */
+const FR=[[-1,2,6],[1,2,6],[1,3,5],[-1,3,5],[2,3,4],[-2,3,4],[1,4,4],[-1,4,4],[1,10,4],[-1,10,4],[3,2,4],[-3,4,3]];
+const DEC=[['0,5',5],['0,1',5],['0,2',4],['0,3',4],['1,5',4],['2,5',3],['-0,5',5],['-0,1',4],['-1,2',3],['0,4',3],['0,01',3],['-2,5',3]];
+function sameBase(b,max,kind){
+  if(kind==='mul'){const m=rnd(1,max-1),n=rnd(1,max-m);return {html:powH(b,m)+' · '+powH(b,n),exp:m+n,alt:{[m*n]:H_ADD}};}
+  if(kind==='mul3'){const m=rnd(1,max-2),n=rnd(1,max-m-1),r=rnd(1,max-m-n);return {html:powH(b,m)+' · '+powH(b,n)+' · '+powH(b,r),exp:m+n+r};}
+  const e=rnd(2,max),n=rnd(1,4);return {html:powH(b,e+n)+' : '+powH(b,n),exp:e,alt:{[e+2*n]:H_SUB}};
+}
+function g_frac(i){const [n,d,max]=pick(FR),b=fracB(n,d),t=sameBase(b,max,['mul','div','mul3'][i%3]);t.base=b;t.value=rpow(b.val,t.exp);t.valKind='frac';return t;}
+function g_dec(i){const [s,max]=pick(DEC),b=decB(s),t=sameBase(b,max,['mul','div'][i%2]);t.base=b;t.value=rpow(b.val,t.exp);t.valKind='dec';return t;}
+const tStr=t=>t%10?Math.floor(t/10)+','+(t%10):String(t/10);
+function g_float(){
+  let v1,v2,p;do{v1=pick([20,30,40,11,12,13,14,15,16,21,22,23,24,31,32,41,42]);v2=rnd(2,4);p=v1*v2;}while(p>=100);
+  if(Math.random()<.5&&v1%10===0){[v1,v2]=[v2*10,v1/10];}
+  const a=rnd(1,7),b=rnd(1,7);
+  return {html:tStr(v1)+' · '+pw10(a)+' · '+tStr(v2*10)+' · '+pw10(b),p,e:a+b,a,b};
+}
+function g_prime(){for(;;){const k=rnd(1,3),ps=shuffle([2,3,5,7]).slice(0,k).sort((x,y)=>x-y);
+  const f=ps.map(p=>[p,rnd(1,p===2?5:p===3?4:3)]);const n=f.reduce((acc,[p,e])=>acc*p**e,1);
+  if(n<8||n>2500||!f.some(x=>x[1]>=2))continue;return {n,f,html:group(String(n))};}}
+function evalNum(u){if(/^\d+$/.test(u))return +u;let m=u.match(/^(\d+)[·*x×](\d+)$/);if(m)return m[1]*m[2];m=u.match(/^(\d+)[:\/](\d+)$/);if(m&&+m[2])return m[1]/m[2];return null;}
+function g_prod(i){
+  const kind=['numMul','varMul','numDiv'][i%3],n=rnd(2,5);
+  const H='Gleiche Hochzahl: Die Basen werden zusammengefasst, die Hochzahl bleibt gleich.';
+  if(kind==='numMul'){let b,c;do{b=rnd(2,6);c=rnd(2,6);}while(b===c||b*c>20);const r=b*c;
+    return {html:powH(intB(b),n)+' · '+powH(intB(c),n),base:{s:String(r),plain:String(r),html:String(r)},exp:n,accept:u=>evalNum(u)===r,baseHint:'Multipliziere die Basen: '+b+' · '+c+' = ?',alt:{[2*n]:H}};}
+  if(kind==='varMul'){const k=rnd(2,9),x=pick(LET);
+    return {html:powH(intB(k),n)+' · '+powH(varB(x),n),base:{s:k+x,plain:'('+k+x+')',html:'('+k+'<i>'+x+'</i>)'},exp:n,accept:u=>{const v=u.replace(/[·*]/g,'');return v===k+x||v===x+k;},baseHint:'Schreibe beide Basen zusammen in die Klammer, z. B. 3a',alt:{[2*n]:H}};}
+  const c=rnd(2,4),q=rnd(2,4),b=c*q;
+  return {html:powH(intB(b),n)+' : '+powH(intB(c),n),base:{s:String(q),plain:String(q),html:String(q)},exp:n,accept:u=>evalNum(u)===q,baseHint:'Dividiere die Basen: '+b+' : '+c+' = ?',alt:{[0]:H}};
+}
+function g_potA(i){
+  const kinds=[()=>{const [n,d]=pick(FR);return fracB(n,d);},()=>decB(pick(DEC)[0]),()=>intB(-rnd(2,5)),()=>varB(pick(LET))];
+  const b=kinds[i%4](),m=rnd(2,4),n=rnd(2,4);return {html:potH(b,m,n),base:b,exp:m*n,alt:{[m+n]:H_MUL}};
+}
+
+/* ---------- Abschnitte ---------- */
+const R=(f,a,b)=>'<p class="rule">'+f+'</p><p>'+a+(b?'<br>'+b:'')+'</p>';
+const SECS=[
+ {id:'st1',level:'std',title:'Schreibe als Potenz mit einer Hochzahl!',name:'Multiplizieren',
+  info:R('a<sup>m</sup> · a<sup>n</sup> = a<sup>m+n</sup>','Potenzen mit gleicher Basis werden <b>multipliziert</b>, indem du die Hochzahlen <b>addierst</b>.','z. B. 2<sup>5</sup> · 2<sup>3</sup> = 2<sup>5+3</sup> = 2<sup>8</sup>'),
+  cfg:powSec({gen:()=>many(8,g_mul)})},
+ {id:'st2',level:'std',title:'Schreibe als Potenz mit einer Hochzahl!',name:'Dividieren',
+  info:R('a<sup>m</sup> : a<sup>n</sup> = a<sup>m−n</sup>','Potenzen mit gleicher Basis werden <b>dividiert</b>, indem du die Hochzahlen <b>subtrahierst</b>.','z. B. 3<sup>6</sup> : 3<sup>4</sup> = 3<sup>2</sup> &nbsp;&nbsp; 2<sup>3</sup> : 2<sup>3</sup> = 2<sup>0</sup> = 1'),
+  cfg:powSec({gen:()=>many(8,g_div)})},
+ {id:'st3',level:'std',title:'Schreibe als Potenz mit einer Hochzahl!',name:'Potenzieren',
+  info:R('(a<sup>m</sup>)<sup>n</sup> = a<sup>m·n</sup>','Potenzen werden <b>potenziert</b>, indem du die Hochzahlen <b>multiplizierst</b>.','z. B. (4<sup>2</sup>)<sup>3</sup> = 4<sup>2·3</sup> = 4<sup>6</sup>'),
+  cfg:powSec({gen:()=>many(8,g_pot)})},
+ {id:'st4',level:'std',title:'Schreibe als Potenz mit einer Hochzahl und berechne ihren Wert!',name:'Potenz und Wert',
+  hint:'Kontrolliere den Wert mit dem Taschenrechner.',cfg:powSec({gen:()=>many(8,g_val)})},
+ {id:'st5',level:'std',title:'Vermischt: Schreibe als Potenz mit einer Hochzahl!',name:'Vermischt',
+  hint:'Rechne Schritt für Schritt. Klammern zuerst!',cfg:powSec({gen:()=>many(8,g_mix)})},
+
+ {id:'ah1',level:'ahs',title:'Schreibe als Potenz mit einer Hochzahl und berechne ihren Wert!',name:'Brüche',
+  hint:'Brüche mit / eingeben, z. B. -1/2 – mit oder ohne Klammer. Den Wert als Bruch, z. B. -1/32',cfg:powSec({gen:()=>many(6,g_frac)})},
+ {id:'ah2',level:'ahs',title:'Schreibe als Potenz mit einer Hochzahl und berechne ihren Wert!',name:'Dezimalzahlen',
+  hint:'Dezimalzahlen mit Komma eingeben, z. B. 0,5. Überprüfe mit dem Taschenrechner.',cfg:powSec({gen:()=>many(6,g_dec)})},
+ {id:'ah3',level:'ahs',title:'Berechne das Produkt!',name:'Produkte mit Zehnerpotenzen',
+  info:'<p class="rule">2 · 10<sup>4</sup> · 3 · 10<sup>2</sup> = 2 · 3 · 10<sup>4</sup> · 10<sup>2</sup> = 6 · 10<sup>6</sup></p><p>Vorzahlen multiplizieren, Hochzahlen der Zehnerpotenzen addieren.</p>',
+  cfg:{gen:()=>many(6,g_float),
+   row:t=>'<span class="expr">'+t.html+'</span><span class="eq">=</span><input class="m" data-k="m" inputmode="decimal" aria-label="Vorzahl" autocomplete="off"><span class="eq">·</span><span class="pin10">10<input class="e" data-k="e" inputmode="numeric" aria-label="Hochzahl" autocomplete="off"></span>',
+   check:(t,el)=>{const m=readMant(val(el,'m')),e=readExp(val(el,'e'));
+     if(!m||m.frac.length>1)return 'Multipliziere die Vorzahlen: Das Ergebnis hat höchstens eine Nachkommastelle.';
+     const tv=+m.int*10+(+(m.frac||0));const okM=tv===t.p;
+     if(!okM)return e===t.e?'Die Hochzahl stimmt – multipliziere die Vorzahlen nochmal!':false;
+     if(e!==t.e)return e===t.a*t.b?'Die Hochzahlen der Zehnerpotenzen werden addiert, nicht multipliziert.':'Die Vorzahl stimmt – addiere die Hochzahlen der Zehnerpotenzen!';
+     return true;},
+   solve:(t,el)=>{put(el,'m',tStr(t.p));put(el,'e',t.e);},task:t=>t.html,solText:t=>tStr(t.p)+' · '+pw10(t.e)}},
+ {id:'ah4',level:'ahs',title:'Zerlege die Zahlen in ihre Primfaktoren! Schreibe sie als Multiplikation mit Potenzen an!',name:'Primfaktoren',
+  info:'<p class="rule">50 = 2 · 5 · 5 = 2 · 5<sup>2</sup></p><p>Hochzahlen mit ^ eingeben: 2 · 5^2 &nbsp;oder&nbsp; 2*5^2</p>',
+  cfg:{gen:()=>many(6,g_prime),
+   row:t=>'<span class="expr">'+t.html+'</span><span class="eq">=</span><input class="prod" data-k="f" aria-label="Primfaktoren" autocomplete="off" placeholder="z. B. 2^3 · 5">',
+   check:(t,el)=>{
+     const s=val(el,'f').replace(/²/g,'^2').replace(/³/g,'^3').replace(/\s/g,'');
+     const parts=s.split(/[·*×.x•]+/).filter(Boolean);if(!parts.length)return false;
+     const map={};let rep=false,prod=1;
+     for(const p of parts){const m=p.match(/^(\d+)(?:\^(\d+))?$/);if(!m)return 'Schreibe z. B. 2^3 · 5 – Hochzahlen mit ^.';
+       const q=+m[1],e=m[2]?+m[2]:1;if(q===1)continue;prod*=q**e;
+       if(!isPrime(q))return 'Zerlege so weit, bis nur noch Primzahlen übrig sind.';
+       if(map[q])rep=true;map[q]=(map[q]||0)+e;}
+     if(prod!==t.n)return 'Das Produkt ergibt nicht '+t.n+'. Kontrolliere deine Zerlegung!';
+     if(rep)return 'Richtig zerlegt – fasse gleiche Faktoren noch zu einer Potenz zusammen!';
+     return true;},
+   solve:(t,el)=>put(el,'f',t.f.map(([p,e])=>e>1?p+'^'+e:p).join(' · ')),task:t=>t.html,
+   solText:t=>t.f.map(([p,e])=>e>1?p+'<sup>'+e+'</sup>':p).join(' · ')}},
+ {id:'ah5',level:'ahs',title:'Schreibe als eine Potenz!',name:'Gleiche Hochzahl',
+  info:R('a<sup>n</sup> · b<sup>n</sup> = (a · b)<sup>n</sup> &nbsp;&nbsp;&nbsp; a<sup>n</sup> : b<sup>n</sup> = (a : b)<sup>n</sup>','Bei <b>gleicher Hochzahl</b> werden die Basen zusammengefasst.','z. B. 2<sup>3</sup> · a<sup>3</sup> = (2a)<sup>3</sup> &nbsp;&nbsp; 2<sup>3</sup> · 4<sup>3</sup> = 8<sup>3</sup>'),
+  hint:'Basis mit Variable z. B. als 2a eingeben.',cfg:powSec({gen:()=>many(6,g_prod)})},
+ {id:'ah6',level:'ahs',title:'Schreibe als Potenz mit einer Hochzahl!',name:'Potenzieren',
+  hint:'Die Basis darfst du mit oder ohne Klammer schreiben, Brüche mit /.',cfg:powSec({gen:()=>many(6,g_potA)})}
+];
+const sections={};SECS.forEach(s=>{sections[s.id]=Object.assign({name:s.name,level:s.level},s.cfg);});
+
+/* DOM der Abschnitte erzeugen */
+(function(){
+  const box=document.getElementById('secs');const nr={std:0,ahs:0};
+  box.innerHTML=SECS.map(s=>{nr[s.level]++;return '<section id="'+s.id+'" data-level="'+s.level+'"><div class="head"><span class="num">'+nr[s.level]+'</span><h2>'+s.title+'</h2></div>'+
+    (s.info?'<div class="info">'+s.info+'</div>':'')+(s.hint?'<p class="hint">'+s.hint+'</p>':'')+
+    '<div class="tasks"></div><div class="actions"><button class="ghost" data-check>Alle überprüfen</button><span class="res"></span></div></section>';}).join('');
+  const n2={std:0,ahs:0};SECS.forEach(s=>{n2[s.level]++;sections[s.id].name=n2[s.level]+' '+s.name;});
+})();
+
+/* ---------- Ablauf ---------- */
+const state={};let summaryRequested=false;let level=location.hash==='#ahs'?'ahs':'std';
+const curIds=()=>SECS.filter(s=>s.level===level).map(s=>s.id);
+
+function build(id){
+  const cfg=sections[id],sec=document.getElementById(id),box=sec.querySelector('.tasks');
+  const tasks=cfg.gen();
+  state[id]={tasks,results:tasks.map(()=>null),tries:tasks.map(()=>0)};
+  box.innerHTML=tasks.map((t,i)=>'<div class="task" data-i="'+i+'"><span class="lbl">'+LBL[i]+')</span>'+cfg.row(t)+'</div>').join('');
+  box.querySelectorAll('.task').forEach(el=>{
+    const i=+el.dataset.i;
+    el.querySelectorAll('input').forEach(inp=>inp.addEventListener('input',()=>clearMark(id,i)));
+    el.addEventListener('focusout',()=>setTimeout(()=>{if(!el.contains(document.activeElement))checkTask(id,i,false);},0));
+  });
+  updateSection(id);
+}
+const taskEl=(id,i)=>document.querySelector('#'+id+' .task[data-i="'+i+'"]');
+const isComplete=el=>![...el.querySelectorAll('input')].some(inp=>!inp.value.trim());
+function clearMark(id,i){
+  const el=taskEl(id,i);if(state[id].results[i]==='shown')return;
+  el.classList.remove('ok','bad');const s=el.querySelector('.sol');if(s)s.remove();
+  if(state[id].results[i]!==null){state[id].results[i]=null;updateSection(id);}
+}
+function checkTask(id,i,force){
+  const cfg=sections[id],el=taskEl(id,i),st=state[id];
+  if(st.results[i]==='shown'||st.results[i]===true)return;
+  if(!isComplete(el)){if(force)setMsg(el,'bad','Bitte alle Felder ausfüllen.');return;}
+  const res=cfg.check(st.tasks[i],el),r=res===true,hint=typeof res==='string'?res:null;
+  el.classList.remove('ok','bad');el.classList.add(r?'ok':'bad');
+  if(r){st.results[i]=true;setMsg(el,'ok','Richtig!');}
+  else{st.results[i]=false;st.tries[i]++;
+    const base=st.tries[i]===1?'Leider falsch – versuch es nochmal!':'Noch nicht richtig. Versuch es nochmal oder sieh dir die Lösung an.';
+    setMsg(el,'bad',hint?hint+(st.tries[i]===1?' Versuch es nochmal!':''):base,st.tries[i]>=2);}
+  updateSection(id);
+}
+function setMsg(el,kind,text,offer){
+  let d=el.querySelector('.sol');if(!d){d=document.createElement('div');el.appendChild(d);}
+  d.className='sol '+kind;d.textContent=text;
+  if(offer){const b=document.createElement('button');b.type='button';b.className='mini';b.textContent='Lösung zeigen';
+    b.addEventListener('click',()=>{const id=el.closest('section').id,i=+el.dataset.i,t=state[id].tasks[i];
+      sections[id].solve(t,el);state[id].results[i]='shown';el.classList.remove('ok','bad');el.classList.add('shown');
+      d.className='sol shown';d.innerHTML='Lösung: '+sections[id].solText(t);updateSection(id);});
+    d.appendChild(b);}
+}
+function updateSection(id){
+  const st=state[id],ok=st.results.filter(r=>r===true).length,n=st.tasks.length;
+  document.querySelector('#'+id+' .res').textContent=ok+' von '+n+' richtig'+(ok===n?' – super!':'');
+  updateScore();updateSummary();
+}
+function updateScore(){let ok=0,n=0;curIds().forEach(id=>{const s=state[id];if(!s)return;n+=s.results.length;ok+=s.results.filter(r=>r===true).length;});
+  document.getElementById('score').textContent=ok+' von '+n+' richtig';}
+function updateSummary(){
+  const ids=curIds();if(ids.some(id=>!state[id]))return;
+  const sum=document.getElementById('summary');
+  const allDone=ids.every(id=>state[id].results.every(r=>r===true||r==='shown'));
+  if(!allDone&&!summaryRequested){sum.hidden=true;return;}
+  let T={ok:0,first:0,shown:0,open:0,n:0},rows='',shownList=[];
+  ids.forEach(id=>{const st=state[id],cfg=sections[id];
+    const ok=st.results.filter(r=>r===true).length,first=st.results.filter((r,i)=>r===true&&st.tries[i]===0).length;
+    const shown=st.results.filter(r=>r==='shown').length,open=st.results.length-ok-shown;
+    st.results.forEach((r,i)=>{if(r==='shown')shownList.push('Übung '+cfg.name.split(' ')[0]+' '+LBL[i]+'): '+cfg.task(st.tasks[i])+' = '+cfg.solText(st.tasks[i]));});
+    T.ok+=ok;T.first+=first;T.shown+=shown;T.open+=open;T.n+=st.results.length;
+    rows+='<tr><td>'+cfg.name+'</td><td>'+ok+' von '+st.results.length+'</td><td>'+first+'</td><td>'+shown+'</td><td>'+open+'</td></tr>';});
+  document.getElementById('sumBody').innerHTML=rows;
+  document.getElementById('sumFoot').innerHTML='<tr><td>Gesamt</td><td>'+T.ok+' von '+T.n+'</td><td>'+T.first+'</td><td>'+T.shown+'</td><td>'+T.open+'</td></tr>';
+  const pct=T.ok/T.n;let msg;
+  if(T.first===T.n)msg='Perfekt! Alle Aufgaben beim ersten Versuch richtig.';
+  else if(pct===1)msg='Super, alle Aufgaben richtig gelöst!';
+  else if(pct>=.75)msg='Sehr gut gemacht!';
+  else if(pct>=.5)msg='Gut! Mit ein bisschen Übung klappt der Rest auch.';
+  else msg='Übe noch ein bisschen weiter – klick auf „Neue Aufgaben“ und probier es nochmal.';
+  if(!allDone)msg='Noch nicht alles erledigt: '+T.open+' Aufgabe'+(T.open===1?' ist':'n sind')+' noch offen. '+msg;
+  document.getElementById('sumTitle').textContent=(allDone?'Geschafft! Deine Auswertung':'Zwischenstand')+' ('+(level==='ahs'?'Standard AHS':'Standard')+')';
+  document.getElementById('sumMsg').textContent=msg;
+  document.getElementById('sumShown').innerHTML=shownList.length?'Bei diesen Aufgaben hast du die Lösung angesehen – schau sie dir nochmal an:<ul>'+shownList.map(x=>'<li>'+x+'</li>').join('')+'</ul>':'';
+  const wasHidden=sum.hidden;sum.hidden=false;
+  if(wasHidden)setTimeout(()=>sum.scrollIntoView({behavior:'smooth',block:'start'}),300);
+}
+function setLevel(l){
+  level=l;summaryRequested=false;
+  document.querySelectorAll('.levels button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.level===l?'true':'false'));
+  SECS.forEach(s=>{document.getElementById(s.id).hidden=s.level!==l;});
+  try{history.replaceState(null,'',l==='ahs'?'#ahs':'#standard');}catch(e){}
+  document.getElementById('summary').hidden=true;updateScore();updateSummary();
+}
+
+SECS.forEach(({id})=>{
+  build(id);const sec=document.getElementById(id);
+  sec.querySelector('[data-check]').addEventListener('click',()=>state[id].tasks.forEach((t,i)=>checkTask(id,i,true)));
+  sec.addEventListener('keydown',e=>{
+    if(e.key!=='Enter'||e.target.tagName!=='INPUT')return;e.preventDefault();
+    const task=e.target.closest('.task'),i=+task.dataset.i,own=[...task.querySelectorAll('input')];
+    if(own.indexOf(e.target)<own.length-1){own[own.indexOf(e.target)+1].focus();return;}
+    checkTask(id,i,true);
+    if(state[id].results[i]===true){const nt=taskEl(id,i+1);if(nt){const f=nt.querySelector('input');if(f)f.focus();}}else e.target.select();
+  });
+});
+document.querySelectorAll('.levels button').forEach(b=>b.addEventListener('click',()=>{setLevel(b.dataset.level);window.scrollTo({top:0,behavior:'smooth'});}));
+function newAll(){summaryRequested=false;curIds().forEach(build);document.getElementById('summary').hidden=true;window.scrollTo({top:0,behavior:'smooth'});}
+document.getElementById('newAll').addEventListener('click',newAll);
+document.getElementById('newAll2').addEventListener('click',newAll);
+document.getElementById('showSum').addEventListener('click',()=>{summaryRequested=true;document.getElementById('summary').hidden=true;updateSummary();});
+setLevel(level);
+
+/* ---------- Weitere Runden pro Übung ---------- */
+const ROUNDS={};
+const roundIds=()=>typeof curIds==='function'?curIds():Object.keys(sections);
+const _build=build;
+build=function(id){if(ROUNDS[id])ROUNDS[id]++;_build(id);};
+const _updateSection=updateSection;
+updateSection=function(id){_updateSection(id);if(ROUNDS[id])refreshRound(id);};
+const _updateSummary=updateSummary;
+updateSummary=function(){
+  _updateSummary();
+  const rows=document.querySelectorAll('#sumBody tr');
+  roundIds().forEach((id,i)=>{const td=rows[i]&&rows[i].firstChild;if(td&&ROUNDS[id]>1)td.innerHTML+=' <span class="rnote">(Runde '+ROUNDS[id]+')</span>';});
+};
+function refreshRound(id){
+  const sec=document.getElementById(id),st=state[id];
+  const r=sec.querySelector('.round'),b=sec.querySelector('[data-more]');if(!r||!b)return;
+  r.textContent='Runde '+ROUNDS[id];
+  const done=st.results.every(x=>x===true||x==='shown');
+  b.classList.toggle('ready',done);
+  b.textContent=done?'Noch eine Runde üben':'Neue Runde';
+}
+Object.keys(sections).forEach(id=>{
+  ROUNDS[id]=1;
+  const act=document.querySelector('#'+id+' .actions');
+  const b=document.createElement('button');b.type='button';b.className='ghost more';b.dataset.more='';b.textContent='Neue Runde';
+  b.title='Diese Übung nochmal mit neuen Zahlen';
+  b.addEventListener('click',()=>{
+    build(id);
+    const sec=document.getElementById(id);
+    sec.scrollIntoView({behavior:'smooth',block:'start'});
+    const f=sec.querySelector('.task input');if(f)setTimeout(()=>f.focus({preventScroll:true}),450);
+  });
+  act.insertBefore(b,act.querySelector('.res'));
+  const r=document.createElement('span');r.className='round';act.appendChild(r);
+  refreshRound(id);
+});
+
+/* ---------- Namenseingabe zu Beginn ---------- */
+let studentName='';
+(function(){
+  const wrap=document.querySelector('.wrap'),header=wrap.querySelector('header');
+  const start=document.createElement('section');start.id='start';
+  start.innerHTML='<div class="head"><h2>Wie heißt du?</h2></div>'+
+    '<p class="hint">Gib deinen Namen ein. Er steht dann am Ende in deiner Auswertung.</p>'+
+    '<div class="startrow"><input id="nameIn" maxlength="40" autocomplete="off" aria-label="Dein Name" placeholder="Vor- und Nachname">'+
+    '<button type="button" id="startBtn">Los geht’s</button></div><p class="sol bad" id="nameErr" hidden>Bitte gib zuerst deinen Namen ein.</p>';
+  header.after(start);
+  const who=document.createElement('span');who.className='who';who.hidden=true;
+  who.innerHTML='<span id="whoName"></span> <button type="button" class="mini" id="nameChange">ändern</button>';
+  document.querySelector('.top').prepend(who);
+  document.body.classList.add('notstarted');
+  const inp=document.getElementById('nameIn');
+  function go(){
+    const n=inp.value.trim().replace(/\s+/g,' ');
+    if(!n){document.getElementById('nameErr').hidden=false;inp.focus();return;}
+    studentName=n;document.getElementById('nameErr').hidden=true;
+    document.getElementById('whoName').textContent=n;who.hidden=false;
+    document.body.classList.remove('notstarted');start.hidden=true;
+    updateSummary();
+    const f=document.querySelector('.wrap section:not([hidden]) .task input');if(f)f.focus();
+  }
+  document.getElementById('startBtn').addEventListener('click',go);
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();go();}});
+  document.getElementById('nameChange').addEventListener('click',()=>{
+    start.hidden=false;document.body.classList.add('notstarted');inp.value=studentName;inp.focus();inp.select();
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+  inp.focus();
+})();
+const _updateSummaryN=updateSummary;
+updateSummary=function(){
+  _updateSummaryN();
+  const sum=document.getElementById('summary');if(sum.hidden||!studentName)return;
+  const t=document.getElementById('sumTitle');
+  t.textContent=t.textContent.replace('Geschafft! Deine Auswertung','Geschafft, '+studentName+'! Deine Auswertung').replace('Zwischenstand','Zwischenstand von '+studentName);
+  let meta=document.getElementById('sumMeta');
+  if(!meta){meta=document.createElement('p');meta.id='sumMeta';t.closest('.head').after(meta);}
+  const now=new Date();
+  meta.textContent=studentName+' · '+document.title+' · '+now.toLocaleDateString('de-AT')+', '+now.toLocaleTimeString('de-AT',{hour:'2-digit',minute:'2-digit'});
+};
+</script>
+</body>
+</html>
