@@ -100,6 +100,28 @@ body.notstarted .wrap>section:not(#start),body.notstarted #secs,body.notstarted 
 .who{font-weight:700;color:var(--ink);display:inline-flex;align-items:center;gap:.4rem}
 .who[hidden]{display:none}
 #sumMeta{color:var(--muted);margin:.3rem 0 0}
+.startcard{border-color:var(--ink);border-width:3px}
+.startcard h2{font-family:Fraunces,Georgia,serif;font-size:1.5rem;color:var(--ink)}
+#pname{width:16rem;max-width:100%;font-size:1.15rem}
+#startDone{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap}
+.who{font-size:1.1rem}
+#summary .who{margin:.4rem 0 0;color:var(--muted)}
+#summary .who b{color:var(--text)}
+#pnameErr{padding-left:0}
+body.locked section[id]:not(#start):not(#summary),body.locked .finish{opacity:.35;filter:grayscale(.4);pointer-events:none;user-select:none}
+#kpad{position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--card);border-top:3px solid var(--ink);padding:.5rem .6rem calc(.6rem + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 18px rgba(0,0,0,.18)}
+#kpad[hidden],#kpadToggle[hidden]{display:none}
+.kp-inner{max-width:34rem;margin:0 auto}
+.kp-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem;font-weight:700;color:var(--ink);font-size:.95rem}
+.kp-small{font-size:.95rem;padding:.2rem .7rem;background:transparent;color:var(--ink);border:2px solid var(--ink)}
+.kp-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:.35rem}
+.kp-grid.letters{grid-template-columns:repeat(7,1fr)}
+.kp-grid button{font:inherit;font-size:1.3rem;font-weight:700;padding:.5rem 0;background:var(--field);color:var(--text);border:2px solid var(--line);border-radius:.5rem;touch-action:manipulation}
+.kp-grid button.op{color:var(--ink);border-color:var(--ink)}
+.kp-grid button.act{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.kp-grid button:active{transform:translateY(1px)}
+#kpadToggle{position:fixed;right:1rem;bottom:calc(1rem + env(safe-area-inset-bottom,0px));z-index:49;border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+body.kpad-on{padding-bottom:17rem}
 </style>
 </head>
 <body>
@@ -114,6 +136,20 @@ body.notstarted .wrap>section:not(#start),body.notstarted #secs,body.notstarted 
       <button id="newAll">Neue Aufgaben</button>
     </div>
   </header>
+
+  <section id="start" class="startcard">
+    <div id="startAsk">
+      <h2>Wie heißt du?</h2>
+      <p class="hint">Gib zuerst deinen Namen ein. Er steht am Ende in deiner Auswertung.</p>
+      <div class="actions"><input id="pname" placeholder="Vor- und Nachname" autocomplete="name" aria-label="Dein Name"><button id="startBtn" type="button">Los geht’s</button></div>
+      <p class="sol bad" id="pnameErr" hidden>Bitte gib deinen Namen ein.</p>
+    </div>
+    <div id="startDone" hidden>
+      <span class="who">👤 <b id="pnameShow"></b></span>
+      <button type="button" class="mini" id="pnameEdit">Name ändern</button>
+    </div>
+  </section>
+
 
   <section id="s1">
     <div class="head"><span class="num">1</span><h2>Schreibe als Potenz!</h2></div>
@@ -505,6 +541,102 @@ updateSummary=function(){
   const now=new Date();
   meta.textContent=studentName+' · '+document.title+' · '+now.toLocaleDateString('de-AT')+', '+now.toLocaleTimeString('de-AT',{hour:'2-digit',minute:'2-digit'});
 };
+
+/* ---------- Namenseingabe zu Beginn ---------- */
+let PUPIL='';
+const lockables=()=>[...document.querySelectorAll('section[id]:not(#start):not(#summary), .finish')];
+function setLocked(on){
+  document.body.classList.toggle('locked',on);
+  lockables().forEach(el=>{if(on)el.setAttribute('inert','');else el.removeAttribute('inert');});
+}
+function startWithName(){
+  const v=document.getElementById('pname').value.trim().replace(/\s+/g,' ');
+  const err=document.getElementById('pnameErr');
+  if(v.length<2){err.hidden=false;document.getElementById('pname').focus();return;}
+  err.hidden=true;PUPIL=v;
+  document.getElementById('pnameShow').textContent=v;
+  document.getElementById('startAsk').hidden=true;document.getElementById('startDone').hidden=false;
+  setLocked(false);updateSummary();
+  const f=[...document.querySelectorAll('section[id]:not(#start):not(#summary)')].find(s=>!s.hidden);
+  const inp=f&&f.querySelector('.task input');if(inp)inp.focus();
+}
+document.getElementById('startBtn').addEventListener('click',startWithName);
+document.getElementById('pname').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();startWithName();}});
+document.getElementById('pnameEdit').addEventListener('click',()=>{
+  document.getElementById('startAsk').hidden=false;document.getElementById('startDone').hidden=true;
+  const i=document.getElementById('pname');i.focus();i.select();
+});
+/* Name und Zeitpunkt in der Auswertung */
+const _updSumName=updateSummary;
+updateSummary=function(){
+  _updSumName();
+  const sum=document.getElementById('summary');
+  let who=document.getElementById('sumWho');
+  if(!who){who=document.createElement('p');who.id='sumWho';who.className='who';sum.querySelector('.head').after(who);}
+  const now=new Date();
+  const lvl=document.querySelector('.levels [aria-pressed="true"]');
+  who.innerHTML='👤 <b></b> · '+now.toLocaleDateString('de-AT')+', '+now.toLocaleTimeString('de-AT',{hour:'2-digit',minute:'2-digit'})+' Uhr'+(lvl?' · '+lvl.textContent:'');
+  who.querySelector('b').textContent=PUPIL||'(kein Name)';
+};
+setLocked(true);
+document.getElementById('pname').focus();
+
+/* ---------- Bildschirm-Tastatur (Zahlen, Vorzeichen, Rechenzeichen, Buchstaben) ---------- */
+(function(){
+  const NUM=[['7','8','9','·',':','⌫'],['4','5','6','+','−','('],['1','2','3','/','^',')'],['0',',','←','→','⇥','↵']];
+  const LET=[['a','b','c','k','m','n','p'],['r','s','t','x','y','z','⌫'],['←','→','⇥','↵']];
+  const INSERT={'−':'-'};
+  const TITLE={'⌫':'Löschen','←':'Cursor nach links','→':'Cursor nach rechts','⇥':'Nächstes Feld','↵':'Prüfen / Weiter','·':'mal',':':'geteilt','^':'hoch (für Hochzahlen)','/':'Bruchstrich','−':'minus','+':'plus',',':'Komma'};
+  const coarse=window.matchMedia&&matchMedia('(pointer: coarse)').matches;
+  let enabled=true,letters=false,target=null;
+
+  const pad=document.createElement('div');pad.id='kpad';pad.hidden=true;pad.setAttribute('role','group');pad.setAttribute('aria-label','Bildschirm-Tastatur');
+  pad.innerHTML='<div class="kp-inner"><div class="kp-head"><span>Tastatur</span><span><button type="button" class="kp-small" data-kp="mode">abc</button> <button type="button" class="kp-small" data-kp="close" title="Tastatur ausblenden">✕</button></span></div><div class="kp-grid"></div></div>';
+  const tog=document.createElement('button');tog.id='kpadToggle';tog.type='button';tog.textContent='⌨ Tastatur';tog.hidden=true;
+  document.body.append(pad,tog);
+  const grid=pad.querySelector('.kp-grid');
+
+  function draw(){
+    const rows=letters?LET:NUM;grid.className='kp-grid'+(letters?' letters':'');
+    grid.innerHTML=rows.flat().map(k=>{const cls=/[0-9a-z]/.test(k)?'':(k==='↵'?'act':'op');
+      return '<button type="button" class="'+cls+'" data-key="'+k+'"'+(TITLE[k]?' title="'+TITLE[k]+'" aria-label="'+TITLE[k]+'"':'')+'>'+k+'</button>';}).join('');
+    pad.querySelector('[data-kp="mode"]').textContent=letters?'123':'abc';
+  }
+  const eligible=el=>el&&el.tagName==='INPUT'&&el.id!=='nameIn'&&!el.disabled;
+  function applyMode(el){
+    if(!('im' in el.dataset))el.dataset.im=el.getAttribute('inputmode')||'';
+    if(enabled&&coarse)el.setAttribute('inputmode','none');
+    else if(el.dataset.im)el.setAttribute('inputmode',el.dataset.im);else el.removeAttribute('inputmode');
+  }
+  const applyAll=()=>document.querySelectorAll('input').forEach(i=>{if(i.id!=='nameIn')applyMode(i);});
+  let t0=null;new MutationObserver(()=>{clearTimeout(t0);t0=setTimeout(applyAll,30);}).observe(document.body,{childList:true,subtree:true});
+  function showPad(){pad.hidden=false;tog.hidden=true;document.body.classList.add('kpad-on');}
+  function hidePad(){pad.hidden=true;tog.hidden=false;document.body.classList.remove('kpad-on');}
+
+  document.addEventListener('focusin',e=>{if(eligible(e.target)){target=e.target;applyMode(target);if(enabled)showPad();else tog.hidden=false;}});
+  ['pointerdown','mousedown'].forEach(ev=>pad.addEventListener(ev,e=>e.preventDefault()));
+
+  const visibleInputs=()=>[...document.querySelectorAll('input')].filter(i=>eligible(i)&&i.offsetParent!==null);
+  function press(k){
+    if(!target||!document.body.contains(target)||target.disabled){const f=visibleInputs()[0];if(!f)return;target=f;}
+    target.focus({preventScroll:true});
+    const v=target.value;let s=target.selectionStart,e=target.selectionEnd;if(s==null){s=e=v.length;}
+    if(k==='↵'){target.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter',bubbles:true,cancelable:true}));return;}
+    if(k==='⇥'){const all=visibleInputs(),i=all.indexOf(target);const n=all[i+1]||all[0];if(n){n.focus();target=n;}return;}
+    if(k==='←'){const p=Math.max(0,s-1);target.setSelectionRange(p,p);return;}
+    if(k==='→'){const p=Math.min(v.length,e+1);target.setSelectionRange(p,p);return;}
+    let nv,pos;
+    if(k==='⌫'){if(s!==e){nv=v.slice(0,s)+v.slice(e);pos=s;}else if(s>0){nv=v.slice(0,s-1)+v.slice(s);pos=s-1;}else return;}
+    else{const ins=INSERT[k]||k;if(target.maxLength>0&&v.length>=target.maxLength)return;nv=v.slice(0,s)+ins+v.slice(e);pos=s+ins.length;}
+    target.value=nv;try{target.setSelectionRange(pos,pos);}catch(_){}
+    target.dispatchEvent(new Event('input',{bubbles:true}));
+  }
+  grid.addEventListener('click',e=>{const b=e.target.closest('[data-key]');if(b)press(b.dataset.key);});
+  pad.querySelector('[data-kp="mode"]').addEventListener('click',()=>{letters=!letters;draw();});
+  pad.querySelector('[data-kp="close"]').addEventListener('click',()=>{enabled=false;applyAll();hidePad();});
+  tog.addEventListener('click',()=>{enabled=true;applyAll();showPad();const f=(target&&document.body.contains(target)&&!target.disabled)?target:visibleInputs()[0];if(f){f.focus();target=f;}});
+  draw();applyAll();
+})();
 </script>
 </body>
 </html>
