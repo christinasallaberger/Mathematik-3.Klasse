@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Terme: Monome, Binome, Polynome üben</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fraunces:opsz,wght@9..144,600;9..144,800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F7F9FC; --grid:#DCE6F2; --ink:#1B2F6B; --text:#1E2533; --muted:#5B6578;
+  --card:#FFFFFF; --line:#C9D5E6; --ok:#217A4B; --okbg:#E3F4EA; --bad:#B3261E; --badbg:#FBE7E5;
+  --mark:#FFE873; --field:#FFFFFF; --info:#EAF1FB;
+  color-scheme: light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#111827; --grid:#1C2638; --ink:#A9C1FF; --text:#E6EAF2; --muted:#9AA4B8;
+    --card:#172033; --line:#2C3A55; --ok:#5FD08E; --okbg:#173326; --bad:#FF8A80; --badbg:#3A1C1C;
+    --mark:#6B5A12; --field:#0F1726; --info:#1A2740; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#111827; --grid:#1C2638; --ink:#A9C1FF; --text:#E6EAF2; --muted:#9AA4B8;
+  --card:#172033; --line:#2C3A55; --ok:#5FD08E; --okbg:#173326; --bad:#FF8A80; --badbg:#3A1C1C;
+  --mark:#6B5A12; --field:#0F1726; --info:#1A2740; color-scheme: dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0; color:var(--text); font-family:"Atkinson Hyperlegible",system-ui,"Segoe UI",Arial,sans-serif;
+  font-size:1.0625rem; line-height:1.5;
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+}
+.wrap{max-width:60rem;margin:0 auto;padding:1.5rem 1rem 4rem}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:1rem;margin:1rem 0 2rem}
+h1{font-family:Fraunces,Georgia,serif;font-weight:800;color:var(--ink);font-size:clamp(2.2rem,6.5vw,3.7rem);line-height:1.02;margin:0;letter-spacing:-.01em}
+h1 sup{font-size:.5em;display:inline-block;transform-origin:left bottom;animation:hop 1.2s ease-out .3s 1;font-style:italic}
+@keyframes hop{0%{transform:translateY(0)}30%{transform:translateY(-.4em) rotate(-8deg)}60%{transform:translateY(0)}80%{transform:translateY(-.1em)}100%{transform:none}}
+@media (prefers-reduced-motion: reduce){h1 sup{animation:none}}
+.sub{color:var(--muted);margin:.5rem 0 0;max-width:40rem}
+.top{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
+.score{font-weight:700;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:999px;padding:.35rem .9rem}
+button{font:inherit;cursor:pointer;border-radius:.5rem;border:2px solid var(--ink);background:var(--ink);color:var(--paper);padding:.45rem .9rem;font-weight:700}
+button.ghost{background:transparent;color:var(--ink)}
+button:disabled{cursor:default}
+button:focus-visible,input:focus-visible{outline:3px solid var(--mark);outline-offset:2px}
+section{background:var(--card);border:2px solid var(--line);border-radius:.75rem;padding:1.25rem 1.25rem 1rem;margin:0 0 1.5rem}
+section[hidden]{display:none}
+.head{display:flex;gap:.8rem;align-items:baseline}
+.num{font-family:Fraunces,Georgia,serif;font-weight:800;font-size:1.6rem;color:var(--ink);min-width:1.4em}
+h2{font-size:1.15rem;margin:0}
+.tasks{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(19rem,100%),1fr));gap:.6rem 1.5rem;margin:1rem 0}
+.tasks.wide{grid-template-columns:repeat(auto-fill,minmax(min(26rem,100%),1fr))}
+.tasks.one{grid-template-columns:1fr}
+.task{display:flex;align-items:center;flex-wrap:wrap;gap:.45rem;padding:.4rem .5rem;border-radius:.5rem;border:2px solid transparent}
+.task.ok{background:var(--okbg);border-color:var(--ok)}
+.task.bad{background:var(--badbg);border-color:var(--bad)}
+.task.shown{border-color:var(--line);border-style:dashed}
+.lbl{font-weight:700;color:var(--ink);width:1.6em}
+.expr{font-size:1.2rem}
+.expr sup,.rule sup,.claim sup,.sol sup,td sup,li sup{font-size:.68em;margin-left:.04em}
+.for{color:var(--muted)}
+.eq{color:var(--muted)}
+.line{flex-basis:100%;display:flex;flex-wrap:wrap;align-items:center;gap:.4rem;padding-left:2.1em}
+.claim{flex:1 1 20rem;font-size:1.1rem}
+input{font:inherit;font-size:1.1rem;color:var(--text);background:var(--field);border:2px solid var(--line);border-radius:.4rem;padding:.2rem .4rem}
+input.val{width:7rem}
+input.v{width:3rem;text-align:center}
+input.prod{width:20rem;max-width:100%}
+input.ne{width:9rem}
+.seg{display:inline-flex;border:2px solid var(--line);border-radius:.4rem;overflow:hidden}
+.seg button{border:0;border-radius:0;background:var(--field);color:var(--text);padding:.2rem .65rem;font-weight:400}
+.seg button+button{border-left:2px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper);font-weight:700}
+.opts{flex-basis:100%;display:flex;flex-direction:column;gap:.4rem;padding-left:2.1em}
+.opt{text-align:left;font-weight:400;background:var(--field);color:var(--text);border:2px solid var(--line);line-height:1.4}
+.opt[aria-pressed="true"]{border-color:var(--ink);background:var(--info);font-weight:700}
+.sol{flex-basis:100%;font-size:.95rem;padding-left:2.1em;display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+.sol.ok{color:var(--ok);font-weight:700}.sol.bad{color:var(--bad)}.sol.shown{color:var(--muted)}
+button.mini{font-size:.85rem;padding:.1rem .55rem;background:transparent;color:var(--ink);border-width:1.5px}
+.actions{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}
+.res{color:var(--muted);font-weight:700}
+.hint{color:var(--muted);font-size:.95rem;margin:.4rem 0 0}
+.info{background:var(--info);border-left:6px solid var(--ink);border-radius:.5rem;padding:.8rem 1rem;margin:.9rem 0 0}
+.info p{margin:.2rem 0}
+.info table{min-width:0;margin:.4rem 0}
+.info td,.info th{border-bottom:1px solid var(--line);padding:.25rem .5rem;text-align:left}
+.rule{font-size:1.1rem}
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;font-size:.8em;line-height:1.1;margin:0 .1em}
+.fr>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .2em}
+.fr>span:last-child{padding:0 .2em}
+.bt .fr{font-size:.95em}
+.finish{display:flex;justify-content:center;margin:0 0 1.5rem}
+#summary{border-color:var(--ink);border-width:3px}
+.summsg{font-size:1.2rem;font-weight:700;color:var(--ink);margin:.6rem 0 1rem}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:30rem}
+th,td{text-align:left;padding:.4rem .6rem;border-bottom:1px solid var(--line)}
+#summary td:not(:first-child),#summary th:not(:first-child){text-align:center}
+tfoot td{font-weight:700;border-bottom:0;border-top:2px solid var(--ink)}
+#sumShown{margin-top:1rem;color:var(--muted)}
+#sumShown ul{margin:.3rem 0 0;padding-left:1.2rem}
+.levels{display:inline-flex;border:2px solid var(--ink);border-radius:999px;overflow:hidden;margin-top:1rem}
+.levels button{border:0;border-radius:0;background:transparent;color:var(--ink);padding:.45rem 1.1rem}
+.levels button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+button.more.ready{background:var(--ink);color:var(--paper)}
+.round{margin-left:auto;color:var(--muted);font-size:.9rem;border:1.5px solid var(--line);border-radius:999px;padding:.1rem .6rem}
+.rnote{color:var(--muted);font-weight:400;font-size:.9em}
+.startcard{border-color:var(--ink);border-width:3px}
+.startcard h2{font-family:Fraunces,Georgia,serif;font-size:1.5rem;color:var(--ink)}
+#pname{width:16rem;max-width:100%;font-size:1.15rem}
+#startDone{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap}
+.who{font-weight:700;color:var(--ink);display:inline-flex;align-items:center;gap:.4rem;font-size:1.1rem}
+#summary .who{margin:.4rem 0 0;color:var(--muted)}
+#summary .who b{color:var(--text)}
+#pnameErr{padding-left:0}
+.prev{color:var(--muted);font-size:1.15rem;min-height:1.6em}
+.prev b{color:var(--text);font-weight:400}
+#pad{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--card);border-top:3px solid var(--ink);
+  padding:.5rem .6rem calc(.5rem + env(safe-area-inset-bottom,0px));box-shadow:0 -4px 16px rgba(27,47,107,.15)}
+#pad[hidden]{display:none}
+#pad .padtop{display:flex;align-items:center;gap:.5rem;max-width:34rem;margin:0 auto .4rem;color:var(--muted);font-size:.9rem}
+#pad .padtop span{margin-right:auto;font-weight:700;color:var(--ink)}
+#pad .keys{display:grid;grid-template-columns:repeat(7,1fr);gap:.3rem;max-width:34rem;margin:0 auto}
+#pad .keys button{padding:.55rem 0;font-size:1.15rem;font-weight:700;background:var(--field);color:var(--text);border:2px solid var(--line);border-radius:.45rem;touch-action:manipulation}
+#pad .keys button.var{font-style:italic;font-family:Georgia,serif}
+#pad .keys button.op{background:var(--info)}
+#pad .keys button.span2{grid-column:span 2}
+#pad .keys button.go{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+#pad .keys button:active{transform:translateY(1px)}
+body.padon .wrap{padding-bottom:20rem}
+body.locked section[id]:not(#start):not(#summary),body.locked .finish{opacity:.35;filter:grayscale(.4);pointer-events:none;user-select:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Monom, Binom, Polynom<sup>x</sup></h1>
+      <p class="sub">Jede Aufgabe wird sofort kontrolliert, sobald du sie fertig hast (Enter oder weiterklicken). Ist sie falsch, versuch es einfach nochmal.</p>
+      <div class="levels" role="group" aria-label="Niveau">
+        <button type="button" data-level="std" aria-pressed="true">Standard</button>
+        <button type="button" data-level="ahs" aria-pressed="false">Standard AHS</button>
+      </div>
+    </div>
+    <div class="top">
+      <span class="score" id="score">0 von 0 richtig</span>
+      <button id="newAll">Neue Aufgaben</button>
+    </div>
+  </header>
+
+  <section id="start" class="startcard">
+    <div id="startAsk">
+      <h2>Wie heißt du?</h2>
+      <p class="hint">Gib zuerst deinen Namen ein. Er steht am Ende in deiner Auswertung.</p>
+      <div class="actions"><input id="pname" placeholder="Vor- und Nachname" autocomplete="name" aria-label="Dein Name"><button id="startBtn" type="button">Los geht’s</button></div>
+      <p class="sol bad" id="pnameErr" hidden>Bitte gib deinen Namen ein.</p>
+    </div>
+    <div id="startDone" hidden>
+      <span class="who">👤 <b id="pnameShow"></b></span>
+      <button type="button" class="mini" id="pnameEdit">Name ändern</button>
+    </div>
+  </section>
+
+  <div id="secs"></div>
+
+  <div class="finish"><button class="ghost" id="showSum">Auswertung anzeigen</button></div>
+
+  <section id="summary" hidden>
+    <div class="head"><h2 id="sumTitle">Auswertung</h2></div>
+    <p id="sumWho" class="who"></p>
+    <p id="sumMsg" class="summsg"></p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Übung</th><th>richtig</th><th>beim 1. Versuch</th><th>Lösung angesehen</th><th>offen</th></tr></thead>
+      <tbody id="sumBody"></tbody>
+      <tfoot id="sumFoot"></tfoot>
+    </table></div>
+    <div id="sumShown"></div>
+    <div class="actions" style="margin-top:1rem"><button id="newAll2">Neue Aufgaben</button></div>
+  </section>
+</div>
+
+<div id="pad" hidden role="group" aria-label="Eingabehilfe">
+  <div class="padtop"><span>Eingabehilfe</span>
+    <button type="button" class="mini" id="padSys">Handy-Tastatur einblenden</button>
+    <button type="button" class="mini" id="padHide" aria-label="Eingabehilfe schließen">✕</button>
+  </div>
+  <div class="keys">
+    <button type="button" data-ins="7">7</button><button type="button" data-ins="8">8</button><button type="button" data-ins="9">9</button>
+    <button type="button" class="var" data-var="0">x</button><button type="button" class="var" data-var="1">y</button><button type="button" class="var" data-var="2">a</button><button type="button" class="var" data-var="3">b</button>
+    <button type="button" data-ins="4">4</button><button type="button" data-ins="5">5</button><button type="button" data-ins="6">6</button>
+    <button type="button" class="op" data-ins="²" aria-label="hoch 2">□²</button><button type="button" class="op" data-ins="³" aria-label="hoch 3">□³</button><button type="button" class="op" data-ins="^" aria-label="hoch beliebige Zahl">□ⁿ</button><button type="button" class="op" data-act="del" aria-label="Löschen">⌫</button>
+    <button type="button" data-ins="1">1</button><button type="button" data-ins="2">2</button><button type="button" data-ins="3">3</button>
+    <button type="button" class="op" data-ins="+">+</button><button type="button" class="op" data-ins="-" aria-label="minus">−</button><button type="button" class="op" data-ins="·" aria-label="mal">·</button><button type="button" class="op" data-ins="/" aria-label="Bruchstrich">/</button>
+    <button type="button" data-ins="0">0</button><button type="button" class="op" data-ins="," aria-label="Komma">,</button><button type="button" class="op" data-ins="; " aria-label="nächste Zahl">;</button>
+    <button type="button" class="op span2" data-act="keine">keine</button><button type="button" class="go span2" data-act="ok">✓ fertig</button>
+  </div>
+</div>
+
+<script>
+/* ================= Zahlen & Brüche ================= */
+const LBL='abcdefghijkl',NN='\u202F',MINUS='−';
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[rnd(0,a.length-1)];
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=rnd(0,i);[a[i],a[j]]=[a[j],a[i]];}return a;};
+const group=s=>s.replace(/\B(?=(\d{3})+(?!\d))/g,NN);
+const B=x=>BigInt(x);
+function gcd(a,b){a=a<0n?-a:a;b=b<0n?-b:b;while(b){[a,b]=[b,a%b];}return a;}
+function rat(n,d=1n){if(d<0n){n=-n;d=-d;}const g=gcd(n,d)||1n;return {n:n/g,d:d/g};}
+const ri=k=>rat(B(k));
+const fr=(n,d)=>rat(B(n),B(d));
+const rneg=a=>({n:-a.n,d:a.d});
+const radd=(a,b)=>rat(a.n*b.d+b.n*a.d,a.d*b.d);
+const rmul=(a,b)=>rat(a.n*b.n,a.d*b.d);
+const rpow=(r,e)=>rat(r.n**B(e),r.d**B(e));
+const req=(a,b)=>a.n*b.d===b.n*a.d;
+const isZero=a=>a.n===0n;
+const isOne=a=>a.n===1n&&a.d===1n;
+const rkey=a=>{const r=rat(a.n,a.d);return r.n+'/'+r.d;};
+const fracH=(n,d)=>'<span class="fr"><span>'+n+'</span><span>'+d+'</span></span>';
+const isDecable=r=>{let d=r.d;while(d%2n===0n)d/=2n;while(d%5n===0n)d/=5n;return d===1n;};
+function ratDec(r){let p=0;while(p<30&&(10n**B(p))%r.d!==0n)p++;const neg=r.n<0n;let s=((neg?-r.n:r.n)*(10n**B(p))/r.d).toString();
+  if(p>0){s=s.padStart(p+1,'0');s=s.slice(0,s.length-p)+','+s.slice(s.length-p);}return (neg?'-':'')+s;}
+function rH(r,dec){const neg=r.n<0n,a=neg?-r.n:r.n;let s;
+  if(r.d===1n)s=group(String(a));else if(dec&&isDecable(r))s=ratDec({n:a,d:r.d});else s=fracH(a,r.d);return (neg?MINUS:'')+s;}
+function rPlain(r,dec){if(r.d===1n)return String(r.n);if(dec&&isDecable(r))return ratDec(r);return r.n+'/'+r.d;}
+function decR(s){const neg=s[0]==='-',b=neg?s.slice(1):s,[i,f='']=b.split(',');return rat(B((neg?'-':'')+i+f),10n**B(f.length));}
+function readRat(str){
+  let s=str.replace(/[−–—]/g,'-').replace(/[\s\u202F\u00A0']/g,'').replace(/[()]/g,'');if(!s)return null;
+  let m=s.match(/^([+-]?)(\d+)\/(\d+)$/);
+  if(m){if(/^0+$/.test(m[3]))return null;return {r:rat(B(m[1]+m[2]),B(m[3])),frac:true,rn:B(m[2]),rd:B(m[3])};}
+  if(s.includes(','))s=s.replace(/\./g,'').replace(',','.');
+  else if(/^[+-]?\d{1,3}(\.\d{3})+$/.test(s))s=s.replace(/\./g,'');
+  m=s.match(/^([+-]?)(\d*)(?:\.(\d+))?$/);if(!m||(!m[2]&&!m[3]))return null;
+  const f=m[3]||'';return {r:rat(B(m[1]+(m[2]||'0')+f),10n**B(f.length)),frac:false};
+}
+function readExp(str){const s=str.replace(/\s/g,'');return /^\d+$/.test(s)?parseInt(s,10):null;}
+
+/* ================= Terme (Glieder = Monome) ================= */
+const V=k=>'<i>'+k+'</i>';
+const sup=e=>e>1?'<sup>'+e+'</sup>':'';
+const M=(c,v={},dec)=>({c:typeof c==='number'?ri(c):c,v,dec:!!dec});
+const mkey=m=>Object.keys(m.v).filter(k=>m.v[k]>0).sort().map(k=>k+(m.v[k]>1?m.v[k]:'')).join('');
+function varsH(m,dot){return Object.keys(m.v).map(k=>V(k)+sup(m.v[k])).join(dot?' · ':'');}
+function coefH(a,dec){return a.d===1n?String(a.n):(dec&&isDecable(a)?ratDec(a):fracH(a.n,a.d));}
+function monoAbsH(m,dot){const a=m.c.n<0n?rneg(m.c):m.c,vp=varsH(m,dot);if(!vp)return coefH(a,m.dec);if(isOne(a))return vp;return coefH(a,m.dec)+(dot?' · ':'')+vp;}
+function polyH(ms,dot){return ms.map((m,i)=>{const neg=m.c.n<0n,b=monoAbsH(m,dot);return i?(neg?' − ':' + ')+b:(neg?MINUS:'')+b;}).join('');}
+function cPlain(a,dec){return a.d===1n?String(a.n):(dec&&isDecable(a)?ratDec(a):a.n+'/'+a.d);}
+function polyPlain(ms){return ms.map((m,i)=>{const neg=m.c.n<0n,a=neg?rneg(m.c):m.c,ks=Object.keys(m.v);
+  const s=((!ks.length||!isOne(a))?cPlain(a,m.dec):'')+ks.map(k=>k+(m.v[k]>1?'^'+m.v[k]:'')).join('');
+  return i?(neg?' - ':' + ')+s:(neg?'-':'')+s;}).join('');}
+function evalMono(m,a,mode){
+  const ks=Object.keys(m.v);
+  if(mode==='cpow'&&ks.length===1&&m.v[ks[0]]>1&&!isOne(m.c)&&!isOne(rneg(m.c)))return rpow(rmul(m.c,a[ks[0]]),m.v[ks[0]]);
+  let r=m.c;ks.forEach(k=>{let p=rpow(a[k],m.v[k]);if(mode==='negpow'&&a[k].n<0n&&m.v[k]%2===0)p=rneg(p);r=rmul(r,p);});return r;
+}
+const evalPoly=(ms,a,mode)=>ms.reduce((s,m)=>radd(s,evalMono(m,a,mode)),ri(0));
+function vSub(r,dec){const neg=r.n<0n,a=neg?rneg(r):r;
+  const inner=a.d===1n?String(a.n):(dec&&isDecable(a)?ratDec(a):fracH(a.n,a.d));
+  return (neg||a.d!==1n)?'('+(neg?MINUS:'')+inner+')':inner;}
+function monoSubAbs(m,a,dec){const c=m.c.n<0n?rneg(m.c):m.c,ks=Object.keys(m.v),f=[];
+  if(!ks.length||!isOne(c))f.push(coefH(c,dec||m.dec));ks.forEach(k=>f.push(vSub(a[k],dec)+sup(m.v[k])));return f.join(' · ');}
+function polySub(ms,a,dec){return ms.map((m,i)=>{const neg=m.c.n<0n,b=monoSubAbs(m,a,dec);return i?(neg?' − ':' + ')+b:(neg?MINUS:'')+b;}).join('');}
+const varsSet=ms=>{const s=new Set();ms.forEach(m=>Object.keys(m.v).forEach(k=>s.add(k)));return s;};
+const hasConst=ms=>ms.some(m=>!Object.keys(m.v).length);
+
+/* Eingabe eines Terms lesen, z. B. 3x^2 - 2xy + 5 */
+function numRat(s){s=s.replace('.',',');let m=s.match(/^(\d+)\/(\d+)$/);if(m)return +m[2]?fr(+m[1],+m[2]):null;
+  m=s.match(/^(\d+)(?:,(\d+))?$/);if(!m)return null;const f=m[2]||'';return rat(B(m[1]+f),10n**B(f.length));}
+function parseTerm(str){
+  const s=str.replace(/[−–—]/g,'-').replace(/²/g,'^2').replace(/³/g,'^3').replace(/⁴/g,'^4').replace(/\s+/g,'').replace(/[·×•]/g,'*').toLowerCase();
+  if(!s)return {err:'Schreibe einen Term.'};
+  if(/[()\[\]]/.test(s))return {err:'Schreibe den Term ohne Klammern.'};
+  if(s.includes('='))return {err:'Schreibe nur den Term, ohne =.'};
+  const chunks=s.match(/[+-]?[^+-]+/g)||[];
+  if(chunks.join('')!==s)return {err:'Zwischen zwei Gliedern steht genau ein + oder −.'};
+  const ms=[];
+  for(const ch of chunks){
+    const neg=ch[0]==='-',body=/^[+-]/.test(ch)?ch.slice(1):ch;
+    if(!body.replace(/\*/g,''))return {err:'Nach einem Rechenzeichen fehlt ein Glied.'};
+    let c=ri(neg?-1:1),last=null,pos=0;const v={};
+    const re=/(\d+(?:[.,]\d+)?(?:\/\d+)?)|([a-z])|(\^\d+)|(\*)/y;
+    while(pos<body.length){
+      re.lastIndex=pos;const m=re.exec(body);
+      if(!m)return {err:'Das Zeichen „'+body[pos]+'“ kann ich nicht lesen.'};
+      pos=re.lastIndex;
+      if(m[1]){const r=numRat(m[1]);if(!r)return {err:'Die Zahl '+m[1]+' kann ich nicht lesen.'};c=rmul(c,r);last={n:r};}
+      else if(m[2]){v[m[2]]=(v[m[2]]||0)+1;last={k:m[2]};}
+      else if(m[3]){const e=+m[3].slice(1);if(!last)return {err:'Vor ^ muss eine Zahl oder eine Variable stehen.'};
+        if(e<1)return {err:'Verwende Hochzahlen ab 1.'};
+        if(last.k)v[last.k]+=e-1;else c=rmul(c,rpow(last.n,e-1));last=null;}
+    }
+    ms.push({c,v});
+  }
+  if(ms.some(m=>isZero(m.c)))return {err:'Ein Glied mit der Vorzahl 0 fällt weg – nimm eine andere Zahl.'};
+  const keys=ms.map(mkey);
+  if(new Set(keys).size<keys.length)return {err:'Gleichartige Glieder (z. B. 2x und 5x) kann man zusammenfassen – dann hätte dein Term weniger Glieder. Nimm verschiedene Variablen oder Hochzahlen.'};
+  return {ms};
+}
+
+/* ================= Eingabefelder ================= */
+const val=(el,k)=>el.querySelector('[data-k="'+k+'"]').value;
+const put=(el,k,v)=>{el.querySelector('[data-k="'+k+'"]').value=v;};
+function setChoice(el,k,v){put(el,k,v);el.querySelectorAll('[data-set="'+k+'"]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===String(v)?'true':'false'));}
+const seg=(k,opts,label)=>'<input type="hidden" data-k="'+k+'"><span class="seg" role="group" aria-label="'+label+'">'+
+  opts.map(([v,l])=>'<button type="button" data-set="'+k+'" data-v="'+v+'" aria-pressed="false">'+l+'</button>').join('')+'</span>';
+function many(count,fn){const out=[],seen=new Set();let g=0;while(out.length<count&&g++<1000){const t=fn(out.length);if(t&&!seen.has(t.html)){seen.add(t.html);out.push(t);}}return shuffle(out);}
+const L1=['x','a','y','b','n','z'];
+const PAIRS=[['a','b'],['x','y'],['m','n'],['p','q']];
+
+/* ================= 1) Monom, Binom oder Polynom? ================= */
+const TYP={mono:'Monom',bi:'Binom',poly:'Polynom'};
+const typOf=n=>n===1?'mono':n===2?'bi':'poly';
+function rMono(o){
+  const nv=rnd(o.minVars||0,o.maxVars);
+  const ks=shuffle(o.letters.slice()).slice(0,nv).sort(),v={};
+  ks.forEach(k=>v[k]=pick(o.exps));
+  let c,dec=false;const r=Math.random();
+  if(o.frac&&r<.15)c=fr(...pick([[1,2],[3,4],[2,3],[1,3],[3,2]]));
+  else if(o.dec&&r<.28){c=decR(pick(['0,5','1,5','2,4','0,2','0,8']));dec=true;}
+  else c=ri(rnd(1,12));
+  if(!nv&&isOne(c))c=ri(rnd(2,9));
+  if(Math.random()<.35)c=rneg(c);
+  return {c,v,dec};
+}
+function genPoly(n,o){
+  const ms=[],keys=new Set();let g=0;
+  while(ms.length<n&&g++<300){
+    const m=rMono(Object.assign({},o,{minVars:n===1?Math.min(2,o.letters.length):(hasConst(ms)?1:0)}));
+    const k=mkey(m);if(keys.has(k))continue;keys.add(k);ms.push(m);
+  }
+  if(ms.length>1&&!Object.keys(ms[0].v).length)ms.push(ms.shift());
+  return ms.length===n?ms:null;
+}
+function g_cls(ahs){return i=>{
+  const pat=ahs?[1,2,3,4,1,5,2,3]:[1,2,3,1,2,4,3,2],n=pat[i%pat.length];
+  const letters=pick(ahs?[['x'],['a','b'],['x','y'],['x','y','z'],['m','n']]:[['x'],['a','b'],['x','y'],['a'],['y']]);
+  const o={letters,maxVars:Math.min(letters.length,ahs?3:2),exps:ahs?[1,1,2,2,3,4]:[1,1,2,2,3],frac:ahs,dec:ahs};
+  let html;
+  if(n===1&&ahs&&i%2===0&&letters.length>1){
+    const [p,q]=letters,m1=M(rnd(2,9),{[p]:pick([1,2])}),m2=M(rnd(2,9)*(Math.random()<.4?-1:1),{[q]:pick([1,2])});
+    const w=m=>m.c.n<0n?'('+polyH([m])+')':polyH([m]);html=w(m1)+' · '+w(m2);
+  }else{
+    const ms=genPoly(n,o);if(!ms)return null;
+    html=polyH(ms,n===1&&!ahs&&i%2===0);
+  }
+  return {html,n,type:typOf(n)};
+};}
+const CLS={
+  row:t=>'<span class="expr">'+t.html+'</span><div class="line">ist ein '+seg('typ',[['mono','Monom'],['bi','Binom'],['poly','Polynom']],'Art des Terms')+
+    ', weil er aus <input class="v" data-k="n" inputmode="numeric" aria-label="Anzahl der Glieder" autocomplete="off"> Glied(ern) besteht.</div>',
+  check:(t,el)=>{
+    const c=readExp(val(el,'n')),ty=val(el,'typ');
+    if(c===null)return 'Gib die Anzahl der Glieder als Zahl ein.';
+    if(c!==t.n)return c>t.n?'Zähle nochmal: Ein Produkt wie 3ab oder 2 · x · y ist nur EIN Glied. Glieder werden durch + oder − getrennt.'
+                           :'Zähle nochmal: Jedes + oder − zwischen zwei Teilen beginnt ein neues Glied.';
+    if(ty!==t.type)return 'Richtig gezählt! Wie heißt ein Term mit '+t.n+(t.n===1?' Glied':' Gliedern')+'?';
+    return true;},
+  solve:(t,el)=>{setChoice(el,'typ',t.type);put(el,'n',t.n);},
+  task:t=>t.html,
+  solText:t=>TYP[t.type]+', weil der Term aus '+t.n+(t.n===1?' Glied':' Gliedern')+' besteht.'
+};
+
+/* ================= 2) Beispiele angeben ================= */
+function needN(ms,n){if(ms.length===n)return true;
+  return 'Dein Term hat '+ms.length+(ms.length===1?' Glied':' Glieder')+' – gesucht ist '+(n===1?'ein Monom (1 Glied)':n===2?'ein Binom (2 Glieder)':'ein Polynom mit '+n+' Gliedern')+'.';}
+function needVars(ms,arr){const s=varsSet(ms);if(arr.every(k=>s.has(k))&&[...s].every(k=>arr.includes(k)))return true;
+  return 'Verwende '+(arr.length===1?'nur die Variable '+arr[0]:'genau die Variablen '+arr.join(' und '))+'.';}
+const chain=(...fs)=>{for(const f of fs){const r=f();if(r!==true)return r;}return true;};
+function needValue(ms,x,k,W){const v=evalPoly(ms,{[x]:ri(k)});if(req(v,ri(W)))return true;
+  return 'Setze '+x+' = '+k+' ein: Dein Term hat dann den Wert '+rPlain(v,true)+', nicht '+W+'.';}
+const EX_STD=[
+  ()=>{const x=pick(L1);return {text:'ein <b>Monom</b> mit der Variablen '+V(x),ex:[M(rnd(2,9),{[x]:rnd(1,3)})],check:ms=>chain(()=>needN(ms,1),()=>needVars(ms,[x]))};},
+  ()=>{const [p,q]=pick(PAIRS);return {text:'ein <b>Monom</b> mit den Variablen '+V(p)+' und '+V(q),ex:[M(rnd(2,9),{[p]:1,[q]:1})],check:ms=>chain(()=>needN(ms,1),()=>needVars(ms,[p,q]))};},
+  ()=>{const x=pick(L1);return {text:'ein <b>Binom</b> mit der Variablen '+V(x),ex:[M(rnd(2,9),{[x]:1}),M(rnd(1,9))],check:ms=>chain(()=>needN(ms,2),()=>needVars(ms,[x]))};},
+  ()=>({text:'ein <b>Binom</b>, bei dem ein Glied eine Zahl ohne Variable ist',ex:[M(1,{x:1}),M(-rnd(1,9))],
+    check:ms=>chain(()=>needN(ms,2),()=>hasConst(ms)||'Eines der beiden Glieder soll eine Zahl ohne Variable sein, z. B. 7.')}),
+  ()=>({text:'ein <b>Polynom</b> mit 3 Gliedern',ex:[M(1,{x:2}),M(rnd(2,6),{x:1}),M(rnd(1,9))],check:ms=>needN(ms,3)}),
+  ()=>{const y=pick(L1);return {text:'ein <b>Polynom</b> mit 4 Gliedern und nur der Variablen '+V(y),ex:[M(1,{[y]:3}),M(rnd(2,5),{[y]:2}),M(rnd(2,9),{[y]:1}),M(rnd(1,9))],
+    check:ms=>chain(()=>needN(ms,4),()=>needVars(ms,[y]))};},
+  ()=>{const [p,q]=pick(PAIRS);return {text:'ein <b>Binom</b> mit den Variablen '+V(p)+' und '+V(q),ex:[M(rnd(2,9),{[p]:1}),M(rnd(2,9),{[q]:1})],
+    check:ms=>chain(()=>needN(ms,2),()=>needVars(ms,[p,q]))};},
+  ()=>{const x=pick(L1);return {text:'ein <b>Monom</b>, in dem '+V(x)+'<sup>2</sup> vorkommt',ex:[M(rnd(2,9),{[x]:2})],
+    check:ms=>chain(()=>needN(ms,1),()=>ms[0].v[x]===2||'Die Variable '+x+' soll die Hochzahl 2 haben, z. B. 3'+x+'².')};},
+  ()=>{const k=rnd(2,5),a=rnd(2,4),b=rnd(1,9),W=a*k+b;return {text:'ein <b>Binom</b> mit der Variablen '+V('x')+', das für '+V('x')+' = '+k+' den Wert '+W+' hat',
+    ex:[M(a,{x:1}),M(b)],check:ms=>chain(()=>needN(ms,2),()=>needVars(ms,['x']),()=>needValue(ms,'x',k,W))};}
+];
+const EX_AHS=[
+  ()=>({text:'ein <b>Polynom</b> mit 3 Gliedern: eines mit '+V('x')+'<sup>2</sup>, eines mit '+V('x')+' und eine Zahl',ex:[M(rnd(2,5),{x:2}),M(-rnd(2,9),{x:1}),M(rnd(1,9))],
+    check:ms=>chain(()=>needN(ms,3),()=>needVars(ms,['x']),()=>{const k=ms.map(mkey).sort().join('|');return k==='|x|x2'||'Du brauchst genau ein Glied mit x², eines mit x und eine Zahl ohne Variable.';})}),
+  ()=>({text:'ein <b>Binom</b>, bei dem jedes Glied beide Variablen '+V('a')+' und '+V('b')+' enthält',ex:[M(rnd(2,9),{a:1,b:1}),M(-rnd(2,9),{a:2,b:1})],
+    check:ms=>chain(()=>needN(ms,2),()=>needVars(ms,['a','b']),()=>ms.every(m=>m.v.a&&m.v.b)||'Jedes Glied muss a UND b enthalten, z. B. 2ab oder a²b.')}),
+  ()=>{const [p,q]=pick(PAIRS);return {text:'ein <b>Monom</b> mit negativer Vorzahl und den Variablen '+V(p)+' und '+V(q),ex:[M(-rnd(2,9),{[p]:2,[q]:1})],
+    check:ms=>chain(()=>needN(ms,1),()=>needVars(ms,[p,q]),()=>ms[0].c.n<0n||'Die Vorzahl soll negativ sein, z. B. −4.')};},
+  ()=>({text:'ein <b>Polynom</b> mit 4 Gliedern, die alle die Variable '+V('x')+' enthalten',ex:[M(1,{x:4}),M(-rnd(2,5),{x:3}),M(rnd(2,9),{x:2}),M(rnd(2,9),{x:1})],
+    check:ms=>chain(()=>needN(ms,4),()=>needVars(ms,['x']),()=>!hasConst(ms)||'Jedes Glied muss x enthalten – eine Zahl allein ist hier nicht erlaubt.')}),
+  ()=>({text:'ein <b>Binom</b> mit der Variablen '+V('x')+', bei dem eine Vorzahl ein Bruch ist',ex:[M(fr(1,pick([2,3,4])),{x:1}),M(rnd(1,9))],
+    check:ms=>chain(()=>needN(ms,2),()=>needVars(ms,['x']),()=>ms.some(m=>m.c.d!==1n)||'Eine Vorzahl soll ein Bruch sein, z. B. 1/2x.')}),
+  ()=>{const k=rnd(1,4),a=rnd(2,5),b=rnd(1,15),W=-a*k+b;return {text:'ein <b>Binom</b> mit der Variablen '+V('x')+', das für '+V('x')+' = '+MINUS+k+' den Wert '+W.toString().replace('-',MINUS)+' hat',
+    ex:[M(a,{x:1}),M(b)],check:ms=>chain(()=>needN(ms,2),()=>needVars(ms,['x']),()=>needValue(ms,'x',-k,W))};},
+  ()=>{const k=rnd(1,3),a=rnd(1,5),b=rnd(1,9),W=k*k+a*k+b;return {text:'ein <b>Polynom</b> mit 3 Gliedern und der Variablen '+V('y')+', das für '+V('y')+' = '+k+' den Wert '+W+' hat',
+    ex:[M(1,{y:2}),M(a,{y:1}),M(b)],check:ms=>chain(()=>needN(ms,3),()=>needVars(ms,['y']),()=>needValue(ms,'y',k,W))};}
+];
+const EXS={
+  row:t=>'<div class="claim">Schreibe '+t.text+' an:</div><div class="line"><input class="prod" data-k="f" aria-label="Dein Term" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="z. B. 3x^2 + 5"><span class="prev" data-prev aria-live="polite"></span></div>',
+  check:(t,el)=>{const p=parseTerm(val(el,'f'));if(p.err)return p.err;return t.check(p.ms);},
+  solve:(t,el)=>put(el,'f',polyPlain(t.ex)),
+  task:t=>t.text,
+  solText:t=>'zum Beispiel '+polyH(t.ex)
+};
+
+/* ================= 3) Wert eines Terms ================= */
+function valTask(ms,a,dec,extra){
+  const value=evalPoly(ms,a),alt={};
+  const add=(r,h)=>{const k=rkey(r);if(!req(r,value)&&!alt[k])alt[k]=h;};
+  (extra||[]).forEach(([r,h])=>add(r,h));
+  add(evalPoly(ms,a,'cpow'),'Zuerst potenzieren, dann multiplizieren – die Hochzahl gehört nur zur Variablen.');
+  add(evalPoly(ms,a,'negpow'),'Achtung: Eine negative Zahl mit gerader Hochzahl ist positiv, z. B. (−3)² = 9.');
+  const sub=polySub(ms,a,dec),parts=ms.map(m=>evalMono(m,a));
+  const mid=parts.map((v,i)=>{const neg=v.n<0n,ab=neg?rneg(v):v;return i?(neg?' − ':' + ')+rH(ab,dec):rH(v,dec);}).join('');
+  const res=rH(value,dec);
+  return {html:polyH(ms),asgH:Object.keys(a).map(k=>V(k)+' = '+rH(a[k],dec)).join(', '),value,dec,alt,
+    steps:sub+(mid!==sub&&mid!==res?' = '+mid:'')+' = '+res,frac:!dec&&value.d!==1n};
+}
+function g_valS(i){
+  const x=pick(L1),k=i%8;
+  if(k===0)return valTask([M(rnd(2,9),{[x]:1}),M(rnd(1,20))],{[x]:ri(rnd(1,9))});
+  if(k===1){const c=rnd(2,9),xv=rnd(2,9),b=rnd(1,c*xv);return valTask([M(c,{[x]:1}),M(-b)],{[x]:ri(xv)});}
+  if(k===2)return valTask([M(1,{[x]:2}),M(rnd(1,15))],{[x]:ri(rnd(2,9))});
+  if(k===3)return valTask([M(rnd(2,5),{[x]:2})],{[x]:ri(rnd(2,6))});
+  if(k===4){const [p,q]=pick(PAIRS);return valTask([M(rnd(2,6),{[p]:1}),M(rnd(2,6),{[q]:1})],{[p]:ri(rnd(1,9)),[q]:ri(rnd(1,9))});}
+  if(k===5){const c=rnd(2,6),b=rnd(1,9),xv=rnd(1,9),v=c*(xv+b);
+    return {html:c+' · ('+V(x)+' + '+b+')',asgH:V(x)+' = '+xv,value:ri(v),dec:false,
+      alt:{[rkey(ri(c*xv+b))]:'Klammer zuerst! Rechne zuerst '+x+' + '+b+' aus und multipliziere dann mit '+c+'.'},
+      steps:c+' · ('+xv+' + '+b+') = '+c+' · '+(xv+b)+' = '+v};}
+  if(k===6){const xv=rnd(3,8),c=rnd(1,xv-1),d=rnd(0,9),ms=[M(1,{[x]:2}),M(-c,{[x]:1})];if(d)ms.push(M(d));return valTask(ms,{[x]:ri(xv)});}
+  const [p,q]=pick(PAIRS);return valTask([M(rnd(2,5),{[p]:1,[q]:1}),M(rnd(1,9))],{[p]:ri(rnd(1,6)),[q]:ri(rnd(1,6))});
+}
+function g_valA(i){
+  const x=pick(['x','a','y','z']),k=i%6;
+  if(k===0){const ms=[M(rnd(1,3),{[x]:2}),M(pick([-1,1])*rnd(1,6),{[x]:1}),M(pick([-1,1])*rnd(1,9))];return valTask(ms,{[x]:ri(-rnd(1,5))});}
+  if(k===1){const xv=rnd(2,6),d=rnd(1,20);return valTask([M(-1,{[x]:2}),M(d)],{[x]:ri(-xv)},false,
+    [[ri(xv*xv+d),'−'+x+'² bedeutet −('+x+'²): zuerst quadrieren, dann kommt das Minus davor.']]);}
+  if(k===2){const ms=[M(rnd(2,4),{[x]:3})];if(Math.random()<.6)ms.push(M(pick([-1,1])*rnd(1,9)));return valTask(ms,{[x]:ri(-rnd(2,3))});}
+  if(k===3){const [p,q]=pick(PAIRS);const nz=()=>pick([-1,1])*rnd(1,6);
+    return valTask([M(rnd(2,6),{[p]:1}),M(-rnd(2,6),{[q]:1})],{[p]:ri(nz()),[q]:ri(nz())});}
+  if(k===4){const d=pick([2,3,4]),n=pick(d===4?[1,3]:d===3?[1,2]:[1,3]);
+    return valTask([M(d*rnd(1,3),{[x]:2}),M(pick([-1,1])*rnd(1,6),{[x]:1}),M(rnd(1,9))],{[x]:fr(n,d)});}
+  return valTask([M(rnd(2,5),{[x]:2}),M(pick([-1,1])*rnd(1,5),{[x]:1})],{[x]:decR(pick(['0,5','1,5','0,2','2,5','-0,5','-1,5']))},true);
+}
+const VAL={
+  row:t=>'<span class="expr">'+t.html+'</span><span class="for">für '+t.asgH+'</span><div class="line">Wert: <input class="val" data-k="v" inputmode="decimal" aria-label="Wert des Terms" autocomplete="off"></div>',
+  check:(t,el)=>{
+    const u=readRat(val(el,'v'));
+    if(!u)return 'Gib den Wert als Zahl ein'+(t.frac?' oder als Bruch, z. B. 7/4':'')+'.';
+    if(req(u.r,t.value)){if(u.frac&&gcd(u.rn,u.rd)>1n)return 'Richtig gerechnet – kürze den Bruch noch!';return true;}
+    const h=t.alt[rkey(u.r)];if(h)return h;
+    if(req(rneg(u.r),t.value))return 'Fast! Kontrolliere das Vorzeichen.';
+    return false;},
+  solve:(t,el)=>put(el,'v',rPlain(t.value,t.dec)),
+  task:t=>t.html+' für '+t.asgH,
+  solText:t=>t.steps
+};
+
+/* ================= 4) Stimmt das? Begründe! ================= */
+function claim(html,ok,w){const opts=shuffle([{t:ok,ok:true}].concat(w.map(t=>({t,ok:false}))));return {html,opts,ok:opts.findIndex(o=>o.ok)};}
+const X=V('x'),S2='<sup>2</sup>',S3='<sup>3</sup>';
+const m_=k=>MINUS+k;
+const CL_STD=[
+  ()=>{const k=rnd(2,5),c=rnd(2,4),W=(c*k)**2;return claim('Für '+X+' = '+k+' hat der Term '+c+X+S2+' den Wert '+W+'.',
+    'Stimmt nicht: Zuerst wird potenziert, dann multipliziert: '+c+' · '+k+S2+' = '+c+' · '+k*k+' = '+c*k*k+'.',
+    ['Stimmt: '+c+' · '+k+' = '+c*k+' und '+c*k+S2+' = '+W+'.','Stimmt nicht: Der Wert ist '+c+' · '+k+' · 2 = '+c*k*2+'.']);},
+  ()=>{const c=rnd(2,9),k=rnd(2,9);return claim('Für '+X+' = '+k+' hat der Term '+c+X+' den Wert '+c+''+k+'.',
+    'Stimmt nicht: '+c+X+' bedeutet '+c+' · '+X+', also '+c+' · '+k+' = '+c*k+'.',
+    ['Stimmt: Man schreibt die Zahl '+k+' einfach statt '+X+' hin.','Stimmt nicht: '+c+X+' bedeutet '+c+' + '+X+', also '+(c+k)+'.']);},
+  ()=>{const c=rnd(2,9),[p,q]=pick(PAIRS);return claim('Der Term '+c+V(p)+V(q)+' ist ein Binom, weil zwei Variablen vorkommen.',
+    'Stimmt nicht: '+c+V(p)+V(q)+' ist ein Produkt ('+c+' · '+V(p)+' · '+V(q)+') und damit nur ein Glied – also ein Monom.',
+    ['Stimmt: Jede Variable bildet ein eigenes Glied.','Stimmt nicht: Es ist ein Polynom, weil es aus drei Teilen besteht.']);},
+  ()=>{const k=rnd(2,20);return claim('Der Term '+X+S2+' − '+k+' ist ein Binom.',
+    'Stimmt: Er besteht aus zwei Gliedern ('+X+S2+' und '+k+'), die durch − getrennt sind.',
+    ['Stimmt nicht: Er ist ein Monom, weil nur eine Variable vorkommt.','Stimmt nicht: Er ist ein Polynom, weil '+X+S2+' = '+X+' · '+X+' schon zwei Glieder sind.']);},
+  ()=>{const k=rnd(1,9),m=rnd(1,9);return claim('Beim Bruchterm '+fracH(m,X+' − '+k)+' darf man für '+X+' die Zahl '+k+' nicht einsetzen.',
+    'Stimmt: Für '+X+' = '+k+' wird der Nenner '+k+' − '+k+' = 0 – und durch 0 darf man nicht dividieren.',
+    ['Stimmt nicht: Man darf für '+X+' jede Zahl einsetzen.','Stimmt nicht: Verboten ist die Zahl '+m_(k)+'.']);},
+  ()=>{const k=rnd(1,9),m=rnd(2,9);return claim('Beim Bruchterm '+fracH(X+' − '+k,m)+' darf man für '+X+' die Zahl '+k+' nicht einsetzen.',
+    'Stimmt nicht: Für '+X+' = '+k+' wird nur der Zähler 0, und 0 : '+m+' = 0 ist erlaubt. Der Nenner '+m+' ist nie 0.',
+    ['Stimmt: Der Zähler wird 0, und das ist verboten.','Stimmt: Man darf nie eine Zahl einsetzen, die schon im Term vorkommt.']);},
+  ()=>{const a=rnd(2,9),c=rnd(2,5),k=rnd(2,6);return claim('Für '+X+' = '+k+' hat der Term '+a+' + '+c+X+' den Wert '+(a+c)*k+'.',
+    'Stimmt nicht: Punkt vor Strich! '+a+' + '+c+' · '+k+' = '+a+' + '+c*k+' = '+(a+c*k)+'.',
+    ['Stimmt: '+a+' + '+c+' = '+(a+c)+' und '+(a+c)+' · '+k+' = '+(a+c)*k+'.','Stimmt nicht: Der Wert ist '+a+' + '+c+' + '+k+' = '+(a+c+k)+'.']);},
+  ()=>{const p=rnd(2,6),q=rnd(1,9),c=rnd(2,5);return claim('Für '+V('a')+' = '+p+' und '+V('b')+' = '+q+' hat der Term '+c+V('a')+' + '+V('b')+' den Wert '+(c*p+q)+'.',
+    'Stimmt: '+c+' · '+p+' + '+q+' = '+c*p+' + '+q+' = '+(c*p+q)+'.',
+    ['Stimmt nicht: Man muss '+c+' · ('+p+' + '+q+') = '+c*(p+q)+' rechnen.','Stimmt nicht: '+c+V('a')+' bedeutet '+c+''+p+', also '+(+(c+''+p)+q)+'.']);}
+];
+const CL_AHS=[
+  ()=>{const k=rnd(2,9);return claim('Für '+X+' = '+m_(k)+' hat '+X+S2+' den Wert '+m_(k*k)+'.',
+    'Stimmt nicht: ('+m_(k)+')'+S2+' = ('+m_(k)+') · ('+m_(k)+') = '+k*k+' – minus mal minus ergibt plus.',
+    ['Stimmt: Das Minus bleibt beim Quadrieren erhalten.','Stimmt nicht: ('+m_(k)+')'+S2+' = '+m_(2*k)+'.']);},
+  ()=>{const k=rnd(2,7);return claim('Für '+X+' = '+m_(k)+' hat der Term '+MINUS+X+S2+' den Wert '+k*k+'.',
+    'Stimmt nicht: '+MINUS+X+S2+' bedeutet '+MINUS+'('+X+S2+'). Zuerst quadrieren: ('+m_(k)+')'+S2+' = '+k*k+', dann das Minus: '+m_(k*k)+'.',
+    ['Stimmt: Minus mal minus ergibt plus.','Stimmt nicht: Der Wert ist '+2*k+'.']);},
+  ()=>{const k=rnd(2,4);return claim('Für '+X+' = '+m_(k)+' hat '+X+S3+' den Wert '+k**3+'.',
+    'Stimmt nicht: ('+m_(k)+')'+S3+' = ('+m_(k)+') · ('+m_(k)+') · ('+m_(k)+') = '+m_(k**3)+' – bei ungerader Hochzahl bleibt das Ergebnis negativ.',
+    ['Stimmt: Potenzen sind immer positiv.','Stimmt nicht: ('+m_(k)+')'+S3+' = '+m_(3*k)+'.']);},
+  ()=>{const a=rnd(2,5),q=rnd(2,6),b=a*q,m=rnd(1,9);return claim('Beim Bruchterm '+fracH(m,a+X+' − '+b)+' darf man für '+X+' die Zahl '+b+' nicht einsetzen.',
+    'Stimmt nicht: Der Nenner wird 0 für '+X+' = '+q+', denn '+a+' · '+q+' − '+b+' = 0. Verboten ist also '+q+'.',
+    ['Stimmt: Die Zahl '+b+' steht im Nenner, also ist sie verboten.','Stimmt nicht: Man darf jede Zahl einsetzen.']);},
+  ()=>{const k=rnd(2,9),m=rnd(1,9);return claim('Beim Bruchterm '+fracH(m,X+' · ('+X+' − '+k+')')+' gibt es genau zwei Zahlen, die man nicht einsetzen darf.',
+    'Stimmt: Für '+X+' = 0 und für '+X+' = '+k+' wird ein Faktor im Nenner 0 – und damit der ganze Nenner.',
+    ['Stimmt nicht: Nur '+k+' ist verboten.','Stimmt nicht: Nur 0 ist verboten.']);},
+  ()=>{const c=rnd(2,9),y=V('y');return claim('Der Term '+MINUS+c+X+S2+y+' ist ein Polynom, weil er aus drei Teilen ('+c+', '+X+S2+', '+y+') besteht.',
+    'Stimmt nicht: '+MINUS+c+X+S2+y+' ist ein Produkt und damit ein einziges Glied – ein Monom.',
+    ['Stimmt: Jeder Faktor zählt als eigenes Glied.','Stimmt nicht: Es ist ein Binom, weil eine Zahl und Variablen vorkommen.']);},
+  ()=>{const k=rnd(2,9),m=rnd(1,9);return claim('Beim Term '+fracH(X,k)+' + '+m+' darf man für '+X+' die Zahl '+k+' nicht einsetzen.',
+    'Stimmt nicht: Im Nenner steht nur die Zahl '+k+' – er ist nie 0. Man darf jede Zahl einsetzen.',
+    ['Stimmt: Sonst steht '+fracH(k,k)+' im Term.','Stimmt nicht: Verboten ist '+X+' = 0.']);},
+  ()=>{const d=rnd(2,3),mm=rnd(1,3),c=mm*d*d;
+    return claim('Für '+X+' = '+fracH(1,d)+' hat der Term '+c+X+S2+' den Wert '+mm+'.',
+    'Stimmt: '+c+' · ('+fracH(1,d)+')'+S2+' = '+c+' · '+fracH(1,d*d)+' = '+mm+'.',
+    ['Stimmt nicht: '+c+' · '+fracH(1,d)+' = '+rH(fr(c,d))+' und ('+rH(fr(c,d))+')'+S2+' = '+rH(rpow(fr(c,d),2))+'.',
+     'Stimmt nicht: ('+fracH(1,d)+')'+S2+' = '+fracH(2,d)+', also '+c+' · '+fracH(2,d)+' = '+rH(fr(2*c,d))+'.']);}
+];
+const CLM={
+  row:t=>'<div class="claim">'+t.html+'</div><input type="hidden" data-k="c"><div class="opts" role="group" aria-label="Antwort mit Begründung">'+
+    t.opts.map((o,j)=>'<button type="button" class="opt" data-set="c" data-v="'+j+'" aria-pressed="false">'+o.t+'</button>').join('')+'</div>',
+  check:(t,el)=>+val(el,'c')===t.ok?true:'Diese Begründung passt nicht. Rechne selbst nach bzw. zähle die Glieder – dann wähle nochmal.',
+  solve:(t,el)=>setChoice(el,'c',t.ok),
+  task:t=>t.html,
+  solText:t=>t.opts[t.ok].t
+};
+
+/* ================= 5) Bruchterme: verbotene Zahlen ================= */
+function linMs(f,x){const ms=[];if(f.a)ms.push(M(f.a,{[x]:1}));if(f.b)ms.push(M(f.b));return f.rev?ms.reverse():ms;}
+function denH(p,x){if(!p.f.length)return String(p.k);if(p.f.length===1)return polyH(linMs(p.f[0],x));
+  return p.f.map(f=>(f.b===0&&f.a===1)?V(x):'('+polyH(linMs(f,x))+')').join(' · ');}
+const partH=(p,x)=>fracH(polyH(p.num),denH(p,x));
+const denVal=(p,v)=>p.f.reduce((s,f)=>rmul(s,radd(rmul(ri(f.a),v),ri(f.b))),ri(p.k||1));
+const numVal=(p,v,x)=>evalPoly(p.num,{[x]:v});
+function numP(x){const k=rnd(0,5);
+  return [()=>[M(rnd(1,9))],()=>[M(1,{[x]:1}),M(rnd(1,9))],()=>[M(rnd(2,5),{[x]:1})],()=>[M(1,{[x]:1}),M(-rnd(1,9))],()=>[M(rnd(2,4),{[x]:1}),M(rnd(1,9))],()=>[M(1,{[x]:2}),M(rnd(1,5))]][k]();}
+function bruch(parts,x){
+  const bad=[];parts.forEach(p=>p.f.forEach(f=>{const r=rat(B(-f.b),B(f.a));if(!bad.some(b=>req(b,r)))bad.push(r);}));
+  bad.sort((a,b)=>(a.n*b.d<b.n*a.d?-1:1));
+  const why=bad.map(v=>{const p=parts.find(p=>p.f.some(f=>isZero(radd(rmul(ri(f.a),v),ri(f.b))))),f=p.f.find(f=>isZero(radd(rmul(ri(f.a),v),ri(f.b))));
+    return 'für '+V(x)+' = '+rH(v)+': '+((f.a===1&&f.b===0)?V(x)+' = 0':polySub(linMs(f,x),{[x]:v})+' = 0');});
+  return {html:parts.map((p,j)=>(j?(p.op||' + '):'')+partH(p,x)).join(''),parts,x,bad,why};
+}
+function g_brS(i){
+  const x=pick(['x','x','a','y','n']),k=i%8,c=rnd(1,9);
+  const P=(f,num,k0)=>({num:num||numP(x),f,k:k0||1});
+  if(k===0)return bruch([P([{a:1,b:0}])],x);
+  if(k===1)return bruch([P([{a:1,b:-c}])],x);
+  if(k===2)return bruch([P([{a:1,b:c}])],x);
+  if(k===3)return bruch([P([{a:rnd(2,9),b:0}])],x);
+  if(k===4)return bruch([P([],[M(1,{[x]:1}),M(pick([-1,1])*rnd(1,9))],rnd(2,9))],x);
+  if(k===5)return bruch([P([{a:1,b:-c}],[M(1,{[x]:1}),M(rnd(1,9))])],x);
+  if(k===6)return bruch([P([{a:-1,b:c,rev:true}])],x);
+  return bruch([P([{a:1,b:c}],[M(1,{[x]:1}),M(-c)])],x);
+}
+function g_brA(i){
+  const x=pick(['x','x','a','y']),k=i%6;
+  const P=(f,op,k0)=>({num:numP(x),f,op,k:k0||1});
+  if(k===0){const a=rnd(2,5);return bruch([P([{a,b:-a*rnd(1,6)}])],x);}
+  if(k===1){let a,b;do{a=rnd(2,5);b=rnd(1,9);}while(gcd(B(a),B(b))!==1n);return bruch([P([{a,b:pick([-1,1])*b}])],x);}
+  if(k===2)return bruch([P([{a:1,b:0},{a:1,b:-rnd(1,9)}])],x);
+  if(k===3){let p,q;do{p=rnd(1,9);q=rnd(1,9);}while(p===q);return bruch([P([{a:1,b:p},{a:1,b:-q}])],x);}
+  if(k===4){if(Math.random()<.5)return bruch([P([{a:1,b:0}]),P([{a:1,b:-rnd(1,9)}],' + ')],x);
+    let p,q;do{p=rnd(1,9);q=rnd(1,9);}while(p===q);return bruch([P([{a:1,b:p}]),P([{a:1,b:-q}],' − ')],x);}
+  if(Math.random()<.5)return bruch([P([],null,rnd(2,9))],x);
+  return bruch([P([{a:rnd(2,6),b:0}])],x);
+}
+function readSet(str){
+  const s=str.trim().toLowerCase();
+  if(/^(kein|nichts|-|—|–)/.test(s)&&!/\d/.test(s))return {none:true,vals:[]};
+  const parts=s.split(/\s*(?:;|\bund\b|\|)\s*/).filter(Boolean),vals=[];
+  for(let p of parts){p=p.replace(/^[a-z]\s*(=|≠|!=)\s*/,'');const u=readRat(p);if(!u)return null;vals.push(u.r);}
+  return vals.length?{none:false,vals}:null;
+}
+const BRU={
+  row:t=>'<span class="expr bt">'+t.html+'</span><div class="line">'+V(t.x)+' ≠ <input class="ne" data-k="z" inputmode="text" aria-label="Verbotene Zahlen" autocomplete="off" autocapitalize="off" placeholder="z. B. 3 oder keine"></div>',
+  check:(t,el)=>{
+    const raw=val(el,'z'),S=readSet(raw),x=t.x;
+    if(!S)return 'Gib die Zahl ein (z. B. 3 oder -2). Mehrere Zahlen mit ; trennen, z. B. 0; 4. Ist jede Zahl erlaubt, schreib: keine';
+    if(!t.bad.length)return S.none?true:'Im Nenner steht keine Variable – er ist immer '+t.parts[0].k+' und nie 0. Schreib: keine';
+    if(S.none)return 'Es gibt eine Zahl, für die der Nenner 0 wird. Welche?';
+    if(t.bad.length>1&&S.vals.length===1&&raw.includes(','))return 'Mehrere Zahlen bitte mit ; trennen, z. B. 0; 4.';
+    for(const v of S.vals){
+      if(t.bad.some(b=>req(b,v)))continue;
+      const vs=rPlain(v);
+      if(t.parts.length===1){const p=t.parts[0];
+        if(isZero(numVal(p,v,x)))return 'Für '+x+' = '+vs+' wird der Zähler 0 – das ist erlaubt! Nur der Nenner darf nicht 0 werden.';
+        return 'Setze '+x+' = '+vs+' ein: Der Nenner hat dann den Wert '+rPlain(denVal(p,v))+' – das ist nicht 0.';}
+      return 'Setze '+x+' = '+vs+' ein: Keiner der Nenner wird 0.';
+    }
+    const found=t.bad.filter(b=>S.vals.some(v=>req(b,v))).length;
+    if(found<t.bad.length)return 'Richtig – aber es gibt noch '+(t.bad.length-found===1?'eine weitere Zahl':'weitere Zahlen')+'. Schau dir jeden Faktor im Nenner an.';
+    return true;},
+  solve:(t,el)=>put(el,'z',t.bad.length?t.bad.map(r=>rPlain(r)).join('; '):'keine'),
+  task:t=>t.html,
+  solText:t=>t.bad.length?V(t.x)+' ≠ '+t.bad.map(r=>rH(r)).join(' und ')+'. Begründung: '+t.why.join('; ')+' – durch 0 darf man nicht dividieren.'
+    :'keine Einschränkung – im Nenner steht keine Variable, er wird nie 0.'
+};
+
+/* ================= Abschnitte ================= */
+const INFO_CLS='<p>Ein Term besteht aus <b>Gliedern</b>. Glieder werden durch <b>+</b> oder <b>−</b> getrennt. Ein Produkt wie 3'+V('a')+V('b')+' oder 2 · '+X+' · '+V('y')+' ist <b>ein</b> Glied.</p>'+
+  '<div class="tablewrap"><table><tr><th>Monom</th><td>1 Glied</td><td>5'+X+S2+', &nbsp;'+MINUS+'3'+V('a')+V('b')+'</td></tr><tr><th>Binom</th><td>2 Glieder</td><td>'+X+' + 4, &nbsp;2'+V('a')+' − 3'+V('b')+'</td></tr>'+
+  '<tr><th>Polynom</th><td>3 oder mehr Glieder</td><td>'+X+S2+' + 2'+X+' + 1</td></tr></table></div><p>Ein Polynom mit genau 3 Gliedern heißt auch <b>Trinom</b>.</p>';
+const INFO_VAL='<p class="rule">3'+X+S2+' + 5 für '+X+' = 2: &nbsp; 3 · 2'+S2+' + 5 = 3 · 4 + 5 = 17</p><p>Setze für die Variable die Zahl ein. Dann gilt: <b>Klammer vor Hoch vor Punkt vor Strich</b>. Negative Zahlen und Brüche setzt du in Klammern ein.</p>';
+const INFO_BRU='<p class="rule">'+fracH(5,X+' − 3')+' &nbsp;→&nbsp; für '+X+' = 3 ist der Nenner 3 − 3 = 0 &nbsp;→&nbsp; '+X+' ≠ 3</p>'+
+  '<p>Durch 0 darf man nicht dividieren. Bei einem Bruchterm darf man also keine Zahl einsetzen, für die der <b>Nenner</b> 0 wird. Der Zähler darf 0 sein!</p><p>Steht im Nenner keine Variable, ist jede Zahl erlaubt: schreib <b>keine</b>.</p>';
+const SECS=[
+ {id:'st1',level:'std',title:'Monom, Binom oder Polynom? Begründe mit der Anzahl der Glieder!',name:'Monom, Binom, Polynom',info:INFO_CLS,layout:'wide',cfg:Object.assign({gen:()=>many(8,g_cls(false))},CLS)},
+ {id:'st2',level:'std',title:'Gib ein passendes Beispiel an!',name:'Beispiele',layout:'one',
+  hint:'Hochzahlen mit ^ oder ², z. B. 3x^2 oder 3x². Den Malpunkt kannst du weglassen: 2ab.',
+  cfg:Object.assign({gen:()=>shuffle(EX_STD.slice()).slice(0,6).map(f=>f())},EXS)},
+ {id:'st3',level:'std',title:'Berechne den Wert des Terms!',name:'Wert eines Terms',info:INFO_VAL,cfg:Object.assign({gen:()=>many(8,g_valS)},VAL)},
+ {id:'st4',level:'std',title:'Stimmt das? Wähle die Antwort mit der richtigen Begründung!',name:'Stimmt das?',layout:'one',
+  cfg:Object.assign({gen:()=>shuffle(CL_STD.slice()).slice(0,6).map(f=>f())},CLM)},
+ {id:'st5',level:'std',title:'Welche Zahl darf man für die Variable nicht einsetzen?',name:'Bruchterme',info:INFO_BRU,cfg:Object.assign({gen:()=>many(8,g_brS)},BRU)},
+
+ {id:'ah1',level:'ahs',title:'Monom, Binom oder Polynom? Begründe mit der Anzahl der Glieder!',name:'Monom, Binom, Polynom',info:INFO_CLS,layout:'wide',cfg:Object.assign({gen:()=>many(8,g_cls(true))},CLS)},
+ {id:'ah2',level:'ahs',title:'Gib ein passendes Beispiel an!',name:'Beispiele',layout:'one',
+  hint:'Hochzahlen mit ^ oder ², z. B. -4a^2b. Brüche mit /, z. B. 1/2x.',
+  cfg:Object.assign({gen:()=>shuffle(EX_AHS.slice()).slice(0,6).map(f=>f())},EXS)},
+ {id:'ah3',level:'ahs',title:'Berechne den Wert des Terms!',name:'Wert eines Terms',info:INFO_VAL,
+  hint:'Ergebnisse als ganze Zahl, Bruch (z. B. 7/4) oder Dezimalzahl (z. B. 1,25) eingeben.',cfg:Object.assign({gen:()=>many(6,g_valA)},VAL)},
+ {id:'ah4',level:'ahs',title:'Stimmt das? Wähle die Antwort mit der richtigen Begründung!',name:'Stimmt das?',layout:'one',
+  cfg:Object.assign({gen:()=>shuffle(CL_AHS.slice()).slice(0,6).map(f=>f())},CLM)},
+ {id:'ah5',level:'ahs',title:'Welche Zahlen darf man für die Variable nicht einsetzen?',name:'Bruchterme',info:INFO_BRU,
+  hint:'Mehrere Zahlen mit ; trennen, z. B. 0; 4. Brüche mit /, z. B. -2/3.',cfg:Object.assign({gen:()=>many(6,g_brA)},BRU)}
+];
+const sections={};SECS.forEach(s=>{sections[s.id]=Object.assign({level:s.level},s.cfg);});
+(function(){
+  const box=document.getElementById('secs'),nr={std:0,ahs:0};
+  box.innerHTML=SECS.map(s=>{nr[s.level]++;sections[s.id].nr=nr[s.level];sections[s.id].name=nr[s.level]+' '+s.name;
+    return '<section id="'+s.id+'" data-level="'+s.level+'"><div class="head"><span class="num">'+nr[s.level]+'</span><h2>'+s.title+'</h2></div>'+
+    (s.info?'<div class="info">'+s.info+'</div>':'')+(s.hint?'<p class="hint">'+s.hint+'</p>':'')+
+    '<div class="tasks '+(s.layout||'')+'"></div><div class="actions"><button class="ghost" data-check>Alle überprüfen</button>'+
+    '<button type="button" class="ghost more" data-more title="Diese Übung nochmal mit neuen Zahlen">Neue Runde</button><span class="res"></span><span class="round"></span></div></section>';}).join('');
+})();
+
+/* ================= Ablauf ================= */
+const state={},ROUNDS={};let summaryRequested=false,PUPIL='';
+let level=location.hash==='#ahs'?'ahs':'std';
+const curIds=()=>SECS.filter(s=>s.level===level).map(s=>s.id);
+const taskEl=(id,i)=>document.querySelector('#'+id+' .task[data-i="'+i+'"]');
+const isComplete=el=>![...el.querySelectorAll('input')].some(inp=>!inp.value.trim());
+
+function build(id){
+  const cfg=sections[id],box=document.querySelector('#'+id+' .tasks');
+  ROUNDS[id]=state[id]?(ROUNDS[id]||1)+1:1;
+  const tasks=cfg.gen();
+  state[id]={tasks,results:tasks.map(()=>null),tries:tasks.map(()=>0)};
+  box.innerHTML=tasks.map((t,i)=>'<div class="task" data-i="'+i+'"><span class="lbl">'+LBL[i]+')</span>'+cfg.row(t)+'</div>').join('');
+  box.querySelectorAll('.task').forEach(el=>{
+    const i=+el.dataset.i;
+    el.querySelectorAll('input:not([type=hidden])').forEach(inp=>inp.addEventListener('input',()=>clearMark(id,i)));
+    el.querySelectorAll('[data-set]').forEach(b=>b.addEventListener('click',()=>{
+      if(state[id].results[i]==='shown')return;
+      setChoice(el,b.dataset.set,b.dataset.v);clearMark(id,i);
+      if(isComplete(el))checkTask(id,i,true);
+      else{const f=[...el.querySelectorAll('input:not([type=hidden])')].find(x=>!x.value.trim());if(f)f.focus();}
+    }));
+    el.addEventListener('focusout',()=>setTimeout(()=>{if(!el.contains(document.activeElement))checkTask(id,i,false);},0));
+  });
+  updateSection(id);
+}
+function clearMark(id,i){
+  const el=taskEl(id,i);if(state[id].results[i]==='shown')return;
+  el.classList.remove('ok','bad');const s=el.querySelector('.sol');if(s)s.remove();
+  if(state[id].results[i]!==null){state[id].results[i]=null;updateSection(id);}
+}
+function checkTask(id,i,force){
+  const cfg=sections[id],el=taskEl(id,i),st=state[id];
+  if(st.results[i]==='shown'||st.results[i]===true)return;
+  if(!isComplete(el)){if(force)setMsg(el,'bad','Bitte alles ausfüllen bzw. auswählen.');return;}
+  const res=cfg.check(st.tasks[i],el),r=res===true,hint=typeof res==='string'?res:null;
+  el.classList.remove('ok','bad');el.classList.add(r?'ok':'bad');
+  if(r){st.results[i]=true;setMsg(el,'ok','Richtig!');}
+  else{st.results[i]=false;st.tries[i]++;
+    const base=st.tries[i]===1?'Leider falsch – versuch es nochmal!':'Noch nicht richtig. Versuch es nochmal oder sieh dir die Lösung an.';
+    setMsg(el,'bad',hint?hint+(st.tries[i]===1?' Versuch es nochmal!':''):base,st.tries[i]>=2);}
+  updateSection(id);
+}
+function setMsg(el,kind,text,offer){
+  let d=el.querySelector('.sol');if(!d){d=document.createElement('div');el.appendChild(d);}
+  d.className='sol '+kind;d.textContent=text;
+  if(offer){const b=document.createElement('button');b.type='button';b.className='mini';b.textContent='Lösung zeigen';
+    b.addEventListener('click',()=>{const id=el.closest('section').id,i=+el.dataset.i,t=state[id].tasks[i];
+      sections[id].solve(t,el);state[id].results[i]='shown';el.classList.remove('ok','bad');el.classList.add('shown');
+      el.querySelectorAll('input').forEach(x=>x.readOnly=true);el.querySelectorAll('[data-set]').forEach(x=>x.disabled=true);
+      d.className='sol shown';d.innerHTML='Lösung: '+sections[id].solText(t);updateSection(id);});
+    d.appendChild(b);}
+}
+function updateSection(id){
+  const st=state[id],ok=st.results.filter(r=>r===true).length,n=st.tasks.length,sec=document.getElementById(id);
+  sec.querySelector('.res').textContent=ok+' von '+n+' richtig'+(ok===n?' – super!':'');
+  sec.querySelector('.round').textContent='Runde '+ROUNDS[id];
+  const done=st.results.every(x=>x===true||x==='shown'),b=sec.querySelector('[data-more]');
+  b.classList.toggle('ready',done);b.textContent=done?'Noch eine Runde üben':'Neue Runde';
+  updateScore();updateSummary();
+}
+function updateScore(){let ok=0,n=0;curIds().forEach(id=>{const s=state[id];if(!s)return;n+=s.results.length;ok+=s.results.filter(r=>r===true).length;});
+  document.getElementById('score').textContent=ok+' von '+n+' richtig';}
+function updateSummary(){
+  const ids=curIds();if(ids.some(id=>!state[id]))return;
+  const sum=document.getElementById('summary');
+  const allDone=ids.every(id=>state[id].results.every(r=>r===true||r==='shown'));
+  if(!allDone&&!summaryRequested){sum.hidden=true;return;}
+  let T={ok:0,first:0,shown:0,open:0,n:0},rows='';const shownList=[];
+  ids.forEach(id=>{const st=state[id],cfg=sections[id];
+    const ok=st.results.filter(r=>r===true).length,first=st.results.filter((r,i)=>r===true&&st.tries[i]===0).length;
+    const shown=st.results.filter(r=>r==='shown').length,open=st.results.length-ok-shown;
+    st.results.forEach((r,i)=>{if(r==='shown')shownList.push('Übung '+cfg.nr+' '+LBL[i]+'): '+cfg.task(st.tasks[i])+' → '+cfg.solText(st.tasks[i]));});
+    T.ok+=ok;T.first+=first;T.shown+=shown;T.open+=open;T.n+=st.results.length;
+    rows+='<tr><td>'+cfg.name+(ROUNDS[id]>1?' <span class="rnote">(Runde '+ROUNDS[id]+')</span>':'')+'</td><td>'+ok+' von '+st.results.length+'</td><td>'+first+'</td><td>'+shown+'</td><td>'+open+'</td></tr>';});
+  document.getElementById('sumBody').innerHTML=rows;
+  document.getElementById('sumFoot').innerHTML='<tr><td>Gesamt</td><td>'+T.ok+' von '+T.n+'</td><td>'+T.first+'</td><td>'+T.shown+'</td><td>'+T.open+'</td></tr>';
+  const pct=T.ok/T.n;let msg;
+  if(T.first===T.n)msg='Perfekt! Alle Aufgaben beim ersten Versuch richtig.';
+  else if(pct===1)msg='Super, alle Aufgaben richtig gelöst!';
+  else if(pct>=.75)msg='Sehr gut gemacht!';
+  else if(pct>=.5)msg='Gut! Mit ein bisschen Übung klappt der Rest auch.';
+  else msg='Übe noch ein bisschen weiter – klick auf „Neue Aufgaben“ und probier es nochmal.';
+  if(!allDone)msg='Noch nicht alles erledigt: '+T.open+' Aufgabe'+(T.open===1?' ist':'n sind')+' noch offen. '+msg;
+  const nm=PUPIL?', '+PUPIL:'';
+  document.getElementById('sumTitle').textContent=(allDone?'Geschafft'+nm+'! Deine Auswertung':'Zwischenstand'+(PUPIL?' von '+PUPIL:''))+' ('+(level==='ahs'?'Standard AHS':'Standard')+')';
+  const now=new Date(),who=document.getElementById('sumWho');
+  who.innerHTML='👤 <b></b> · '+now.toLocaleDateString('de-AT')+', '+now.toLocaleTimeString('de-AT',{hour:'2-digit',minute:'2-digit'})+' Uhr · '+(level==='ahs'?'Standard AHS':'Standard');
+  who.querySelector('b').textContent=PUPIL||'(kein Name)';
+  document.getElementById('sumMsg').textContent=msg;
+  document.getElementById('sumShown').innerHTML=shownList.length?'Bei diesen Aufgaben hast du die Lösung angesehen – schau sie dir nochmal an:<ul>'+shownList.map(x=>'<li>'+x+'</li>').join('')+'</ul>':'';
+  const wasHidden=sum.hidden;sum.hidden=false;
+  if(wasHidden)setTimeout(()=>sum.scrollIntoView({behavior:'smooth',block:'start'}),300);
+}
+function setLevel(l){
+  level=l;summaryRequested=false;
+  document.querySelectorAll('.levels button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.level===l?'true':'false'));
+  SECS.forEach(s=>{document.getElementById(s.id).hidden=s.level!==l;});
+  try{history.replaceState(null,'',l==='ahs'?'#ahs':'#standard');}catch(e){}
+  document.getElementById('summary').hidden=true;updateScore();updateSummary();
+}
+
+SECS.forEach(({id})=>{
+  build(id);const sec=document.getElementById(id);
+  sec.querySelector('[data-check]').addEventListener('click',()=>state[id].tasks.forEach((t,i)=>checkTask(id,i,true)));
+  sec.querySelector('[data-more]').addEventListener('click',()=>{
+    build(id);sec.scrollIntoView({behavior:'smooth',block:'start'});
+    const f=sec.querySelector('.task input:not([type=hidden])');if(f)setTimeout(()=>f.focus({preventScroll:true}),450);
+  });
+  sec.addEventListener('keydown',e=>{
+    if(e.key!=='Enter'||e.target.tagName!=='INPUT')return;e.preventDefault();
+    const task=e.target.closest('.task'),i=+task.dataset.i,own=[...task.querySelectorAll('input:not([type=hidden])')];
+    if(own.indexOf(e.target)<own.length-1){own[own.indexOf(e.target)+1].focus();return;}
+    checkTask(id,i,true);
+    if(state[id].results[i]===true){const nt=taskEl(id,i+1);if(nt){const f=nt.querySelector('input:not([type=hidden])');if(f)f.focus();}}else e.target.select();
+  });
+});
+document.querySelectorAll('.levels button').forEach(b=>b.addEventListener('click',()=>{setLevel(b.dataset.level);window.scrollTo({top:0,behavior:'smooth'});}));
+function newAll(){summaryRequested=false;curIds().forEach(build);document.getElementById('summary').hidden=true;window.scrollTo({top:0,behavior:'smooth'});}
+document.getElementById('newAll').addEventListener('click',newAll);
+document.getElementById('newAll2').addEventListener('click',newAll);
+document.getElementById('showSum').addEventListener('click',()=>{summaryRequested=true;document.getElementById('summary').hidden=true;updateSummary();});
+setLevel(level);
+
+/* ================= Name zu Beginn ================= */
+const lockables=()=>[...document.querySelectorAll('section[id]:not(#start):not(#summary), .finish')];
+function setLocked(on){
+  document.body.classList.toggle('locked',on);
+  lockables().forEach(el=>{if(on)el.setAttribute('inert','');else el.removeAttribute('inert');});
+}
+function startWithName(){
+  const inp=document.getElementById('pname'),v=inp.value.trim().replace(/\s+/g,' '),err=document.getElementById('pnameErr');
+  if(v.length<2){err.hidden=false;inp.focus();return;}
+  err.hidden=true;PUPIL=v;
+  document.getElementById('pnameShow').textContent=v;
+  document.getElementById('startAsk').hidden=true;document.getElementById('startDone').hidden=false;
+  setLocked(false);updateSummary();
+  const f=[...document.querySelectorAll('section[id]:not(#start):not(#summary)')].find(s=>!s.hidden);
+  const first=f&&f.querySelector('.task input:not([type=hidden])');if(first)first.focus();
+}
+document.getElementById('startBtn').addEventListener('click',startWithName);
+document.getElementById('pname').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();startWithName();}});
+document.getElementById('pnameEdit').addEventListener('click',()=>{
+  document.getElementById('startAsk').hidden=false;document.getElementById('startDone').hidden=true;
+  const i=document.getElementById('pname');i.focus();i.select();
+});
+setLocked(true);
+document.getElementById('pname').focus();
+
+/* ================= Eingabehilfe (Bildschirm-Tastatur) ================= */
+(function(){
+  const pad=document.getElementById('pad'),sysBtn=document.getElementById('padSys');
+  const touch=window.matchMedia&&matchMedia('(pointer: coarse)').matches;
+  let padOnly=touch,closed=false,cur=null;
+  try{const s=localStorage.getItem('padOnly');if(s!==null)padOnly=s==='1';}catch(e){}
+  const taskInputs=()=>[...document.querySelectorAll('.task input:not([type=hidden])')];
+  function applyMode(){
+    taskInputs().forEach(i=>{if(i.dataset.im===undefined)i.dataset.im=i.getAttribute('inputmode')||'';
+      if(padOnly)i.setAttribute('inputmode','none');else if(i.dataset.im)i.setAttribute('inputmode',i.dataset.im);else i.removeAttribute('inputmode');});
+    sysBtn.textContent=padOnly?'Handy-Tastatur einblenden':'Handy-Tastatur ausblenden';
+  }
+  const _build=build;build=function(id){_build(id);applyMode();};
+  applyMode();
+
+  /* Variablen-Tasten passend zur Aufgabe */
+  function setVars(input){
+    const task=input.closest('.task'),found=[];
+    task.querySelectorAll('i').forEach(n=>{const t=n.textContent.trim();if(/^[a-z]$/.test(t)&&!found.includes(t))found.push(t);});
+    ['x','y','a','b'].forEach(t=>{if(found.length<4&&!found.includes(t))found.push(t);});
+    pad.querySelectorAll('[data-var]').forEach(b=>{b.textContent=found[+b.dataset.var];});
+  }
+  function show(input){cur=input;setVars(input);if(closed)return;pad.hidden=false;document.body.classList.add('padon');
+    const r=input.getBoundingClientRect();if(r.bottom>window.innerHeight-pad.offsetHeight-10)input.scrollIntoView({block:'center',behavior:'smooth'});}
+  function hide(){pad.hidden=true;document.body.classList.remove('padon');}
+  document.addEventListener('focusin',e=>{const t=e.target;
+    if(t.tagName==='INPUT'&&t.closest('.task')&&!t.readOnly)show(t);});
+  document.addEventListener('focusout',()=>setTimeout(()=>{const a=document.activeElement;
+    if(!(a&&a.tagName==='INPUT'&&a.closest('.task')))hide();},120));
+
+  function insert(txt){
+    if(!cur||cur.readOnly)return;
+    const s=cur.selectionStart??cur.value.length,e=cur.selectionEnd??cur.value.length;
+    cur.setRangeText(txt,s,e,'end');cur.dispatchEvent(new Event('input',{bubbles:true}));
+  }
+  pad.addEventListener('pointerdown',e=>{if(e.target.closest('button'))e.preventDefault();});
+  pad.addEventListener('mousedown',e=>{if(e.target.closest('button'))e.preventDefault();});
+  pad.addEventListener('click',e=>{
+    const b=e.target.closest('button');if(!b)return;
+    if(b.id==='padHide'){closed=true;hide();return;}
+    if(b.id==='padSys'){padOnly=!padOnly;try{localStorage.setItem('padOnly',padOnly?'1':'0');}catch(x){}applyMode();
+      if(cur){cur.blur();setTimeout(()=>cur.focus(),60);}return;}
+    if(!cur)return;
+    if(b.dataset.ins!==undefined)insert(b.dataset.ins);
+    else if(b.dataset.var!==undefined)insert(b.textContent);
+    else if(b.dataset.act==='keine'){cur.value='';insert('keine');}
+    else if(b.dataset.act==='del'){
+      if(cur.readOnly)return;const s=cur.selectionStart??cur.value.length,e2=cur.selectionEnd??s;
+      if(s!==e2)cur.setRangeText('',s,e2,'end');else if(s>0)cur.setRangeText('',s-1,s,'end');
+      cur.dispatchEvent(new Event('input',{bubbles:true}));}
+    else if(b.dataset.act==='ok')cur.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter',bubbles:true,cancelable:true}));
+    cur.focus({preventScroll:true});
+  });
+  /* Wer die Hilfe geschlossen hat, bekommt sie bei neuen Aufgaben wieder */
+  document.addEventListener('click',e=>{if(e.target.closest('#newAll,#newAll2,[data-more]'))closed=false;});
+})();
+
+/* ================= Vorschau beim Term-Eintippen ================= */
+document.addEventListener('input',e=>{
+  const t=e.target;if(t.dataset.k!=='f')return;
+  const pv=t.parentNode.querySelector('[data-prev]');if(!pv)return;
+  const p=parseTerm(t.value);
+  pv.innerHTML=(!t.value.trim()||p.err)?'':'→ <b>'+polyH(p.ms)+'</b>';
+});
+</script>
+</body>
+</html>
