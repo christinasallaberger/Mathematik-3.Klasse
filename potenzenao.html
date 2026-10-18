@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Potenzen Schritt für Schritt</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fraunces:opsz,wght@9..144,600;9..144,800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F7F9FC; --grid:#DCE6F2; --ink:#1B2F6B; --text:#1E2533; --muted:#5B6578;
+  --card:#FFFFFF; --line:#C9D5E6; --ok:#217A4B; --okbg:#E3F4EA; --bad:#B3261E; --badbg:#FBE7E5;
+  --mark:#FFE873; --field:#FFFFFF; --info:#EAF1FB;
+  color-scheme: light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#111827; --grid:#1C2638; --ink:#A9C1FF; --text:#E6EAF2; --muted:#9AA4B8;
+    --card:#172033; --line:#2C3A55; --ok:#5FD08E; --okbg:#173326; --bad:#FF8A80; --badbg:#3A1C1C;
+    --mark:#6B5A12; --field:#0F1726; --info:#1A2740; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#111827; --grid:#1C2638; --ink:#A9C1FF; --text:#E6EAF2; --muted:#9AA4B8;
+  --card:#172033; --line:#2C3A55; --ok:#5FD08E; --okbg:#173326; --bad:#FF8A80; --badbg:#3A1C1C;
+  --mark:#6B5A12; --field:#0F1726; --info:#1A2740; color-scheme: dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0; color:var(--text); font-family:"Atkinson Hyperlegible",system-ui,"Segoe UI",Arial,sans-serif;
+  font-size:1.0625rem; line-height:1.5;
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+}
+.wrap{max-width:60rem;margin:0 auto;padding:1.5rem 1rem 4rem}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:1rem;margin:1rem 0 2rem}
+h1{font-family:Fraunces,Georgia,serif;font-weight:800;color:var(--ink);font-size:clamp(2.4rem,7vw,4rem);line-height:1;margin:0;letter-spacing:-.01em}
+h1 sup{font-size:.5em;display:inline-block;transform-origin:left bottom;animation:hop 1.2s ease-out .3s 1}
+@keyframes hop{0%{transform:translateY(0)}30%{transform:translateY(-.4em) rotate(-8deg)}60%{transform:translateY(0)}80%{transform:translateY(-.1em)}100%{transform:none}}
+@media (prefers-reduced-motion: reduce){h1 sup{animation:none}}
+.sub{color:var(--muted);margin:.5rem 0 0}
+.top{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
+.score{font-weight:700;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:999px;padding:.35rem .9rem}
+button{font:inherit;cursor:pointer;border-radius:.5rem;border:2px solid var(--ink);background:var(--ink);color:var(--paper);padding:.45rem .9rem;font-weight:700}
+button.ghost{background:transparent;color:var(--ink)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--mark);outline-offset:2px}
+section{background:var(--card);border:2px solid var(--line);border-radius:.75rem;padding:1.25rem 1.25rem 1rem;margin:0 0 1.5rem}
+.head{display:flex;gap:.8rem;align-items:baseline}
+.num{font-family:Fraunces,Georgia,serif;font-weight:800;font-size:1.6rem;color:var(--ink);min-width:1.4em}
+h2{font-size:1.15rem;margin:0}
+.tasks{display:grid;grid-template-columns:repeat(auto-fill,minmax(19rem,1fr));gap:.6rem 1.5rem;margin:1rem 0}
+.task{display:flex;align-items:center;flex-wrap:wrap;gap:.45rem;padding:.4rem .5rem;border-radius:.5rem;border:2px solid transparent}
+.task.ok{background:var(--okbg);border-color:var(--ok)}
+.task.bad{background:var(--badbg);border-color:var(--bad)}
+.lbl{font-weight:700;color:var(--ink);width:1.6em}
+.expr{font-size:1.2rem;white-space:nowrap}
+.pw sup{font-size:.68em;margin-left:.05em}
+input{font:inherit;font-size:1.1rem;color:var(--text);background:var(--field);border:2px solid var(--line);border-radius:.4rem;padding:.2rem .4rem}
+input.prod{width:12rem;max-width:100%}
+input.val{width:6.5rem}
+.pin{display:inline-flex;align-items:flex-start}
+.pin .b{width:3rem;text-align:center}
+.pin .e{width:2.4rem;font-size:.85rem;text-align:center;margin-top:-.6rem;margin-left:.1rem;padding:.1rem .2rem}
+.eq{color:var(--muted)}
+.sign{display:inline-flex;border:2px solid var(--line);border-radius:.4rem;overflow:hidden}
+.sign button{border:0;border-radius:0;background:var(--field);color:var(--text);padding:.2rem .65rem;font-size:1.1rem}
+.sign button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.sol{flex-basis:100%;font-size:.95rem;padding-left:2.1em;display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+.sol.ok{color:var(--ok);font-weight:700}.sol.bad{color:var(--bad)}.sol.shown{color:var(--muted)}
+.task.shown{border-color:var(--line);border-style:dashed}
+button.mini{font-size:.85rem;padding:.1rem .55rem;background:transparent;color:var(--ink);border-width:1.5px}
+.actions{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}
+.res{color:var(--muted);font-weight:700}
+.hint{color:var(--muted);font-size:.95rem;margin:.4rem 0 0}
+.info{background:var(--info);border-left:6px solid var(--ink);border-radius:.5rem;padding:.8rem 1rem;margin:.9rem 0 0}
+.info p{margin:.2rem 0}
+.info .pos{color:var(--ok);font-weight:700}.info .neg{color:var(--bad);font-weight:700}
+.finish{display:flex;justify-content:center;margin:0 0 1.5rem}
+#summary{border-color:var(--ink);border-width:3px}
+.summsg{font-size:1.2rem;font-weight:700;color:var(--ink);margin:.6rem 0 1rem}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:30rem}
+th,td{text-align:left;padding:.4rem .6rem;border-bottom:1px solid var(--line)}
+td:not(:first-child),th:not(:first-child){text-align:center}
+tfoot td{font-weight:700;border-bottom:0;border-top:2px solid var(--ink)}
+#sumShown{margin-top:1rem;color:var(--muted)}
+#sumShown ul{margin:.3rem 0 0;padding-left:1.2rem}
+.tasks.one{grid-template-columns:1fr}
+.pin10{display:inline-flex;align-items:flex-start;font-size:1.2rem}
+.pin10 .e{width:2.6rem;font-size:.85rem;text-align:center;margin-top:-.55rem;margin-left:.1rem;padding:.1rem .2rem}
+input.num{width:11rem;max-width:100%}
+input.v{width:2.8rem;text-align:center}
+input.m{width:4.5rem;text-align:center}
+.word{font-style:italic}
+.info .big{font-size:1.2rem}
+.vz{color:#B0367C;font-weight:700}
+.zp{color:var(--ink);font-weight:700}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .vz{color:#F59AC9}}
+:root[data-theme="dark"] .vz{color:#F59AC9}
+.ordering{width:100%}
+.pool,.seq{display:flex;flex-wrap:wrap;gap:.45rem;align-items:center;margin:.3rem 0}
+.seq{min-height:2.8rem;border-top:2px dashed var(--line);padding-top:.6rem;margin-top:.6rem}
+.tile{background:var(--field);color:var(--text);border:2px solid var(--line);font-weight:400;font-size:1.15rem;padding:.25rem .7rem}
+.tile:disabled{opacity:.3;cursor:default}
+.tile.placed{border-color:var(--ink)}
+.slot{display:inline-block;width:3.2rem;height:2.2rem;border-bottom:2px solid var(--muted)}
+.lt{color:var(--muted);font-size:1.2rem}
+body{font-size:1.15rem}
+.wrap{max-width:52rem}
+#start{border-color:var(--ink);border-width:3px}
+.startrow{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.6rem}
+#nameIn{flex:1 1 14rem;max-width:24rem;font-size:1.25rem;padding:.45rem .7rem}
+body.notstarted #main{display:none}
+.who{font-weight:700;color:var(--ink)}
+/* Lernpfad */
+#path{display:flex;flex-wrap:wrap;gap:.5rem;margin:0 0 1.2rem}
+.stage{display:inline-flex;align-items:center;gap:.4rem;font-weight:700;font-size:.95rem;border-radius:999px;padding:.35rem .8rem;border:2px solid var(--line);background:var(--card);color:var(--muted)}
+.stage.done{border-color:var(--ok);color:var(--ok)}
+.stage.cur{border-color:var(--ink);background:var(--ink);color:var(--paper)}
+.stage.practice{outline:3px solid var(--mark)}
+.stage:disabled{opacity:.55;cursor:default}
+/* Aufgabenkarte */
+#card{border-width:3px;border-color:var(--ink);min-height:18rem}
+.cardhead{display:flex;justify-content:space-between;align-items:center;gap:.6rem;flex-wrap:wrap}
+.tag{font-weight:700;color:var(--ink)}
+.tag .helptag{background:var(--mark);color:var(--text);border-radius:.4rem;padding:.05rem .45rem;margin-left:.4rem;font-size:.85rem}
+.instr{font-size:1.35rem;font-weight:700;margin:.8rem 0 1rem}
+.big{font-size:1.8rem;display:flex;flex-wrap:wrap;align-items:center;gap:.35rem;margin:.4rem 0}
+.big input{font-size:1.6rem;width:5rem;text-align:center;padding:.15rem .3rem}
+.big input.wide{width:11rem}
+.pw sup{font-size:.6em}
+.box{display:inline-flex;align-items:center;justify-content:center;min-width:2.2em;height:2.2em;border:2px solid var(--ink);border-radius:.45rem;background:var(--field);font-weight:700;position:relative}
+.box.zero{border-color:#B0367C;color:#B0367C}
+.box.one{border-color:var(--muted)}
+.box small{position:absolute;bottom:-1.35em;left:0;right:0;text-align:center;font-size:.55em;color:var(--muted);font-weight:400}
+.numbered{padding-bottom:1.4em}
+.dot{color:var(--muted)}
+.grp{display:inline-flex;align-items:center;gap:.25rem;border:2px dashed var(--line);border-radius:.6rem;padding:.2rem .35rem}
+.pin{display:inline-flex;align-items:flex-start}
+.pin .b{width:4rem!important}
+.pin .e{width:3rem!important;font-size:1rem!important;margin-top:-.9rem;margin-left:.1rem}
+.legend{color:var(--muted);font-size:1rem;margin:.6rem 0 0}
+.legend b{color:var(--ink)}
+.tray{display:inline-flex;flex-wrap:wrap;align-items:center;gap:.25rem;min-height:2.4em;min-width:6rem;border-bottom:3px solid var(--line);padding:0 .3rem}
+.pad{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1rem;align-items:center}
+.pad .tile{font-size:1.6rem;min-width:3.4rem;padding:.3rem .8rem;background:var(--field);color:var(--text);border:2px solid var(--ink)}
+.steps{display:flex;flex-direction:column;gap:.4rem;margin:.8rem 0}
+.step{font-size:1.5rem;display:flex;align-items:center;gap:.4rem}
+.step input{font-size:1.4rem;width:5.5rem;text-align:center}
+.step .left{min-width:2.5em;text-align:right;font-weight:700;color:var(--ink)}
+.dots{display:inline-grid;gap:.25rem;margin:.5rem 0;padding:.4rem;border:1px solid var(--line);border-radius:.5rem}
+.dots i{width:.8rem;height:.8rem;border-radius:50%;background:var(--ink);display:block}
+#fb{margin-top:1rem}
+.fbbox{border-radius:.6rem;padding:.8rem 1rem;font-size:1.1rem}
+.fbbox.ok{background:var(--okbg);border:2px solid var(--ok)}
+.fbbox.bad{background:var(--badbg);border:2px solid var(--bad)}
+.fbbox.show{background:var(--info);border:2px solid var(--ink)}
+.fbbox .msg{font-weight:700;margin:0 0 .4rem}
+.fbbox .big{font-size:1.4rem}
+.actions{margin-top:1rem}
+#streak{margin-top:1rem;color:var(--muted);font-size:1rem;display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
+#streak .s{width:1.1rem;height:1.1rem;border-radius:50%;border:2px solid var(--ok);display:inline-block}
+#streak .s.on{background:var(--ok)}
+.celebrate{font-size:1.4rem;font-weight:800;color:var(--ok);animation:pop .6s ease-out}
+@keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.1)}100%{transform:none;opacity:1}}
+@media (prefers-reduced-motion: reduce){.celebrate{animation:none}}
+.finish{display:flex;justify-content:center;margin:1.5rem 0}
+#summary{border-color:var(--ink);border-width:3px}
+#sumMeta{color:var(--muted);margin:.3rem 0 1rem}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:32rem;font-size:1rem}
+th,td{text-align:left;padding:.4rem .6rem;border-bottom:1px solid var(--line)}
+td:not(:first-child),th:not(:first-child){text-align:center}
+#errList li{margin:.3rem 0}
+.speak{background:transparent;color:var(--ink);border:2px solid var(--ink);padding:.2rem .6rem;font-size:.95rem}
+#kpad{position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--card);border-top:3px solid var(--ink);padding:.5rem .6rem calc(.6rem + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 18px rgba(0,0,0,.18)}
+#kpad[hidden],#kpadToggle[hidden]{display:none}
+.kp-inner{max-width:34rem;margin:0 auto}
+.kp-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem;font-weight:700;color:var(--ink);font-size:.95rem}
+.kp-small{font-size:.95rem;padding:.2rem .7rem;background:transparent;color:var(--ink);border:2px solid var(--ink)}
+.kp-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:.35rem}
+.kp-grid.letters{grid-template-columns:repeat(7,1fr)}
+.kp-grid button{font:inherit;font-size:1.3rem;font-weight:700;padding:.5rem 0;background:var(--field);color:var(--text);border:2px solid var(--line);border-radius:.5rem;touch-action:manipulation}
+.kp-grid button.op{color:var(--ink);border-color:var(--ink)}
+.kp-grid button.act{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.kp-grid button:active{transform:translateY(1px)}
+#kpadToggle{position:fixed;right:1rem;bottom:calc(1rem + env(safe-area-inset-bottom,0px));z-index:49;border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+body.kpad-on{padding-bottom:17rem}
+</style>
+</head>
+<body class="notstarted">
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Potenzen<sup>n</sup> Schritt für Schritt</h1>
+      <p class="sub">Immer eine Aufgabe. Bei Fehlern bekommst du Hilfe. 3 richtig hintereinander = ⭐</p>
+    </div>
+    <div class="top"><span class="who" id="who" hidden></span><span class="score" id="score">⭐ 0 von 6</span></div>
+  </header>
+
+  <section id="start">
+    <div class="head"><h2>Wie heißt du?</h2></div>
+    <p class="hint">Schreib deinen Namen. Dann drück „Los geht’s“.</p>
+    <div class="startrow"><input id="nameIn" maxlength="40" autocomplete="off" aria-label="Dein Name" placeholder="Vorname Nachname"><button type="button" id="startBtn">Los geht’s</button></div>
+    <p class="sol bad" id="nameErr" hidden>Bitte schreib zuerst deinen Namen.</p>
+  </section>
+
+  <div id="main">
+    <nav id="path" aria-label="Lernstufen"></nav>
+    <section id="card">
+      <div class="cardhead"><span class="tag" id="tag"></span><button type="button" class="speak" id="sayBtn">🔊 Vorlesen</button></div>
+      <p class="instr" id="instr"></p>
+      <div id="body"></div>
+      <div id="fb" aria-live="polite"></div>
+      <div class="actions">
+        <button type="button" id="checkBtn">Prüfen</button>
+        <button type="button" class="ghost" id="dontKnow">Ich weiß es nicht</button>
+        <button type="button" id="nextBtn" hidden>Weiter →</button>
+      </div>
+      <div id="streak"></div>
+    </section>
+    <div class="finish"><button class="ghost" id="showSum">Auswertung anzeigen</button></div>
+    <section id="summary" hidden>
+      <div class="head"><h2 id="sumTitle">Auswertung</h2></div>
+      <p id="sumMeta"></p>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Stufe</th><th>⭐</th><th>gleich richtig</th><th>mit Tipp richtig</th><th>Lösung angesehen</th></tr></thead>
+        <tbody id="sumBody"></tbody>
+      </table></div>
+      <div id="errBox"></div>
+      <div class="actions"><button id="backBtn">Weiter üben</button></div>
+    </section>
+  </div>
+</div>
+
+<script>
+/* ---------- Hilfen ---------- */
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[rnd(0,a.length-1)];
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=rnd(0,i);[a[i],a[j]]=[a[j],a[i]];}return a;};
+const NN='\u202F',group=s=>String(s).replace(/\B(?=(\d{3})+(?!\d))/g,NN);
+const isVar=b=>typeof b==='string'&&!/^\d+$/.test(b);
+const bH=b=>isVar(b)?'<i>'+b+'</i>':String(b);
+const pwH=(b,e)=>e===1?bH(b):'<span class="pw">'+bH(b)+'<sup>'+e+'</sup></span>';
+const pw10=e=>'<span class="pw">10<sup>'+e+'</sup></span>';
+const box=(n,cls,idx)=>'<span class="box '+(cls||'')+'">'+bH(n)+(idx?'<small>'+idx+'</small>':'')+'</span>';
+const dotSep='<span class="dot">·</span>';
+const prodBoxes=(b,e,numbered)=>'<span class="'+(numbered?'numbered':'')+'" style="display:inline-flex;align-items:center;gap:.25rem;flex-wrap:wrap">'+Array.from({length:e},(_,i)=>box(b,'',numbered?i+1:0)).join(dotSep)+'</span>';
+const inp=(k,cls,mode)=>'<input data-k="'+k+'" class="'+(cls||'')+'" inputmode="'+(mode||'numeric')+'" autocomplete="off" autocapitalize="off" aria-label="Antwort">';
+const pinIn=mode=>'<span class="pin">'+inp('b','b',mode)+inp('e','e')+'</span>';
+const rawv=(B,k)=>{const el=B.querySelector('[data-k="'+k+'"]');return el?el.value.trim():'';};
+const num=(B,k)=>{const s=rawv(B,k).replace(/[\s.\u202F']/g,'');return /^\d+$/.test(s)?parseInt(s,10):null;};
+const strip=h=>h.replace(/<sup>/g,' hoch ').replace(/<[^>]+>/g,' ').replace(/·/g,' mal ').replace(/\s+/g,' ').trim();
+function dots(a,b){if(a*b>100)return '';let h='<div class="dots" style="grid-template-columns:repeat('+b+',.8rem)">';for(let i=0;i<a*b;i++)h+='<i></i>';return h+'</div>';}
+const OK={ok:true};
+const E=(err,msg,hint,meta)=>({ok:false,err,msg,hint:hint||'',meta});
+
+/* ---------- Stufen ---------- */
+const STAGES=[
+ {id:'mal',t:'Einmaleins'},
+ {id:'zaehlen',t:'Potenz erkennen'},
+ {id:'produkt',t:'Potenz als Malrechnung'},
+ {id:'wert',t:'Wert ausrechnen'},
+ {id:'zehn',t:'Zehnerpotenzen'},
+ {id:'mult',t:'Potenzen malnehmen'}
+];
+const STN={};STAGES.forEach(s=>STN[s.id]=s.t);
+const ERRTXT={
+ mal_plus:'Plus statt mal gerechnet',
+ einmaleins:'Fehler beim Einmaleins',
+ vertauscht:'Basis und Hochzahl vertauscht',
+ gezaehlt:'Faktoren falsch gezählt',
+ basis:'Basis nicht erkannt',
+ b_mal_e:'Potenz mit „mal“ verwechselt (z. B. 3⁴ = 3 · 4)',
+ b_plus_e:'Basis und Hochzahl addiert (z. B. 3⁴ = 3 + 4)',
+ faktor_anzahl:'Einmal zu oft oder zu wenig malgenommen',
+ nullen:'Nullen falsch gezählt',
+ hoch_mal:'Hochzahlen malgenommen statt addiert',
+ basis_mal:'Basen malgenommen (die Basis bleibt gleich)',
+ sonst:'Sonstige Fehler'
+};
+
+/* ---------- Aufgaben ---------- */
+const GEN={};
+/* Einmaleins */
+function makeMal(a,b){return {skill:'mal',instr:'Rechne.',say:a+' mal '+b,
+  render:B=>{B.innerHTML='<div class="big">'+a+' · '+b+' = '+inp('v')+'</div>';},
+  check:B=>{const v=num(B,'v');if(v===null)return null;if(v===a*b)return OK;
+    const tip=dots(a,b)+'<p>Tipp: '+Array(a).fill(b).join(' + ')+'</p>';
+    if(v===a+b)return E('mal_plus','Du hast plus gerechnet. Hier heißt es <b>mal</b>.',tip);
+    return E('einmaleins','Noch nicht richtig.',tip);},
+  solution:()=>dots(a,b)+'<div class="big">'+Array(a).fill(b).join(' + ')+' = '+(a*b)+'</div><div class="big">'+a+' · '+b+' = '+(a*b)+'</div>',
+  help:()=>[makeMal(rnd(2,5),rnd(2,5))]};}
+GEN.mal=d=>makeMal(rnd(2,[5,9,10][d]),rnd(2,[5,9,9][d]));
+
+/* Potenz erkennen: 3·3·3·3 = 3^4 */
+function makeZ(b,e){return {skill:'zaehlen',instr:'Schreib als Potenz.',say:Array(e).fill(b).join(' mal '),
+  render:B=>{B.innerHTML='<div class="big">'+prodBoxes(b,e)+' = '+pinIn(isVar(b)?'text':'numeric')+'</div><p class="legend">Unten: die Zahl, die malgenommen wird (<b>Basis</b>). Oben klein: wie oft (<b>Hochzahl</b>).</p>';},
+  check:B=>{const bb=rawv(B,'b').toLowerCase(),ee=num(B,'e');if(!bb||ee===null)return null;
+    const tip='<div class="big">'+prodBoxes(b,e,true)+'</div>';
+    if(bb===String(b)&&ee===e)return OK;
+    if(bb===String(e)&&ee===b)return E('vertauscht','Basis und Hochzahl sind vertauscht. Unten steht die Zahl, die malgenommen wird.',tip);
+    if(bb===String(b))return E('gezaehlt','Die Basis stimmt! Zähle nochmal, wie oft die '+b+' dasteht.',tip);
+    return E('basis','Schau: Welche Zahl wird malgenommen? Diese Zahl kommt unten hin.',tip);},
+  solution:()=>'<div class="big">'+prodBoxes(b,e,true)+' = '+pwH(b,e)+'</div><p>Die '+bH(b)+' steht '+e+'-mal da → Hochzahl '+e+'.</p>',
+  help:()=>[makeZ(rnd(2,5),rnd(2,3))]};}
+GEN.zaehlen=d=>{let b,e;do{b=d===2?pick([2,3,4,5,6,7,8,9,10,'a','x']):rnd(2,d?9:5);e=d===0?rnd(2,4):d===1?rnd(3,6):rnd(4,7);}while(b===e);return makeZ(b,e);};
+
+/* Potenz als Malrechnung (Kärtchen antippen) */
+function makeP(b,e){let tiles=[],B0;
+  const draw=()=>{B0.querySelector('.tray').innerHTML=tiles.length?tiles.map(n=>box(n)).join(dotSep):'<span class="dot">…</span>';};
+  return {skill:'produkt',instr:'Schreib als Malrechnung. Tippe die Zahlen an.',say:b+' hoch '+e,
+  render:B=>{B0=B;tiles=[];
+    B.innerHTML='<div class="big">'+pwH(b,e)+' = <span class="tray"></span></div><div class="pad">'+shuffle([b,e]).map(n=>'<button type="button" class="tile" data-n="'+n+'">'+n+'</button>').join('')+'<button type="button" class="ghost" data-undo>↶ zurück</button></div>';
+    draw();
+    B.querySelectorAll('[data-n]').forEach(x=>x.addEventListener('click',()=>{if(tiles.length<12){tiles.push(+x.dataset.n);draw();}}));
+    B.querySelector('[data-undo]').addEventListener('click',()=>{tiles.pop();draw();});},
+  check:()=>{if(!tiles.length)return null;
+    const tip='<div class="big">'+pwH(b,e)+' → die '+b+' genau '+e+'-mal</div>';
+    if(tiles.length===e&&tiles.every(n=>n===b))return OK;
+    if(tiles.length===b&&tiles.every(n=>n===e))return E('vertauscht','Vertauscht! Die große Zahl unten ('+b+') wird malgenommen. Die kleine Zahl oben ('+e+') sagt, wie oft.',tip);
+    if(tiles.length===2&&tiles.includes(b)&&tiles.includes(e))return E('b_mal_e','Achtung: '+pwH(b,e)+' ist <b>nicht</b> '+b+' · '+e+'. Die Hochzahl '+e+' sagt: Schreib die '+b+' genau '+e+'-mal hin.',tip);
+    if(tiles.every(n=>n===b))return E('gezaehlt','Fast! Du brauchst die '+b+' genau '+e+'-mal. Du hast sie '+tiles.length+'-mal.',tip);
+    return E('sonst','Noch nicht richtig. Nimm nur die '+b+'. Wie oft? Das sagt die kleine Zahl oben.',tip);},
+  solution:()=>'<div class="big">'+pwH(b,e)+' = '+prodBoxes(b,e,true)+'</div>',
+  help:err=>err==='b_mal_e'||err==='vertauscht'?[makeZ(b,e)]:[makeP(rnd(2,5),rnd(2,4))]};}
+GEN.produkt=d=>{let b,e;do{b=rnd(2,d?9:5);e=d===0?rnd(2,3):d===1?rnd(3,5):rnd(4,6);}while(b===e);return makeP(b,e);};
+
+/* Wert ausrechnen */
+function makeW(b,e,steps){
+  const target=b**e;
+  return {skill:'wert',instr:steps?'Rechne Schritt für Schritt.':'Rechne aus.',say:b+' hoch '+e,
+  render:B=>{
+    if(!steps){B.innerHTML='<div class="big">'+pwH(b,e)+' = '+inp('v','wide')+'</div>';return;}
+    let h='<div class="big">'+pwH(b,e)+' = '+prodBoxes(b,e)+'</div><div class="steps">';
+    for(let k=1;k<e;k++)h+='<div class="step"><span class="left" data-l="'+k+'">'+(k===1?b:'?')+'</span> · '+b+' = '+inp('s'+k)+'</div>';
+    B.innerHTML=h+'</div>';
+    for(let k=1;k<e-1;k++)B.querySelector('[data-k="s'+k+'"]').addEventListener('input',ev=>{B.querySelector('[data-l="'+(k+1)+'"]').textContent=ev.target.value.trim()||'?';});
+  },
+  check:B=>{
+    if(steps){let prev=b;
+      for(let k=1;k<e;k++){const v=num(B,'s'+k);if(v===null)return null;
+        if(v!==prev*b){const tip=dots(prev,b)+(prev<=12?'<p>Tipp: '+Array(b).fill(prev).join(' + ')+'</p>':'');
+          return E(v===prev+b?'mal_plus':'einmaleins','Zeile '+k+' stimmt nicht: Was ist '+prev+' · '+b+'?',tip,{a:prev,b});}
+        prev=v;}
+      return OK;}
+    const v=num(B,'v');if(v===null)return null;if(v===target)return OK;
+    const tip='<div class="big">'+pwH(b,e)+' = '+prodBoxes(b,e)+'</div>';
+    if(v===b*e)return E('b_mal_e','Achtung: '+pwH(b,e)+' ist <b>nicht</b> '+b+' · '+e+'. Schreib es als Malrechnung:',tip);
+    if(v===b+e)return E('b_plus_e','Achtung: '+pwH(b,e)+' ist <b>nicht</b> '+b+' + '+e+'. Schreib es als Malrechnung:',tip);
+    if(v===b**(e-1)||v===b**(e+1))return E('faktor_anzahl','Fast! Es sind genau '+e+' Faktoren. Zähle nochmal:',tip);
+    return E('sonst','Noch nicht richtig. Schreib es zuerst als Malrechnung:',tip);},
+  solution:()=>{let h='<div class="big">'+pwH(b,e)+' = '+prodBoxes(b,e)+'</div>',prev=b;
+    for(let k=1;k<e;k++){h+='<div class="step">'+prev+' · '+b+' = <b>'+prev*b+'</b></div>';prev*=b;}
+    return h+'<div class="big">'+pwH(b,e)+' = '+group(target)+'</div>';},
+  help:(err,meta)=>{
+    if(err==='einmaleins'||err==='mal_plus'){const a=meta&&meta.a<=10?meta.a:rnd(2,9);return [makeMal(a,b),makeW(b,e,true)];}
+    if(err==='b_mal_e'||err==='b_plus_e')return [makeP(b,e),makeW(b,e,true)];
+    return [makeW(b,e,true)];}};}
+GEN.wert=d=>d===0?makeW(rnd(2,3),rnd(2,3),true):d===1?makeW(rnd(2,5),rnd(3,4),true):makeW(rnd(2,5),rnd(2,4),false);
+
+/* Zehnerpotenzen */
+function zeroVis(e){return '<div class="big numbered" style="gap:.2rem">'+box(1,'one')+Array.from({length:e},(_,i)=>box(0,'zero',i+1)).join('')+'</div><p>Hochzahl '+e+' → '+e+' Nullen</p>';}
+function makeT(e,rev){const ns='1'+'0'.repeat(e);
+  return {skill:'zehn',instr:rev?'Schreib als Zehnerpotenz.':'Schreib die Zahl.',say:rev?group(ns).replace(/\u202F/g,''):'10 hoch '+e,
+  render:B=>{B.innerHTML=rev?'<div class="big">'+group(ns)+' = <span class="pin" style="align-items:flex-start">10'+inp('e','e')+'</span></div>':'<div class="big">'+pw10(e)+' = '+inp('v','wide')+'</div><p class="legend">Große Zahlen darfst du mit Leerzeichen schreiben: 10 000</p>';
+    if(rev){const x=B.querySelector('.e');x.style.width='3rem';x.style.fontSize='1rem';x.style.marginTop='-.9rem';}},
+  check:B=>{
+    if(rev){const x=num(B,'e');if(x===null)return null;if(x===e)return OK;
+      if(Math.abs(x-e)===1)return E('nullen','Zähle nur die Nullen!',zeroVis(e));return E('sonst','Die Hochzahl sagt, wie viele Nullen die Zahl hat.',zeroVis(e));}
+    const s=rawv(B,'v').replace(/[\s.\u202F']/g,'');if(!s)return null;if(s===ns)return OK;
+    if(s==='1'+'0'.repeat(e-1)||s==='1'+'0'.repeat(e+1))return E('nullen','Zähle die Nullen: Die Hochzahl ist '+e+', also '+e+' Nullen.',zeroVis(e));
+    if(s===String(10*e))return E('b_mal_e','Achtung: '+pw10(e)+' ist <b>nicht</b> 10 · '+e+'.',zeroVis(e));
+    return E('sonst','Noch nicht richtig. Schreib eine 1 und dahinter die Nullen.',zeroVis(e));},
+  solution:()=>zeroVis(e)+'<div class="big">'+pw10(e)+' = '+group(ns)+'</div>',
+  help:err=>err==='b_mal_e'?[makeZ(10,Math.min(e,4)),makeT(Math.min(e,4),false)]:[makeT(rnd(1,3),rev)]};}
+GEN.zehn=d=>d===0?makeT(rnd(1,4),false):d===1?makeT(rnd(2,7),Math.random()<.3):makeT(rnd(3,8),Math.random()<.6);
+
+/* Potenzen malnehmen */
+function makeM(b,m,n,vis){
+  const groups='<div class="big"><span class="grp">'+prodBoxes(b,m)+'</span>'+dotSep+'<span class="grp">'+prodBoxes(b,n)+'</span></div>';
+  return {skill:'mult',instr:'Schreib als eine Potenz.',say:b+' hoch '+m+' mal '+b+' hoch '+n,
+  render:B=>{B.innerHTML='<div class="big">'+pwH(b,m)+' · '+pwH(b,n)+' = '+pinIn(isVar(b)?'text':'numeric')+'</div>'+
+    (vis==='show'?'<p class="legend">So sieht das aus:</p>'+groups:vis==='tip'?'<button type="button" class="ghost" data-tip>💡 Tipp zeigen</button><div data-tipbox hidden><p class="legend">So sieht das aus:</p>'+groups+'</div>':'');
+    const t=B.querySelector('[data-tip]');if(t)t.addEventListener('click',()=>{B.querySelector('[data-tipbox]').hidden=false;t.remove();});},
+  check:B=>{const bb=rawv(B,'b').toLowerCase(),ee=num(B,'e');if(!bb||ee===null)return null;const okB=bb===String(b);
+    if(okB&&ee===m+n)return OK;
+    if(okB&&ee===m*n)return E('hoch_mal','Beim Malnehmen werden die Hochzahlen <b>plus</b> gerechnet: '+m+' + '+n+'. Zähle alle '+bH(b)+':',groups);
+    if(!isVar(b)&&bb===String(b*b))return E('basis_mal','Die Basis bleibt gleich: '+b+'. Nur die Hochzahl ändert sich.',groups);
+    if(okB)return E('gezaehlt','Die Basis stimmt. Zähle alle '+bH(b)+' zusammen:',groups);
+    return E('basis','Die Basis bleibt '+bH(b)+'.',groups);},
+  solution:()=>groups+'<div class="big">'+pwH(b,m)+' · '+pwH(b,n)+' = '+bH(b)+'<sup>'+m+' + '+n+'</sup> = '+pwH(b,m+n)+'</div>',
+  help:()=>[makeM(2,rnd(1,3),rnd(2,3),'show')]};}
+GEN.mult=d=>d===0?makeM(2,rnd(1,3),rnd(2,3),'show'):d===1?makeM(rnd(2,5),rnd(2,4),rnd(2,4),'tip'):makeM(pick([rnd(2,9),'a','x','m',10]),rnd(2,6),rnd(2,6),'none');
+
+/* ---------- Ablauf ---------- */
+const SK={};STAGES.forEach(s=>SK[s.id]={streak:0,diff:0,done:false,right:0,helped:0,shown:0});
+const ERR={};
+let task=null,attempt=0,lastErr=null,queue=[],practice=null,studentName='',allDoneShown=false;
+const $=id=>document.getElementById(id);
+const PRAISE=['Richtig! 👍','Super! ⭐','Genau so!','Toll gemacht!','Stimmt!','Sehr gut!'];
+
+function stageNow(){if(practice)return practice;const s=STAGES.find(s=>!SK[s.id].done);return s?s.id:'mix';}
+function nextTask(){
+  let t;
+  if(queue.length){t=queue.shift();t.main=false;t.isHelp=true;}
+  else{let id=stageNow();
+    if(id==='mix'){id=pick(STAGES.slice(1)).id;t=GEN[id](2);t.main=false;t.mix=true;}
+    else{t=GEN[id](SK[id].diff);t.main=!practice;}}
+  show(t);
+}
+function show(t){
+  task=t;attempt=0;lastErr=null;
+  $('tag').innerHTML=STN[t.skill]+(t.isHelp?'<span class="helptag">Zwischenübung</span>':'')+(t.mix?'<span class="helptag">Mischung</span>':'')+(practice&&!t.isHelp?'<span class="helptag">Wiederholen</span>':'');
+  $('instr').textContent=t.instr;
+  t.render($('body'));
+  $('fb').innerHTML='';$('checkBtn').hidden=false;$('dontKnow').hidden=false;$('nextBtn').hidden=true;
+  drawPath();drawStreak();
+  const f=$('body').querySelector('input');if(f)setTimeout(()=>f.focus({preventScroll:true}),50);
+}
+function fbBox(cls,msg,extra){
+  $('fb').innerHTML='<div class="fbbox '+cls+'"><p class="msg">'+msg+'</p>'+(extra||'')+'<button type="button" class="speak" data-sayfb>🔊</button></div>';
+  $('fb').querySelector('[data-sayfb]').addEventListener('click',()=>speak(strip(msg)));
+}
+function onCheck(){
+  if(!$('nextBtn').hidden){nextTask();return;}
+  const r=task.check($('body'));
+  if(!r){fbBox('bad','Bitte zuerst etwas eintragen.');return;}
+  r.ok?success():fail(r);
+}
+function success(){
+  const sk=SK[task.skill];let extra='';
+  if(attempt===0){sk.right++;if(task.main){sk.streak++;sk.diff=Math.min(2,sk.diff+1);}}
+  else{sk.helped++;}
+  if(task.main&&sk.streak>=3&&!sk.done){
+    sk.done=true;const nx=stageNow();
+    extra='<p class="celebrate">⭐ Stufe „'+STN[task.skill]+'“ geschafft!</p>'+(nx!=='mix'?'<p>Als Nächstes: '+STN[nx]+'</p>':'<p>Du hast alle Stufen geschafft! Jetzt kommt eine Mischung.</p>');
+  }
+  fbBox('ok',attempt===0?pick(PRAISE):'Richtig! Diesmal mit Tipp – super, dass du es nochmal probiert hast.',extra);
+  endTask();
+  if(STAGES.every(s=>SK[s.id].done)&&!allDoneShown){allDoneShown=true;showSummary();}
+}
+function fail(r){
+  attempt++;lastErr=r;ERR[r.err]=(ERR[r.err]||0)+1;
+  if(task.main)SK[task.skill].streak=0;
+  if(attempt===1){fbBox('bad',r.msg,r.hint+'<p>Versuch es nochmal!</p>');drawStreak();}
+  else reveal(r);
+}
+function reveal(r){
+  const sk=SK[task.skill];sk.shown++;
+  if(task.main){sk.streak=0;sk.diff=Math.max(0,sk.diff-1);}
+  const help=task.help?task.help(r?r.err:null,r&&r.meta):[];
+  queue.unshift(...help);
+  fbBox('show','So geht es:',task.solution()+(help.length?'<p>Jetzt üben wir das zuerst nochmal.</p>':''));
+  endTask();
+}
+function endTask(){$('checkBtn').hidden=true;$('dontKnow').hidden=true;$('nextBtn').hidden=false;$('nextBtn').focus({preventScroll:true});
+  $('body').querySelectorAll('input,button').forEach(x=>x.disabled=true);drawPath();drawStreak();updateScore();}
+function drawPath(){
+  const cur=stageNow();
+  $('path').innerHTML=STAGES.map((s,i)=>{const sk=SK[s.id],unlocked=sk.done||STAGES.slice(0,i).every(p=>SK[p.id].done);
+    const cls=sk.done?'done':(s.id===cur&&!practice?'cur':'');
+    return '<button type="button" class="stage '+cls+(practice===s.id?' practice':'')+'" data-s="'+s.id+'" '+(unlocked?'':'disabled')+' title="'+(sk.done?'Nochmal üben':unlocked?'Aktuelle Stufe':'Noch gesperrt')+'">'+(sk.done?'⭐':unlocked?'▶':'🔒')+' '+(i+1)+' '+s.t+'</button>';}).join('');
+  $('path').querySelectorAll('[data-s]').forEach(b=>b.addEventListener('click',()=>{
+    const id=b.dataset.s;practice=SK[id].done?id:null;queue=[];nextTask();}));
+}
+function drawStreak(){
+  const id=stageNow(),el=$('streak');
+  if(practice||id==='mix'||!task||!task.main){el.innerHTML=practice?'Du wiederholst eine geschaffte Stufe. <button type="button" class="ghost mini" id="backMain">Zurück zur aktuellen Stufe</button>':'';
+    const b=$('backMain');if(b)b.addEventListener('click',()=>{practice=null;queue=[];nextTask();});return;}
+  const s=SK[id].streak;el.innerHTML='<span class="s'+(s>0?' on':'')+'"></span><span class="s'+(s>1?' on':'')+'"></span><span class="s'+(s>2?' on':'')+'"></span> 3 richtig hintereinander → ⭐';
+}
+function updateScore(){$('score').textContent='⭐ '+STAGES.filter(s=>SK[s.id].done).length+' von '+STAGES.length;}
+function speak(text){try{if(!('speechSynthesis' in window))return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='de-DE';u.rate=.85;speechSynthesis.speak(u);}catch(e){}}
+
+function showSummary(){
+  const all=STAGES.every(s=>SK[s.id].done);
+  $('sumTitle').textContent=all?'Geschafft, '+studentName+'! Deine Auswertung':'Zwischenstand von '+studentName;
+  const now=new Date();
+  $('sumMeta').textContent=studentName+' · '+document.title+' · '+now.toLocaleDateString('de-AT')+', '+now.toLocaleTimeString('de-AT',{hour:'2-digit',minute:'2-digit'});
+  $('sumBody').innerHTML=STAGES.map((s,i)=>{const k=SK[s.id];return '<tr><td>'+(i+1)+' '+s.t+'</td><td>'+(k.done?'⭐':'–')+'</td><td>'+k.right+'</td><td>'+k.helped+'</td><td>'+k.shown+'</td></tr>';}).join('');
+  const errs=Object.entries(ERR).sort((a,b)=>b[1]-a[1]);
+  $('errBox').innerHTML=errs.length?'<h3>Darauf solltest du noch achten:</h3><ul id="errList">'+errs.map(([k,v])=>'<li>'+ERRTXT[k]+' – '+v+'-mal</li>').join('')+'</ul>':'<p>Keine Fehler – stark!</p>';
+  $('summary').hidden=false;setTimeout(()=>$('summary').scrollIntoView({behavior:'smooth',block:'start'}),100);
+}
+
+/* ---------- Start ---------- */
+function go(){
+  const n=$('nameIn').value.trim().replace(/\s+/g,' ');
+  if(!n){$('nameErr').hidden=false;$('nameIn').focus();return;}
+  studentName=n;$('who').textContent=n;$('who').hidden=false;$('start').hidden=true;document.body.classList.remove('notstarted');
+  nextTask();
+}
+$('startBtn').addEventListener('click',go);
+$('nameIn').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();go();}});
+$('checkBtn').addEventListener('click',onCheck);
+$('nextBtn').addEventListener('click',nextTask);
+$('dontKnow').addEventListener('click',()=>{attempt=2;reveal(lastErr);});
+$('sayBtn').addEventListener('click',()=>speak(task.instr+' '+task.say));
+$('showSum').addEventListener('click',showSummary);
+$('backBtn').addEventListener('click',()=>{$('summary').hidden=true;window.scrollTo({top:0,behavior:'smooth'});});
+$('card').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.tagName==='INPUT'){e.preventDefault();
+  const ins=[...$('body').querySelectorAll('input')],i=ins.indexOf(e.target);
+  if(i<ins.length-1&&!ins[i+1].value)ins[i+1].focus();else onCheck();}});
+if(!('speechSynthesis' in window))$('sayBtn').hidden=true;
+updateScore();$('nameIn').focus();
+
+/* ---------- Bildschirm-Tastatur (Zahlen, Vorzeichen, Rechenzeichen, Buchstaben) ---------- */
+(function(){
+  const NUM=[['7','8','9','·',':','⌫'],['4','5','6','+','−','('],['1','2','3','/','^',')'],['0',',','←','→','⇥','↵']];
+  const LET=[['a','b','c','k','m','n','p'],['r','s','t','x','y','z','⌫'],['←','→','⇥','↵']];
+  const INSERT={'−':'-'};
+  const TITLE={'⌫':'Löschen','←':'Cursor nach links','→':'Cursor nach rechts','⇥':'Nächstes Feld','↵':'Prüfen / Weiter','·':'mal',':':'geteilt','^':'hoch (für Hochzahlen)','/':'Bruchstrich','−':'minus','+':'plus',',':'Komma'};
+  const coarse=window.matchMedia&&matchMedia('(pointer: coarse)').matches;
+  let enabled=true,letters=false,target=null;
+
+  const pad=document.createElement('div');pad.id='kpad';pad.hidden=true;pad.setAttribute('role','group');pad.setAttribute('aria-label','Bildschirm-Tastatur');
+  pad.innerHTML='<div class="kp-inner"><div class="kp-head"><span>Tastatur</span><span><button type="button" class="kp-small" data-kp="mode">abc</button> <button type="button" class="kp-small" data-kp="close" title="Tastatur ausblenden">✕</button></span></div><div class="kp-grid"></div></div>';
+  const tog=document.createElement('button');tog.id='kpadToggle';tog.type='button';tog.textContent='⌨ Tastatur';tog.hidden=true;
+  document.body.append(pad,tog);
+  const grid=pad.querySelector('.kp-grid');
+
+  function draw(){
+    const rows=letters?LET:NUM;grid.className='kp-grid'+(letters?' letters':'');
+    grid.innerHTML=rows.flat().map(k=>{const cls=/[0-9a-z]/.test(k)?'':(k==='↵'?'act':'op');
+      return '<button type="button" class="'+cls+'" data-key="'+k+'"'+(TITLE[k]?' title="'+TITLE[k]+'" aria-label="'+TITLE[k]+'"':'')+'>'+k+'</button>';}).join('');
+    pad.querySelector('[data-kp="mode"]').textContent=letters?'123':'abc';
+  }
+  const eligible=el=>el&&el.tagName==='INPUT'&&el.id!=='nameIn'&&!el.disabled;
+  function applyMode(el){
+    if(!('im' in el.dataset))el.dataset.im=el.getAttribute('inputmode')||'';
+    if(enabled&&coarse)el.setAttribute('inputmode','none');
+    else if(el.dataset.im)el.setAttribute('inputmode',el.dataset.im);else el.removeAttribute('inputmode');
+  }
+  const applyAll=()=>document.querySelectorAll('input').forEach(i=>{if(i.id!=='nameIn')applyMode(i);});
+  let t0=null;new MutationObserver(()=>{clearTimeout(t0);t0=setTimeout(applyAll,30);}).observe(document.body,{childList:true,subtree:true});
+  function showPad(){pad.hidden=false;tog.hidden=true;document.body.classList.add('kpad-on');}
+  function hidePad(){pad.hidden=true;tog.hidden=false;document.body.classList.remove('kpad-on');}
+
+  document.addEventListener('focusin',e=>{if(eligible(e.target)){target=e.target;applyMode(target);if(enabled)showPad();else tog.hidden=false;}});
+  ['pointerdown','mousedown'].forEach(ev=>pad.addEventListener(ev,e=>e.preventDefault()));
+
+  const visibleInputs=()=>[...document.querySelectorAll('input')].filter(i=>eligible(i)&&i.offsetParent!==null);
+  function press(k){
+    if(!target||!document.body.contains(target)||target.disabled){const f=visibleInputs()[0];if(!f)return;target=f;}
+    target.focus({preventScroll:true});
+    const v=target.value;let s=target.selectionStart,e=target.selectionEnd;if(s==null){s=e=v.length;}
+    if(k==='↵'){target.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter',bubbles:true,cancelable:true}));return;}
+    if(k==='⇥'){const all=visibleInputs(),i=all.indexOf(target);const n=all[i+1]||all[0];if(n){n.focus();target=n;}return;}
+    if(k==='←'){const p=Math.max(0,s-1);target.setSelectionRange(p,p);return;}
+    if(k==='→'){const p=Math.min(v.length,e+1);target.setSelectionRange(p,p);return;}
+    let nv,pos;
+    if(k==='⌫'){if(s!==e){nv=v.slice(0,s)+v.slice(e);pos=s;}else if(s>0){nv=v.slice(0,s-1)+v.slice(s);pos=s-1;}else return;}
+    else{const ins=INSERT[k]||k;if(target.maxLength>0&&v.length>=target.maxLength)return;nv=v.slice(0,s)+ins+v.slice(e);pos=s+ins.length;}
+    target.value=nv;try{target.setSelectionRange(pos,pos);}catch(_){}
+    target.dispatchEvent(new Event('input',{bubbles:true}));
+  }
+  grid.addEventListener('click',e=>{const b=e.target.closest('[data-key]');if(b)press(b.dataset.key);});
+  pad.querySelector('[data-kp="mode"]').addEventListener('click',()=>{letters=!letters;draw();});
+  pad.querySelector('[data-kp="close"]').addEventListener('click',()=>{enabled=false;applyAll();hidePad();});
+  tog.addEventListener('click',()=>{enabled=true;applyAll();showPad();const f=(target&&document.body.contains(target)&&!target.disabled)?target:visibleInputs()[0];if(f){f.focus();target=f;}});
+  draw();applyAll();
+})();
+</script>
+</body>
+</html>
