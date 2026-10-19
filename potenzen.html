@@ -107,13 +107,32 @@ body.notstarted .wrap>section:not(#start),body.notstarted #secs,body.notstarted 
 .kp-small{font-size:.95rem;padding:.2rem .7rem;background:transparent;color:var(--ink);border:2px solid var(--ink)}
 .kp-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:.35rem}
 .kp-grid.letters{grid-template-columns:repeat(7,1fr)}
+.kp-grid.qw{grid-template-columns:repeat(11,1fr);gap:.25rem}
+.kp-grid.qw button{font-size:1.05rem;padding:.55rem 0}
+.kp-grid.qw button[data-key="⇥"]{grid-column:span 4}
+.kp-grid.qw button[data-key="↵"]{grid-column:span 7}
 .kp-grid button{font:inherit;font-size:1.3rem;font-weight:700;padding:.5rem 0;background:var(--field);color:var(--text);border:2px solid var(--line);border-radius:.5rem;touch-action:manipulation}
 .kp-grid button.op{color:var(--ink);border-color:var(--ink)}
 .kp-grid button.act{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 .kp-grid button:active{transform:translateY(1px)}
 #kpadToggle{position:fixed;right:1rem;bottom:calc(1rem + env(safe-area-inset-bottom,0px));z-index:49;border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,.2)}
 body.kpad-on{padding-bottom:17rem}
-#sumTime h3{margin:1.2rem 0 .3rem;font-size:1.05rem}.tnote{font-size:.95rem;color:var(--muted)}.tnote b{color:var(--bad,var(--red,#c62828))}</style>
+#sumTime h3{margin:1.2rem 0 .3rem;font-size:1.05rem}.tnote{font-size:.95rem;color:var(--muted)}.tnote b{color:var(--bad,var(--red,#c62828))}.big0{font-size:1.6rem}
+.hlB,.hlE,.hlP{border-radius:.3rem;padding:0 .15em}
+.hlB{background:#ffe873;color:#1b2f6b;outline:2px solid #c9a400}
+.hlE{background:#cfe3ff;color:#1b2f6b;outline:2px solid #3b6fd8}
+.hlP{background:#e3f4ea;color:#1b2f6b;outline:2px solid #217a4b}
+.cB{color:#a07800}.cE{color:#3b6fd8}
+.q0{color:var(--muted);font-size:.95rem}
+.wbtns{display:inline-flex;gap:.35rem;flex-wrap:wrap}
+.wbtn{font-size:1rem;padding:.3rem .7rem;background:var(--field);color:var(--ink);border:2px solid var(--ink)}
+.wbtn.chosen,.part.chosen{background:var(--ink);color:var(--paper)}
+.part{font:inherit;font-size:inherit;font-weight:inherit;padding:0 .2em;margin:0;background:var(--field);color:var(--text);border:2px dashed var(--ink);border-radius:.35rem;line-height:1.1}
+.part.pe{font-size:.8em}
+.wbtn:disabled,.part:disabled{opacity:1}
+input.wordin{width:9.5rem;font-size:1.1rem}
+.q0s{font-size:1.15rem}
+</style>
 </head>
 <body>
 <div class="wrap">
@@ -131,29 +150,49 @@ body.kpad-on{padding-bottom:17rem}
 
 
 
+  <section id="s0">
+    <div class="head"><span class="num">1</span><h2>Benenne die Teile der Potenz!</h2></div>
+    <div class="info">
+      <p class="big0"><span class="pw"><span class="hlB">3</span><sup><span class="hlE">4</span></sup></span></p>
+      <p><b class="cB">3</b> ist die <b class="cB">Basis</b> – die Zahl, die malgenommen wird.<br>
+      <b class="cE">4</b> ist der <b class="cE">Exponent</b> (Hochzahl) – er sagt, wie oft die Basis malgenommen wird.<br>
+      <b>3<sup>4</sup></b> zusammen heißt <b>Potenz</b>.</p>
+    </div>
+    <p class="hint">Tippe auf das richtige Wort bzw. auf den richtigen Teil der Potenz.</p>
+    <div class="tasks"></div>
+    <div class="actions"><button class="ghost" data-check>Alle überprüfen</button><span class="res"></span></div>
+  </section>
+
+  <section id="sw">
+    <div class="head"><span class="num">2</span><h2>Schreibe den richtigen Fachbegriff!</h2></div>
+    <p class="hint">Schreib das Wort in das Feld: <b>Basis</b>, <b>Exponent</b> oder <b>Potenz</b>. Groß- oder Kleinschreibung ist egal.</p>
+    <div class="tasks"></div>
+    <div class="actions"><button class="ghost" data-check>Alle überprüfen</button><span class="res"></span></div>
+  </section>
+
   <section id="s1">
-    <div class="head"><span class="num">1</span><h2>Schreibe als Potenz!</h2></div>
+    <div class="head"><span class="num">3</span><h2>Schreibe als Potenz!</h2></div>
     <p class="hint">Basis in das große Feld, Hochzahl (Exponent) in das kleine Feld.</p>
     <div class="tasks"></div>
     <div class="actions"><button class="ghost" data-check>Alle überprüfen</button><span class="res"></span></div>
   </section>
 
   <section id="s2">
-    <div class="head"><span class="num">2</span><h2>Schreibe die Potenzen als Produkt gleicher Faktoren!</h2></div>
+    <div class="head"><span class="num">4</span><h2>Schreibe die Potenzen als Produkt gleicher Faktoren!</h2></div>
     <p class="hint">Malpunkt als <b>·</b>, <b>*</b> oder <b>.</b> eingeben, z. B. 3*3*3</p>
     <div class="tasks"></div>
     <div class="actions"><button class="ghost" data-check>Alle überprüfen</button><span class="res"></span></div>
   </section>
 
   <section id="s3">
-    <div class="head"><span class="num">3</span><h2>Schreibe die Potenzen als Produkt und berechne ihren Wert!</h2></div>
+    <div class="head"><span class="num">5</span><h2>Schreibe die Potenzen als Produkt und berechne ihren Wert!</h2></div>
     <p class="hint">Überprüfe mit dem Taschenrechner. Bei Hochzahl 0 gibt es kein Produkt – nur den Wert eintragen.</p>
     <div class="tasks"></div>
     <div class="actions"><button class="ghost" data-check>Alle überprüfen</button><span class="res"></span></div>
   </section>
 
   <section id="s4">
-    <div class="head"><span class="num">4</span><h2>Negative Basis: Produkt, Vorzeichen, Wert</h2></div>
+    <div class="head"><span class="num">6</span><h2>Negative Basis: Produkt, Vorzeichen, Wert</h2></div>
     <div class="info">
       <p>Ist die Basis negativ, hängt das Vorzeichen vom Exponenten ab:</p>
       <p>gerader Exponent → Wert <span class="pos">positiv</span>, z. B. (−2)<sup>4</sup> = (−2)·(−2)·(−2)·(−2) = +16</p>
@@ -251,7 +290,59 @@ function parseNum(str){
 }
 
 /* Rendering */
+const ACC={b:['basis','grundzahl'],e:['exponent','hochzahl'],p:['potenz']};
+const normW=v=>v.toLowerCase().replace(/[.!]/g,'').replace(/\s+/g,' ').trim();
+function lev(a,b){const m=a.length,n=b.length,d=Array.from({length:m+1},(_,i)=>[i]);for(let j=1;j<=n;j++)d[0][j]=j;
+  for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[m][n];}
+function genW(){
+  const kinds=shuffle(['mb','me','mp','sb','se','sp']);const seen=new Set();
+  return kinds.map(k=>{let b,e,key;do{b=Math.random()<.65?rnd(2,12):pick(LETTERS);e=rnd(2,9);key=b+'^'+e;}while(b===e||seen.has(key));seen.add(key);return {kind:k,b,e,ans:k[1]};});
+}
+function rowW(t){
+  const B=fmtBase(t.b),E=String(t.e),inp='<input class="wordin" data-k="t" inputmode="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" maxlength="20" aria-label="Fachbegriff">';
+  if(t.kind[0]==='m'){
+    const expr=t.ans==='b'?'<span class="hlB">'+B+'</span><sup>'+E+'</sup>':t.ans==='e'?B+'<sup><span class="hlE">'+E+'</span></sup>':'<span class="hlP">'+B+'<sup>'+E+'</sup></span>';
+    return '<span class="expr big0"><span class="pw">'+expr+'</span></span><span class="q0">Der markierte Teil heißt</span>'+inp;
+  }
+  const what=t.ans==='b'?'<b>'+B+'</b>':t.ans==='e'?'<b>'+E+'</b>':'der ganze Ausdruck';
+  return '<span class="q0s">In <span class="pw">'+B+'<sup>'+E+'</sup></span> heißt '+what+'</span>'+inp;
+}
+const WORD={b:'Basis',e:'Exponent',p:'Potenz'};
+function gen0(){
+  const kinds=shuffle(['nb','ne','np','nb','ne','np','tb','te']);
+  const seen=new Set();
+  return kinds.map(k=>{let b,e,key;do{b=Math.random()<.65?rnd(2,12):pick(LETTERS);e=rnd(2,9);key=b+'^'+e;}while(b===e||seen.has(key));seen.add(key);
+    return {kind:k,b,e,ans:k[1]};});
+}
+function row0(t){
+  const B=fmtBase(t.b),E=String(t.e);
+  if(t.kind[0]==='n'){
+    const expr=t.ans==='b'?'<span class="hlB">'+B+'</span><sup>'+E+'</sup>':t.ans==='e'?B+'<sup><span class="hlE">'+E+'</span></sup>':'<span class="hlP">'+B+'<sup>'+E+'</sup></span>';
+    return '<span class="expr big0"><span class="pw">'+expr+'</span></span><span class="q0">Wie heißt der markierte Teil?</span>'+
+      '<span class="wbtns">'+['b','e','p'].map(w=>'<button type="button" class="wbtn" data-w="'+w+'">'+WORD[w]+'</button>').join('')+'</span><input type="hidden" data-k="w">';
+  }
+  return '<span class="q0">Tippe auf '+(t.ans==='b'?'die <b>Basis</b>':'den <b>Exponenten</b>')+':</span>'+
+    '<span class="expr big0"><span class="pw"><button type="button" class="part" data-w="b">'+B+'</button><sup><button type="button" class="part pe" data-w="e">'+E+'</button></sup></span></span><input type="hidden" data-k="w">';
+}
+function mark0(el,w){el.querySelectorAll('[data-w]').forEach(x=>x.classList.toggle('chosen',x.dataset.w===w));}
 const sections={
+  s0:{gen:gen0,row:row0,
+    check:(t,el)=>el.querySelector('[data-k=w]').value===t.ans,
+    solve:(t,el)=>{el.querySelector('[data-k=w]').value=t.ans;mark0(el,t.ans);},
+    task:t=>t.kind[0]==='n'?pwHTML(t.b,t.e)+' – markierter Teil':pwHTML(t.b,t.e)+' – '+(t.ans==='b'?'Basis':'Exponent')+' antippen',
+    solText:t=>t.kind[0]==='n'?'Der markierte Teil heißt <b>'+WORD[t.ans]+'</b>.':'Die '+(t.ans==='b'?'Basis ist <b>'+fmtBase(t.b)+'</b>':'Hochzahl (der Exponent) ist <b>'+t.e+'</b>')+'.'
+  },
+  sw:{gen:genW,row:rowW,
+    check:(t,el)=>ACC[t.ans].includes(normW(el.querySelector('[data-k=t]').value)),
+    hint:(t,el)=>{const v=normW(el.querySelector('[data-k=t]').value);
+      const other=Object.keys(ACC).find(k=>k!==t.ans&&ACC[k].includes(v));
+      if(other)return '„'+WORD[other]+'“ ist ein anderer Teil. '+({b:'Gesucht ist die Zahl, die malgenommen wird (unten, groß).',e:'Gesucht ist die kleine Zahl oben – sie sagt, wie oft.',p:'Gesucht ist der ganze Ausdruck aus Basis und Exponent.'})[t.ans];
+      if(ACC[t.ans].some(w=>lev(v,w)<=2))return 'Fast! Achte auf die Rechtschreibung – das Wort beginnt mit „'+WORD[t.ans][0]+'“.';
+      return ({b:'Tipp: Die Zahl, die malgenommen wird, heißt B…',e:'Tipp: Die kleine Zahl oben heißt E… (oder Hochzahl).',p:'Tipp: Der ganze Ausdruck heißt P…'})[t.ans];},
+    solve:(t,el)=>{el.querySelector('[data-k=t]').value=WORD[t.ans];},
+    task:t=>pwHTML(t.b,t.e)+' – '+(t.kind[0]==='m'?'markierter Teil':'Fachbegriff'),
+    solText:t=>'Das Wort heißt <b>'+WORD[t.ans]+'</b>'+(t.ans==='e'?' (auch: Hochzahl)':'')+'.'
+  },
   s1:{gen:gen1,row:(t)=>
     '<span class="expr">'+product(t.b,t.e)+'</span><span class="eq">=</span>'+
     '<span class="pin"><input class="b" data-k="b" aria-label="Basis" autocomplete="off"><input class="e" data-k="e" inputmode="numeric" aria-label="Hochzahl" autocomplete="off"></span>',
@@ -308,7 +399,7 @@ const sections={
   }
 };
 const state={};
-const NAMES={s1:'1 Als Potenz schreiben',s2:'2 Als Produkt schreiben',s3:'3 Produkt und Wert',s4:'4 Negative Basis'};
+const NAMES={s0:'1 Fachbegriffe antippen',sw:'2 Fachbegriffe schreiben',s1:'3 Als Potenz schreiben',s2:'4 Als Produkt schreiben',s3:'5 Produkt und Wert',s4:'6 Negative Basis'};
 let summaryRequested=false;
 
 function setSign(el,s){el.querySelectorAll('.sign button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.s===s?'true':'false'));}
@@ -347,10 +438,11 @@ function checkTask(id,i,force){
   if(!isComplete(el)){if(force)setMsg(el,'bad','Bitte alle Felder ausfüllen.');return;}
   const r=!!cfg.check(st.tasks[i],el);
   el.classList.remove('ok','bad');el.classList.add(r?'ok':'bad');
-  if(r){st.results[i]=true;setMsg(el,'ok','Richtig!');}
+  if(r){st.results[i]=true;setMsg(el,'ok','Richtig!');if(id==='sw'){const x=el.querySelector('[data-k=t]');x.value=WORD[st.tasks[i].ans];}}
   else{
     st.results[i]=false;st.tries[i]++;
-    setMsg(el,'bad',st.tries[i]===1?'Leider falsch – versuch es nochmal!':'Noch nicht richtig. Versuch es nochmal oder sieh dir die Lösung an.',st.tries[i]>=2);
+    const hn=cfg.hint&&cfg.hint(st.tasks[i],el);
+    setMsg(el,'bad',hn?hn+(st.tries[i]===1?' Versuch es nochmal!':''):(st.tries[i]===1?'Leider falsch – versuch es nochmal!':'Noch nicht richtig. Versuch es nochmal oder sieh dir die Lösung an.'),st.tries[i]>=2);
   }
   updateSection(id);
 }
@@ -396,7 +488,7 @@ function updateSummary(){
     const first=st.results.filter((r,i)=>r===true&&st.tries[i]===0).length;
     const shown=st.results.filter(r=>r==='shown').length;
     const open=st.results.length-ok-shown;
-    st.results.forEach((r,i)=>{if(r==='shown'){const t=st.tasks[i];shownList.push('Übung '+id.slice(1)+' '+LBL[i]+') '+pwHTML(t.b,t.e));}});
+    st.results.forEach((r,i)=>{if(r==='shown'){const t=st.tasks[i];shownList.push('Übung '+NAMES[id].split(' ')[0]+' '+LBL[i]+') '+(sections[id].task?sections[id].task(t):pwHTML(t.b,t.e)));}});
     T.ok+=ok;T.first+=first;T.shown+=shown;T.open+=open;T.n+=st.results.length;
     rows+='<tr><td>'+NAMES[id]+'</td><td>'+ok+' von '+st.results.length+'</td><td>'+first+'</td><td>'+shown+'</td><td>'+open+'</td></tr>';
   });
@@ -418,6 +510,14 @@ function updateSummary(){
   if(wasHidden)setTimeout(()=>sum.scrollIntoView({behavior:'smooth',block:'start'}),300);
 }
 
+document.getElementById('s0').addEventListener('click',e=>{
+  const b=e.target.closest('[data-w]');if(!b)return;
+  const el=b.closest('.task');if(!el)return;const i=+el.dataset.i,st=state.s0;
+  if(st.results[i]===true||st.results[i]==='shown')return;
+  el.querySelector('[data-k=w]').value=b.dataset.w;mark0(el,b.dataset.w);clearMark('s0',i);checkTask('s0',i,true);
+  if(st.results[i]===false){const sol=el.querySelector('.sol');const H={b:'Die Basis ist die große Zahl unten – sie wird malgenommen.',e:'Der Exponent (Hochzahl) ist die kleine Zahl oben – er sagt, wie oft.',p:'Basis und Exponent zusammen heißen Potenz.'};
+    if(sol&&sol.firstChild&&sol.firstChild.nodeType===3)sol.firstChild.nodeValue='Nicht ganz. '+H[st.tasks[i].ans]+' Versuch es nochmal! ';}
+});
 Object.keys(sections).forEach(id=>{
   build(id);
   const sec=document.getElementById(id);
@@ -546,7 +646,7 @@ updateSummary=function(){
   let tot=0,cnt=0,fast=0,last=0,rows='';
   ids.forEach(id=>{const arr=(TIMES[id]||[]).filter(x=>x.ms!=null);const s=arr.reduce((a,x)=>a+x.ms,0),fz=arr.filter(x=>x.ms<3000).length;
     arr.forEach(x=>{if(x.end>last)last=x.end;});tot+=s;cnt+=arr.length;fast+=fz;
-    rows+='<tr><td>'+sections[id].name+'</td><td>'+fmtT(s)+'</td><td>'+(arr.length?fmtT(s/arr.length):'–')+'</td><td>'+fz+'</td></tr>';});
+    rows+='<tr><td>'+((typeof NAMES!=='undefined'&&NAMES[id])||sections[id].name)+'</td><td>'+fmtT(s)+'</td><td>'+(arr.length?fmtT(s/arr.length):'–')+'</td><td>'+fz+'</td></tr>';});
   let box=document.getElementById('sumTime');
   if(!box){box=document.createElement('div');box.id='sumTime';sum.querySelector('.tablewrap').after(box);}
   const span=tStartAll&&last?last-tStartAll:0;
@@ -561,6 +661,7 @@ updateSummary();
 (function(){
   const NUM=[['7','8','9','·',':','⌫'],['4','5','6','+','−','('],['1','2','3','/','^',')'],['0',',','←','→','⇥','↵']];
   const LET=[['a','b','c','k','m','n','p'],['r','s','t','x','y','z','⌫'],['←','→','⇥','↵']];
+  const QW=[['q','w','e','r','t','z','u','i','o','p','ü'],['a','s','d','f','g','h','j','k','l','ö','ä'],['y','x','c','v','b','n','m','ß','⌫','←','→'],['⇥','↵']];
   const INSERT={'−':'-'};
   const TITLE={'⌫':'Löschen','←':'Cursor nach links','→':'Cursor nach rechts','⇥':'Nächstes Feld','↵':'Prüfen / Weiter','·':'mal',':':'geteilt','^':'hoch (für Hochzahlen)','/':'Bruchstrich','−':'minus','+':'plus',',':'Komma'};
   const coarse=window.matchMedia&&matchMedia('(pointer: coarse)').matches;
@@ -573,8 +674,8 @@ updateSummary();
   const grid=pad.querySelector('.kp-grid');
 
   function draw(){
-    const rows=letters?LET:NUM;grid.className='kp-grid'+(letters?' letters':'');
-    grid.innerHTML=rows.flat().map(k=>{const cls=/[0-9a-z]/.test(k)?'':(k==='↵'?'act':'op');
+    const rows=letters==='qw'?QW:letters?LET:NUM;grid.className='kp-grid'+(letters==='qw'?' qw':letters?' letters':'');
+    grid.innerHTML=rows.flat().map(k=>{const cls=/^[0-9a-zäöüß]$/.test(k)?'':(k==='↵'?'act':'op');
       return '<button type="button" class="'+cls+'" data-key="'+k+'"'+(TITLE[k]?' title="'+TITLE[k]+'" aria-label="'+TITLE[k]+'"':'')+'>'+k+'</button>';}).join('');
     pad.querySelector('[data-kp="mode"]').textContent=letters?'123':'abc';
   }
@@ -589,7 +690,7 @@ updateSummary();
   function showPad(){pad.hidden=false;tog.hidden=true;document.body.classList.add('kpad-on');}
   function hidePad(){pad.hidden=true;tog.hidden=false;document.body.classList.remove('kpad-on');}
 
-  document.addEventListener('focusin',e=>{if(eligible(e.target)){target=e.target;applyMode(target);if(enabled)showPad();else tog.hidden=false;}});
+  document.addEventListener('focusin',e=>{if(eligible(e.target)){target=e.target;applyMode(target);{const want=target.classList.contains('wordin')?'qw':(letters==='qw'?false:letters);if(want!==letters){letters=want;draw();}}if(enabled)showPad();else tog.hidden=false;}});
   ['pointerdown','mousedown'].forEach(ev=>pad.addEventListener(ev,e=>e.preventDefault()));
 
   const visibleInputs=()=>[...document.querySelectorAll('input')].filter(i=>eligible(i)&&i.offsetParent!==null);
