@@ -205,6 +205,17 @@ body.kpad-on{padding-bottom:17rem}
     <div class="actions"><button class="ghost" data-check>Alle überprüfen</button><span class="res"></span></div>
   </section>
 
+  <section id="sq">
+    <div class="head"><span class="num">8</span><h2>Quadratzahlen bis 20 trainieren</h2></div>
+    <div class="info">
+      <p class="big">13<sup>2</sup> = 13 · 13 = 169</p>
+      <p>Eine Quadratzahl entsteht, wenn man eine Zahl <b>mit sich selbst</b> malnimmt. Lerne die Quadratzahlen von 1² bis 20² auswendig – du brauchst sie oft!</p>
+    </div>
+    <p class="hint">In jeder Runde kommen alle Quadratzahlen von 1² bis 20² dran – in zufälliger Reihenfolge. Bei „□² = …“ suchst du die Zahl, die mit sich selbst malgenommen das Ergebnis gibt. Mit „Neue Runde“ kannst du so oft üben, wie du willst.</p>
+    <div class="tasks"></div>
+    <div class="actions"><button class="ghost" data-check>Alle überprüfen</button><span class="res"></span></div>
+  </section>
+
   <div class="finish"><button class="ghost" id="showSum">Auswertung anzeigen</button></div>
 
   <section id="summary" hidden>
@@ -221,7 +232,7 @@ body.kpad-on{padding-bottom:17rem}
 </div>
 
 <script>
-const LBL='abcdefghijkl';
+const LBL='abcdefghijklmnopqrstuvwxyz';
 const NN='\u202F';
 const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
 const shuffle=arr=>{for(let i=arr.length-1;i>0;i--){const j=rnd(0,i);[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;};
@@ -290,7 +301,26 @@ const sections={
   s8:{name:'7 Gleitkomma → Zahl',gen:()=>genFloat(8),
     row:t=>'<span class="expr">'+mantStr(t)+' · '+pw10(t.e)+'</span><span class="eq">=</span>'+numIn,
     check:(t,el)=>readInt(val(el,'n'))===floatNum(t),
-    solve:(t,el)=>put(el,'n',group(floatNum(t))), task:t=>mantStr(t)+' · '+pw10(t.e), solText:t=>group(floatNum(t))}
+    solve:(t,el)=>put(el,'n',group(floatNum(t))), task:t=>mantStr(t)+' · '+pw10(t.e), solText:t=>group(floatNum(t))},
+  sq:{name:'8 Quadratzahlen bis 20',gen:()=>{
+      const ns=range(1,20);
+      const rev=new Set(shuffle(range(0,19)).slice(0,6));
+      return shuffle(ns).map((n,i)=>({n,rev:rev.has(i)}));},
+    row:t=>t.rev
+      ?'<span class="expr"><span class="pin" style="align-items:flex-start"><input class="v" data-k="n" inputmode="numeric" aria-label="gesuchte Zahl" autocomplete="off"><sup>2</sup></span></span><span class="eq">=</span><span class="expr">'+group(String(t.n*t.n))+'</span>'
+      :'<span class="expr">'+t.n+'<sup>2</sup></span><span class="eq">=</span>'+numIn,
+    check:(t,el)=>{const v=readInt(val(el,'n'));const sq=t.n*t.n;
+      if(t.rev){if(v===String(t.n))return true;
+        if(v===String(sq/2))return 'Nicht durch 2 teilen! Gesucht ist die Zahl, die mit sich selbst malgenommen '+sq+' ergibt.';
+        const x=+v;if(x>0&&x*x!==sq)return 'Probe: '+x+' · '+x+' = '+(x*x)+'. Das ist '+(x*x<sq?'zu klein':'zu groß')+'.';return false;}
+      if(v===String(sq))return true;
+      if(v===String(2*t.n))return 'Quadrieren heißt nicht mal 2! '+t.n+'² = '+t.n+' · '+t.n+'.';
+      if(v===String(t.n+t.n))return 'Nicht plus! '+t.n+'² = '+t.n+' · '+t.n+'.';
+      const x=+v;if(Math.abs(x-sq)<=t.n&&x!==sq)return 'Knapp daneben – rechne nochmal '+t.n+' · '+t.n+'.';
+      return 'Rechne '+t.n+' · '+t.n+'.';},
+    solve:(t,el)=>put(el,'n',t.rev?String(t.n):group(String(t.n*t.n))),
+    task:t=>t.rev?'□² = '+group(String(t.n*t.n)):t.n+'<sup>2</sup>',
+    solText:t=>t.n+'<sup>2</sup> = '+t.n+' · '+t.n+' = '+group(String(t.n*t.n))}
 };
 
 const state={};
