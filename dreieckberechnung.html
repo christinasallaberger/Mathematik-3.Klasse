@@ -33,9 +33,9 @@ body{
 .wrap{max-width:1080px;margin:0 auto;padding:28px 18px 60px}
 header h1{font-family:"Patrick Hand",cursive;font-weight:400;font-size:clamp(34px,6vw,52px);line-height:1.05;margin:0 0 6px;color:var(--pen)}
 header p{margin:0 0 20px;color:var(--muted);max-width:60ch}
-.controls{display:flex;flex-wrap:wrap;gap:14px 22px;margin-bottom:22px}
-.ctl-label{display:block;font-size:13px;color:var(--muted);margin-bottom:4px}
-.namein{font:inherit;font-size:16px;padding:7px 12px;border:2px solid var(--ink);border-radius:10px;background:var(--card);color:var(--ink);width:240px;max-width:100%}
+.controls{display:flex;flex-direction:column;gap:12px;margin-bottom:22px;background:var(--card);border:2px solid var(--line);border-radius:14px;padding:16px}
+.ctl-label{display:block;font-size:14px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.namein{font:inherit;font-size:16px;padding:7px 12px;border:2px solid var(--ink);border-radius:10px;background:var(--card);color:var(--ink);width:260px;max-width:100%}
 .grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:22px;align-items:start}
 @media (max-width:820px){.grid{grid-template-columns:1fr}}
 .sheet{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:18px}
@@ -45,12 +45,10 @@ svg{width:100%;height:auto;display:block}
 .side{stroke:var(--ink);stroke-width:3;stroke-linecap:round}
 .side.height-line{stroke:var(--red);stroke-width:2.5;stroke-dasharray:6 4}
 .side.selected{stroke:var(--pen);stroke-width:5}
-.side.flash{stroke:var(--red);stroke-width:5}
 .tri{fill:var(--tri)}
 .ra{fill:none;stroke:var(--ink);stroke-width:2}
 .dot{fill:var(--ink)}
 .lbl{font-family:"Patrick Hand",cursive;font-size:21px;fill:var(--ink)}
-.lbl.unk{fill:var(--pen)}
 .way-title{margin:18px 0 4px;font-size:15px;color:var(--muted)}
 .way{font-family:"Patrick Hand",cursive;font-size:24px;line-height:1.55;color:var(--pen);min-height:44px;border-left:3px solid var(--pen);padding-left:14px}
 .way:empty::before{content:"Hier entsteht dein Rechenweg.";color:var(--muted);font-size:19px}
@@ -89,21 +87,31 @@ svg{width:100%;height:auto;display:block}
 table{border-collapse:collapse;width:100%;font-size:15px}
 th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
 .tag{font-size:14px;color:var(--muted)}
+.homework-box{background:var(--tri);border:2px dashed var(--pen);border-radius:10px;padding:12px 14px;margin-top:14px;font-size:15px}
+.homework-box h4{margin:0 0 6px;color:var(--pen);font-size:17px}
+.codebox{background:var(--paper);border:2px solid var(--ink);border-radius:8px;padding:8px 12px;font-family:monospace;font-size:18px;font-weight:bold;color:var(--pen);display:inline-block;margin:6px 0}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
     <h1>Dreiecke: Umfang & Flächeninhalt</h1>
-    <p>Erkenne die benötigten Seiten, bestimme Umfang $u$ und Flächeninhalt $A$ Schritt für Schritt wie im Schulheft.</p>
+    <p>Wähle zuerst die passende Formel mit Variablen, setze die Zahlen ein und berechne Umfang $u$ und Flächeninhalt $A$.</p>
   </header>
 
   <div class="controls">
     <div>
-      <label class="ctl-label" for="name">Dein Name</label>
+      <label class="ctl-label" for="name">1. Dein Name</label>
       <div class="namerow">
         <input id="name" class="namein" placeholder="Vor- und Nachname">
         <button class="next" id="nameOk">Los geht's</button>
+      </div>
+    </div>
+    <div style="border-top: 1px solid var(--line); padding-top: 12px; margin-top: 4px;">
+      <label class="ctl-label" for="codeInp">2. Bereits einen Speicher-Code von einem anderen Gerät?</label>
+      <div class="namerow">
+        <input id="codeInp" class="namein" placeholder="Zahlencode eingeben" inputmode="numeric">
+        <button class="next" id="codeOk" style="background:var(--muted)">Fortschritt laden</button>
       </div>
     </div>
   </div>
@@ -132,10 +140,10 @@ th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
 <script>
 const ROUND = 4;
 const PLAN = [
-  { type: 'right', mode: 'u_and_a' },
-  { type: 'general', mode: 'u_and_a' },
-  { type: 'right', mode: 'u_and_a' },
-  { type: 'general', mode: 'u_and_a' }
+  { type: 'right' },
+  { type: 'general' },
+  { type: 'right' },
+  { type: 'general' }
 ];
 
 const state = { solved: 0, perfect: 0, log: [], nameLocked: false, idx: 0, name: '' };
@@ -145,13 +153,35 @@ const $ = s => document.querySelector(s);
 function fmt(x){ return String(Math.round(x * 100) / 100).replace('.', ','); }
 function parseNum(s){ return Number(String(s).trim().replace(',', '.')); }
 
+function generateCode() {
+  // Generiert einen einzigartigen Zahlencode basierend auf Name, gelösten Aufgaben und Fehlern
+  let hash = 0;
+  const str = state.name + state.solved + state.perfect + state.idx;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash % 900000 + 100000); // 6-stelliger Zahlencode
+}
+
 function updateScore() {
   $('#score').textContent = (state.name ? state.name + ': ' : '') + `Gelöst: ${state.solved} von ${ROUND}, davon fehlerfrei: ${state.perfect}`;
 }
 
+function saveToLocalStorage() {
+  if (!state.nameLocked) return;
+  const data = {
+    name: state.name,
+    solved: state.solved,
+    perfect: state.perfect,
+    idx: state.idx,
+    log: state.log
+  };
+  localStorage.setItem('dreieck_app_' + state.name.toLowerCase().replace(/\s+/g, ''), JSON.stringify(data));
+}
+
 function newTask() {
   const p = PLAN[state.idx % ROUND];
-  state.idx++;
   
   if (p.type === 'right') {
     const a = 3 + Math.floor(Math.random() * 6);
@@ -171,13 +201,13 @@ function newTask() {
   $('#done').hidden = true;
 
   const figName = task.type === 'right' ? 'Rechtwinkliges Dreieck' : 'Allgemeines Dreieck';
-  $('#taskText').innerHTML = `<span class="tag">Aufgabe ${(state.idx - 1) % ROUND + 1} von ${ROUND} · ${figName}</span><br>Berechne den <b>Umfang u</b> und den <b>Flächeninhalt A</b> des Dreiecks.`;
+  $('#taskText').innerHTML = `<span class="tag">Aufgabe ${state.idx % ROUND + 1} von ${ROUND} · ${figName}</span><br>Stelle die Formeln auf und berechne <b>u</b> und <b>A</b>.`;
 
   draw();
 
   if (!state.nameLocked) {
     task.waiting = true;
-    $('#steps').innerHTML = '<div class="step"><p>Gib bitte zuerst oben deinen Namen ein und klicke auf „Los geht\'s“.</p></div>';
+    $('#steps').innerHTML = '<div class="step"><p>Gib bitte zuerst oben deinen Namen ein oder gib einen Code ein, um fortzufahren.</p></div>';
     return;
   }
   stepSelectSides();
@@ -264,7 +294,7 @@ function right(d, msg) {
   const fb = d.querySelector('.fb');
   fb.className = 'fb ok';
   fb.textContent = '✓ ' + msg;
-  d.querySelectorAll('input,button').forEach(e => e.disabled = true);
+  d.querySelectorAll('input,button,select').forEach(e => e.disabled = true);
 }
 
 function addWay(text, cls = '') {
@@ -284,50 +314,73 @@ function stepSelectSides() {
 
   d.querySelector('.check').onclick = () => {
     const sel = Array.from(task.selected);
-    const isRight = task.type === 'right' && sel.length === 3 && sel.includes('a') && sel.includes('b') && sel.includes('c');
-    const isGen = task.type === 'general' && sel.length === 3 && sel.includes('a') && sel.includes('b') && sel.includes('c');
+    const ok = sel.length === 3 && sel.includes('a') && sel.includes('b') && sel.includes('c');
 
-    if (isRight || isGen) {
+    if (ok) {
       task.selecting = false;
       draw();
-      right(d, 'Richtig! Der Umfang ist die Summe aller 3 Außenseiten (u = a + b + c).');
-      addWay('u = a + b + c');
-      stepCalcU();
+      right(d, 'Richtig! Der Umfang u besteht genau aus den 3 Außenseiten a, b und c.');
+      stepFormulaU();
     } else {
       if (sel.includes('h')) {
-        wrong(d, 'Die Höhe h liegt im Inneren des Dreiecks. Für den Umfang brauchst du nur die Außenkanten!');
+        wrong(d, 'Die Höhe h liegt im Inneren. Für den Umfang brauchst du nur die Außenkanten!');
       } else {
-        wrong(d, 'Der Umfang besteht genau aus den 3 äußeren Seiten des Dreiecks.');
+        wrong(d, 'Klicke genau die 3 äußeren Seiten des Dreiecks an.');
       }
     }
   };
 }
 
-// Schritt 2: Umfang ausrechnen
+// Schritt 2: Umfang-Formel eingeben
+function stepFormulaU() {
+  const d = addStep(2, 'Formel für den Umfang u aufstellen', 
+    `<p>Wähle die richtige Variablen-Formel für den Umfang:</p>
+     <div class="opts">
+       <button class="opt" data-f="1">u = a + b + c</button>
+       <button class="opt" data-f="2">u = a · b · c</button>
+       <button class="opt" data-f="3">u = (a · h) / 2</button>
+     </div>`);
+
+  d.querySelectorAll('.opt').forEach(btn => {
+    btn.onclick = () => {
+      if (btn.dataset.f === '1') {
+        btn.classList.add('good');
+        right(d, 'Richtig! u = a + b + c');
+        addWay('u = a + b + c');
+        stepCalcU();
+      } else {
+        btn.classList.add('wrongb');
+        wrong(d, 'Beim Umfang werden alle Seiten miteinander addiert (+).');
+      }
+    };
+  });
+}
+
+// Schritt 3: Umfang ausrechnen
 function stepCalcU() {
-  const d = addStep(2, 'Umfang u berechnen', 
-    `<p>Setze die Zahlen ein und berechne den Umfang:</p>
+  const d = addStep(3, 'Umfang u berechnen', 
+    `<p>Setze die Zahlen ein (u = ${fmt(task.a)} + ${fmt(task.b)} + ${fmt(task.c)}):</p>
      <div class="eq"><span>u =</span><input class="n wide" id="uInp"><span>cm</span><button class="check" id="uBtn">Prüfen</button></div>`);
 
   $('#uBtn').onclick = () => {
     const val = parseNum($('#uInp').value);
     if (Math.abs(val - task.u) < 0.05) {
       right(d, `Korrekt! u = ${fmt(task.u)} cm`);
-      addWay(`u = ${fmt(task.u)} cm`);
-      stepFormulaA();
+      addWay(`u = ${fmt(task.a)} + ${fmt(task.b)} + ${fmt(task.c)} = ${fmt(task.u)} cm`);
+      stepGenFormulaA();
     } else {
-      wrong(d, `Addiere alle 3 Außenseiten miteinander.`);
+      wrong(d, `Addiere die drei Seiten: ${fmt(task.a)} + ${fmt(task.b)} + ${fmt(task.c)}`);
     }
   };
 }
 
-// Schritt 3: Formel für Flächeninhalt wählen
-function stepFormulaA() {
-  const d = addStep(3, 'Formel für den Flächeninhalt A', 
-    `<p>Welche Formel gehört zum Flächeninhalt dieses Dreiecks?</p>
+// Schritt 4: Allgemeine Formel für Flächeninhalt
+function stepGenFormulaA() {
+  const d = addStep(4, 'Allgemeine Formel für den Flächeninhalt A', 
+    `<p>Welche Grundformel gilt für den Flächeninhalt von Dreiecken?</p>
      <div class="opts">
        <button class="opt" data-f="1">A = (g · h) / 2</button>
-       <button class="opt" data-f="2">A = a · b</button>
+       <button class="opt" data-f="2">A = g · h</button>
        <button class="opt" data-f="3">A = a + b + c</button>
      </div>`);
 
@@ -335,35 +388,79 @@ function stepFormulaA() {
     btn.onclick = () => {
       if (btn.dataset.f === '1') {
         btn.classList.add('good');
-        right(d, 'Richtig! Die Fläche eines Dreiecks ist Grundseite mal Höhe geteilt durch 2.');
-        addWay('A = (g · h) / 2');
-        stepCalcA();
+        right(d, 'Richtig! Ein Dreieck ist halb so groß wie das zugehörige Rechteck: A = (g · h) / 2.');
+        stepSpecFormulaA();
       } else {
         btn.classList.add('wrongb');
-        wrong(d, 'Erinnerung: Ein Dreieck ist genau halb so groß wie ein Rechteck mit gleicher Grundlinie und Höhe.');
+        wrong(d, 'Achtung: Vergiss nicht die Halbe (/ 2)!');
       }
     };
   });
 }
 
-// Schritt 4: Flächeninhalt berechnen
+// Schritt 5: Spezifische Formel aus der Skizze wählen
+function stepSpecFormulaA() {
+  let correctFormula, opt1, opt2, opt3;
+  if (task.type === 'right') {
+    correctFormula = 'A = (a · b) / 2';
+    opt1 = 'A = (a · b) / 2';
+    opt2 = 'A = (c · h) / 2';
+    opt3 = 'A = (a · c) / 2';
+  } else {
+    correctFormula = 'A = (c · h) / 2';
+    opt1 = 'A = (a · ha) / 2';
+    opt2 = 'A = (c · h) / 2';
+    opt3 = 'A = (b · hb) / 2';
+  }
+
+  const d = addStep(5, 'Formel an diese Skizze anpassen', 
+    `<p>Welche Formel passt exakt zu den Beschriftungen in unserer Skizze?</p>
+     <div class="opts">
+       <button class="opt" data-f="${opt1}">${opt1}</button>
+       <button class="opt" data-f="${opt2}">${opt2}</button>
+       <button class="opt" data-f="${opt3}">${opt3}</button>
+     </div>`);
+
+  d.querySelectorAll('.opt').forEach(btn => {
+    btn.onclick = () => {
+      if (btn.dataset.f === correctFormula) {
+        btn.classList.add('good');
+        right(d, `Richtig! In dieser Skizze lautet die Formel: ${correctFormula}`);
+        addWay(correctFormula);
+        stepCalcA();
+      } else {
+        btn.classList.add('wrongb');
+        if (task.type === 'right') {
+          wrong(d, 'Im rechtwinkligen Dreieck stehen die Katheten a und b normal aufeinander.');
+        } else {
+          wrong(d, 'Achte darauf, welche Höhe h eingezeichnet ist.');
+        }
+      }
+    };
+  });
+}
+
+// Schritt 6: Flächeninhalt berechnen
 function stepCalcA() {
-  const d = addStep(4, 'Flächeninhalt A berechnen', 
-    `<p>Berechne den Flächeninhalt:</p>
+  let subText;
+  if (task.type === 'right') {
+    subText = `A = (${fmt(task.a)} · ${fmt(task.b)}) / 2`;
+  } else {
+    subText = `A = (${fmt(task.c)} · ${fmt(task.h)}) / 2`;
+  }
+
+  const d = addStep(6, 'Flächeninhalt A berechnen', 
+    `<p>Setze die Werte ein (${subText}) und berechne:</p>
      <div class="eq"><span>A =</span><input class="n wide" id="aInp"><span>cm²</span><button class="check" id="aBtn">Prüfen</button></div>`);
 
   $('#aBtn').onclick = () => {
     const val = parseNum($('#aInp').value);
     if (Math.abs(val - task.A) < 0.05) {
       right(d, `Hervorragend! A = ${fmt(task.A)} cm²`);
-      addWay(`A = ${fmt(task.A)} cm²`, 'final');
+      addWay(`${subText} = ${fmt(task.A)} cm²`, 'final');
       finish();
     } else {
-      if (task.type === 'right') {
-        wrong(d, `Im rechtwinkligen Dreieck stehen die Katheten a und b normal aufeinander. A = (${fmt(task.a)} · ${fmt(task.b)}) / 2`);
-      } else {
-        wrong(d, `Nutze die Grundseite c und die Höhe h: A = (${fmt(task.c)} · ${fmt(task.h)}) / 2`);
-      }
+      wrong(d, `Rechne: Multipliziere die beiden Werte und teile das Ergebnis durch 2.`);
     }
   };
 }
@@ -371,6 +468,7 @@ function stepCalcA() {
 function finish() {
   state.solved++;
   if (task.errors === 0) state.perfect++;
+  state.idx++;
   
   state.log.push({
     type: task.type === 'right' ? 'Rechtw. Dreieck' : 'Allg. Dreieck',
@@ -380,11 +478,25 @@ function finish() {
     time: Math.round((Date.now() - task.t0) / 1000) + 's'
   });
 
+  saveToLocalStorage();
   updateScore();
 
-  $('#doneText').innerHTML = task.errors === 0 
+  const code = generateCode();
+  $('#doneText').innerHTML = (task.errors === 0 
     ? '<b>Perfekt gelöst ohne Fehler!</b>' 
-    : `Aufgabe geschafft mit ${task.errors} Fehlversuch(en).`;
+    : `Aufgabe geschafft mit ${task.errors} Fehlversuch(en).`) + 
+    `<div class="homework-box">
+       <h4>📝 Schulheft-Auftrag</h4>
+       <p>Übertrage die Aufgabe sauber in dein Heft:</p>
+       <ul>
+         <li><b>Ganz links:</b> Die Angaben (Gegeben & Gesucht)</li>
+         <li><b>In der Mitte:</b> Die saubere Skizze mit Beschriftung</li>
+         <li><b>Ganz rechts:</b> Die Rechenschritte und Formeln</li>
+       </ul>
+       <hr style="border:0; border-top:1px dashed var(--pen); margin:10px 0;">
+       <p style="margin:0; font-size:14px;">Dein aktueller <b>Geräte-Wechsel-Code</b> für ein anderes Gerät lautet:</p>
+       <div class="codebox">${code}</div>
+     </div>`;
 
   $('#nextBtn').textContent = state.log.length >= ROUND ? 'Zur Zusammenfassung' : 'Nächste Aufgabe';
   $('#done').hidden = false;
@@ -405,6 +517,11 @@ function showSummary() {
         <tbody>${rows}</tbody>
       </table>
     </div>
+    <div class="homework-box">
+      <h4>Wichtiger Hinweis zum Heft-Eintrag:</h4>
+      <p>Überprüfe, ob alle 4 Beispiele vollständig mit <b>Angaben (links)</b>, <b>Skizze (Mitte)</b> und <b>Rechenschritten (rechts)</b> im Heft stehen!</p>
+    </div>
+    <br>
     <button class="next" onclick="location.reload()">Neustarten</button>
   `;
 
@@ -416,16 +533,69 @@ function showSummary() {
 
 $('#nameOk').onclick = () => {
   const name = $('#name').value.trim();
-  if (!name) return;
+  if (!name) { alert('Bitte gib deinen Namen ein.'); return; }
   state.name = name;
   state.nameLocked = true;
   $('#name').disabled = true;
   $('#nameOk').hidden = true;
+  
+  // Prüfen ob es schon einen gespeicherten Stand gibt
+  const saved = localStorage.getItem('dreieck_app_' + name.toLowerCase().replace(/\s+/g, ''));
+  if (saved) {
+    if (confirm('Wir haben einen gespeicherten Stand für "' + name + '" gefunden. Möchtest du dort weitermachen?')) {
+      const data = JSON.parse(saved);
+      state.solved = data.solved;
+      state.perfect = data.perfect;
+      state.idx = data.idx;
+      state.log = data.log;
+    }
+  }
+
   updateScore();
   if (task && task.waiting) {
     task.waiting = false;
     $('#steps').innerHTML = '';
-    stepSelectSides();
+    newTask();
+  }
+};
+
+$('#codeOk').onclick = () => {
+  const codeVal = $('#codeInp').value.trim();
+  if (!codeVal) { alert('Bitte gib einen Code ein.'); return; }
+  
+  // Alle LocalStorage Einträge durchsuchen, um den passenden Code zu finden
+  let found = false;
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key.startsWith('dreieck_app_')) {
+      const data = JSON.parse(localStorage.getItem(key));
+      // Testen durch Nachbilden des Codes
+      state.name = data.name;
+      if (String(generateCode()) === codeVal) {
+        state.solved = data.solved;
+        state.perfect = data.perfect;
+        state.idx = data.idx;
+        state.log = data.log;
+        state.nameLocked = true;
+        $('#name').value = data.name;
+        $('#name').disabled = true;
+        $('#nameOk').hidden = true;
+        found = true;
+        break;
+      }
+    }
+  }
+
+  if (found) {
+    alert('Fortschritt erfolgreich geladen! Willkommen zurück, ' + state.name + '.');
+    updateScore();
+    if (task && task.waiting) {
+      task.waiting = false;
+      $('#steps').innerHTML = '';
+      newTask();
+    }
+  } else {
+    alert('Ungültiger Code oder kein passender Speicherstand auf diesem Gerät gefunden.');
   }
 };
 
