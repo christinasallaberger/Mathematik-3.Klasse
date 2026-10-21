@@ -95,6 +95,7 @@ th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
 .homework-box{background:var(--tri);border:2px dashed var(--pen);border-radius:10px;padding:12px 14px;margin-top:14px;font-size:15px}
 .homework-box h4{margin:0 0 6px;color:var(--pen);font-size:17px}
 .codebox{background:var(--paper);border:2px solid var(--ink);border-radius:8px;padding:8px 12px;font-family:monospace;font-size:18px;font-weight:bold;color:var(--pen);display:inline-block;margin:6px 0}
+/* Onscreen Keypad */
 .keypad{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:3px solid var(--pen);padding:10px 14px;box-shadow:0 -4px 20px rgba(0,0,0,0.15);display:flex;flex-direction:column;align-items:center;gap:8px;z-index:999}
 .keypad-header{display:flex;justify-content:space-between;width:100%;max-width:360px;font-size:14px;font-weight:bold;color:var(--muted)}
 .keypad-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;max-width:360px}
@@ -107,7 +108,7 @@ th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
 <div class="wrap">
   <header>
     <h1>Dreiecke: Umfang & Flächeninhalt</h1>
-    <p>Stelle die passende Formel auf, lies die Werte aus der Skizze ab, setze sie ein und berechne Umfang u und Flächeninhalt A.</p>
+    <p>Stelle die passende Formel auf, lies die Werte aus der Skizze ab, setze sie ein und berechne Umfang $u$ und Flächeninhalt $A$.</p>
   </header>
 
   <div class="controls">
@@ -127,7 +128,7 @@ th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
     </div>
   </div>
 
-  <p class="score" id="score">Gelöst: 0 von 8, davon fehlerfrei: 0</p>
+  <p class="score" id="score">Gelöst: 0 von 4, davon fehlerfrei: 0</p>
 
   <div class="grid">
     <div class="sheet">
@@ -148,6 +149,7 @@ th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
   <section class="summary" id="summary" hidden></section>
 </div>
 
+<!-- Onscreen Nummernfeld -->
 <div class="keypad" id="keypad" hidden>
   <div class="keypad-header">
     <span>Eingabe über Tastatur / Touch</span>
@@ -170,18 +172,12 @@ th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
 </div>
 
 <script>
-const TOTAL_TASKS = 8;
+const ROUND = 4;
 const PRESETS = [
-  // Runde 1 (Aufgaben 1 - 4)
-  { round: 1, type: 'right', a: 6, b: 14, c: 15.23 },
-  { round: 1, type: 'general', a: 11, b: 16, c: 20, h: 8 },
-  { round: 1, type: 'right', a: 8, b: 18, c: 19.7 },
-  { round: 1, type: 'general', a: 13, b: 19, c: 24, h: 10 },
-  // Runde 2 (Aufgaben 5 - 8)
-  { round: 2, type: 'right', a: 9, b: 12, c: 15 },
-  { round: 2, type: 'general', a: 14, b: 17, c: 22, h: 9 },
-  { round: 2, type: 'right', a: 7, b: 24, c: 25 },
-  { round: 2, type: 'general', a: 15, b: 20, c: 26, h: 11 }
+  { type: 'right', a: 6, b: 14, c: 15.23 },
+  { type: 'general', a: 11, b: 16, c: 20, h: 8 },
+  { type: 'right', a: 8, b: 18, c: 19.7 },
+  { type: 'general', a: 13, b: 19, c: 24, h: 10 }
 ];
 
 const state = { solved: 0, perfect: 0, log: [], nameLocked: false, idx: 0, name: '' };
@@ -227,7 +223,7 @@ function generateCode() {
 }
 
 function updateScore() {
-  $('#score').textContent = (state.name ? state.name + ': ' : '') + `Gelöst: ${state.solved} von ${TOTAL_TASKS}, davon fehlerfrei: ${state.perfect}`;
+  $('#score').textContent = (state.name ? state.name + ': ' : '') + `Gelöst: ${state.solved} von ${ROUND}, davon fehlerfrei: ${state.perfect}`;
 }
 
 function saveToLocalStorage() {
@@ -237,7 +233,7 @@ function saveToLocalStorage() {
 }
 
 function newTask() {
-  const p = PRESETS[state.idx % TOTAL_TASKS];
+  const p = PRESETS[state.idx % ROUND];
   
   if (p.type === 'right') {
     task = { type: 'right', a: p.a, b: p.b, c: p.c, u: p.a+p.b+p.c, A: (p.a*p.b)/2, selected: new Set(), errors: 0, t0: Date.now() };
@@ -249,11 +245,8 @@ function newTask() {
   $('#way').innerHTML = '';
   $('#done').hidden = true;
 
-  const currentRound = p.round;
-  const roundTaskNum = (state.idx % 4) + 1;
   const figName = task.type === 'right' ? 'Rechtwinkliges Dreieck' : 'Allgemeines Dreieck';
-  
-  $('#taskText').innerHTML = `<span class="tag">Runde ${currentRound} · Aufgabe ${roundTaskNum} von 4 (Gesamt: ${state.idx + 1}/${TOTAL_TASKS}) · ${figName}</span><br>Stelle die Formeln auf, setze die Werte aus der Skizze ein und berechne <b>u</b> und <b>A</b>.`;
+  $('#taskText').innerHTML = `<span class="tag">Aufgabe ${state.idx % ROUND + 1} von ${ROUND} · ${figName}</span><br>Stelle die Formeln auf, setze die Werte aus der Skizze ein und berechne <b>u</b> und <b>A</b>.`;
 
   draw();
 
@@ -289,6 +282,7 @@ function draw() {
       labels += `<text x="${pos[0]}" y="${pos[1]}" class="lbl" text-anchor="middle">${txt}</text>`;
     }
   } else {
+    // Mathematisch exakte Eckpunkte für allgemeines Dreieck aus den Vorlagen
     const scale = 10;
     const cPx = task.c * scale;
     const xC = 40 + ((task.b*task.b - task.a*task.a + task.c*task.c) / (2 * task.c)) * scale;
@@ -363,6 +357,7 @@ function addWay(text, cls = '') {
   $('#way').appendChild(el);
 }
 
+// Schritt 1: Umfangsseiten anklicken
 function stepSelectSides() {
   task.selecting = true;
   draw();
@@ -389,6 +384,7 @@ function stepSelectSides() {
   };
 }
 
+// Schritt 2: Formel für den Umfang
 function stepFormulaU() {
   const d = addStep(2, 'Formel für den Umfang u aufstellen', 
     `<p>Wähle die passende Formel mit den Variablen aus der Skizze:</p>
@@ -413,6 +409,7 @@ function stepFormulaU() {
   });
 }
 
+// Schritt 3: Zahlen in Umfang-Formel einsetzen
 function stepInsertU() {
   const d = addStep(3, 'Zahlen in die Umfang-Formel einsetzen', 
     `<p>Lies die Längen aus der Skizze ab und trage sie ein:</p>
@@ -442,6 +439,7 @@ function stepInsertU() {
   };
 }
 
+// Schritt 4: Umfang ausrechnen
 function stepCalcU() {
   const d = addStep(4, 'Umfang u berechnen', 
     `<p>Rechne das Ergebnis aus:</p>
@@ -459,6 +457,7 @@ function stepCalcU() {
   };
 }
 
+// Schritt 5: Formel für Flächeninhalt wählen
 function stepFormulaA() {
   let opt1, opt2, opt3, correctFormula;
   if (task.type === 'right') {
@@ -496,6 +495,7 @@ function stepFormulaA() {
   });
 }
 
+// Schritt 6: Zahlen in Flächen-Formel einsetzen
 function stepInsertA() {
   const d = addStep(6, 'Zahlen in die Bruch-Formel einsetzen', 
     `<p>Lies die Werte aus der Skizze ab und trage sie in den Bruch ein:</p>
@@ -537,6 +537,7 @@ function stepInsertA() {
   };
 }
 
+// Schritt 7: Flächeninhalt ausrechnen
 function stepCalcA() {
   const d = addStep(7, 'Flächeninhalt A berechnen', 
     `<p>Rechne das Ergebnis aus:</p>
@@ -571,13 +572,6 @@ function finish() {
   updateScore();
 
   const code = generateCode();
-  const isRound1End = state.idx === 4;
-  const isFinalEnd = state.idx >= TOTAL_TASKS;
-
-  let btnText = 'Nächste Aufgabe';
-  if (isRound1End) btnText = 'Runde 2 starten';
-  else if (isFinalEnd) btnText = 'Zur Gesamtauswertung';
-
   $('#doneText').innerHTML = (task.errors === 0 
     ? '<b>Perfekt gelöst ohne Fehler!</b>' 
     : `Aufgabe geschafft mit ${task.errors} Fehlversuch(en).`) + 
@@ -594,7 +588,7 @@ function finish() {
        <div class="codebox">${code}</div>
      </div>`;
 
-  $('#nextBtn').textContent = btnText;
+  $('#nextBtn').textContent = state.log.length >= ROUND ? 'Zur Zusammenfassung' : 'Nächste Aufgabe';
   $('#done').hidden = false;
 }
 
@@ -616,7 +610,7 @@ function showSummary() {
     </div>
     <div class="homework-box">
       <h4>Wichtiger Hinweis zum Heft-Eintrag:</h4>
-      <p>Überprüfe, ob alle Beispiele vollständig mit <b>Angaben (links)</b>, <b>Skizze (Mitte)</b> und <b>Rechenschritten (rechts)</b> im Heft stehen!</p>
+      <p>Überprüfe, ob alle Beipiele vollständig mit <b>Angaben (links)</b>, <b>Skizze (Mitte)</b> und <b>Rechenschritten (rechts)</b> im Heft stehen!</p>
     </div>
     <br>
     <button class="next" onclick="location.reload()">Neustarten</button>
@@ -694,7 +688,7 @@ $('#codeOk').onclick = () => {
 };
 
 $('#nextBtn').onclick = () => {
-  if (state.idx >= TOTAL_TASKS) showSummary();
+  if (state.log.length >= ROUND) showSummary();
   else newTask();
 };
 
