@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Berechnungen am Dreieck – Umfang & Flächeninhalt</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#fdfdf9; --grid:#d6e4f2; --ink:#1b2a4a; --pen:#1d4ed8; --muted:#5b6b85;
+  --red:#c62828; --red-soft:#fdecea; --green:#2e7d32; --green-soft:#e6f4e7;
+  --marker:#ffe36e; --tri:#eaf1fb; --card:#ffffff; --line:#c9d6e6; --btn:#1b2a4a; --btn-ink:#ffffff;
+  color-scheme:light;
+  box-sizing:border-box;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#151b26; --grid:#222d3e; --ink:#e6ecf5; --pen:#8fb1ff; --muted:#9aa8bf;
+    --red:#ff7a7a; --red-soft:#3a1e22; --green:#6fd17a; --green-soft:#17301c;
+    --marker:#7a6516; --tri:#1e2a3e; --card:#1b2231; --line:#33415a; --btn:#e6ecf5; --btn-ink:#151b26;
+    color-scheme:dark;
+  }
+}
+*,*::before,*::after{box-sizing:inherit}
+body{
+  margin:0; color:var(--ink); background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:22px 22px;
+  font-family:"Atkinson Hyperlegible",system-ui,-apple-system,sans-serif; font-size:17px; line-height:1.5;
+}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 18px 60px}
+header h1{font-family:"Patrick Hand",cursive;font-weight:400;font-size:clamp(34px,6vw,52px);line-height:1.05;margin:0 0 6px;color:var(--pen)}
+header p{margin:0 0 20px;color:var(--muted);max-width:60ch}
+.controls{display:flex;flex-wrap:wrap;gap:14px 22px;margin-bottom:22px}
+.ctl-label{display:block;font-size:13px;color:var(--muted);margin-bottom:4px}
+.namein{font:inherit;font-size:16px;padding:7px 12px;border:2px solid var(--ink);border-radius:10px;background:var(--card);color:var(--ink);width:240px;max-width:100%}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:22px;align-items:start}
+@media (max-width:820px){.grid{grid-template-columns:1fr}}
+.sheet{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:18px}
+.task{font-size:20px;margin:0 0 8px}
+.task b{font-family:"Patrick Hand",cursive;font-size:26px;color:var(--pen);font-weight:400}
+svg{width:100%;height:auto;display:block}
+.side{stroke:var(--ink);stroke-width:3;stroke-linecap:round}
+.side.height-line{stroke:var(--red);stroke-width:2.5;stroke-dasharray:6 4}
+.side.selected{stroke:var(--pen);stroke-width:5}
+.side.flash{stroke:var(--red);stroke-width:5}
+.tri{fill:var(--tri)}
+.ra{fill:none;stroke:var(--ink);stroke-width:2}
+.dot{fill:var(--ink)}
+.lbl{font-family:"Patrick Hand",cursive;font-size:21px;fill:var(--ink)}
+.lbl.unk{fill:var(--pen)}
+.way-title{margin:18px 0 4px;font-size:15px;color:var(--muted)}
+.way{font-family:"Patrick Hand",cursive;font-size:24px;line-height:1.55;color:var(--pen);min-height:44px;border-left:3px solid var(--pen);padding-left:14px}
+.way:empty::before{content:"Hier entsteht dein Rechenweg.";color:var(--muted);font-size:19px}
+.wline{animation:write .35s ease-out}
+@keyframes write{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:none}}
+.wline.final{display:inline-block;border-bottom:3px double var(--pen);margin-top:2px;font-weight:bold}
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:14px 16px}
+.step.solved{border-color:var(--green)}
+.step-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.num{flex:none;width:30px;height:30px;border-radius:50%;border:2px solid var(--ink);display:grid;place-items:center;font-weight:700;font-size:15px}
+.step.solved .num{background:var(--green);border-color:var(--green);color:var(--card)}
+.step h3{margin:0;font-size:18px}
+.step p{margin:0 0 8px}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{font:inherit;font-family:"Patrick Hand",cursive;font-size:22px;min-width:56px;padding:4px 14px;border:2px solid var(--ink);border-radius:10px;background:var(--card);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){background:var(--tri)}
+.opt.good{background:var(--green-soft);border-color:var(--green);color:var(--green)}
+.opt.wrongb{background:var(--red-soft);border-color:var(--red);color:var(--red);text-decoration:line-through}
+.opt:disabled{cursor:default}
+.eq{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-family:"Patrick Hand",cursive;font-size:24px}
+.n{font:inherit;font-family:"Patrick Hand",cursive;font-size:22px;width:80px;padding:2px 8px;border:2px solid var(--ink);border-radius:8px;background:var(--paper);color:var(--pen);text-align:center}
+.n.wide{width:110px}
+.check,.next{font:inherit;font-size:16px;font-weight:700;padding:8px 16px;border-radius:10px;border:0;background:var(--btn);color:var(--btn-ink);cursor:pointer}
+.fb{font-size:15px;margin-top:8px}
+.fb:empty{display:none}
+.fb.bad{color:var(--red);background:var(--red-soft);padding:8px 10px;border-radius:8px}
+.fb.ok{color:var(--green)}
+.hit{stroke:transparent;stroke-width:28;stroke-linecap:round;cursor:pointer;pointer-events:stroke}
+.tapnote{text-align:center;font-weight:700;color:var(--pen);margin:6px 0 0;font-size:16px}
+.score{font-size:15px;color:var(--muted);margin:0 0 12px}
+.namerow{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.summary{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:20px}
+.summary h2{font-family:"Patrick Hand",cursive;font-size:32px;color:var(--pen);margin:0 0 14px}
+.tablewrap{overflow-x:auto;margin-bottom:14px}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+.tag{font-size:14px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Dreiecke: Umfang & Flächeninhalt</h1>
+    <p>Erkenne die benötigten Seiten, bestimme Umfang $u$ und Flächeninhalt $A$ Schritt für Schritt wie im Schulheft.</p>
+  </header>
+
+  <div class="controls">
+    <div>
+      <label class="ctl-label" for="name">Dein Name</label>
+      <div class="namerow">
+        <input id="name" class="namein" placeholder="Vor- und Nachname">
+        <button class="next" id="nameOk">Los geht's</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="score" id="score">Gelöst: 0 von 4, davon fehlerfrei: 0</p>
+
+  <div class="grid">
+    <div class="sheet">
+      <p class="task" id="taskText"></p>
+      <div id="fig"></div>
+      <p class="way-title">Rechenweg</p>
+      <div class="way" id="way"></div>
+    </div>
+    <div>
+      <div class="steps" id="steps"></div>
+      <div class="done" id="done" hidden style="margin-top:16px;">
+        <p id="doneText" style="font-size:18px; margin-bottom:12px;"></p>
+        <button class="next" id="nextBtn">Nächste Aufgabe</button>
+      </div>
+    </div>
+  </div>
+
+  <section class="summary" id="summary" hidden></section>
+</div>
+
+<script>
+const ROUND = 4;
+const PLAN = [
+  { type: 'right', mode: 'u_and_a' },
+  { type: 'general', mode: 'u_and_a' },
+  { type: 'right', mode: 'u_and_a' },
+  { type: 'general', mode: 'u_and_a' }
+];
+
+const state = { solved: 0, perfect: 0, log: [], nameLocked: false, idx: 0, name: '' };
+let task = null;
+
+const $ = s => document.querySelector(s);
+function fmt(x){ return String(Math.round(x * 100) / 100).replace('.', ','); }
+function parseNum(s){ return Number(String(s).trim().replace(',', '.')); }
+
+function updateScore() {
+  $('#score').textContent = (state.name ? state.name + ': ' : '') + `Gelöst: ${state.solved} von ${ROUND}, davon fehlerfrei: ${state.perfect}`;
+}
+
+function newTask() {
+  const p = PLAN[state.idx % ROUND];
+  state.idx++;
+  
+  if (p.type === 'right') {
+    const a = 3 + Math.floor(Math.random() * 6);
+    const b = 4 + Math.floor(Math.random() * 6);
+    const c = Math.sqrt(a*a + b*b);
+    task = { type: 'right', a, b, c: Math.round(c*100)/100, u: a+b+c, A: (a*b)/2, selected: new Set(), errors: 0, t0: Date.now() };
+  } else {
+    const a = 5 + Math.floor(Math.random() * 4);
+    const b = 6 + Math.floor(Math.random() * 4);
+    const c = 7 + Math.floor(Math.random() * 4);
+    const h = 4 + Math.floor(Math.random() * 3);
+    task = { type: 'general', a, b, c, h, u: a+b+c, A: (c*h)/2, selected: new Set(), errors: 0, t0: Date.now() };
+  }
+
+  $('#steps').innerHTML = '';
+  $('#way').innerHTML = '';
+  $('#done').hidden = true;
+
+  const figName = task.type === 'right' ? 'Rechtwinkliges Dreieck' : 'Allgemeines Dreieck';
+  $('#taskText').innerHTML = `<span class="tag">Aufgabe ${(state.idx - 1) % ROUND + 1} von ${ROUND} · ${figName}</span><br>Berechne den <b>Umfang u</b> und den <b>Flächeninhalt A</b> des Dreiecks.`;
+
+  draw();
+
+  if (!state.nameLocked) {
+    task.waiting = true;
+    $('#steps').innerHTML = '<div class="step"><p>Gib bitte zuerst oben deinen Namen ein und klicke auf „Los geht\'s“.</p></div>';
+    return;
+  }
+  stepSelectSides();
+}
+
+function draw() {
+  const W = 360, H = 240;
+  let lines = '', hits = '', labels = '';
+
+  if (task.type === 'right') {
+    const pA = [60, 190], pB = [280, 190], pC = [60, 60];
+    const segs = {
+      'a': [pC, pA, `a = ${fmt(task.a)} cm`, [35, 125]],
+      'b': [pA, pB, `b = ${fmt(task.b)} cm`, [170, 215]],
+      'c': [pB, pC, `c = ${fmt(task.c)} cm`, [180, 115]]
+    };
+
+    lines += `<polygon class="tri" points="${pA.join(',')} ${pB.join(',')} ${pC.join(',')}"/>`;
+    lines += `<path class="ra" d="M60,175 L75,175 L75,190"/><circle class="dot" cx="67" cy="182" r="2"/>`;
+
+    for (const [key, [p1, p2, txt, pos]] of Object.entries(segs)) {
+      const isSel = task.selected.has(key);
+      lines += `<line x1="${p1[0]}" y1="${p1[1]}" x2="${p2[0]}" y2="${p2[1]}" class="side${isSel ? ' selected' : ''}"/>`;
+      if (task.selecting) {
+        hits += `<line x1="${p1[0]}" y1="${p1[1]}" x2="${p2[0]}" y2="${p2[1]}" class="hit" data-seg="${key}"/>`;
+      }
+      labels += `<text x="${pos[0]}" y="${pos[1]}" class="lbl" text-anchor="middle">${txt}</text>`;
+    }
+  } else {
+    const pA = [50, 180], pB = [300, 180], pC = [180, 60], pH = [180, 180];
+    const segs = {
+      'b': [pA, pC, `b = ${fmt(task.b)} cm`, [100, 110]],
+      'a': [pC, pB, `a = ${fmt(task.a)} cm`, [250, 110]],
+      'c': [pA, pB, `c = ${fmt(task.c)} cm`, [175, 205]],
+      'h': [pC, pH, `h = ${fmt(task.h)} cm`, [195, 120]]
+    };
+
+    lines += `<polygon class="tri" points="${pA.join(',')} ${pB.join(',')} ${pC.join(',')}"/>`;
+
+    for (const [key, [p1, p2, txt, pos]] of Object.entries(segs)) {
+      const isSel = task.selected.has(key);
+      const isH = key === 'h';
+      lines += `<line x1="${p1[0]}" y1="${p1[1]}" x2="${p2[0]}" y2="${p2[1]}" class="side${isH ? ' height-line' : ''}${isSel ? ' selected' : ''}"/>`;
+      if (task.selecting) {
+        hits += `<line x1="${p1[0]}" y1="${p1[1]}" x2="${p2[0]}" y2="${p2[1]}" class="hit" data-seg="${key}"/>`;
+      }
+      labels += `<text x="${pos[0]}" y="${pos[pos.length-1][1]}" class="lbl" text-anchor="middle">${txt}</text>`;
+    }
+  }
+
+  const note = task.selecting ? `<p class="tapnote">👆 Klicke die 3 Seiten an, die du für den <b>Umfang u</b> brauchst!</p>` : '';
+
+  $('#fig').innerHTML = `<svg viewBox="0 0 ${W} ${H}">${lines}${labels}${hits}</svg>${note}`;
+
+  if (task.selecting) {
+    document.querySelectorAll('#fig .hit').forEach(el => {
+      el.onclick = () => {
+        const seg = el.dataset.seg;
+        if (task.selected.has(seg)) task.selected.delete(seg);
+        else task.selected.add(seg);
+        draw();
+      };
+    });
+  }
+}
+
+function addStep(num, title, body) {
+  const d = document.createElement('section');
+  d.className = 'step';
+  d.innerHTML = `<div class="step-head"><span class="num">${num}</span><h3>${title}</h3></div><div class="body">${body}</div><div class="fb"></div>`;
+  $('#steps').appendChild(d);
+  return d;
+}
+
+function wrong(d, msg) {
+  task.errors++;
+  const fb = d.querySelector('.fb');
+  fb.className = 'fb bad';
+  fb.textContent = msg;
+}
+
+function right(d, msg) {
+  d.classList.add('solved');
+  const fb = d.querySelector('.fb');
+  fb.className = 'fb ok';
+  fb.textContent = '✓ ' + msg;
+  d.querySelectorAll('input,button').forEach(e => e.disabled = true);
+}
+
+function addWay(text, cls = '') {
+  const el = document.createElement('div');
+  el.className = 'wline' + (cls ? ' ' + cls : '');
+  el.textContent = text;
+  $('#way').appendChild(el);
+}
+
+// Schritt 1: Seiten für den Umfang antippen
+function stepSelectSides() {
+  task.selecting = true;
+  draw();
+  const d = addStep(1, 'Welche Seiten brauchst du für den Umfang u?', 
+    `<p>Klicke in der Skizze die <b>3 Außenseiten</b> an und drücke dann auf Bestätigen.</p>
+     <button class="check">Auswahl überprüfen</button>`);
+
+  d.querySelector('.check').onclick = () => {
+    const sel = Array.from(task.selected);
+    const isRight = task.type === 'right' && sel.length === 3 && sel.includes('a') && sel.includes('b') && sel.includes('c');
+    const isGen = task.type === 'general' && sel.length === 3 && sel.includes('a') && sel.includes('b') && sel.includes('c');
+
+    if (isRight || isGen) {
+      task.selecting = false;
+      draw();
+      right(d, 'Richtig! Der Umfang ist die Summe aller 3 Außenseiten (u = a + b + c).');
+      addWay('u = a + b + c');
+      stepCalcU();
+    } else {
+      if (sel.includes('h')) {
+        wrong(d, 'Die Höhe h liegt im Inneren des Dreiecks. Für den Umfang brauchst du nur die Außenkanten!');
+      } else {
+        wrong(d, 'Der Umfang besteht genau aus den 3 äußeren Seiten des Dreiecks.');
+      }
+    }
+  };
+}
+
+// Schritt 2: Umfang ausrechnen
+function stepCalcU() {
+  const d = addStep(2, 'Umfang u berechnen', 
+    `<p>Setze die Zahlen ein und berechne den Umfang:</p>
+     <div class="eq"><span>u =</span><input class="n wide" id="uInp"><span>cm</span><button class="check" id="uBtn">Prüfen</button></div>`);
+
+  $('#uBtn').onclick = () => {
+    const val = parseNum($('#uInp').value);
+    if (Math.abs(val - task.u) < 0.05) {
+      right(d, `Korrekt! u = ${fmt(task.u)} cm`);
+      addWay(`u = ${fmt(task.u)} cm`);
+      stepFormulaA();
+    } else {
+      wrong(d, `Addiere alle 3 Außenseiten miteinander.`);
+    }
+  };
+}
+
+// Schritt 3: Formel für Flächeninhalt wählen
+function stepFormulaA() {
+  const d = addStep(3, 'Formel für den Flächeninhalt A', 
+    `<p>Welche Formel gehört zum Flächeninhalt dieses Dreiecks?</p>
+     <div class="opts">
+       <button class="opt" data-f="1">A = (g · h) / 2</button>
+       <button class="opt" data-f="2">A = a · b</button>
+       <button class="opt" data-f="3">A = a + b + c</button>
+     </div>`);
+
+  d.querySelectorAll('.opt').forEach(btn => {
+    btn.onclick = () => {
+      if (btn.dataset.f === '1') {
+        btn.classList.add('good');
+        right(d, 'Richtig! Die Fläche eines Dreiecks ist Grundseite mal Höhe geteilt durch 2.');
+        addWay('A = (g · h) / 2');
+        stepCalcA();
+      } else {
+        btn.classList.add('wrongb');
+        wrong(d, 'Erinnerung: Ein Dreieck ist genau halb so groß wie ein Rechteck mit gleicher Grundlinie und Höhe.');
+      }
+    };
+  });
+}
+
+// Schritt 4: Flächeninhalt berechnen
+function stepCalcA() {
+  const d = addStep(4, 'Flächeninhalt A berechnen', 
+    `<p>Berechne den Flächeninhalt:</p>
+     <div class="eq"><span>A =</span><input class="n wide" id="aInp"><span>cm²</span><button class="check" id="aBtn">Prüfen</button></div>`);
+
+  $('#aBtn').onclick = () => {
+    const val = parseNum($('#aInp').value);
+    if (Math.abs(val - task.A) < 0.05) {
+      right(d, `Hervorragend! A = ${fmt(task.A)} cm²`);
+      addWay(`A = ${fmt(task.A)} cm²`, 'final');
+      finish();
+    } else {
+      if (task.type === 'right') {
+        wrong(d, `Im rechtwinkligen Dreieck stehen die Katheten a und b normal aufeinander. A = (${fmt(task.a)} · ${fmt(task.b)}) / 2`);
+      } else {
+        wrong(d, `Nutze die Grundseite c und die Höhe h: A = (${fmt(task.c)} · ${fmt(task.h)}) / 2`);
+      }
+    }
+  };
+}
+
+function finish() {
+  state.solved++;
+  if (task.errors === 0) state.perfect++;
+  
+  state.log.push({
+    type: task.type === 'right' ? 'Rechtw. Dreieck' : 'Allg. Dreieck',
+    u: fmt(task.u) + ' cm',
+    A: fmt(task.A) + ' cm²',
+    errors: task.errors,
+    time: Math.round((Date.now() - task.t0) / 1000) + 's'
+  });
+
+  updateScore();
+
+  $('#doneText').innerHTML = task.errors === 0 
+    ? '<b>Perfekt gelöst ohne Fehler!</b>' 
+    : `Aufgabe geschafft mit ${task.errors} Fehlversuch(en).`;
+
+  $('#nextBtn').textContent = state.log.length >= ROUND ? 'Zur Zusammenfassung' : 'Nächste Aufgabe';
+  $('#done').hidden = false;
+}
+
+function showSummary() {
+  const s = $('#summary');
+  let rows = state.log.map((l, i) => 
+    `<tr><td>${i+1}</td><td>${l.type}</td><td>${l.u}</td><td>${l.A}</td><td>${l.errors}</td><td>${l.time}</td></tr>`
+  ).join('');
+
+  s.innerHTML = `
+    <h2>Zusammenfassung für die Lehrkraft</h2>
+    <p><b>Name:</b> ${state.name || '–'}</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Nr.</th><th>Typ</th><th>Umfang u</th><th>Fläche A</th><th>Fehler</th><th>Zeit</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+    <button class="next" onclick="location.reload()">Neustarten</button>
+  `;
+
+  $('.grid').hidden = true;
+  $('.controls').hidden = true;
+  $('#score').hidden = true;
+  s.hidden = false;
+}
+
+$('#nameOk').onclick = () => {
+  const name = $('#name').value.trim();
+  if (!name) return;
+  state.name = name;
+  state.nameLocked = true;
+  $('#name').disabled = true;
+  $('#nameOk').hidden = true;
+  updateScore();
+  if (task && task.waiting) {
+    task.waiting = false;
+    $('#steps').innerHTML = '';
+    stepSelectSides();
+  }
+};
+
+$('#nextBtn').onclick = () => {
+  if (state.log.length >= ROUND) showSummary();
+  else newTask();
+};
+
+newTask();
+</script>
+</body>
+</html>
