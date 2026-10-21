@@ -481,3 +481,272 @@ function stepInsertU() {
     const expected = [task.a, task.b, task.c].sort((x,y)=>x-y);
 
     if (vals.length === 3 && Math.abs(vals[0] - expected[0]) < 0.05 && Math.abs(vals[1] - expected[1]) < 0.05 && Math.abs(vals[2] - expected[2]) < 0.05) {
+      right(d, 'Sehr gut! Alle Werte richtig eingesetzt.');
+      addWay(`u = ${fmt(task.a)} + ${fmt(task.b)} + ${fmt(task.c)}`);
+      stepCalcU();
+    } else {
+      wrong(d, 'Vergleiche die Eingaben genau mit den Werten an den 3 Außenseiten in der Skizze.');
+    }
+  };
+}
+
+function stepCalcU() {
+  const d = addStep(4, 'Umfang u berechnen', 
+    `<p>Rechne das Ergebnis aus:</p>
+     <div class="eq"><span>u =</span><input class="n wide" id="uInp" readonly onclick="openKeypad(this)"><span>cm</span><button class="check" id="uBtn">Prüfen</button></div>`);
+
+  $('#uBtn').onclick = () => {
+    const val = parseNum($('#uInp').value);
+    if (Math.abs(val - task.u) < 0.05) {
+      right(d, `Korrekt! u = ${fmt(task.u)} cm`);
+      addWay(`u = ${fmt(task.u)} cm`);
+      stepFormulaA();
+    } else {
+      wrong(d, 'Addiere die drei Zahlen noch einmal sorgfältig zusammen.');
+    }
+  };
+}
+
+function stepFormulaA() {
+  let opt1, opt2, opt3, correctFormula;
+  if (task.type === 'right') {
+    correctFormula = 'A = (a · b) / 2';
+    opt1 = 'A = (a · b) / 2';
+    opt2 = 'A = (a · c) / 2';
+    opt3 = 'A = a + b + c';
+  } else {
+    correctFormula = 'A = (c · h_c) / 2';
+    opt1 = 'A = (a · h_a) / 2';
+    opt2 = 'A = (c · h_c) / 2';
+    opt3 = 'A = (b · h_b) / 2';
+  }
+
+  const d = addStep(5, 'Formel für den Flächeninhalt A wählen', 
+    `<p>Welche Formel passt exakt zu den Bezeichnungen in unserer Skizze?</p>
+     <div class="opts">
+       <button class="opt" data-f="${opt1}">${opt1}</button>
+       <button class="opt" data-f="${opt2}">${opt2}</button>
+       <button class="opt" data-f="${opt3}">${opt3}</button>
+     </div>`);
+
+  d.querySelectorAll('.opt').forEach(btn => {
+    btn.onclick = () => {
+      if (btn.dataset.f === correctFormula) {
+        btn.classList.add('good');
+        right(d, `Richtig! In dieser Skizze lautet die Formel: ${correctFormula}`);
+        addWay(correctFormula);
+        stepInsertA();
+      } else {
+        btn.classList.add('wrongb');
+        wrong(d, task.type === 'right' ? 'Im rechtwinkligen Dreieck bilden die Katheten a und b die Grundseite und Höhe.' : 'Schau in der Skizze genau nach, auf welcher Grundseite die Höhe steht.');
+      }
+    };
+  });
+}
+
+function stepInsertA() {
+  const d = addStep(6, 'Zahlen in die Bruch-Formel einsetzen', 
+    `<p>Lies die Werte aus der Skizze ab und trage sie in den Bruch ein:</p>
+     <div class="eq">
+       <span>A =</span>
+       <div class="frac">
+         <div class="frac-top">
+           <input class="n" id="aTop1" readonly onclick="openKeypad(this)"><span>·</span><input class="n" id="aTop2" readonly onclick="openKeypad(this)">
+         </div>
+         <div class="frac-bot">
+           <input class="n" id="aBot" value="2" readonly onclick="openKeypad(this)" style="width:45px">
+         </div>
+       </div>
+       <button class="check" id="aInsBtn">Prüfen</button>
+     </div>`);
+
+  $('#aInsBtn').onclick = () => {
+    const t1 = parseNum($('#aTop1').value);
+    const t2 = parseNum($('#aTop2').value);
+    const bot = parseNum($('#aBot').value);
+
+    const exp1 = task.type === 'right' ? task.a : task.c;
+    const exp2 = task.type === 'right' ? task.b : task.h;
+
+    const topOk = (Math.abs(t1 - exp1) < 0.05 && Math.abs(t2 - exp2) < 0.05) || (Math.abs(t1 - exp2) < 0.05 && Math.abs(t2 - exp1) < 0.05);
+    const botOk = bot === 2;
+
+    if (topOk && botOk) {
+      right(d, 'Sehr gut! Die Werte wurden richtig im Bruch platziert.');
+      addWay(`A = (${fmt(exp1)} · ${fmt(exp2)}) / 2`);
+      stepCalcA();
+    } else {
+      if (!botOk) {
+        wrong(d, 'Der Nenner unten muss beim Dreieck immer 2 sein!');
+      } else {
+        wrong(d, task.type === 'right' ? 'Setze im Zähler die Längen der beiden Katheten ein, die am rechten Winkel liegen.' : 'Setze im Zähler die Grundseite c und die dazugehörige Höhe h_c ein.');
+      }
+    }
+  };
+}
+
+function stepCalcA() {
+  const d = addStep(7, 'Flächeninhalt A berechnen', 
+    `<p>Rechne das Ergebnis aus:</p>
+     <div class="eq"><span>A =</span><input class="n wide" id="aInp" readonly onclick="openKeypad(this)"><span>cm²</span><button class="check" id="aBtn">Prüfen</button></div>`);
+
+  $('#aBtn').onclick = () => {
+    const val = parseNum($('#aInp').value);
+    if (Math.abs(val - task.A) < 0.05) {
+      right(d, `Hervorragend! A = ${fmt(task.A)} cm²`);
+      addWay(`A = ${fmt(task.A)} cm²`, 'final');
+      finish();
+    } else {
+      wrong(d, 'Multipliziere die beiden Zahlen oben im Zähler und dividiere das Zwischenergebnis durch 2.');
+    }
+  };
+}
+
+function finish() {
+  state.solved++;
+  if (task.errors === 0) state.perfect++;
+  state.idx++;
+  
+  state.log.push({
+    type: task.type === 'right' ? 'Rechtw. Dreieck' : 'Allg. Dreieck',
+    u: fmt(task.u) + ' cm',
+    A: fmt(task.A) + ' cm²',
+    errors: task.errors,
+    time: Math.round((Date.now() - task.t0) / 1000) + 's'
+  });
+
+  saveToLocalStorage();
+  updateScore();
+
+  const code = generateCode();
+  const isRound1End = state.idx === 4;
+  const isFinalEnd = state.idx >= TOTAL_TASKS;
+
+  let btnText = 'Nächste Aufgabe';
+  if (isRound1End) btnText = 'Runde 2 starten';
+  else if (isFinalEnd) btnText = 'Zur Gesamtauswertung';
+
+  $('#doneText').innerHTML = (task.errors === 0 
+    ? '<b>Perfekt gelöst ohne Fehler!</b>' 
+    : `Aufgabe geschafft mit ${task.errors} Fehlversuch(en).`) + 
+    `<div class="homework-box">
+       <h4>📝 Schulheft-Auftrag</h4>
+       <p>Übertrage das gelöste Beispiel sauber in dein Heft:</p>
+       <ul>
+         <li><b>Ganz links:</b> Die Angaben (Gegeben & Gesucht)</li>
+         <li><b>In der Mitte:</b> Die saubere Skizze mit Beschriftung</li>
+         <li><b>Ganz rechts:</b> Die Rechenschritte und Formeln</li>
+       </ul>
+       <hr style="border:0; border-top:1px dashed var(--pen); margin:10px 0;">
+       <p style="margin:0; font-size:14px;">Dein aktueller <b>Geräte-Wechsel-Code</b> lautet:</p>
+       <div class="codebox">${code}</div>
+     </div>`;
+
+  $('#nextBtn').textContent = btnText;
+  $('#done').hidden = false;
+}
+
+function showSummary() {
+  closeKeypad();
+  const s = $('#summary');
+  let rows = state.log.map((l, i) => 
+    `<tr><td>${i+1}</td><td>${l.type}</td><td>${l.u}</td><td>${l.A}</td><td>${l.errors}</td><td>${l.time}</td></tr>`
+  ).join('');
+
+  s.innerHTML = `
+    <h2>Zusammenfassung für die Lehrkraft</h2>
+    <p><b>Name:</b> ${state.name || '–'}</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Nr.</th><th>Typ</th><th>Umfang u</th><th>Fläche A</th><th>Fehler</th><th>Zeit</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+    <div class="homework-box">
+      <h4>Wichtiger Hinweis zum Heft-Eintrag:</h4>
+      <p>Überprüfe, ob alle Beispiele vollständig mit <b>Angaben (links)</b>, <b>Skizze (Mitte)</b> und <b>Rechenschritten (rechts)</b> im Heft stehen!</p>
+    </div>
+    <br>
+    <button class="next" onclick="location.reload()">Neustarten</button>
+  `;
+
+  $('.grid').hidden = true;
+  $('.controls').hidden = true;
+  $('#score').hidden = true;
+  s.hidden = false;
+}
+
+$('#nameOk').onclick = () => {
+  const name = $('#name').value.trim();
+  if (!name) { alert('Bitte gib deinen Namen ein.'); return; }
+  state.name = name;
+  state.nameLocked = true;
+  $('#name').disabled = true;
+  $('#nameOk').hidden = true;
+  
+  const saved = localStorage.getItem('dreieck_app_' + name.toLowerCase().replace(/\s+/g, ''));
+  if (saved) {
+    if (confirm('Wir haben einen gespeicherten Stand für "' + name + '" gefunden. Möchtest du dort weitermachen?')) {
+      const data = JSON.parse(saved);
+      state.solved = data.solved;
+      state.perfect = data.perfect;
+      state.idx = data.idx;
+      state.log = data.log;
+    }
+  }
+
+  updateScore();
+  if (task && task.waiting) {
+    task.waiting = false;
+    $('#steps').innerHTML = '';
+    newTask();
+  }
+};
+
+$('#codeOk').onclick = () => {
+  const codeVal = $('#codeInp').value.trim();
+  if (!codeVal) { alert('Bitte gib einen Code ein.'); return; }
+  
+  let found = false;
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key.startsWith('dreieck_app_')) {
+      const data = JSON.parse(localStorage.getItem(key));
+      state.name = data.name;
+      if (String(generateCode()) === codeVal) {
+        state.solved = data.solved;
+        state.perfect = data.perfect;
+        state.idx = data.idx;
+        state.log = data.log;
+        state.nameLocked = true;
+        $('#name').value = data.name;
+        $('#name').disabled = true;
+        $('#nameOk').hidden = true;
+        found = true;
+        break;
+      }
+    }
+  }
+
+  if (found) {
+    alert('Fortschritt erfolgreich geladen! Willkommen zurück, ' + state.name + '.');
+    updateScore();
+    if (task && task.waiting) {
+      task.waiting = false;
+      $('#steps').innerHTML = '';
+      newTask();
+    }
+  } else {
+    alert('Ungültiger Code oder kein passender Speicherstand auf diesem Gerät gefunden.');
+  }
+};
+
+$('#nextBtn').onclick = () => {
+  if (state.idx >= TOTAL_TASKS) showSummary();
+  else newTask();
+};
+
+newTask();
+</script>
+</body>
+</html>
