@@ -109,4 +109,329 @@ th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
 .tag{font-size:14px;color:var(--muted);font-weight:bold}
 .homework-box{background:var(--tri);border:2px dashed var(--pen);border-radius:10px;padding:12px 14px;margin-top:14px;font-size:15px}
 .homework-box h4{margin:0 0 6px;color:var(--pen);font-size:17px}
-.codebox{background:var(--paper);border:2px solid var(--ink);border-radius:8px;padding:8px 12px;font-family:monospace;font-size:18px;font-weight:
+.codebox{background:var(--paper);border:2px solid var(--ink);border-radius:8px;padding:8px 12px;font-family:monospace;font-size:18px;font-weight:bold;color:var(--pen);display:inline-block;margin:6px 0}
+
+.keypad{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:3px solid var(--pen);padding:10px 14px;box-shadow:0 -4px 20px rgba(0,0,0,0.15);display:flex;flex-direction:column;align-items:center;gap:8px;z-index:999}
+.keypad-header{display:flex;justify-content:space-between;width:100%;max-width:380px;font-size:14px;font-weight:bold;color:var(--muted)}
+.keypad-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;max-width:380px}
+.keybtn{font-family:"Patrick Hand",cursive;font-size:24px;padding:8px;border:2px solid var(--ink);border-radius:8px;background:var(--paper);color:var(--ink);cursor:pointer;text-align:center}
+.keybtn:active{background:var(--tri)}
+.keybtn.action{background:var(--btn);color:var(--btn-ink);font-size:18px;font-family:sans-serif}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Textaufgaben: Dreiecke & Sachrechnen</h1>
+    <p>Berechne Umfang, Flächeninhalt und Folgekosten bei Alltagsaufgaben. (6 Schulübungen & 4 Hausübungen)</p>
+  </header>
+
+  <!-- Aufgaben-Leiste oben -->
+  <div class="taskbar">
+    <div class="taskbar-row">
+      <span class="taskbar-label">Schulübung:</span>
+      <div id="badgesSUE" style="display:flex; gap:6px; flex-wrap:wrap;"></div>
+    </div>
+    <div class="taskbar-row" style="border-top:1px solid var(--line); padding-top:6px;">
+      <span class="taskbar-label">Hausübung:</span>
+      <div id="badgesHUE" style="display:flex; gap:6px; flex-wrap:wrap;"></div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div>
+      <label class="ctl-label" for="name">1. Dein Name</label>
+      <div class="namerow">
+        <input id="name" class="namein" placeholder="Vor- und Nachname">
+        <button class="next" id="nameOk">Starten</button>
+      </div>
+    </div>
+    <div style="border-top: 1px solid var(--line); padding-top: 12px; margin-top: 4px;">
+      <label class="ctl-label" for="codeInp">2. Bereits einen Speicher-Code von einem anderen Gerät?</label>
+      <div class="namerow">
+        <input id="codeInp" class="namein" placeholder="Zahlencode eingeben" inputmode="numeric">
+        <button class="next" id="codeOk" style="background:var(--muted)">Fortschritt laden</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="score" id="score">Gelöst: 0 von 10, davon fehlerfrei: 0</p>
+
+  <div class="grid">
+    <div class="sheet">
+      <p class="task" id="taskText"></p>
+      <div id="fig"></div>
+      <p class="way-title">Rechenweg</p>
+      <div class="way" id="way"></div>
+    </div>
+    <div>
+      <div class="steps" id="steps"></div>
+      <div class="done" id="done" hidden style="margin-top:16px;">
+        <p id="doneText" style="font-size:18px; margin-bottom:12px;"></p>
+        <button class="next" id="nextBtn">Nächste Aufgabe</button>
+      </div>
+    </div>
+  </div>
+
+  <section class="summary" id="summary" hidden></section>
+</div>
+
+<!-- Virtuelle Zusatztastatur -->
+<div class="keypad" id="keypad" hidden>
+  <div class="keypad-header">
+    <span>Bildschirm-Tastatur (Tippen oder physisch nutzen)</span>
+    <span style="cursor:pointer; color:var(--red)" onclick="closeKeypad()">✕ Schließen</span>
+  </div>
+  <div class="keypad-grid">
+    <button class="keybtn" onclick="keyPress('7')">7</button>
+    <button class="keybtn" onclick="keyPress('8')">8</button>
+    <button class="keybtn" onclick="keyPress('9')">9</button>
+    <button class="keybtn" onclick="keyPress('4')">4</button>
+    <button class="keybtn" onclick="keyPress('5')">5</button>
+    <button class="keybtn" onclick="keyPress('6')">6</button>
+    <button class="keybtn" onclick="keyPress('1')">1</button>
+    <button class="keybtn" onclick="keyPress('2')">2</button>
+    <button class="keybtn" onclick="keyPress('3')">3</button>
+    <button class="keybtn" onclick="keyPress(',')">,</button>
+    <button class="keybtn" onclick="keyPress('0')">0</button>
+    <button class="keybtn action" onclick="keyPress('back')">⌫</button>
+  </div>
+</div>
+
+<script>
+const TOTAL_TASKS = 10;
+const PRESETS = [
+  // --- SCHULÜBUNG (6 Aufgaben) ---
+  { 
+    section: 'Schulübung', num: 1, type: 'general', a: 900, b: 1400, c: 1600, h: 800, unit: 'm',
+    title: 'Waldstück aufforsten', 
+    text: 'Ein dreieckiges Waldstück soll mit Fichten neu aufgeforstet werden. Wie groß ist die Fläche A in m² und wie teuer ist das Holz, wenn 1 m² Fichtenpflanzen 2,50 € kosten?',
+    costPerUnit: 2.50, costName: 'Gesamtkosten', costUnit: '€', costType: 'A',
+    answerText: 'Das Aufforsten des Waldstücks kostet insgesamt'
+  },
+  { 
+    section: 'Schulübung', num: 2, type: 'general', a: 800, b: 800, c: 1480, h: 680, unit: 'cm',
+    title: 'Hausgiebel verschalen', 
+    text: 'Der Giebel eines Hauses soll mit Holz verschalt werden (Grundseite c = 14,8 m = 1480 cm, Höhe h_c = 6,8 m = 680 cm). Berechne den Flächeninhalt A in m² (1 m² = 10 000 cm²) und die Holzkosten bei 38 € pro m².',
+    costPerUnit: 38, costName: 'Holzkosten', costUnit: '€', costType: 'A', convertToM2: true,
+    answerText: 'Die Holzverschaltung für den Giebel kostet insgesamt'
+  },
+  { 
+    section: 'Schulübung', num: 3, type: 'general', a: 720, b: 720, c: 450, h: 700, unit: 'cm',
+    title: 'Kirchturmdach neu decken', 
+    text: 'Ein Kirchturmdach besteht aus 4 gleichen dreieckigen Flächen (c = 4,5 m = 450 cm, h_c = 7 m = 700 cm). Berechne die Gesamtfläche aller 4 Flächen in m² und die Gesamtkosten bei 280 € pro m²!',
+    costPerUnit: 280, costName: 'Gesamtkosten (4 Flächen)', costUnit: '€', costType: 'A_multi', multiplier: 4, convertToM2: true,
+    answerText: 'Die Neueindeckung des Kirchturmdachs kostet insgesamt'
+  },
+  { 
+    section: 'Schulübung', num: 4, type: 'right', a: 6, b: 8, c: 10, unit: 'm',
+    title: 'Rechtwinkliges Blumenbeet', 
+    text: 'Ein rechtwinkliges Blumenbeet mit den Katheten a = 6 m und b = 8 m soll mit Randsteinen eingefasst werden. Berechne den Umfang u in m und den Preis für den Zaun bei 15 € pro Meter.',
+    costPerUnit: 15, costName: 'Einfassungskosten', costUnit: '€', costType: 'u',
+    answerText: 'Die Einfassung des Blumenbeets kostet insgesamt'
+  },
+  { 
+    section: 'Schulübung', num: 5, type: 'right', a: 3, b: 4, c: 5, unit: 'm',
+    title: 'Sonnensegel für den Garten', 
+    text: 'Ein rechtwinkliges Sonnensegel besitzt die Katheten 3 m und 4 m. Wie viel m² Stoff A werden benötigt und what kostet das Segel bei 22 € pro m²?',
+    costPerUnit: 22, costName: 'Segelkosten', costUnit: '€', costType: 'A',
+    answerText: 'Das Sonnensegel kostet im Gesamtpreis'
+  },
+  { 
+    section: 'Schulübung', num: 6, type: 'general', a: 35, b: 42, c: 50, h: 28, unit: 'm',
+    title: 'Dreieckiger Parkteich', 
+    text: 'Ein Ententeich im Park ist dreieckig abgegrenzt (a = 35 m, b = 42 m, c = 50 m). Wie lang ist der Sicherheitszaun um den gesamten Teich (Umfang u) und was kostet der Zaun bei 18 € / m?',
+    costPerUnit: 18, costName: 'Zaunkosten', costUnit: '€', costType: 'u',
+    answerText: 'Der Sicherheitszaun um den Parkteich kostet insgesamt'
+  },
+
+  // --- HAUSÜBUNG (4 Aufgaben) ---
+  { 
+    section: 'Hausübung', num: 1, type: 'general', a: 24, b: 30, c: 36, h: 20, unit: 'm',
+    title: 'Gartengrundstück einzäunen', 
+    text: 'HÜ 1: Ein dreieckiger Garten (a = 24 m, b = 30 m, c = 36 m, h_c = 20 m) erhält einen neuen Maschendrahtzaun. Berechne den Umfang u und die Zaunkosten bei 12 € pro Meter.',
+    costPerUnit: 12, costName: 'Zaunkosten', costUnit: '€', costType: 'u',
+    answerText: 'Für die Einzäunung des Gartens betragen die Gesamtkosten'
+  },
+  { 
+    section: 'Hausübung', num: 2, type: 'right', a: 9, b: 12, c: 15, unit: 'm',
+    title: 'Rechtwinklige Dachfläche', 
+    text: 'HÜ 2: Eine rechtwinklige Dachfläche hat die Katheten 9 m und 12 m. Berechne die Fläche A in m² und die Eindeckungskosten bei 45 € pro m².',
+    costPerUnit: 45, costName: 'Dachkosten', costUnit: '€', costType: 'A',
+    answerText: 'Die Eindeckung der Dachfläche kostet insgesamt'
+  },
+  { 
+    section: 'Hausübung', num: 3, type: 'general', a: 18, b: 22, c: 25, h: 16, unit: 'm',
+    title: 'Bauplatz Raseneinsaat', 
+    text: 'HÜ 3: Auf einem dreieckigen Bauplatz (c = 25 m, h_c = 16 m) soll Rasen gesät werden. Berechne die Fläche A in m² und die Saatgutkosten bei 1,50 € pro m².',
+    costPerUnit: 1.5, costName: 'Saatgutkosten', costUnit: '€', costType: 'A',
+    answerText: 'Die Saatgutkosten für den Bauplatz belaufen sich auf insgesamt'
+  },
+  { 
+    section: 'Hausübung', num: 4, type: 'right', a: 60, b: 80, c: 100, unit: 'cm',
+    title: 'Verkehrsschild streichen', 
+    text: 'HÜ 4: Ein rechtwinkliges Warnschild mit Katheten 60 cm und 80 cm erhält eine Reflexionsfolie. Berechne A in cm² und die Kosten bei 0,05 € pro cm².',
+    costPerUnit: 0.05, costName: 'Folienkosten', costUnit: '€', costType: 'A',
+    answerText: 'Die Kosten für die Reflexionsfolie betragen insgesamt'
+  }
+];
+
+const state = { solved: 0, perfect: 0, log: [], nameLocked: false, idx: 0, name: '' };
+let task = null, activeInput = null;
+
+const $ = s => document.querySelector(s);
+function fmt(x){ return String(Math.round(x * 100) / 100).replace('.', ','); }
+function parseNum(s){ if(!s) return NaN; return Number(String(s).trim().replace(',', '.')); }
+
+function openKeypad(inputEl) {
+  activeInput = inputEl;
+  $('#keypad').hidden = false;
+}
+function closeKeypad() {
+  $('#keypad').hidden = true;
+  activeInput = null;
+}
+function keyPress(key) {
+  if (!activeInput) return;
+  if (key === 'back') {
+    activeInput.value = activeInput.value.slice(0, -1);
+  } else {
+    if (key === ',' && activeInput.value.includes(',')) return;
+    activeInput.value += key;
+  }
+  activeInput.dispatchEvent(new Event('input'));
+}
+
+document.addEventListener('focusin', e => {
+  if (e.target.tagName === 'INPUT' && e.target.classList.contains('n')) {
+    openKeypad(e.target);
+  }
+});
+
+function renderBadges() {
+  const sList = PRESETS.filter(p => p.section === 'Schulübung');
+  const hList = PRESETS.filter(p => p.section === 'Hausübung');
+
+  $('#badgesSUE').innerHTML = sList.map(p => {
+    const globalIdx = PRESETS.indexOf(p);
+    const isDone = globalIdx < state.idx;
+    const isCurr = globalIdx === state.idx;
+    let cls = 'tbadge';
+    if (isDone) cls += ' solved-badge';
+    if (isCurr) cls += ' active';
+    return `<button class="${cls}" onclick="jumpTask(${globalIdx})">SÜ${p.num}</button>`;
+  }).join('');
+
+  $('#badgesHUE').innerHTML = hList.map(p => {
+    const globalIdx = PRESETS.indexOf(p);
+    const isDone = globalIdx < state.idx;
+    const isCurr = globalIdx === state.idx;
+    let cls = 'tbadge';
+    if (isDone) cls += ' solved-badge';
+    if (isCurr) cls += ' active';
+    return `<button class="${cls}" onclick="jumpTask(${globalIdx})">HÜ${p.num}</button>`;
+  }).join('');
+}
+
+function jumpTask(index) {
+  if (!state.nameLocked) {
+    alert('Bitte gib zuerst oben deinen Namen ein.');
+    return;
+  }
+  state.idx = index;
+  newTask();
+}
+
+function generateCode() {
+  let hash = 0;
+  const str = state.name + state.solved + state.perfect + state.idx;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash % 900000 + 100000);
+}
+
+function updateScore() {
+  $('#score').textContent = (state.name ? state.name + ': ' : '') + `Gelöst: ${state.solved} von ${TOTAL_TASKS}, davon fehlerfrei: ${state.perfect}`;
+  renderBadges();
+}
+
+function saveToLocalStorage() {
+  if (!state.nameLocked) return;
+  const data = { name: state.name, solved: state.solved, perfect: state.perfect, idx: state.idx, log: state.log };
+  localStorage.setItem('dreieck_sach_app_' + state.name.toLowerCase().replace(/\s+/g, ''), JSON.stringify(data));
+}
+
+function newTask() {
+  if (state.idx >= TOTAL_TASKS) {
+    showSummary();
+    return;
+  }
+  const p = PRESETS[state.idx];
+  
+  if (p.type === 'right') {
+    task = { ...p, u: p.a+p.b+p.c, A: (p.a*p.b)/2, selected: new Set(), errors: 0, t0: Date.now() };
+  } else {
+    task = { ...p, u: p.a+p.b+p.c, A: (p.c*p.h)/2, selected: new Set(), errors: 0, t0: Date.now() };
+  }
+
+  let targetVal = 0;
+  if (p.costType === 'u') targetVal = task.u;
+  else if (p.costType === 'A') {
+    targetVal = p.convertToM2 ? task.A / 10000 : task.A;
+  } else if (p.costType === 'A_multi') {
+    const singleM2 = p.convertToM2 ? task.A / 10000 : task.A;
+    targetVal = singleM2 * p.multiplier;
+  }
+  task.totalCost = targetVal * p.costPerUnit;
+
+  $('#steps').innerHTML = '';
+  $('#way').innerHTML = '';
+  $('#done').hidden = true;
+  $('#summary').hidden = true;
+  $('.grid').hidden = false;
+  $('.controls').hidden = false;
+  $('#score').hidden = false;
+
+  const tagText = `${p.section} ${p.num} (Gesamt: ${state.idx + 1}/${TOTAL_TASKS}) · ${p.title}`;
+  $('#taskText').innerHTML = `<span class="tag">${tagText}</span><br>${p.text}`;
+
+  draw();
+  updateScore();
+
+  if (!state.nameLocked) {
+    task.waiting = true;
+    $('#steps').innerHTML = '<div class="step"><p>Gib bitte zuerst oben deinen Namen ein oder nutze einen Speicher-Code.</p></div>';
+    return;
+  }
+  stepWhatToCalculate();
+}
+
+function draw() {
+  const W = 520, H = 300;
+  let lines = '', hits = '', labels = '';
+
+  if (task.type === 'right') {
+    const pA = [90, 205], pB = [430, 205], pC = [90, 50];
+    const segs = {
+      'a': [pC, pA, `a = ${fmt(task.a)}${task.unit}`, [42, 127]],
+      'b': [pA, pB, `b = ${fmt(task.b)}${task.unit}`, [260, 230]],
+      'c': [pB, pC, `c = ${fmt(task.c)}${task.unit}`, [278, 115]]
+    };
+
+    lines += `<polygon class="tri" points="${pA.join(',')} ${pB.join(',')} ${pC.join(',')}"/>`;
+    lines += `<path class="ra" d="M90,185 L110,185 L110,205"/><circle class="dot" cx="100" cy="195" r="2"/>`;
+
+    for (const [key, [p1, p2, txt, pos]] of Object.entries(segs)) {
+      const isSel = task.selected.has(key);
+      lines += `<line x1="${p1[0]}" y1="${p1[1]}" x2="${p2[0]}" y2="${p2[1]}" class="side${isSel ? ' selected' : ''}"/>`;
+      if (task.selecting) {
+        hits += `<line x1="${p1[0]}" y1="${p1[1]}" x2="${p2[0]}" y2="${p2[1]}" class="hit" data-seg="${key}"/>`;
+      }
+      labels += `<text x="${pos[0]}" y="${pos[1]}" class="lbl" text-anchor="middle">${txt}</text>`;
+    }
+  } else {
+    const scale = 0.15;
+    const cPx = Math.min(task.c * scale, 290);
+    const xC = 90 + (cPx * 0.52);
