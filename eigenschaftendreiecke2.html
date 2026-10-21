@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dreiecke – Arten und Eigenschaften</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#fdfbf6; --card:#ffffff; --ink:#1f2a44; --muted:#5d6577; --line:#d9d3c4; --grid:#ece6d8;
+  --pen:#2457c5; --ok:#1f7a3d; --okbg:#e5f4ea; --bad:#c0392b; --badbg:#fbe9e7;
+  --tri:#fff3d6; --triS:#7a4a12; --arc:#e8955a; --arcS:#b85d1d; --hl:#ffd54a;
+  color-scheme:light; box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#171b24; --card:#202634; --ink:#e8ebf2; --muted:#a3abbd; --line:#3a4255; --grid:#262d3b;
+    --pen:#8db4ff; --ok:#6fd38f; --okbg:#1d3326; --bad:#ff8a7a; --badbg:#3a2220;
+    --tri:#3a3222; --triS:#f0c27a; --arc:#c8783f; --arcS:#f0a46a; --hl:#b48a00; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#171b24; --card:#202634; --ink:#e8ebf2; --muted:#a3abbd; --line:#3a4255; --grid:#262d3b;
+  --pen:#8db4ff; --ok:#6fd38f; --okbg:#1d3326; --bad:#ff8a7a; --badbg:#3a2220;
+  --tri:#3a3222; --triS:#f0c27a; --arc:#c8783f; --arcS:#f0a46a; --hl:#b48a00; color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--paper);color:var(--ink);font:18px/1.5 "Atkinson Hyperlegible",system-ui,sans-serif}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:50;background:var(--paper)}
+.wrap{max-width:900px;margin:0 auto;padding:18px 14px 60px}
+h1{font-family:"Patrick Hand",cursive;font-size:2.3rem;line-height:1.1;margin:6px 0 4px;color:var(--pen)}
+h2{font-family:"Patrick Hand",cursive;font-size:1.7rem;margin:4px 0 6px;line-height:1.15}
+h3{font-size:1.05rem;margin:14px 0 6px}
+.intro{color:var(--muted);margin:0 0 14px;max-width:65ch}
+button{font:inherit;cursor:pointer}
+.btn{border:2px solid var(--pen);background:var(--card);color:var(--pen);border-radius:10px;padding:6px 14px;font-weight:700}
+.btn.go{background:var(--pen);color:var(--paper)}
+button:focus-visible,input:focus-visible,.card:focus-visible,.zone:focus-visible,svg:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
+
+.namebox{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;background:var(--card);border:2px solid var(--pen);border-radius:12px;padding:12px 14px;margin-bottom:14px}
+.namebox label{font-weight:700}
+.namebox input{font:inherit;padding:6px 10px;border:2px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);flex:1 1 220px;max-width:340px}
+.namebox input:disabled{opacity:1;border-color:var(--ok);font-weight:700}
+.nmsg{width:100%;margin:0;font-weight:700;color:var(--ok)}
+.nmsg:empty{display:none}.nmsg.bad{color:var(--bad)}
+body.waiting #tabs,body.waiting #stage{opacity:.35;pointer-events:none}
+
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.tab{border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:5px 12px;font-size:.95rem}
+.tab.cur{border-color:var(--pen);color:var(--pen);font-weight:700}
+.tab.done{border-color:var(--ok);color:var(--ok)}
+.tab.newr{margin-left:auto;border-style:dashed}
+
+.stage{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:14px}
+.lead{margin:0 0 10px}
+.practice{display:inline-block;background:var(--hl);color:#3a2a00;border-radius:6px;padding:0 8px;font:700 .85rem "Atkinson Hyperlegible",sans-serif;margin-left:8px;vertical-align:middle}
+.fb{min-height:1.6em;margin:8px 0;font-weight:700;border-radius:10px}
+.fb.ok{color:var(--ok);background:var(--okbg);padding:6px 10px}
+.fb.bad{color:var(--bad);background:var(--badbg);padding:6px 10px}
+.fb.info{color:var(--pen);padding:6px 0}
+
+/* Sortieren */
+.bins{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);padding:6px 0}
+.bin{border:3px dashed var(--line);border-radius:12px;padding:6px;min-height:118px;background:var(--paper);transition:transform .12s,border-color .12s,background .12s}
+.bin.hover{border-color:var(--pen);border-style:solid;transform:scale(1.03);background:color-mix(in srgb,var(--pen) 10%,var(--paper))}
+.binh{display:flex;flex-direction:column;align-items:center;text-align:center;line-height:1.2}
+.binh b{font-size:1rem}
+.binh small{color:var(--muted);font-size:.8rem}
+.binh svg{width:64px;height:48px}
+.slot{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin-top:4px}
+.pool{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:10px;margin-top:10px}
+.card{background:var(--card);border:2px solid var(--line);border-radius:12px;padding:4px;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab;box-shadow:0 2px 0 var(--line);transition:transform .12s,box-shadow .12s}
+.card svg{display:block;width:100%;height:auto;pointer-events:none}
+.card:hover{transform:translateY(-2px);box-shadow:0 4px 0 var(--line)}
+.card.sel{border-color:var(--pen);box-shadow:0 0 0 3px color-mix(in srgb,var(--pen) 35%,transparent);transform:translateY(-3px)}
+.card.lift{opacity:.25}
+.card.placed{cursor:default;box-shadow:none;border-color:var(--ok);transform:none;padding:2px;animation:pop .35s}
+.slot .card.placed svg{width:64px}
+.card.text{padding:8px 10px;font-size:.95rem;line-height:1.3;display:flex;align-items:center;justify-content:center;text-align:center;min-height:62px}
+.slot .card.text.placed{min-height:0;font-size:.78rem;padding:3px 6px;width:100%}
+.ghost{position:fixed;left:0;top:0;z-index:100;pointer-events:none;box-shadow:0 12px 24px rgba(0,0,0,.25);border-color:var(--pen)}
+.shake{animation:shake .42s}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-9px)}40%{transform:translateX(8px)}60%{transform:translateX(-6px)}80%{transform:translateX(4px)}}
+@keyframes pop{0%{transform:scale(.6)}70%{transform:scale(1.12)}100%{transform:scale(1)}}
+
+/* Dreiecks-Grafik */
+.tri{fill:var(--tri);stroke:var(--triS);stroke-width:2.2;stroke-linejoin:round}
+.arc{fill:var(--arc);fill-opacity:.55;stroke:var(--arcS);stroke-width:1.2}
+.rmark{fill:none;stroke:var(--triS);stroke-width:1.4}
+.rdot{fill:var(--triS)}
+.tick{stroke:var(--triS);stroke-width:2}
+.slab{font:700 13px "Atkinson Hyperlegible",sans-serif;fill:var(--ink)}
+.axis{stroke:var(--pen);stroke-width:1.6;stroke-dasharray:6 5}
+
+/* Beschriften */
+.fig{position:relative;max-width:520px;margin:0 auto}
+.fig svg{display:block;width:100%;height:auto}
+.zone.lbl{position:absolute;transform:translate(-50%,-50%);min-width:88px;padding:4px 8px;border:2.5px dashed var(--pen);border-radius:10px;background:color-mix(in srgb,var(--card) 88%,transparent);color:var(--muted);font-size:.85rem;text-align:center;line-height:1.2;transition:transform .12s}
+.zone.lbl.hover{transform:translate(-50%,-50%) scale(1.12);border-style:solid;background:color-mix(in srgb,var(--pen) 14%,var(--card))}
+.zone.lbl.filled{border:2.5px solid var(--ok);color:var(--ok);font-weight:700;background:var(--okbg);animation:pop .35s}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:12px}
+.card.chip{padding:6px 14px;font-weight:700;font-size:1rem;border-color:var(--pen);color:var(--pen)}
+.figtitle{text-align:center;font-weight:700;margin:4px 0}
+
+/* Formen */
+.task5{font-size:1.1rem;margin:0 0 8px;padding:8px 12px;border-left:5px solid var(--pen);background:var(--paper);border-radius:6px}
+.board{max-width:620px;margin:0 auto;touch-action:none}
+.board svg{display:block;width:100%;height:auto;touch-action:none;user-select:none;-webkit-user-select:none}
+.gl{stroke:var(--grid);stroke-width:1}
+.gl.m{stroke:var(--line)}
+.handle{fill:var(--pen);fill-opacity:.18;stroke:var(--pen);stroke-width:2.5;cursor:grab}
+.handle.act{fill-opacity:.45}
+.hdot{fill:var(--pen);pointer-events:none}
+.vlab{font:700 16px "Atkinson Hyperlegible",sans-serif;fill:var(--pen);pointer-events:none}
+.alab{font:700 13px "Atkinson Hyperlegible",sans-serif;fill:var(--arcS);pointer-events:none}
+.info5{display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:center;color:var(--muted);font-size:.95rem;margin:6px 0}
+.info5 b{color:var(--ink)}
+.row5{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+
+.donebox{margin-top:12px;padding:12px 14px;border:2px solid var(--ok);background:var(--okbg);border-radius:12px;font-weight:700;color:var(--ok);display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+
+/* Übersicht Lehrkraft */
+.summary{margin-top:26px;background:var(--card);border:2px solid var(--line);border-radius:14px;padding:14px 16px}
+.summary h2{color:var(--pen)}
+.livetag{font:400 .85rem "Atkinson Hyperlegible",sans-serif;color:var(--muted);margin-left:8px}
+.sumhead,.sumstats{display:flex;flex-wrap:wrap;gap:8px 20px;margin:6px 0 10px}
+.sumhead div,.sumstats div{display:flex;flex-direction:column;min-width:7em}
+.sumhead span,.sumstats span{font-size:.82rem;color:var(--muted)}
+.sumstats b{font-size:1.35rem;color:var(--pen)}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-size:.82rem}
+tr.okrow td:first-child{border-left:4px solid var(--ok)}
+tr.errrow td:first-child{border-left:4px solid var(--bad)}
+.mist{font-size:.85rem;color:var(--muted)}
+.sumnote{color:var(--muted);font-size:.92rem}
+@media (max-width:560px){
+  h1{font-size:1.9rem}
+  .bins{gap:5px}.bin{padding:4px;min-height:100px}
+  .binh b{font-size:.85rem}.binh small{font-size:.7rem}
+  .pool{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+  .slot .card.placed svg{width:46px}
+  .card.text{font-size:.85rem;min-height:56px;padding:6px}
+  .zone.lbl{min-width:70px;font-size:.75rem;padding:3px 5px}
+}
+@media (prefers-reduced-motion:reduce){.card,.bin,.zone.lbl{transition:none}.shake,.card.placed,.zone.lbl.filled{animation:none}}
+</style>
+</head>
+<body class="waiting">
+<div class="wrap">
+  <h1>Dreiecke – Arten und Eigenschaften</h1>
+  <p class="intro">Ziehe die Karten mit dem Finger oder der Maus an die richtige Stelle – oder tippe zuerst auf eine Karte und dann auf das passende Feld. In der letzten Station formst du selbst Dreiecke, indem du die Ecken verschiebst.</p>
+
+  <div class="namebox">
+    <label for="name">Dein Name</label>
+    <input id="name" autocomplete="off" placeholder="Vor- und Nachname">
+    <button class="btn go" id="nameOk">Los geht's</button>
+    <p class="nmsg" id="nameMsg" role="status"></p>
+  </div>
+
+  <nav class="tabs" id="tabs" aria-label="Stationen"></nav>
+  <section class="stage" id="stage"></section>
+  <section class="summary" id="summary" hidden></section>
+</div>
+
+<script>
+/* =================== Grundlagen =================== */
+const $ = s => document.querySelector(s);
+const rnd = (a,b) => a + Math.floor(Math.random()*(b-a+1));
+const pick = a => a[Math.floor(Math.random()*a.length)];
+function shuffle(a){ a=[...a]; for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const buzz = p => { try{ if(navigator.vibrate) navigator.vibrate(p); }catch(_){ } };
+const deg = r => r*180/Math.PI, rad = d => d*Math.PI/180;
+
+const NAMES = ["Nach Winkeln","Nach Seiten","Beschriften","Eigenschaften","Dreieck formen"];
+function blankSt(){ return NAMES.map(()=>({done:false, err:0, ms:0, mist:{}})); }
+const S = {name:"", round:1, st:blankSt(), hist:[], cur:0};
+let run = {practice:false};
+
+/* =================== Geometrie & Zeichnen =================== */
+const sub=(p,q)=>[p[0]-q[0],p[1]-q[1]], add=(p,q)=>[p[0]+q[0],p[1]+q[1]], mul=(p,k)=>[p[0]*k,p[1]*k];
+const len=p=>Math.hypot(p[0],p[1]), unit=p=>{ const l=len(p)||1; return [p[0]/l,p[1]/l]; };
+const f1=v=>String(Math.round(v*10)/10).replace(".",",");
+function angleAt(P,Q,R){ const u=sub(Q,P), v=sub(R,P); return deg(Math.acos(Math.max(-1,Math.min(1,(u[0]*v[0]+u[1]*v[1])/(len(u)*len(v)))))); }
+function fromAngles(a,b){ const g=180-a-b, bl=Math.sin(rad(b))/Math.sin(rad(g)); return [[0,0],[1,0],[bl*Math.cos(rad(a)),-bl*Math.sin(rad(a))]]; }
+function fromSides(a,b,c){ const x=(b*b+c*c-a*a)/(2*c), y=-Math.sqrt(Math.max(0,b*b-x*x)); return [[0,0],[c,0],[x,y]]; }
+function rotate(P,t,flip){ const c=Math.cos(rad(t)), s=Math.sin(rad(t)); return P.map(([x,y])=>{ if(flip) x=-x; return [x*c-y*s, x*s+y*c]; }); }
+function fit(P,W,H,m){
+  const xs=P.map(p=>p[0]), ys=P.map(p=>p[1]), x0=Math.min(...xs), y0=Math.min(...ys);
+  const w=Math.max(...xs)-x0||1, h=Math.max(...ys)-y0||1, k=Math.min((W-2*m)/w,(H-2*m)/h);
+  return P.map(([x,y])=>[m+(x-x0)*k+((W-2*m)-w*k)/2, m+(y-y0)*k+((H-2*m)-h*k)/2]);
+}
+const pt=p=>`${p[0].toFixed(1)},${p[1].toFixed(1)}`;
+function arcPath(P,Q,R,r){
+  const u1=unit(sub(Q,P)), u2=unit(sub(R,P)), p1=add(P,mul(u1,r)), p2=add(P,mul(u2,r));
+  const sw=(u1[0]*u2[1]-u1[1]*u2[0])>0?1:0;
+  return `M${pt(P)} L${pt(p1)} A${r} ${r} 0 0 ${sw} ${pt(p2)} Z`;
+}
+function rightMark(P,Q,R,s){
+  const u1=unit(sub(Q,P)), u2=unit(sub(R,P)), a=add(P,mul(u1,s)), b=add(a,mul(u2,s)), c=add(P,mul(u2,s)), d=add(P,mul(add(u1,u2),s/2));
+  return `<path class="rmark" d="M${pt(a)} L${pt(b)} L${pt(c)}"/><circle class="rdot" cx="${d[0].toFixed(1)}" cy="${d[1].toFixed(1)}" r="1.9"/>`;
+}
+const centroid=P=>[(P[0][0]+P[1][0]+P[2][0])/3,(P[0][1]+P[1][1]+P[2][1])/3];
+function outward(P,i,j,d){
+  const M=mul(add(P[i],P[j]),.5), G=centroid(P); let n=unit([-(P[j][1]-P[i][1]),P[j][0]-P[i][0]]);
+  if((M[0]-G[0])*n[0]+(M[1]-G[1])*n[1]<0) n=mul(n,-1);
+  return add(M,mul(n,d));
+}
+function vertexOut(P,i,d){ const G=centroid(P); return add(P[i],mul(unit(sub(P[i],G)),d)); }
+function ticks(P,i,j,n){
+  const M=mul(add(P[i],P[j]),.5), u=unit(sub(P[j],P[i])), nn=[-u[1],u[0]]; let s="";
+  for(let k=0;k<n;k++){ const c=add(M,mul(u,(k-(n-1)/2)*5)), a=add(c,mul(nn,6)), b=add(c,mul(nn,-6));
+    s+=`<line class="tick" x1="${a[0].toFixed(1)}" y1="${a[1].toFixed(1)}" x2="${b[0].toFixed(1)}" y2="${b[1].toFixed(1)}"/>`; }
+  return s;
+}
+// opts: arcs (true oder Liste der Ecken), right (Ecke mit 90°), labels (für Seiten BC, AC, AB), ticks, axis
+function triSVG(P,W,H,opts={}){
+  let s=`<svg viewBox="0 0 ${W} ${H}" aria-hidden="true"><polygon class="tri" points="${P.map(pt).join(" ")}"/>`;
+  const r=opts.r||Math.min(W,H)*.13;
+  [0,1,2].forEach(i=>{ const Q=P[(i+1)%3], R=P[(i+2)%3];
+    if(opts.right===i) s+=rightMark(P[i],Q,R,r*.75);
+    else if(opts.arcs===true || (Array.isArray(opts.arcs)&&opts.arcs.includes(i))) s+=`<path class="arc" d="${arcPath(P[i],Q,R,r)}"/>`; });
+  if(opts.ticks) opts.ticks.forEach(([i,j,n])=>s+=ticks(P,i,j,n));
+  if(opts.axis) s+=opts.axis;
+  if(opts.labels) [[1,2],[0,2],[0,1]].forEach(([i,j],k)=>{ const q=outward(P,i,j,11);
+    s+=`<text class="slab" x="${q[0].toFixed(1)}" y="${q[1].toFixed(1)}" text-anchor="middle" dominant-baseline="middle">${opts.labels[k]}</text>`; });
+  return s+"</svg>";
+}
+
+/* =================== Ziehen & Ablegen (Maus, Finger, Tippen, Tastatur) =================== */
+function dnd(root, onDrop){
+  let sel=null;
+  const clearSel=()=>{ if(sel) sel.classList.remove("sel"); sel=null; };
+  const zoneAt=(x,y)=>{ const e=document.elementFromPoint(x,y), z=e&&e.closest(".zone"); return z&&root.contains(z)&&!z.classList.contains("filled")?z:null; };
+  const drop=(c,z)=>{ clearSel(); if(onDrop(c,z)) buzz(25); else { c.classList.remove("shake"); void c.offsetWidth; c.classList.add("shake"); buzz([60,50,60]); } };
+  const select=c=>{ clearSel(); sel=c; c.classList.add("sel"); const f=root.querySelector(".fb"); if(f){ f.className="fb info"; f.textContent="👉 Tippe jetzt auf das passende Feld."; } };
+  root.addEventListener("pointerdown",e=>{
+    const c=e.target.closest(".card"); if(!c||!root.contains(c)||c.classList.contains("placed")||e.button>0) return;
+    e.preventDefault();
+    const r=c.getBoundingClientRect();
+    const g={moved:false, ghost:null, dx:e.clientX-r.left, dy:e.clientY-r.top, sx:e.clientX, sy:e.clientY, over:null};
+    const mv=ev=>{
+      if(!g.moved){ if(Math.hypot(ev.clientX-g.sx,ev.clientY-g.sy)<7) return;
+        g.moved=true; clearSel(); g.ghost=c.cloneNode(true); g.ghost.classList.add("ghost"); g.ghost.classList.remove("sel","shake");
+        g.ghost.style.width=r.width+"px"; document.body.appendChild(g.ghost); c.classList.add("lift"); buzz(10); }
+      g.ghost.style.transform=`translate(${ev.clientX-g.dx}px,${ev.clientY-g.dy}px) rotate(-3deg) scale(1.06)`;
+      const z=zoneAt(ev.clientX,ev.clientY);
+      if(z!==g.over){ if(g.over) g.over.classList.remove("hover"); if(z){ z.classList.add("hover"); buzz(8); } g.over=z; }
+      if(ev.clientY<60) window.scrollBy(0,-14); else if(ev.clientY>innerHeight-60) window.scrollBy(0,14);
+    };
+    const up=ev=>{
+      window.removeEventListener("pointermove",mv); window.removeEventListener("pointerup",up); window.removeEventListener("pointercancel",up);
+      if(g.ghost) g.ghost.remove(); c.classList.remove("lift"); if(g.over) g.over.classList.remove("hover");
+      if(!g.moved){ if(sel===c) clearSel(); else select(c); return; }
+      const z=ev.type==="pointerup"?zoneAt(ev.clientX,ev.clientY):null; if(z) drop(c,z);
+    };
+    window.addEventListener("pointermove",mv); window.addEventListener("pointerup",up); window.addEventListener("pointercancel",up);
+  });
+  root.addEventListener("click",e=>{ const z=e.target.closest(".zone"); if(z&&sel&&root.contains(z)&&!z.classList.contains("filled")) drop(sel,z); });
+  root.addEventListener("keydown",e=>{
+    if(e.key!=="Enter"&&e.key!==" ") return;
+    const c=e.target.closest(".card"), z=e.target.closest(".zone");
+    if(c&&!c.classList.contains("placed")){ e.preventDefault(); if(sel===c) clearSel(); else select(c); }
+    else if(z&&sel){ e.preventDefault(); drop(sel,z); }
+  });
+}
+function say(el,cls,msg){ const f=el.querySelector(".fb"); f.className="fb "+cls; f.innerHTML=msg; }
+function mistake(key){
+  if(run.practice) return;
+  const s=S.st[S.cur]; s.err++; s.mist[key]=(s.mist[key]||0)+1; save(); renderSummary();
+}
+const tag=()=>run.practice?'<span class="practice">Übungsmodus – zählt nicht</span>':"";
+
+/* =================== Sortier-Gerüst =================== */
+function sortStation(el,cfg){
+  el.innerHTML=`<h2>${cfg.title}${tag()}</h2><p class="lead">${cfg.lead}</p>
+    <div class="bins">${cfg.bins.map(b=>`<div class="bin zone" tabindex="0" data-accept="${b.v}" aria-label="${esc(b.label)}"><div class="binh">${b.icon||""}<b>${b.label}</b><small>${b.desc||""}</small></div><div class="slot"></div></div>`).join("")}</div>
+    <div class="fb" aria-live="polite"></div>
+    <div class="pool">${cfg.cards.map((c,i)=>`<div class="card ${cfg.cardCls||""}" tabindex="0" role="button" data-v="${c.v}" aria-label="${esc(c.aria||"Dreieck "+(i+1))}">${c.html}</div>`).join("")}</div>`;
+  let placed=0; const total=cfg.cards.length;
+  dnd(el,(card,zone)=>{
+    const v=card.dataset.v, acc=zone.dataset.accept;
+    if(v===acc){
+      zone.querySelector(".slot").appendChild(card); card.classList.add("placed"); card.classList.remove("sel"); card.removeAttribute("tabindex");
+      placed++; say(el,"ok",`🙂 Richtig!${placed<total?` Noch ${total-placed} ${total-placed===1?"Karte":"Karten"}.`:""}`);
+      if(placed===total) stationDone(el);
+      return true;
+    }
+    say(el,"bad","😟 "+cfg.hint[v]);
+    mistake(cfg.mkey?cfg.mkey(card,acc):`${cfg.label(v)} bei „${cfg.label(acc)}“ abgelegt`);
+    return false;
+  });
+}
+
+/* =================== Station 1: Nach Winkeln =================== */
+const ANG={spitz:{l:"spitzwinkelig",d:"drei spitze Winkel (kleiner als 90°)"},recht:{l:"rechtwinkelig",d:"ein rechter Winkel (90°)"},stumpf:{l:"stumpfwinkelig",d:"ein stumpfer Winkel (größer als 90°)"}};
+function angleTri(kind){
+  let A;
+  if(kind==="spitz"){ for(;;){ const a=rnd(42,78), b=rnd(42,78), g=180-a-b; if(g>=42&&g<=78){ A=[a,b,g]; break; } } }
+  else if(kind==="recht"){ const b=rnd(25,65); A=[90,b,90-b]; }
+  else { const big=rnd(105,140), b=rnd(15,180-big-15); A=[big,b,180-big-b]; }
+  A=shuffle(A);
+  const P=fit(rotate(fromAngles(A[0],A[1]),rnd(0,359),Math.random()<.5),130,100,12);
+  const right=[0,1,2].find(i=>Math.abs(angleAt(P[i],P[(i+1)%3],P[(i+2)%3])-90)<0.5);
+  return triSVG(P,130,100,{arcs:true,right,r:15});
+}
+function st1(el){
+  const cards=shuffle(["spitz","spitz","spitz","recht","recht","recht","stumpf","stumpf","stumpf"]).map(v=>({v,html:angleTri(v)}));
+  sortStation(el,{title:"Station 1: Dreiecke nach ihren Winkeln",
+    lead:"Schau dir die Winkel genau an. Ziehe jedes Dreieck in das richtige Feld.",
+    bins:Object.keys(ANG).map(k=>({v:k,label:ANG[k].l,desc:ANG[k].d})),
+    cards, label:v=>ANG[v].l,
+    hint:{spitz:"Schau genau: Alle drei Winkel sind kleiner als ein rechter Winkel – alle sind <b>spitz</b>.",
+          recht:"Schau genau: Ein Winkel ist genau 90° – erkennbar am Zeichen mit dem Punkt.",
+          stumpf:"Schau genau: Ein Winkel ist größer als ein rechter Winkel – er ist <b>stumpf</b>."}});
+}
+
+/* =================== Station 2: Nach Seiten =================== */
+const SID={gleichseitig:{l:"gleichseitig",d:"3 Seiten gleich lang"},gleichschenkelig:{l:"gleichschenkelig",d:"2 Seiten gleich lang"},allgemein:{l:"allgemein",d:"alle Seiten verschieden lang"}};
+function sideTri(kind){
+  let s;
+  if(kind==="gleichseitig"){ const a=rnd(3,9); s=[a,a,a]; }
+  else if(kind==="gleichschenkelig"){ for(;;){ const L=rnd(3,9), B=rnd(2,Math.floor(L*1.6)); if(B!==L&&B<2*L){ s=shuffle([L,L,B]); break; } } }
+  else { for(;;){ const a=rnd(3,10), b=rnd(3,10), c=rnd(3,10), m=Math.max(a,b,c);
+    if(a!==b&&b!==c&&a!==c&&a+b+c-m>m+1&&m/Math.min(a,b,c)<=2.6){ s=[a,b,c]; break; } } }
+  const P=fit(rotate(fromSides(s[0],s[1],s[2]),rnd(0,359),Math.random()<.5),130,100,20);
+  return triSVG(P,130,100,{labels:s.map(x=>x+" cm")});
+}
+function st2(el){
+  const cards=shuffle(["gleichseitig","gleichseitig","gleichseitig","gleichschenkelig","gleichschenkelig","gleichschenkelig","allgemein","allgemein","allgemein"]).map(v=>({v,html:sideTri(v)}));
+  sortStation(el,{title:"Station 2: Dreiecke nach ihren Seitenlängen",
+    lead:"Vergleiche die Seitenlängen. Ziehe jedes Dreieck in das richtige Feld.",
+    bins:Object.keys(SID).map(k=>({v:k,label:SID[k].l,desc:SID[k].d})),
+    cards, label:v=>SID[v].l,
+    hint:{gleichseitig:"Vergleiche die Längen: Hier sind <b>alle drei</b> Seiten gleich lang.",
+          gleichschenkelig:"Vergleiche die Längen: Hier sind <b>genau zwei</b> Seiten gleich lang.",
+          allgemein:"Vergleiche die Längen: Hier sind <b>alle Seiten verschieden</b> lang."}});
+}
+
+/* =================== Station 3: Beschriften =================== */
+function figIso(){
+  const apex=pick([rnd(34,50),rnd(72,104)]), base=2*Math.sin(rad(apex/2));
+  let P=[[0,0],[base,0],[base/2,-Math.cos(rad(apex/2))]];
+  P=fit(rotate(P,pick([0,0,12,-12,180,90,-90]),false),400,300,64);
+  const M=mul(add(P[0],P[1]),.5), Ax=add(M,mul(sub(P[2],M),.42));
+  const axis=`<line class="axis" x1="${P[2][0].toFixed(1)}" y1="${P[2][1].toFixed(1)}" x2="${M[0].toFixed(1)}" y2="${M[1].toFixed(1)}"/>`;
+  return {title:"Das gleichschenkelige Dreieck", type:"iso",
+    svg:triSVG(P,400,300,{arcs:[0,1],r:26,ticks:[[0,2,1],[1,2,1]],axis}),
+    zones:[{acc:"Schenkel",p:outward(P,0,2,34)},{acc:"Schenkel",p:outward(P,1,2,34)},{acc:"Basis",p:outward(P,0,1,30)},
+      {acc:"Basiswinkel",p:vertexOut(P,0,36)},{acc:"Basiswinkel",p:vertexOut(P,1,36)},{acc:"Symmetrieachse",p:Ax}],
+    chips:shuffle(["Schenkel","Schenkel","Basis","Basiswinkel","Basiswinkel","Symmetrieachse","Hypotenuse"])};
+}
+function figRight(){
+  const q=rnd(55,85)/100;
+  const P=fit(rotate([[1,0],[0,-q],[0,0]],pick([0,0,15,-15,90,180,-90,200]),Math.random()<.5),400,300,64);
+  return {title:"Das rechtwinkelige Dreieck", type:"right",
+    svg:triSVG(P,400,300,{right:2,r:30}),
+    zones:[{acc:"Hypotenuse",p:outward(P,0,1,32)},{acc:"Kathete",p:outward(P,0,2,32)},{acc:"Kathete",p:outward(P,1,2,32)},{acc:"rechter Winkel",p:vertexOut(P,2,38)}],
+    chips:shuffle(["Hypotenuse","Kathete","Kathete","rechter Winkel","Basis"])};
+}
+function lblHint(v,acc,type){
+  const ang=["Basiswinkel","rechter Winkel"], side=["Schenkel","Basis","Hypotenuse","Kathete"];
+  if(v==="Hypotenuse"&&type==="iso") return "Eine <b>Hypotenuse</b> gibt es nur im rechtwinkeligen Dreieck.";
+  if(v==="Basis"&&type==="right") return "Eine <b>Basis</b> gibt es nur im gleichschenkeligen Dreieck.";
+  if(ang.includes(v)&&!ang.includes(acc)) return `„${v}“ ist ein <b>Winkel</b> – er gehört in eine Ecke.`;
+  if(side.includes(v)&&!side.includes(acc)) return `„${v}“ ist eine <b>Seite</b> – das Kärtchen gehört neben eine Seite.`;
+  return ({Schenkel:"Die <b>Schenkel</b> sind die beiden gleich langen Seiten – sie sind mit einem Strich markiert.",
+    Basis:"Die <b>Basis</b> ist die dritte Seite. Sie liegt zwischen den beiden Basiswinkeln.",
+    Basiswinkel:"Die <b>Basiswinkel</b> liegen an der Basis.",
+    Symmetrieachse:"Die <b>Symmetrieachse</b> ist die gestrichelte Linie.",
+    Hypotenuse:"Die <b>Hypotenuse</b> liegt dem rechten Winkel gegenüber. Sie ist die längste Seite.",
+    Kathete:"Die <b>Katheten</b> schließen den rechten Winkel ein – sie liegen direkt am rechten Winkel.",
+    "rechter Winkel":"Der <b>rechte Winkel</b> ist mit dem Zeichen mit Punkt markiert."})[v]||"Schau noch einmal genau.";
+}
+function st3(el){
+  const figs=[figIso(),figRight()]; let fi=0, filled=0;
+  el.innerHTML=`<h2>Station 3: Beschriften${tag()}</h2>
+    <p class="lead">Ziehe die Kärtchen in die gestrichelten Felder. Achtung: Ein Kärtchen passt nicht zu diesem Dreieck!</p>
+    <div id="figbox"></div><div class="fb" aria-live="polite"></div><div class="chips" id="chips"></div>`;
+  const show=()=>{
+    const f=figs[fi];
+    $("#figbox").innerHTML=`<p class="figtitle">${fi+1}. ${f.title}</p><div class="fig">${f.svg}${f.zones.map(z=>`<div class="zone lbl" tabindex="0" data-accept="${z.acc}" style="left:${(z.p[0]/4).toFixed(2)}%;top:${(z.p[1]/3).toFixed(2)}%">?</div>`).join("")}</div>`;
+    $("#chips").innerHTML=f.chips.map(c=>`<div class="card chip" tabindex="0" role="button" data-v="${c}">${c}</div>`).join("");
+  };
+  show();
+  dnd(el,(card,zone)=>{
+    const f=figs[fi], v=card.dataset.v, acc=zone.dataset.accept;
+    if(v===acc){
+      zone.classList.add("filled"); zone.textContent=v; zone.removeAttribute("tabindex"); card.remove(); filled++;
+      if(filled===f.zones.length){
+        filled=0;
+        if(fi===0){ say(el,"ok","🙂 Super, alles richtig beschriftet! Jetzt kommt das nächste Dreieck."); fi++; setTimeout(show,800); }
+        else { say(el,"ok","🙂 Super, alles richtig beschriftet!"); $("#chips").innerHTML=""; stationDone(el); }
+      } else say(el,"ok","🙂 Richtig!");
+      return true;
+    }
+    say(el,"bad","😟 "+lblHint(v,acc,f.type));
+    mistake(`„${v}“ statt „${acc}“`);
+    return false;
+  });
+}
+
+/* =================== Station 4: Eigenschaften =================== */
+const PROPS={
+  gleichseitig:["Alle Seiten sind gleich lang.","Alle Winkel sind gleich groß (60°).","Es gibt drei Symmetrieachsen.","a = b = c","α = β = γ = 60°"],
+  gleichschenkelig:["Die Schenkel sind gleich lang.","Die dritte Seite heißt Basis.","Die Basiswinkel sind gleich groß.","Es gibt eine Symmetrieachse.","a = b und α = β"],
+  rechtwinkelig:["Ein Winkel ist 90° groß.","Die Hypotenuse liegt dem rechten Winkel gegenüber.","Die Hypotenuse ist die längste Seite.","Die Katheten schließen den rechten Winkel ein.","α + β = 90°"]
+};
+const PNAME={gleichseitig:"gleichseitige",gleichschenkelig:"gleichschenkelige",rechtwinkelig:"rechtwinkelige"};
+function miniIcon(k){
+  if(k==="gleichseitig") return triSVG(fit(fromAngles(60,60),64,48,5),64,48,{arcs:true,r:7});
+  if(k==="gleichschenkelig") return triSVG(fit([[0,0],[1,0],[.5,-1.25]],64,48,5),64,48,{ticks:[[0,2,1],[1,2,1]]});
+  return triSVG(fit([[0,0],[1.6,0],[0,-1]],64,48,5),64,48,{right:0,r:9});
+}
+function st4(el){
+  const cards=shuffle(Object.keys(PROPS).flatMap(k=>shuffle(PROPS[k]).slice(0,3).map(t=>({v:k,html:esc(t),aria:t}))));
+  sortStation(el,{title:"Station 4: Eigenschaften zuordnen",
+    lead:"Welche Eigenschaft gehört zu welchem Dreieck? Ziehe jede Karte in das richtige Feld.",
+    bins:Object.keys(PROPS).map((k,i)=>({v:k,label:"ABC"[i]+" – das "+PNAME[k]+" Dreieck",icon:miniIcon(k)})),
+    cards, cardCls:"text", label:v=>PNAME[v]+" Dreieck", mkey:(card,acc)=>`„${card.textContent.trim()}“ beim ${PNAME[acc]}n Dreieck abgelegt`,
+    hint:{gleichseitig:"Hier ist alles gleich – das passt zu dem Dreieck mit <b>drei</b> gleich langen Seiten.",
+          gleichschenkelig:"Schenkel, Basis und Basiswinkel gibt es beim Dreieck mit <b>zwei</b> gleich langen Seiten.",
+          rechtwinkelig:"Hypotenuse, Katheten und 90° gehören zum Dreieck mit dem <b>rechten Winkel</b>."}});
+}
+
+/* =================== Station 5: Dreieck formen =================== */
+const T5=[
+  {g:0,text:"ein rechtwinkeliges Dreieck",test:c=>c.ang==="recht",tip:"Ein rechter Winkel entsteht z. B., wenn eine Seite genau waagrecht und die andere genau senkrecht entlang der Kästchenlinien liegt."},
+  {g:0,text:"ein stumpfwinkeliges Dreieck",test:c=>c.ang==="stumpf",tip:"Ziehe eine Ecke so, dass der Winkel dort größer als 90° wird – das Dreieck wird flacher."},
+  {g:0,text:"ein spitzwinkeliges Dreieck",test:c=>c.ang==="spitz",tip:"Alle drei Winkel müssen kleiner als 90° sein."},
+  {g:1,text:"ein gleichschenkeliges Dreieck",test:c=>c.iso,tip:"Zwei Seiten müssen genau gleich lang sein. Setze z. B. die Spitze genau über die Mitte der Grundseite."},
+  {g:1,text:"ein (fast) gleichseitiges Dreieck",test:c=>c.equi,tip:"Alle drei Seiten möglichst gleich lang. Tipp: Grundseite 8 Kästchen, Spitze 7 Kästchen über der Mitte."},
+  {g:2,text:"ein gleichschenkelig-rechtwinkeliges Dreieck",test:c=>c.iso&&c.ang==="recht",tip:"Zwei gleich lange Seiten, die einen rechten Winkel einschließen – z. B. 4 Kästchen nach rechts und 4 Kästchen nach oben."},
+  {g:2,text:"ein gleichschenkelig-stumpfwinkeliges Dreieck",test:c=>c.iso&&c.ang==="stumpf",tip:"Lange Grundseite, die Spitze genau über der Mitte – aber nur wenig darüber."},
+  {g:2,text:"ein rechtwinkeliges Dreieck, bei dem alle Seiten verschieden lang sind",test:c=>c.ang==="recht"&&!c.iso,tip:"Die beiden Seiten am rechten Winkel müssen verschieden lang sein."}
+];
+function classify(P){
+  const [A,B,C]=P, d2=(p,q)=>(p[0]-q[0])**2+(p[1]-q[1])**2, dot=(u,v)=>u[0]*v[0]+u[1]*v[1];
+  const cross=(B[0]-A[0])*(C[1]-A[1])-(B[1]-A[1])*(C[0]-A[0]);
+  if(cross===0) return {deg:true};
+  const ds=[dot(sub(B,A),sub(C,A)),dot(sub(A,B),sub(C,B)),dot(sub(A,C),sub(B,C))];
+  const s=[d2(B,C),d2(A,C),d2(A,B)], L=s.map(Math.sqrt);
+  return {ang:ds.some(d=>d===0)?"recht":ds.some(d=>d<0)?"stumpf":"spitz", right:ds.findIndex(d=>d===0),
+    iso:s[0]===s[1]||s[1]===s[2]||s[0]===s[2], equi:Math.max(...L)/Math.min(...L)<=1.06, area:Math.abs(cross)/2};
+}
+const descr=c=>`${ANG[c.ang].l} und ${c.equi?"fast gleichseitig":c.iso?"gleichschenkelig":"allgemein (alle Seiten verschieden)"}`;
+function st5(el){
+  const W=12,H=9,U=40;
+  let tasks=[0,1,2].map(g=>shuffle(T5.filter(t=>t.g===g))[0]);
+  tasks.push(shuffle(T5.filter(t=>!tasks.includes(t)))[0]); tasks=shuffle(tasks);
+  let k=0, P=null, drag=null, kb=0;
+  el.innerHTML=`<h2>Station 5: Dreieck formen${tag()}</h2>
+    <p class="lead">Ziehe die drei Ecken A, B und C. Sie rasten auf den Kästchen ein. Wenn das Dreieck passt, tippe auf „Prüfen“.</p>
+    <div class="task5" id="t5"></div>
+    <div class="board"><svg id="bd" viewBox="-14 -14 ${W*U+28} ${H*U+28}" tabindex="0" role="img" aria-label="Kästchen mit verschiebbarem Dreieck. Tasten 1, 2, 3 wählen eine Ecke, Pfeiltasten verschieben sie.">
+      <g id="grid"></g><g id="dyn"></g>
+      ${[0,1,2].map(i=>`<circle class="handle" data-i="${i}" r="18"/><circle class="hdot" data-d="${i}" r="5"/><text class="vlab" data-l="${i}" text-anchor="middle">${"ABC"[i]}</text>`).join("")}
+    </svg></div>
+    <div class="info5" id="i5"></div>
+    <div class="fb" aria-live="polite"></div>
+    <div class="row5"><button class="btn go" id="chk5">Prüfen</button><button class="btn go" id="nx5" hidden>Nächste Aufgabe</button></div>`;
+  const svg=$("#bd");
+  let g="";
+  for(let x=0;x<=W;x++) g+=`<line class="gl${x%4===0?" m":""}" x1="${x*U}" y1="0" x2="${x*U}" y2="${H*U}"/>`;
+  for(let y=0;y<=H;y++) g+=`<line class="gl${y%4===0?" m":""}" x1="0" y1="${y*U}" x2="${W*U}" y2="${y*U}"/>`;
+  $("#grid").innerHTML=g;
+  const randTri=()=>{ for(;;){ const Q=[[rnd(0,W),rnd(0,H)],[rnd(0,W),rnd(0,H)],[rnd(0,W),rnd(0,H)]], c=classify(Q); if(!c.deg&&c.area>=8) return Q; } };
+  function draw(){
+    const Q=P.map(p=>[p[0]*U,p[1]*U]), c=classify(P);
+    let s=`<polygon class="tri" points="${Q.map(pt).join(" ")}"/>`;
+    if(!c.deg){
+      [0,1,2].forEach(i=>{ const A=Q[i], B=Q[(i+1)%3], C=Q[(i+2)%3], a=angleAt(A,B,C);
+        s+= i===c.right ? rightMark(A,B,C,16) : `<path class="arc" d="${arcPath(A,B,C,22)}"/>`;
+        const lp=add(A,mul(unit(add(unit(sub(B,A)),unit(sub(C,A)))),a>120?30:42));
+        const at=i===c.right?"90°":(Math.abs(a-90)<1?a.toFixed(1).replace(".",","):Math.round(a))+"°";
+        s+=`<text class="alab" x="${lp[0].toFixed(1)}" y="${lp[1].toFixed(1)}" text-anchor="middle" dominant-baseline="middle">${at}</text>`; });
+      [[1,2],[0,2],[0,1]].forEach(([i,j])=>{ const q=outward(Q,i,j,15);
+        s+=`<text class="slab" x="${q[0].toFixed(1)}" y="${q[1].toFixed(1)}" text-anchor="middle" dominant-baseline="middle">${f1(len(sub(P[i],P[j])))}</text>`; });
+    }
+    $("#dyn").innerHTML=s;
+    const G=centroid(Q);
+    [0,1,2].forEach(i=>{
+      ["i","d"].forEach(a=>{ const e=svg.querySelector(`[data-${a}="${i}"]`); e.setAttribute("cx",Q[i][0]); e.setAttribute("cy",Q[i][1]); });
+      const o=add(Q[i],mul(unit(sub(Q[i],G)),28)), l=svg.querySelector(`[data-l="${i}"]`); l.setAttribute("x",o[0].toFixed(1)); l.setAttribute("y",(o[1]+6).toFixed(1)); });
+    $("#i5").innerHTML = c.deg ? "<b>Die drei Ecken liegen auf einer Linie – das ist kein Dreieck.</b>"
+      : `<span>Seitenlängen (Kästchen): <b>${[[1,2],[0,2],[0,1]].map(([i,j])=>f1(len(sub(P[i],P[j])))).join(" · ")}</b></span>
+         <span>Winkel: <b>${[0,1,2].map(i=>i===c.right?"90°":Math.round(angleAt(Q[i],Q[(i+1)%3],Q[(i+2)%3]))+"°").join(" · ")}</b></span>`;
+  }
+  function newTask(){
+    const t=tasks[k];
+    $("#t5").innerHTML=`Aufgabe ${k+1} von ${tasks.length}: Forme <b>${t.text}</b>.`;
+    do{ P=randTri(); }while(t.test(classify(P)));
+    $("#chk5").hidden=false; $("#nx5").hidden=true; const f=el.querySelector(".fb"); f.className="fb"; f.textContent="";
+    draw();
+  }
+  const toGrid=e=>{ const m=svg.getScreenCTM&&svg.getScreenCTM(); if(!m) return null; const p=svg.createSVGPoint(); p.x=e.clientX; p.y=e.clientY; const q=p.matrixTransform(m.inverse());
+    return [Math.max(0,Math.min(W,Math.round(q.x/U))),Math.max(0,Math.min(H,Math.round(q.y/U)))]; };
+  const locked=()=>!$("#nx5").hidden||$("#chk5").hidden;
+  const moveTo=(i,n)=>{ if(P.some((p,j)=>j!==i&&p[0]===n[0]&&p[1]===n[1])) return; if(n[0]!==P[i][0]||n[1]!==P[i][1]){ P[i]=n; draw(); buzz(5); } };
+  svg.addEventListener("pointerdown",e=>{ const h=e.target.closest(".handle"); if(!h||locked()) return; e.preventDefault(); drag=+h.dataset.i; kb=drag; h.classList.add("act"); try{ svg.setPointerCapture(e.pointerId); }catch(_){ } buzz(10); });
+  svg.addEventListener("pointermove",e=>{ if(drag===null) return; const n=toGrid(e); if(n) moveTo(drag,n); });
+  const end=()=>{ if(drag===null) return; svg.querySelector(`[data-i="${drag}"]`).classList.remove("act"); drag=null; };
+  svg.addEventListener("pointerup",end); svg.addEventListener("pointercancel",end);
+  svg.addEventListener("keydown",e=>{
+    if(["1","2","3"].includes(e.key)){ kb=+e.key-1; return; }
+    const d={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[e.key]; if(!d||locked()) return; e.preventDefault();
+    moveTo(kb,[Math.max(0,Math.min(W,P[kb][0]+d[0])),Math.max(0,Math.min(H,P[kb][1]+d[1]))]); });
+  $("#chk5").onclick=()=>{
+    const t=tasks[k], c=classify(P);
+    if(c.deg){ say(el,"bad","😟 Die drei Ecken liegen auf einer Linie – das ist kein Dreieck."); buzz([60,50,60]); return; }
+    if(t.test(c)){
+      buzz(25); k++; $("#chk5").hidden=true;
+      say(el,"ok",`🙂 Richtig! Dein Dreieck ist ${descr(c)}.`);
+      if(k===tasks.length) stationDone(el); else { $("#nx5").hidden=false; $("#nx5").focus({preventScroll:true}); }
+      return;
+    }
+    buzz([60,50,60]);
+    say(el,"bad",`😟 Dein Dreieck ist <b>${descr(c)}</b>. Gesucht ist ${t.text}.<br><small>Tipp: ${t.tip}</small>`);
+    mistake(`statt ${t.text.replace(/^ein /,"")}: ${descr(c)}`);
+  };
+  $("#nx5").onclick=newTask;
+  newTask();
+}
+
+/* =================== Ablauf, Zeit, Speichern =================== */
+const STATIONS=[st1,st2,st3,st4,st5];
+// jede Station bekommt einen frischen Container, damit keine alten Zieh-Handler weiterlaufen
+function host(){ const h=document.createElement("div"); $("#stage").replaceChildren(h); return h; }
+let tAct=null;
+function tStart(){ if(!tAct&&S.name&&!run.practice&&!S.st[S.cur].done&&!document.hidden) tAct=Date.now(); }
+function tStop(){ if(tAct){ S.st[S.cur].ms+=Date.now()-tAct; tAct=null; } }
+const curMs=i=>S.st[i].ms+(tAct&&i===S.cur?Date.now()-tAct:0);
+const fmtT=ms=>{ const s=Math.round(ms/1000); return Math.floor(s/60)+":"+String(s%60).padStart(2,"0"); };
+document.addEventListener("visibilitychange",()=>{ if(document.hidden){ tStop(); save(); } else tStart(); });
+window.addEventListener("pagehide",()=>{ tStop(); save(); });
+const norm=s=>s.trim().replace(/\s+/g," ").toLowerCase();
+const KEY=()=>"mathe-fortschritt:dreiecke-eigenschaften:"+norm(S.name);
+function save(){ if(!S.name) return; try{ localStorage.setItem(KEY(),JSON.stringify({round:S.round,st:S.st.map((x,i)=>({...x,ms:curMs(i)})),hist:S.hist})); }catch(_){ } }
+function load(){ try{ const v=localStorage.getItem(KEY()); return v?JSON.parse(v):null; }catch(_){ return null; } }
+
+function renderTabs(){
+  $("#tabs").innerHTML=NAMES.map((n,i)=>`<button class="tab${i===S.cur?" cur":""}${S.st[i].done?" done":""}" data-i="${i}">${S.st[i].done?"✓ ":""}${i+1} ${n}</button>`).join("")
+    +(S.name?`<button class="tab newr" id="newR">🔄 Neue Runde</button>`:"");
+  $("#tabs").querySelectorAll("[data-i]").forEach(b=>b.onclick=()=>{ if(S.name) go(+b.dataset.i); });
+  if($("#newR")) $("#newR").onclick=newRound;
+}
+function nextBtn(i){ const n=S.st.findIndex((x,j)=>!x.done&&j!==i); return n>=0?`<button class="btn go" id="goNext" data-n="${n}">Weiter zu Station ${n+1}</button>`:""; }
+function wireNext(){ const b=$("#goNext"); if(b) b.onclick=()=>{ go(+b.dataset.n); const t=$("#tabs"); if(t.scrollIntoView) t.scrollIntoView({behavior:"smooth",block:"start"}); }; }
+function go(i){
+  tStop(); S.cur=i; run={practice:false}; renderTabs();
+  if(S.st[i].done){
+    const el=host();
+    el.innerHTML=`<h2>Station ${i+1}: ${NAMES[i]}</h2><div class="donebox">✓ Diese Station hast du schon geschafft. <button class="btn" id="again">Noch einmal üben</button>${nextBtn(i)}</div>`;
+    $("#again").onclick=()=>{ run={practice:true}; STATIONS[i](host()); };
+    wireNext(); return;
+  }
+  STATIONS[i](host()); tStart(); save();
+}
+function stationDone(el){
+  const i=S.cur;
+  if(!run.practice){ tStop(); S.st[i].done=true; save(); }
+  renderTabs(); renderSummary();
+  const nb=nextBtn(i), box=document.createElement("div"); box.className="donebox";
+  box.innerHTML=`🎉 Station geschafft!${run.practice?" (Übungsmodus)":""} ${nb}${!nb&&S.st.every(x=>x.done)?"<span>Alle Stationen erledigt – zeig deiner Lehrkraft die Übersicht unten.</span>":""}`;
+  el.appendChild(box); wireNext(); buzz([30,40,30,40,80]);
+  if(box.scrollIntoView) box.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+function newRound(){
+  if(!S.name) return;
+  const open=S.st.filter(x=>!x.done).length;
+  if(!confirm(`Neue Runde mit neuen Dreiecken starten?${open?` ${open} Station${open===1?" ist":"en sind"} noch nicht fertig.`:""} Die Ergebnisse dieser Runde bleiben in der Übersicht.`)) return;
+  tStop();
+  S.hist.push({n:S.round,done:S.st.filter(x=>x.done).length,err:S.st.reduce((a,x)=>a+x.err,0),ms:S.st.reduce((a,x)=>a+x.ms,0)});
+  S.round++; S.st=blankSt(); go(0); renderSummary(); window.scrollTo({top:0,behavior:"smooth"});
+}
+function renderSummary(){
+  const s=$("#summary"); if(!S.name){ s.hidden=true; return; }
+  const now=new Date(), dt=now.toLocaleDateString("de-AT")+", "+now.toLocaleTimeString("de-AT",{hour:"2-digit",minute:"2-digit"});
+  const all=S.st.every(x=>x.done), errs=S.st.reduce((a,x)=>a+x.err,0), ms=S.st.reduce((a,x,i)=>a+curMs(i),0);
+  const rows=S.st.map((x,i)=>{ const top=Object.entries(x.mist).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k,n])=>esc(k)+(n>1?` (${n}×)`:"")).join("<br>");
+    return `<tr class="${x.done&&!x.err?"okrow":x.err>=3?"errrow":""}"><td>${i+1}</td><td>${NAMES[i]}</td><td>${x.done?"✓ erledigt":"offen"}</td><td>${x.err}</td><td>${fmtT(curMs(i))}</td><td class="mist">${top||"–"}</td></tr>`; }).join("");
+  const hist=S.hist.length?`<h3>Frühere Runden</h3><div class="tablewrap"><table><thead><tr><th>Runde</th><th>Stationen erledigt</th><th>Fehlversuche</th><th>Zeit</th></tr></thead><tbody>${S.hist.map(h=>`<tr><td>${h.n}</td><td>${h.done} / 5</td><td>${h.err}</td><td>${fmtT(h.ms)}</td></tr>`).join("")}</tbody></table></div>`:"";
+  s.innerHTML=`<h2>Übersicht für die Lehrkraft${all?"":'<span class="livetag">wird laufend aktualisiert</span>'}</h2>
+    <div class="sumhead"><div><span>Name</span><b>${esc(S.name)}</b></div><div><span>Datum</span><b>${dt}</b></div><div><span>Übung</span><b>Dreiecke – Runde ${S.round}</b></div></div>
+    <div class="sumstats"><div><b>${S.st.filter(x=>x.done).length} / 5</b><span>Stationen erledigt</span></div><div><b>${S.st.filter(x=>x.done&&!x.err).length}</b><span>ohne Fehler</span></div><div><b>${errs}</b><span>Fehlversuche</span></div><div><b>${fmtT(ms)}</b><span>Bearbeitungszeit</span></div></div>
+    <div class="tablewrap"><table><thead><tr><th>Nr.</th><th>Station</th><th>Stand</th><th>Fehlversuche</th><th>Zeit</th><th>Häufigste Fehler</th></tr></thead><tbody>${rows}</tbody></table></div>
+    ${hist}<p class="sumnote">Zeig diese Übersicht deiner Lehrkraft. „Noch einmal üben“ zählt nicht in die Übersicht.</p>`;
+  s.hidden=false;
+}
+setInterval(()=>{ if(S.name&&tAct) renderSummary(); },15000);
+
+/* =================== Name =================== */
+function lockName(){
+  if(S.name) return;
+  const inp=$("#name"), msg=$("#nameMsg"), n=inp.value.trim().replace(/\s+/g," ");
+  if(!n){ msg.className="nmsg bad"; msg.textContent="Bitte gib zuerst deinen Namen ein."; inp.focus(); return; }
+  S.name=n; inp.value=n; inp.disabled=true; $("#nameOk").hidden=true; document.body.classList.remove("waiting");
+  const sv=load();
+  if(sv&&sv.st&&sv.st.length===NAMES.length){ S.round=sv.round||1; S.st=sv.st; S.hist=sv.hist||[]; msg.className="nmsg"; msg.textContent="✓ Willkommen zurück! Dein Fortschritt wurde geladen."; }
+  else msg.textContent="";
+  const first=S.st.findIndex(x=>!x.done);
+  go(first>=0?first:0); renderSummary();
+}
+$("#nameOk").onclick=lockName;
+$("#name").addEventListener("keydown",e=>{ if(e.key==="Enter") lockName(); });
+
+renderTabs(); st1(host());
+</script>
+</body>
+</html>
