@@ -1,1142 +1,826 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interaktives Geometrie-Heft: Dreiecke</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts: Atkinson Hyperlegible & Patrick Hand -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Patrick+Hand&display=swap" rel="stylesheet">
-    <style>
-        body { 
-            font-family: 'Atkinson Hyperlegible', sans-serif; 
-            background-color: #fbf9f4;
-            color: #2d3748;
-        }
-        .handwritten { font-family: 'Patrick Hand', cursive; }
-        
-        /* Papier-Effekt (Karo-Muster) */
-        .paper-card {
-            background-color: #ffffff;
-            background-image: radial-gradient(#cbd5e1 0.8px, transparent 0.8px);
-            background-size: 16px 16px;
-            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.03);
-        }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Textaufgaben: Dreiecke & Sachrechnen – Umfang & Flächeninhalt</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#fdfdf9; --grid:#d6e4f2; --ink:#1b2a4a; --pen:#1d4ed8; --muted:#5b6b85;
+  --red:#c62828; --red-soft:#fdecea; --green:#2e7d32; --green-soft:#e6f4e7;
+  --marker:#ffe36e; --tri:#eaf1fb; --card:#ffffff; --line:#c9d6e6; --btn:#1b2a4a; --btn-ink:#ffffff;
+  color-scheme:light;
+  box-sizing:border-box;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#151b26; --grid:#222d3e; --ink:#e6ecf5; --pen:#8fb1ff; --muted:#9aa8bf;
+    --red:#ff7a7a; --red-soft:#3a1e22; --green:#6fd17a; --green-soft:#17301c;
+    --marker:#7a6516; --tri:#1e2a3e; --card:#1b2231; --line:#33415a; --btn:#e6ecf5; --btn-ink:#151b26;
+    color-scheme:dark;
+  }
+}
+*,*::before,*::after{box-sizing:inherit}
+body{
+  margin:0; color:var(--ink); background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:22px 22px;
+  font-family:"Atkinson Hyperlegible",system-ui,-apple-system,sans-serif; font-size:17px; line-height:1.5;
+  padding-bottom:280px;
+}
+.wrap{max-width:1080px;margin:0 auto;padding:24px 18px 60px}
+header h1{font-family:"Patrick Hand",cursive;font-weight:400;font-size:clamp(32px,5.5vw,46px);line-height:1.05;margin:0 0 6px;color:var(--pen)}
+header p{margin:0 0 16px;color:var(--muted);max-width:65ch}
 
-        .keypad-btn {
-            @apply bg-amber-50 hover:bg-amber-100 active:bg-amber-200 text-amber-900 font-bold py-2.5 rounded-lg text-lg transition-colors border border-amber-200 shadow-sm flex items-center justify-center select-none cursor-pointer;
-        }
+/* Kompakte Aufgaben-Leiste oben */
+.taskbar{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:12px 16px;margin-bottom:20px;display:flex;flex-direction:column;gap:8px}
+.taskbar-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.taskbar-label{font-size:13px;font-weight:700;color:var(--muted);width:90px;flex:none}
+.tbadge{font-family:"Patrick Hand",cursive;font-size:18px;width:38px;height:38px;border-radius:10px;border:2px solid var(--line);background:var(--paper);color:var(--ink);display:grid;place-items:center;cursor:pointer;transition:all 0.2s}
+.tbadge:hover{border-color:var(--pen);background:var(--tri)}
+.tbadge.active{background:var(--pen);color:#fff;border-color:var(--pen)}
+.tbadge.solved-badge{border-color:var(--green);background:var(--green-soft);color:var(--green)}
+.tbadge.solved-badge.active{background:var(--green);color:#fff}
 
-        /* SVG Interaktive Elemente & Hitboxen */
-        .svg-hitbox {
-            cursor: pointer;
-            stroke: transparent;
-            stroke-width: 20px;
-            fill: none;
-            transition: all 0.2s ease;
-        }
-        .svg-visible-line {
-            transition: all 0.2s ease;
-            pointer-events: none;
-        }
-        .svg-hitbox:hover + .svg-visible-line, .svg-hitbox:hover {
-            filter: drop-shadow(0 0 4px rgba(37, 99, 235, 0.6));
-        }
-        .svg-selected-line {
-            stroke: #2563eb !important;
-            stroke-width: 4px !important;
-        }
-        .svg-label {
-            cursor: pointer;
-            user-select: none;
-            transition: all 0.2s ease;
-        }
-        .svg-label-selected {
-            fill: #2563eb !important;
-            font-weight: bold !important;
-        }
-    </style>
+.controls{display:flex;flex-direction:column;gap:12px;margin-bottom:20px;background:var(--card);border:2px solid var(--line);border-radius:14px;padding:16px}
+.ctl-label{display:block;font-size:14px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.namein{font:inherit;font-size:16px;padding:7px 12px;border:2px solid var(--ink);border-radius:10px;background:var(--card);color:var(--ink);width:260px;max-width:100%}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:22px;align-items:start}
+@media (max-width:820px){.grid{grid-template-columns:1fr}}
+.sheet{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:18px}
+.task{font-size:19px;margin:0 0 12px;line-height:1.4}
+.task b{font-family:"Patrick Hand",cursive;font-size:24px;color:var(--pen);font-weight:400}
+svg{width:100%;height:auto;display:block}
+.side{stroke:var(--ink);stroke-width:3;stroke-linecap:round}
+.side.height-line{stroke:var(--red);stroke-width:2.5;stroke-dasharray:6 4}
+.side.selected{stroke:var(--pen);stroke-width:5}
+.tri{fill:var(--tri)}
+.ra{fill:none;stroke:var(--ink);stroke-width:2}
+.dot{fill:var(--ink)}
+.lbl{font-family:"Patrick Hand",cursive;font-size:19px;fill:var(--ink)}
+.hit{stroke:transparent;stroke-width:28;stroke-linecap:round;cursor:pointer;pointer-events:stroke}
+.tapnote{text-anchor:middle;font-weight:700;fill:var(--pen);font-size:15px}
+
+.way-title{margin:18px 0 4px;font-size:15px;color:var(--muted)}
+.way{font-family:"Patrick Hand",cursive;font-size:23px;line-height:1.5;color:var(--pen);min-height:44px;border-left:3px solid var(--pen);padding-left:14px}
+.way:empty::before{content:"Hier entsteht dein Rechenweg.";color:var(--muted);font-size:18px}
+.wline{animation:write .35s ease-out}
+@keyframes write{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:none}}
+.wline.final{display:inline-block;border-bottom:3px double var(--pen);margin-top:2px;font-weight:bold}
+
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:14px 16px}
+.step.solved{border-color:var(--green)}
+.step-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.num{flex:none;width:30px;height:30px;border-radius:50%;border:2px solid var(--ink);display:grid;place-items:center;font-weight:700;font-size:15px}
+.step.solved .num{background:var(--green);border-color:var(--green);color:var(--card)}
+.step h3{margin:0;font-size:18px}
+.step p{margin:0 0 8px}
+
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{font:inherit;font-family:"Patrick Hand",cursive;font-size:21px;min-width:56px;padding:4px 14px;border:2px solid var(--ink);border-radius:10px;background:var(--card);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){background:var(--tri)}
+.opt.good{background:var(--green-soft);border-color:var(--green);color:var(--green)}
+.opt.wrongb{background:var(--red-soft);border-color:var(--red);color:var(--red);text-decoration:line-through}
+.opt:disabled{cursor:default}
+
+.eq{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-family:"Patrick Hand",cursive;font-size:23px}
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 4px}
+.frac-top{border-bottom:2px solid var(--ink);padding-bottom:2px;display:flex;align-items:center;gap:4px}
+.frac-bot{padding-top:2px;display:flex;align-items:center;justify-content:center}
+.n{font:inherit;font-family:"Patrick Hand",cursive;font-size:21px;width:75px;padding:2px 4px;border:2px solid var(--ink);border-radius:8px;background:var(--paper);color:var(--pen);text-align:center}
+.n:focus{outline:3px solid var(--pen)}
+.n.wide{width:110px}
+.check,.next{font:inherit;font-size:16px;font-weight:700;padding:8px 16px;border-radius:10px;border:0;background:var(--btn);color:var(--btn-ink);cursor:pointer}
+.fb{font-size:15px;margin-top:8px}
+.fb:empty{display:none}
+.fb.bad{color:var(--red);background:var(--red-soft);padding:8px 10px;border-radius:8px}
+.fb.ok{color:var(--green)}
+.score{font-size:15px;color:var(--muted);margin:0 0 12px}
+.namerow{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.summary{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:20px}
+.summary h2{font-family:"Patrick Hand",cursive;font-size:32px;color:var(--pen);margin:0 0 14px}
+.tablewrap{overflow-x:auto;margin-bottom:14px}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+.tag{font-size:14px;color:var(--muted);font-weight:bold}
+.homework-box{background:var(--tri);border:2px dashed var(--pen);border-radius:10px;padding:12px 14px;margin-top:14px;font-size:15px}
+.homework-box h4{margin:0 0 6px;color:var(--pen);font-size:17px}
+.codebox{background:var(--paper);border:2px solid var(--ink);border-radius:8px;padding:8px 12px;font-family:monospace;font-size:18px;font-weight:bold;color:var(--pen);display:inline-block;margin:6px 0}
+
+.keypad{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:3px solid var(--pen);padding:10px 14px;box-shadow:0 -4px 20px rgba(0,0,0,0.15);display:flex;flex-direction:column;align-items:center;gap:8px;z-index:999}
+.keypad-header{display:flex;justify-content:space-between;width:100%;max-width:360px;font-size:14px;font-weight:bold;color:var(--muted)}
+.keypad-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;max-width:360px}
+.keybtn{font-family:"Patrick Hand",cursive;font-size:24px;padding:8px;border:2px solid var(--ink);border-radius:8px;background:var(--paper);color:var(--ink);cursor:pointer;text-align:center}
+.keybtn:active{background:var(--tri)}
+.keybtn.action{background:var(--btn);color:var(--btn-ink);font-size:18px;font-family:sans-serif}
+</style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body>
+<div class="wrap">
+  <header>
+    <h1>Textaufgaben: Dreiecke & Sachrechnen</h1>
+    <p>Berechne Umfang, Flächeninhalt und Folgekosten bei Alltagsaufgaben. (6 Schulübungen & 4 Hausübungen)</p>
+  </header>
 
-    <!-- Header Navigation -->
-    <header class="bg-amber-800 text-amber-50 border-b-4 border-amber-900 shadow-md">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
-            <div class="flex items-center space-x-3">
-                <div class="bg-amber-100/10 p-2 rounded-xl border border-amber-400/20">
-                    <i class="fa-solid fa-ruler-combined text-2xl text-amber-200"></i>
-                </div>
-                <div>
-                    <h1 class="font-bold text-xl leading-tight handwritten text-2xl tracking-wide">Geometrie-Lernheft</h1>
-                    <p class="text-xs text-amber-200">Dreiecke: Umfang, Fläche & Sachaufgaben</p>
-                </div>
-            </div>
-            
-            <div class="flex items-center gap-2">
-                <!-- Schüler Name Input -->
-                <div class="bg-amber-900/60 px-3 py-1 rounded-lg border border-amber-700/50 flex items-center gap-2">
-                    <i class="fa-solid fa-user-graduate text-xs text-amber-300"></i>
-                    <input type="text" id="student-name" placeholder="Dein Name..." class="bg-transparent border-b border-amber-400/40 text-xs text-white focus:outline-none focus:border-amber-200 w-28 sm:w-36">
-                </div>
-
-                <button id="btn-device-code" class="bg-amber-700/80 hover:bg-amber-700 text-xs sm:text-sm px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 border border-amber-500/30">
-                    <i class="fa-solid fa-key"></i> <span class="hidden sm:inline">Code</span>
-                </button>
-                <button id="btn-teacher-view" class="bg-emerald-700 hover:bg-emerald-800 text-xs sm:text-sm px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 font-medium shadow-sm border border-emerald-600">
-                    <i class="fa-solid fa-chalkboard-user"></i> <span>Lehrkraft</span>
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="max-w-6xl mx-auto w-full px-4 py-6 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-        <!-- Sidebar Navigation (Aufgabenheft) -->
-        <aside class="lg:col-span-4 bg-white rounded-2xl p-4 shadow-sm border border-amber-200/60 flex flex-col h-fit">
-            <div class="flex items-center justify-between mb-3 pb-2 border-b border-amber-100">
-                <h2 class="font-bold text-amber-900 flex items-center gap-2 handwritten text-xl">
-                    <i class="fa-solid fa-book-bookmark text-amber-700"></i> Aufgabenheft
-                </h2>
-                <span id="overall-progress" class="text-xs bg-amber-100 text-amber-800 font-bold px-2.5 py-1 rounded-full border border-amber-200">0 / 10 Erledigt</span>
-            </div>
-
-            <!-- Category Tabs -->
-            <div class="flex bg-amber-50 p-1 rounded-xl mb-4 text-xs font-semibold border border-amber-200/50">
-                <button id="tab-su" class="flex-1 py-2 rounded-lg bg-white shadow-sm text-amber-900 font-bold text-center transition">Schulübung (6)</button>
-                <button id="tab-hu" class="flex-1 py-2 rounded-lg text-amber-700 hover:text-amber-900 text-center transition">Hausübung (4)</button>
-            </div>
-
-            <!-- Dynamic Task List -->
-            <div id="taskList" class="space-y-2 max-h-[520px] overflow-y-auto pr-1">
-                <!-- Task Items inserted via JS -->
-            </div>
-
-            <!-- Reset Button -->
-            <div class="mt-4 pt-3 border-t border-amber-100 flex justify-between items-center">
-                <button id="btn-reset-progress" class="text-xs text-rose-600 hover:text-rose-800 flex items-center gap-1 font-medium">
-                    <i class="fa-solid fa-rotate-left"></i> Fortschritt zurücksetzen
-                </button>
-            </div>
-        </aside>
-
-        <!-- Main Task Panel -->
-        <section class="lg:col-span-8 space-y-6">
-
-            <!-- Active Task Description Card -->
-            <div class="paper-card rounded-2xl p-5 border border-amber-200/80 relative">
-                <div class="flex justify-between items-start mb-3">
-                    <div>
-                        <span id="task-category-badge" class="inline-block text-[10px] uppercase tracking-wider font-bold px-2.5 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-200 mb-1">Schulübung</span>
-                        <h2 id="task-title" class="text-2xl font-bold text-amber-950 handwritten">1. Waldstück neu aufforsten</h2>
-                    </div>
-                    <span id="task-status-badge" class="px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-500 flex items-center gap-1.5 border border-slate-200">
-                        <i class="fa-regular fa-circle"></i> Offen
-                    </span>
-                </div>
-
-                <!-- Problem Text -->
-                <p id="task-description" class="text-slate-700 text-sm sm:text-base leading-relaxed bg-amber-50/60 p-4 rounded-xl border border-amber-100 mb-4">
-                    <!-- Task Text Populated Here -->
-                </p>
-
-                <!-- Step 1: Interactive SVG Triangle Selection -->
-                <div class="bg-amber-50/30 rounded-xl p-4 border border-amber-200/60 flex flex-col items-center">
-                    <div class="w-full flex justify-between items-center mb-2">
-                        <span class="text-xs font-bold text-amber-900 flex items-center gap-1.5">
-                            <i class="fa-solid fa-pointer text-amber-600"></i> Schritt 1: Klicke in der Skizze die benötigten Linien an!
-                        </span>
-                        <span id="svg-selection-counter" class="text-xs font-mono font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded">0 gewählt</span>
-                    </div>
-
-                    <div class="w-full bg-white rounded-xl p-3 border border-amber-100 flex justify-center relative min-h-[220px]">
-                        <svg id="triangle-svg" viewBox="0 0 300 180" class="w-full max-w-md h-auto overflow-visible select-none">
-                            <!-- Dynamic Diagram -->
-                        </svg>
-                    </div>
-                    
-                    <p id="svg-help-text" class="text-xs text-amber-700 mt-2 font-medium text-center">
-                        Tipp: Klicke die Linien direkt an, die du für die gesuchte Größe brauchst.
-                    </p>
-                </div>
-            </div>
-
-            <!-- Steps Panel -->
-            <div class="paper-card rounded-2xl p-5 border border-amber-200/80 space-y-6">
-                
-                <!-- Step 2: Formel selbst erstellen -->
-                <div id="step-2-container" class="space-y-3 opacity-50 pointer-events-none transition-all border-b border-amber-100 pb-5">
-                    <div class="flex items-center gap-2 text-sm font-bold text-amber-950">
-                        <span class="w-6 h-6 rounded-full bg-amber-800 text-white flex items-center justify-center text-xs">2</span>
-                        <span>Erstelle die passende Formel:</span>
-                    </div>
-
-                    <div class="pl-2 sm:pl-8 space-y-2">
-                        <div class="flex flex-wrap items-center gap-2 bg-amber-50 p-3 rounded-xl border border-amber-200/80 text-base font-mono">
-                            <span id="formula-target-label" class="font-bold text-amber-900 text-lg">A =</span>
-                            <div id="formula-builder-slots" class="flex items-center gap-1.5 flex-wrap">
-                                <!-- Interactive Formula Slots -->
-                            </div>
-                        </div>
-
-                        <!-- Variable / Operator Palette Buttons -->
-                        <div id="formula-palette" class="flex flex-wrap gap-1.5 pt-1">
-                            <!-- Buttons dynamically added -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Step 3: Werte einsetzen & Berechnen -->
-                <div id="step-3-container" class="space-y-3 opacity-50 pointer-events-none transition-all border-b border-amber-100 pb-5">
-                    <div class="flex items-center gap-2 text-sm font-bold text-amber-950">
-                        <span class="w-6 h-6 rounded-full bg-amber-800 text-white flex items-center justify-center text-xs">3</span>
-                        <span>Werte einsetzen und Hauptgröße berechnen:</span>
-                    </div>
-
-                    <div class="pl-2 sm:pl-8 space-y-3">
-                        <div class="flex flex-wrap items-center gap-2 font-mono bg-amber-50 p-3 rounded-xl border border-amber-200/80" id="step3-values-builder">
-                            <!-- Dynamic inputs for step 3 -->
-                        </div>
-
-                        <div class="flex flex-wrap items-center gap-3">
-                            <span class="font-bold text-slate-700 text-sm">Ergebnis:</span>
-                            <input type="text" id="main-result-input" readonly placeholder="Ergebnis..." class="w-36 bg-white border border-amber-300 rounded-lg px-3 py-1.5 text-lg font-bold text-indigo-700 text-center focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer">
-                            <span id="main-result-unit" class="font-bold text-slate-700">m²</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Step 4: Kosten / Sachaufgabe -->
-                <div id="step-4-container" class="space-y-3 opacity-50 pointer-events-none transition-all">
-                    <div class="flex items-center gap-2 text-sm font-bold text-amber-950">
-                        <span class="w-6 h-6 rounded-full bg-amber-800 text-white flex items-center justify-center text-xs">4</span>
-                        <span>Sachaufgabe / Gesamtkosten berechnen:</span>
-                    </div>
-
-                    <div class="pl-2 sm:pl-8 space-y-3">
-                        <p id="step4-question-text" class="text-xs sm:text-sm text-slate-700 bg-amber-50/80 p-3 rounded-lg border border-amber-100 font-medium">
-                            <!-- Question text -->
-                        </p>
-                        <div class="flex flex-wrap items-center gap-3">
-                            <span class="font-bold text-slate-700 text-sm">Gesamtergebnis:</span>
-                            <input type="text" id="final-cost-input" readonly placeholder="Betrag..." class="w-40 bg-white border border-amber-300 rounded-lg px-3 py-1.5 text-lg font-bold text-emerald-700 text-center focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer">
-                            <span id="cost-unit" class="font-bold text-slate-700">€</span>
-                            <button id="btn-check-all" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2 rounded-lg transition shadow-sm ml-auto text-sm flex items-center gap-2 cursor-pointer">
-                                <i class="fa-solid fa-check"></i> Antwort Prüfen
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- On-Screen Keypad -->
-                <div id="keypad-panel" class="pt-4 border-t border-amber-100">
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="text-xs font-bold text-amber-800 uppercase tracking-wider"><i class="fa-solid fa-calculator mr-1"></i> Virtuelle Tastatur</span>
-                        <span id="active-input-label" class="text-xs text-indigo-700 font-bold bg-indigo-50 px-2.5 py-0.5 rounded border border-indigo-100">Klicke ein Eingabefeld an</span>
-                    </div>
-                    <div class="grid grid-cols-4 gap-2 max-w-xs sm:max-w-sm mx-auto">
-                        <button class="keypad-btn" data-key="7">7</button>
-                        <button class="keypad-btn" data-key="8">8</button>
-                        <button class="keypad-btn" data-key="9">9</button>
-                        <button class="keypad-btn bg-rose-100 hover:bg-rose-200 text-rose-800 border-rose-300" data-key="DEL"><i class="fa-solid fa-backspace"></i></button>
-                        <button class="keypad-btn" data-key="4">4</button>
-                        <button class="keypad-btn" data-key="5">5</button>
-                        <button class="keypad-btn" data-key="6">6</button>
-                        <button class="keypad-btn bg-slate-200 hover:bg-slate-300 text-slate-700 border-slate-300" data-key="CLR">C</button>
-                        <button class="keypad-btn" data-key="1">1</button>
-                        <button class="keypad-btn" data-key="2">2</button>
-                        <button class="keypad-btn" data-key="3">3</button>
-                        <button class="keypad-btn" data-key="*">*</button>
-                        <button class="keypad-btn" data-key="0">0</button>
-                        <button class="keypad-btn" data-key=",">,</button>
-                        <button class="keypad-btn" data-key="+">+</button>
-                        <button class="keypad-btn" data-key="/">/</button>
-                    </div>
-                </div>
-
-                <!-- Feedback Message Container -->
-                <div id="feedback-box" class="hidden p-4 rounded-xl text-sm font-medium transition-all"></div>
-
-            </div>
-        </section>
-    </main>
-
-    <!-- Modal: Device Code Import/Export -->
-    <div id="modal-device-code" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-amber-200">
-            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-                <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2 handwritten text-xl">
-                    <i class="fa-solid fa-key text-amber-600"></i> Fortschritt Speichern / Laden
-                </h3>
-                <button class="btn-close-modal text-slate-400 hover:text-slate-600 cursor-pointer"><i class="fa-solid fa-xmark text-xl"></i></button>
-            </div>
-            <p class="text-xs text-slate-600 leading-relaxed">
-                Kopiere deinen Code, um deinen Fortschritt auf einem anderen Gerät fortzusetzen.
-            </p>
-            <div class="space-y-2">
-                <label class="text-xs font-bold text-slate-700">Dein aktueller Code:</label>
-                <div class="flex gap-2">
-                    <input type="text" id="export-code-input" readonly class="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 font-mono text-xs text-slate-700">
-                    <button id="btn-copy-code" class="bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold px-3 py-2 rounded-lg text-xs transition cursor-pointer">Kopieren</button>
-                </div>
-            </div>
-            <div class="pt-2 border-t border-slate-100 space-y-2">
-                <label class="text-xs font-bold text-slate-700">Code eingeben:</label>
-                <div class="flex gap-2">
-                    <input type="text" id="import-code-input" placeholder="Code einfügen..." class="flex-1 border border-slate-300 rounded-lg px-3 py-2 font-mono text-xs focus:ring-2 focus:ring-amber-500 focus:outline-none">
-                    <button id="btn-apply-code" class="bg-amber-800 hover:bg-amber-900 text-white font-bold px-4 py-2 rounded-lg text-xs transition cursor-pointer">Laden</button>
-                </div>
-            </div>
-        </div>
+  <!-- Kompakte Aufgaben-Leiste -->
+  <div class="taskbar">
+    <div class="taskbar-row">
+      <span class="taskbar-label">Schulübung:</span>
+      <div id="badgesSUE" style="display:flex; gap:6px; flex-wrap:wrap;"></div>
     </div>
-
-    <!-- Modal: Teacher Summary Table -->
-    <div id="modal-teacher-view" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-        <div class="bg-white rounded-2xl max-w-4xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] flex flex-col border border-amber-200">
-            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-                <div class="flex items-center gap-2.5">
-                    <div class="p-2.5 bg-emerald-100 text-emerald-800 rounded-xl"><i class="fa-solid fa-chalkboard-user text-xl"></i></div>
-                    <div>
-                        <h3 class="font-bold text-slate-800 text-lg handwritten text-2xl">Lehrkraft-Übersicht</h3>
-                        <p class="text-xs text-slate-500" id="teacher-student-info">Schüler/in: Nicht angegeben</p>
-                    </div>
-                </div>
-                <button class="btn-close-modal text-slate-400 hover:text-slate-600 cursor-pointer"><i class="fa-solid fa-xmark text-xl"></i></button>
-            </div>
-
-            <!-- Stats Overview -->
-            <div class="grid grid-cols-3 gap-3">
-                <div class="bg-amber-50 p-3 rounded-xl border border-amber-200/60 text-center">
-                    <span class="block text-2xl font-bold text-amber-900" id="teacher-stat-total">0/10</span>
-                    <span class="text-[11px] text-amber-700 font-bold uppercase">Gesamt</span>
-                </div>
-                <div class="bg-indigo-50 p-3 rounded-xl border border-indigo-100 text-center">
-                    <span class="block text-2xl font-bold text-indigo-900" id="teacher-stat-su">0/6</span>
-                    <span class="text-[11px] text-indigo-700 font-bold uppercase">Schulübungen</span>
-                </div>
-                <div class="bg-amber-50 p-3 rounded-xl border border-amber-200/60 text-center">
-                    <span class="block text-2xl font-bold text-amber-800" id="teacher-stat-hu">0/4</span>
-                    <span class="text-[11px] text-amber-700 font-bold uppercase">Hausübungen</span>
-                </div>
-            </div>
-
-            <!-- Progress Table -->
-            <div class="overflow-y-auto flex-1 border border-slate-200 rounded-xl">
-                <table class="w-full text-left text-xs">
-                    <thead class="bg-slate-100 text-slate-700 font-bold sticky top-0">
-                        <tr>
-                            <th class="p-3">Aufgabe</th>
-                            <th class="p-3">Typ</th>
-                            <th class="p-3">Status</th>
-                            <th class="p-3 text-right">Hauptwert</th>
-                            <th class="p-3 text-right">Kosten / Ergebnis</th>
-                        </tr>
-                    </thead>
-                    <tbody id="teacher-table-body" class="divide-y divide-slate-100 font-mono">
-                        <!-- Dynamic Rows -->
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="pt-2 flex justify-end">
-                <button class="btn-close-modal bg-amber-900 text-white font-bold px-5 py-2 rounded-xl text-xs hover:bg-amber-950 transition cursor-pointer">Schließen</button>
-            </div>
-        </div>
+    <div class="taskbar-row" style="border-top:1px solid var(--line); padding-top:6px;">
+      <span class="taskbar-label">Hausübung:</span>
+      <div id="badgesHUE" style="display:flex; gap:6px; flex-wrap:wrap;"></div>
     </div>
-
-    <!-- Application Script Logic -->
-    <script>
-        // --- TASKS DEFINITION (10 TASKS) ---
-        const TASKS = [
-            // Schulübungen (1-6)
-            {
-                id: 'su_1',
-                type: 'SÜ',
-                number: 1,
-                title: 'Waldstück neu aufforsten',
-                description: 'Ein dreieckiges Waldstück soll mit jungen Eichen bepflanzt werden. Die Grundseite beträgt g = 120 m und die Höhe h_c = 75 m. Berechne die Fläche des Waldstücks.',
-                triangleType: 'general',
-                requiredVars: ['g', 'h_c'],
-                target: 'A',
-                formulaAllowedVars: ['g', 'h_c', 'a', 'b', 'c'],
-                correctValues: [120, 75],
-                mainResult: 4500, // (120*75)/2
-                mainUnit: 'm²',
-                costQuestion: 'Ein Eichensteckling reicht für 15 m² und kostet 4,50 €. Wie hoch sind die Gesamtkosten für die Bepflanzung?',
-                costResult: 1350, // (4500/15) * 4.5 = 1350 €
-                costUnit: '€'
-            },
-            {
-                id: 'su_2',
-                type: 'SÜ',
-                number: 2,
-                title: 'Hausgiebel aus Holz verschalen',
-                description: 'Die dreieckige Giebelfront eines Hauses hat eine Grundseite g = 10 m und eine Höhe h_c = 4,8 m. Berechne die Fläche der Giebelfront.',
-                triangleType: 'general',
-                requiredVars: ['g', 'h_c'],
-                target: 'A',
-                formulaAllowedVars: ['g', 'h_c', 'a', 'b'],
-                correctValues: [10, 4.8],
-                mainResult: 24, // (10*4.8)/2
-                mainUnit: 'm²',
-                costQuestion: 'Das Holz für die Verschalung kostet 32,00 € pro m². Berechne die Materialkosten für den Giebel.',
-                costResult: 768, // 24 * 32 = 768 €
-                costUnit: '€'
-            },
-            {
-                id: 'su_3',
-                type: 'SÜ',
-                number: 3,
-                title: 'Kirchturmdach neu decken',
-                description: 'Ein Kirchturmdach besteht aus 4 gleichen dreieckigen Dachflächen. Eine einzelnen Fläche hat die Grundseite g = 6 m und eine Höhe h_c = 14 m. Berechne die Fläche EINER Dachseite.',
-                triangleType: 'general',
-                requiredVars: ['g', 'h_c'],
-                target: 'A',
-                formulaAllowedVars: ['g', 'h_c', 'a', 'b'],
-                correctValues: [6, 14],
-                mainResult: 42, // (6*14)/2
-                mainUnit: 'm²',
-                costQuestion: 'Die Eindeckung kostet 85,00 € pro m². Wie teuer ist die Neueindeckung des GESAMTEN Daches (alle 4 Flächen)?',
-                costResult: 14280, // 4 * 42 * 85 = 14280 €
-                costUnit: '€'
-            },
-            {
-                id: 'su_4',
-                type: 'SÜ',
-                number: 4,
-                title: 'Rechtwinkliges Blumenbeet',
-                description: 'Ein rechtwinkliges Blumenbeet hat die Katheten a = 4 m und b = 3 m sowie die Hypotenuse c = 5 m. Berechne den Umfang u des Beets.',
-                triangleType: 'right',
-                requiredVars: ['a', 'b', 'c'],
-                target: 'u',
-                formulaAllowedVars: ['a', 'b', 'c', 'h_c'],
-                correctValues: [4, 3, 5],
-                mainResult: 12, // 4+3+5
-                mainUnit: 'm',
-                costQuestion: 'Der Zierzaun kostet 14,50 € pro Meter. Wie teuer ist die gesamte Einfassung des Beets?',
-                costResult: 174, // 12 * 14.50 = 174 €
-                costUnit: '€'
-            },
-            {
-                id: 'su_5',
-                type: 'SÜ',
-                number: 5,
-                title: 'Rechtwinkliges Sonnensegel',
-                description: 'Ein rechtwinkliges Sonnensegel für den Garten hat die beiden Katheten a = 3,5 m und b = 4 m. Berechne die Fläche des Sonnensegels.',
-                triangleType: 'right',
-                requiredVars: ['a', 'b'],
-                target: 'A',
-                formulaAllowedVars: ['a', 'b', 'c'],
-                correctValues: [3.5, 4],
-                mainResult: 7, // (3.5*4)/2
-                mainUnit: 'm²',
-                costQuestion: 'Spezial-Markisenstoff kostet 28,00 € pro Quadratmeter. Was kostet der Stoff für das Sonnensegel?',
-                costResult: 196, // 7 * 28 = 196 €
-                costUnit: '€'
-            },
-            {
-                id: 'su_6',
-                type: 'SÜ',
-                number: 6,
-                title: 'Parkteich einzäunen',
-                description: 'Ein dreieckiger Ententeich im Stadtpark hat die Seitenlängen a = 24 m, b = 18 m und c = 30 m. Berechne den Umfang u des Teichs.',
-                triangleType: 'general',
-                requiredVars: ['a', 'b', 'c'],
-                target: 'u',
-                formulaAllowedVars: ['a', 'b', 'c', 'g', 'h_c'],
-                correctValues: [24, 18, 30],
-                mainResult: 72, // 24+18+30
-                mainUnit: 'm',
-                costQuestion: 'Ein Schutzzaun kostet 22,50 € pro Meter. Wie hoch sind die Gesamtkosten für die Umzäunung?',
-                costResult: 1620, // 72 * 22.50 = 1620 €
-                costUnit: '€'
-            },
-
-            // Hausübungen (7-10)
-            {
-                id: 'hu_1',
-                type: 'HÜ',
-                number: 1,
-                title: 'Gartengrundstück einzäunen',
-                description: 'Ein dreieckiges Gartengrundstück besitzt die drei Außenseiten a = 35 m, b = 42 m und c = 28 m. Berechne den Umfang u des Grundstücks.',
-                triangleType: 'general',
-                requiredVars: ['a', 'b', 'c'],
-                target: 'u',
-                formulaAllowedVars: ['a', 'b', 'c', 'g', 'h_c'],
-                correctValues: [35, 42, 28],
-                mainResult: 105, // 35+42+28
-                mainUnit: 'm',
-                costQuestion: 'Der Maschendrahtzaun kostet 12,00 € pro Meter. Wie viel kostet das Material für die Umzäunung?',
-                costResult: 1260, // 105 * 12 = 1260 €
-                costUnit: '€'
-            },
-            {
-                id: 'hu_2',
-                type: 'HÜ',
-                number: 2,
-                title: 'Rechtwinklige Dachfläche',
-                description: 'Ein rechtwinkliges Schleppdach an einer Scheune hat die beiden Katheten a = 6 m und b = 8,5 m. Berechne die Fläche dieses Daches.',
-                triangleType: 'right',
-                requiredVars: ['a', 'b'],
-                target: 'A',
-                formulaAllowedVars: ['a', 'b', 'c'],
-                correctValues: [6, 8.5],
-                mainResult: 25.5, // (6*8.5)/2
-                mainUnit: 'm²',
-                costQuestion: 'Dachziegel kosten 18,00 € pro Quadratmeter. Was kostet das Eindecken der Dachfläche?',
-                costResult: 459, // 25.5 * 18 = 459 €
-                costUnit: '€'
-            },
-            {
-                id: 'hu_3',
-                type: 'HÜ',
-                number: 3,
-                title: 'Bauplatz Rasensaat',
-                description: 'Auf einem dreieckigen Bauplatz mit der Grundseite g = 50 m und der Höhe h_c = 32 m soll Rasen gesät werden. Berechne die Fläche des Bauplatzes.',
-                triangleType: 'general',
-                requiredVars: ['g', 'h_c'],
-                target: 'A',
-                formulaAllowedVars: ['g', 'h_c', 'a', 'b', 'c'],
-                correctValues: [50, 32],
-                mainResult: 800, // (50*32)/2
-                mainUnit: 'm²',
-                costQuestion: 'Ein Sack Rasensamen reicht für 100 m² und kostet 15,00 €. Wie teuer ist der Rasensamen insgesamt?',
-                costResult: 120, // (800 / 100) * 15 = 120 €
-                costUnit: '€'
-            },
-            {
-                id: 'hu_4',
-                type: 'HÜ',
-                number: 4,
-                title: 'Gefahrenschild Folie',
-                description: 'Ein rechtwinkliges Verkehrsschild aus Metall hat die Katheten a = 80 cm und b = 60 cm. Berechne die Vorderfläche des Schildes in cm².',
-                triangleType: 'right',
-                requiredVars: ['a', 'b'],
-                target: 'A',
-                formulaAllowedVars: ['a', 'b', 'c'],
-                correctValues: [80, 60],
-                mainResult: 2400, // (80*60)/2
-                mainUnit: 'cm²',
-                costQuestion: 'Die reflektierende Spezialfolie kostet 0,02 € pro cm². Wie hoch sind die Folienkosten pro Schild?',
-                costResult: 48, // 2400 * 0.02 = 48 €
-                costUnit: '€'
-            }
-        ];
-
-        // --- APP STATE ---
-        let currentTab = 'SÜ';
-        let activeTaskId = 'su_1';
-        let selectedSvgVars = new Set();
-        let userFormulaSlots = [];
-        let activeInputEl = null;
-        let studentName = '';
-        let userProgress = {}; // { taskId: { completed: bool, mainVal: str, costVal: str } }
-
-        // --- INITIALIZATION ---
-        window.addEventListener('DOMContentLoaded', () => {
-            loadProgress();
-            renderTaskList();
-            loadTask(activeTaskId);
-            setupEventListeners();
-        });
-
-        function loadProgress() {
-            const saved = localStorage.getItem('geo_dreieck_v3_progress');
-            if (saved) {
-                try { userProgress = JSON.parse(saved); } catch(e) { userProgress = {}; }
-            }
-            const savedName = localStorage.getItem('geo_student_name');
-            if (savedName) {
-                studentName = savedName;
-                document.getElementById('student-name').value = studentName;
-            }
-        }
-
-        function saveProgress() {
-            localStorage.setItem('geo_dreieck_v3_progress', JSON.stringify(userProgress));
-            localStorage.setItem('geo_student_name', studentName);
-            updateOverallProgressUI();
-        }
-
-        function updateOverallProgressUI() {
-            const completedCount = Object.keys(userProgress).filter(k => userProgress[k].completed).length;
-            document.getElementById('overall-progress').textContent = `${completedCount} / ${TASKS.length} Erledigt`;
-        }
-
-        // --- RENDER TASK LIST ---
-        function renderTaskList() {
-            const taskListEl = document.getElementById('taskList');
-            taskListEl.innerHTML = '';
-
-            const filtered = TASKS.filter(t => t.type === currentTab);
-
-            filtered.forEach(task => {
-                const isCompleted = userProgress[task.id] && userProgress[task.id].completed;
-                const isActive = task.id === activeTaskId;
-
-                const item = document.createElement('div');
-                item.className = `p-3 rounded-xl cursor-pointer border transition flex items-center justify-between ${
-                    isActive 
-                        ? 'bg-amber-100/80 border-amber-400 font-bold text-amber-950 shadow-sm' 
-                        : 'bg-white border-amber-100 hover:bg-amber-50 text-slate-700'
-                }`;
-
-                item.onclick = () => {
-                    activeTaskId = task.id;
-                    renderTaskList();
-                    loadTask(task.id);
-                };
-
-                item.innerHTML = `
-                    <div class="flex items-center space-x-3">
-                        <span class="w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center ${
-                            isCompleted ? 'bg-emerald-600 text-white' : 'bg-amber-200 text-amber-900'
-                        }">
-                            ${isCompleted ? '<i class="fa-solid fa-check"></i>' : task.number}
-                        </span>
-                        <div>
-                            <div class="text-xs font-bold">${task.title}</div>
-                            <div class="text-[10px] text-slate-500">${task.target === 'A' ? 'Fläche (A)' : 'Umfang (u)'}</div>
-                        </div>
-                    </div>
-                    <i class="fa-solid fa-chevron-right text-xs ${isActive ? 'text-amber-700' : 'text-slate-300'}"></i>
-                `;
-
-                taskListEl.appendChild(item);
-            });
-            updateOverallProgressUI();
-        }
-
-        // --- LOAD TASK ---
-        function loadTask(taskId) {
-            const task = TASKS.find(t => t.id === taskId);
-            if (!task) return;
-
-            selectedSvgVars.clear();
-            userFormulaSlots = [];
-
-            // Task Header & Descriptions
-            document.getElementById('task-category-badge').textContent = task.type === 'SÜ' ? 'Schulübung' : 'Hausübung';
-            document.getElementById('task-category-badge').className = `inline-block text-[10px] uppercase tracking-wider font-bold px-2.5 py-0.5 rounded border mb-1 ${
-                task.type === 'SÜ' ? 'bg-amber-100 text-amber-900 border-amber-300' : 'bg-indigo-100 text-indigo-900 border-indigo-200'
-            }`;
-            document.getElementById('task-title').textContent = `${task.number}. ${task.title}`;
-            document.getElementById('task-description').textContent = task.description;
-
-            // Task Status Badge
-            const isDone = userProgress[taskId] && userProgress[taskId].completed;
-            const statusBadge = document.getElementById('task-status-badge');
-            if (isDone) {
-                statusBadge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1.5';
-                statusBadge.innerHTML = '<i class="fa-solid fa-circle-check"></i> Gelöst';
-            } else {
-                statusBadge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-500 border border-slate-200 flex items-center gap-1.5';
-                statusBadge.innerHTML = '<i class="fa-regular fa-circle"></i> Offen';
-            }
-
-            // Step 4 Text
-            document.getElementById('step4-question-text').textContent = task.costQuestion;
-            document.getElementById('main-result-unit').textContent = task.mainUnit;
-            document.getElementById('cost-unit').textContent = task.costUnit;
-
-            // Clear inputs
-            document.getElementById('main-result-input').value = '';
-            document.getElementById('final-cost-input').value = '';
-
-            // Render SVG
-            renderInteractiveSVG(task);
-            updateSvgSelectionState(task);
-
-            // Formula Builder
-            setupFormulaBuilder(task);
-
-            hideFeedback();
-            activeInputEl = null;
-            document.getElementById('active-input-label').textContent = 'Klicke ein Eingabefeld an';
-        }
-
-        // --- STEP 1: INTERACTIVE SVG WITH ENLARGED TOUCH HITBOXES ---
-        function renderInteractiveSVG(task) {
-            const svg = document.getElementById('triangle-svg');
-            svg.innerHTML = '';
-
-            let content = '';
-
-            if (task.triangleType === 'right') {
-                // Right Triangle
-                content = `
-                    <polygon points="50,140 250,140 50,30" fill="rgba(245, 158, 11, 0.08)" stroke="#d97706" stroke-width="2" stroke-linejoin="round"/>
-                    <path d="M 50 125 L 65 125 L 65 140" fill="none" stroke="#d97706" stroke-width="1.5"/>
-                    <circle cx="56" cy="133" r="2" fill="#d97706"/>
-
-                    <!-- Side 'a' (Bottom) -->
-                    <line x1="50" y1="140" x2="250" y2="140" class="svg-hitbox" data-var="a"/>
-                    <line x1="50" y1="140" x2="250" y2="140" class="svg-visible-line" data-var-line="a" stroke="#d97706" stroke-width="3"/>
-                    <text x="150" y="162" text-anchor="middle" font-size="13" class="svg-label font-bold fill-slate-700" data-var-label="a">a</text>
-
-                    <!-- Side 'b' (Left vertical) -->
-                    <line x1="50" y1="140" x2="50" y2="30" class="svg-hitbox" data-var="b"/>
-                    <line x1="50" y1="140" x2="50" y2="30" class="svg-visible-line" data-var-line="b" stroke="#d97706" stroke-width="3"/>
-                    <text x="32" y="85" text-anchor="middle" font-size="13" class="svg-label font-bold fill-slate-700" data-var-label="b">b</text>
-
-                    <!-- Side 'c' (Hypotenuse) -->
-                    <line x1="250" y1="140" x2="50" y2="30" class="svg-hitbox" data-var="c"/>
-                    <line x1="250" y1="140" x2="50" y2="30" class="svg-visible-line" data-var-line="c" stroke="#d97706" stroke-width="3"/>
-                    <text x="160" y="75" text-anchor="middle" font-size="13" class="svg-label font-bold fill-slate-700" data-var-label="c">c</text>
-                `;
-            } else {
-                // General Triangle
-                const baseVar = task.requiredVars.includes('g') ? 'g' : 'c';
-                content = `
-                    <polygon points="40,140 260,140 170,30" fill="rgba(245, 158, 11, 0.08)" stroke="#d97706" stroke-width="2" stroke-linejoin="round"/>
-
-                    <!-- Base 'g' / 'c' -->
-                    <line x1="40" y1="140" x2="260" y2="140" class="svg-hitbox" data-var="${baseVar}"/>
-                    <line x1="40" y1="140" x2="260" y2="140" class="svg-visible-line" data-var-line="${baseVar}" stroke="#d97706" stroke-width="3"/>
-                    <text x="150" y="162" text-anchor="middle" font-size="13" class="svg-label font-bold fill-slate-700" data-var-label="${baseVar}">${baseVar}</text>
-
-                    <!-- Side 'a' -->
-                    <line x1="260" y1="140" x2="170" y2="30" class="svg-hitbox" data-var="a"/>
-                    <line x1="260" y1="140" x2="170" y2="30" class="svg-visible-line" data-var-line="a" stroke="#d97706" stroke-width="3"/>
-                    <text x="225" y="80" text-anchor="middle" font-size="13" class="svg-label font-bold fill-slate-700" data-var-label="a">a</text>
-
-                    <!-- Side 'b' -->
-                    <line x1="40" y1="140" x2="170" y2="30" class="svg-hitbox" data-var="b"/>
-                    <line x1="40" y1="140" x2="170" y2="30" class="svg-visible-line" data-var-line="b" stroke="#d97706" stroke-width="3"/>
-                    <text x="90" y="80" text-anchor="middle" font-size="13" class="svg-label font-bold fill-slate-700" data-var-label="b">b</text>
-
-                    <!-- Height h_c -->
-                    <line x1="170" y1="30" x2="170" y2="140" class="svg-hitbox" data-var="h_c"/>
-                    <line x1="170" y1="30" x2="170" y2="140" class="svg-visible-line" data-var-line="h_c" stroke="#dc2626" stroke-width="2.5" stroke-dasharray="4,4"/>
-                    <text x="185" y="85" text-anchor="middle" font-size="13" class="svg-label font-bold fill-rose-600" data-var-label="h_c">h_c</text>
-                `;
-            }
-
-            svg.innerHTML = content;
-
-            // Bind click events on SVG hitboxes and labels
-            const toggleVar = (varName) => {
-                if (selectedSvgVars.has(varName)) {
-                    selectedSvgVars.delete(varName);
-                } else {
-                    selectedSvgVars.add(varName);
-                }
-                updateSvgSelectionState(task);
-            };
-
-            svg.querySelectorAll('.svg-hitbox').forEach(el => {
-                el.onclick = () => toggleVar(el.dataset.var);
-            });
-            svg.querySelectorAll('.svg-label').forEach(el => {
-                el.onclick = () => toggleVar(el.dataset.varLabel);
-            });
-        }
-
-        function updateSvgSelectionState(task) {
-            const svg = document.getElementById('triangle-svg');
-            
-            svg.querySelectorAll('.svg-visible-line').forEach(el => {
-                const varName = el.dataset.varLine;
-                if (selectedSvgVars.has(varName)) {
-                    el.classList.add('svg-selected-line');
-                } else {
-                    el.classList.remove('svg-selected-line');
-                }
-            });
-
-            svg.querySelectorAll('.svg-label').forEach(el => {
-                const varName = el.dataset.varLabel;
-                if (selectedSvgVars.has(varName)) {
-                    el.classList.add('svg-label-selected');
-                } else {
-                    el.classList.remove('svg-label-selected');
-                }
-            });
-
-            document.getElementById('svg-selection-counter').textContent = `${selectedSvgVars.size} gewählt`;
-
-            // Validate Step 1
-            const requiredSet = new Set(task.requiredVars);
-            const isSvgCorrect = requiredSet.size === selectedSvgVars.size && [...requiredSet].every(v => selectedSvgVars.has(v));
-
-            if (isSvgCorrect) {
-                activateStep2(task);
-            } else {
-                disableStepsFrom(2);
-            }
-        }
-
-        // --- STEP 2: FORMULA BUILDER ---
-        function setupFormulaBuilder(task) {
-            document.getElementById('formula-target-label').textContent = `${task.target} =`;
-            
-            const palette = document.getElementById('formula-palette');
-            palette.innerHTML = '';
-
-            const items = [...task.formulaAllowedVars, '+', '*', '/', '(', ')'];
-
-            items.forEach(item => {
-                const btn = document.createElement('button');
-                btn.className = 'px-3 py-1.5 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold text-xs border border-amber-300 transition shadow-sm cursor-pointer';
-                btn.textContent = item;
-                btn.onclick = () => addFormulaToken(task, item);
-                palette.appendChild(btn);
-            });
-
-            renderFormulaSlots(task);
-        }
-
-        function addFormulaToken(task, token) {
-            userFormulaSlots.push(token);
-            renderFormulaSlots(task);
-            checkFormulaValidity(task);
-        }
-
-        function removeFormulaToken(task, index) {
-            userFormulaSlots.splice(index, 1);
-            renderFormulaSlots(task);
-            checkFormulaValidity(task);
-        }
-
-        function renderFormulaSlots(task) {
-            const container = document.getElementById('formula-builder-slots');
-            container.innerHTML = '';
-
-            if (userFormulaSlots.length === 0) {
-                container.innerHTML = '<span class="text-xs text-amber-600/70 italic">Klicke unten auf Variablen/Operatoren...</span>';
-                return;
-            }
-
-            userFormulaSlots.forEach((token, idx) => {
-                const tag = document.createElement('span');
-                tag.className = 'inline-flex items-center gap-1 bg-amber-200 text-amber-950 font-bold px-2.5 py-1 rounded text-sm border border-amber-300 cursor-pointer hover:bg-rose-200 hover:text-rose-900 transition';
-                tag.innerHTML = `${token} <i class="fa-solid fa-xmark text-[10px]"></i>`;
-                tag.onclick = () => removeFormulaToken(task, idx);
-                container.appendChild(tag);
-            });
-        }
-
-        function checkFormulaValidity(task) {
-            const formulaStr = userFormulaSlots.join('');
-            let isFormulaCorrect = false;
-
-            if (task.target === 'u') {
-                const hasA = formulaStr.includes('a');
-                const hasB = formulaStr.includes('b');
-                const hasC = formulaStr.includes('c');
-                const plusCount = (formulaStr.match(/\+/g) || []).length;
-                if (hasA && hasB && hasC && plusCount === 2) {
-                    isFormulaCorrect = true;
-                }
-            } else {
-                const hasMul = formulaStr.includes('*');
-                const hasDiv2 = formulaStr.includes('/2');
-                const v1 = task.requiredVars[0];
-                const v2 = task.requiredVars[1];
-                if (hasMul && hasDiv2 && formulaStr.includes(v1) && formulaStr.includes(v2)) {
-                    isFormulaCorrect = true;
-                }
-            }
-
-            if (isFormulaCorrect) {
-                activateStep3(task);
-            } else {
-                disableStepsFrom(3);
-            }
-        }
-
-        // --- STEP 3 & 4 ACTIVATION ---
-        function activateStep2(task) {
-            document.getElementById('step-2-container').classList.remove('opacity-50', 'pointer-events-none');
-        }
-
-        function activateStep3(task) {
-            const step3 = document.getElementById('step-3-container');
-            step3.classList.remove('opacity-50', 'pointer-events-none');
-
-            const builder = document.getElementById('step3-values-builder');
-            builder.innerHTML = '';
-
-            if (task.target === 'A') {
-                builder.innerHTML = `
-                    <span class="font-bold text-amber-900">A = (</span>
-                    <input type="text" readonly data-step3="0" placeholder="Wert 1" class="step3-input w-20 bg-white border border-amber-300 rounded px-2 py-1 text-center font-bold focus:ring-2 focus:ring-amber-500 focus:outline-none cursor-pointer">
-                    <span class="font-bold text-amber-900">·</span>
-                    <input type="text" readonly data-step3="1" placeholder="Wert 2" class="step3-input w-20 bg-white border border-amber-300 rounded px-2 py-1 text-center font-bold focus:ring-2 focus:ring-amber-500 focus:outline-none cursor-pointer">
-                    <span class="font-bold text-amber-900">) / 2</span>
-                `;
-            } else {
-                builder.innerHTML = `
-                    <span class="font-bold text-amber-900">u =</span>
-                    <input type="text" readonly data-step3="0" placeholder="a" class="step3-input w-16 bg-white border border-amber-300 rounded px-2 py-1 text-center font-bold focus:ring-2 focus:ring-amber-500 focus:outline-none cursor-pointer">
-                    <span class="font-bold text-amber-900">+</span>
-                    <input type="text" readonly data-step3="1" placeholder="b" class="step3-input w-16 bg-white border border-amber-300 rounded px-2 py-1 text-center font-bold focus:ring-2 focus:ring-amber-500 focus:outline-none cursor-pointer">
-                    <span class="font-bold text-amber-900">+</span>
-                    <input type="text" readonly data-step3="2" placeholder="c" class="step3-input w-16 bg-white border border-amber-300 rounded px-2 py-1 text-center font-bold focus:ring-2 focus:ring-amber-500 focus:outline-none cursor-pointer">
-                `;
-            }
-
-            builder.querySelectorAll('.step3-input').forEach((inp, i) => {
-                inp.onclick = (e) => setActiveInput(e.target, `Schritt 3: Wert ${i+1}`);
-            });
-
-            const mainResultInput = document.getElementById('main-result-input');
-            mainResultInput.onclick = (e) => setActiveInput(e.target, 'Schritt 3: Haupt-Ergebnis');
-
-            activateStep4(task);
-        }
-
-        function activateStep4(task) {
-            const step4 = document.getElementById('step-4-container');
-            step4.classList.remove('opacity-50', 'pointer-events-none');
-
-            const costInput = document.getElementById('final-cost-input');
-            costInput.onclick = (e) => setActiveInput(e.target, 'Schritt 4: Gesamtergebnis');
-        }
-
-        function disableStepsFrom(stepNum) {
-            if (stepNum <= 2) {
-                document.getElementById('step-2-container').classList.add('opacity-50', 'pointer-events-none');
-            }
-            if (stepNum <= 3) {
-                document.getElementById('step-3-container').classList.add('opacity-50', 'pointer-events-none');
-            }
-            if (stepNum <= 4) {
-                document.getElementById('step-4-container').classList.add('opacity-50', 'pointer-events-none');
-            }
-        }
-
-        // --- KEYPAD ENGINE ---
-        function setActiveInput(el, label) {
-            if (activeInputEl) {
-                activeInputEl.classList.remove('ring-2', 'ring-amber-500', 'border-amber-500');
-            }
-            activeInputEl = el;
-            activeInputEl.classList.add('ring-2', 'ring-amber-500', 'border-amber-500');
-            document.getElementById('active-input-label').textContent = label;
-        }
-
-        function handleKeypadPress(key) {
-            if (!activeInputEl) return;
-
-            let val = activeInputEl.value;
-
-            if (key === 'DEL') {
-                val = val.slice(0, -1);
-            } else if (key === 'CLR') {
-                val = '';
-            } else {
-                val += key;
-            }
-
-            activeInputEl.value = val;
-        }
-
-        // --- CHECK ANSWERS ---
-        function checkAllAnswers() {
-            const task = TASKS.find(t => t.id === activeTaskId);
-            if (!task) return;
-
-            // Step 3 Main Result Validation
-            const mainValStr = document.getElementById('main-result-input').value.replace(',', '.');
-            const mainVal = parseFloat(mainValStr);
-            if (isNaN(mainVal)) {
-                showFeedback('Bitte berechne zuerst das Hauptergebnis in Schritt 3.', 'error');
-                return;
-            }
-
-            if (Math.abs(mainVal - task.mainResult) > 0.1) {
-                showFeedback('Das Hauptergebnis in Schritt 3 ist leider nicht korrekt. Prüfe deine Berechnung!', 'error');
-                return;
-            }
-
-            // Step 4 Cost Validation
-            const costValStr = document.getElementById('final-cost-input').value.replace(',', '.');
-            const costVal = parseFloat(costValStr);
-            if (isNaN(costVal)) {
-                showFeedback('Bitte berechne das Gesamtergebnis / die Kosten in Schritt 4.', 'error');
-                return;
-            }
-
-            if (Math.abs(costVal - task.costResult) > 0.5) {
-                showFeedback('Das Gesamtergebnis in Schritt 4 stimmt noch nicht ganz. Prüfe deine Rechnung!', 'error');
-                return;
-            }
-
-            // SUCCESS
-            showFeedback('Hervorragend! Alle Schritte und Ergebnisse wurden richtig berechnet! 🎉', 'success');
-
-            if (!userProgress[task.id]) userProgress[task.id] = {};
-            userProgress[task.id].completed = true;
-            userProgress[task.id].mainVal = mainVal;
-            userProgress[task.id].costVal = costVal;
-            saveProgress();
-
-            renderTaskList();
-
-            const statusBadge = document.getElementById('task-status-badge');
-            statusBadge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1.5';
-            statusBadge.innerHTML = '<i class="fa-solid fa-circle-check"></i> Gelöst';
-        }
-
-        function showFeedback(msg, type) {
-            const box = document.getElementById('feedback-box');
-            box.classList.remove('hidden', 'bg-rose-50', 'text-rose-900', 'border-rose-300', 'bg-emerald-50', 'text-emerald-900', 'border-emerald-300');
-
-            if (type === 'error') {
-                box.classList.add('bg-rose-50', 'text-rose-900', 'border', 'border-rose-300');
-                box.innerHTML = `<i class="fa-solid fa-circle-exclamation mr-2 text-rose-600"></i> ${msg}`;
-            } else {
-                box.classList.add('bg-emerald-50', 'text-emerald-900', 'border', 'border-emerald-300');
-                box.innerHTML = `<i class="fa-solid fa-circle-check mr-2 text-emerald-600"></i> ${msg}`;
-            }
-        }
-
-        function hideFeedback() {
-            document.getElementById('feedback-box').classList.add('hidden');
-        }
-
-        // --- TEACHER VIEW & DEVICE CODES ---
-        function renderTeacherView() {
-            document.getElementById('teacher-student-info').textContent = studentName 
-                ? `Schüler/in: ${studentName}` 
-                : 'Schüler/in: Nicht angegeben';
-
-            const completedSU = TASKS.filter(t => t.type === 'SÜ' && userProgress[t.id] && userProgress[t.id].completed).length;
-            const completedHU = TASKS.filter(t => t.type === 'HÜ' && userProgress[t.id] && userProgress[t.id].completed).length;
-            const total = completedSU + completedHU;
-
-            document.getElementById('teacher-stat-total').textContent = `${total}/${TASKS.length}`;
-            document.getElementById('teacher-stat-su').textContent = `${completedSU}/6`;
-            document.getElementById('teacher-stat-hu').textContent = `${completedHU}/4`;
-
-            const tbody = document.getElementById('teacher-table-body');
-            tbody.innerHTML = '';
-
-            TASKS.forEach(task => {
-                const prog = userProgress[task.id];
-                const isDone = prog && prog.completed;
-
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="p-3 font-bold text-slate-800">${task.number}. ${task.title}</td>
-                    <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${task.type === 'SÜ' ? 'bg-amber-100 text-amber-900' : 'bg-indigo-100 text-indigo-900'}">${task.type}</span></td>
-                    <td class="p-3">
-                        <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${isDone ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-500'}">
-                            ${isDone ? 'Erledigt' : 'Offen'}
-                        </span>
-                    </td>
-                    <td class="p-3 text-right font-bold text-slate-700">${isDone ? `${prog.mainVal} ${task.mainUnit}` : '-'}</td>
-                    <td class="p-3 text-right font-bold text-emerald-700">${isDone ? `${prog.costVal} ${task.costUnit}` : '-'}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function getDeviceCode() {
-            return btoa(JSON.stringify({ name: studentName, progress: userProgress }));
-        }
-
-        function applyDeviceCode(code) {
-            try {
-                const decoded = JSON.parse(atob(code));
-                if (decoded && typeof decoded === 'object') {
-                    if (decoded.progress) userProgress = decoded.progress;
-                    if (decoded.name) {
-                        studentName = decoded.name;
-                        document.getElementById('student-name').value = studentName;
-                    }
-                    saveProgress();
-                    renderTaskList();
-                    loadTask(activeTaskId);
-                    return true;
-                }
-            } catch(e) { return false; }
-            return false;
-        }
-
-        // --- EVENT LISTENERS ---
-        function setupEventListeners() {
-            document.getElementById('student-name').oninput = (e) => {
-                studentName = e.target.value;
-                saveProgress();
-            };
-
-            document.getElementById('tab-su').onclick = () => {
-                currentTab = 'SÜ';
-                document.getElementById('tab-su').className = 'flex-1 py-2 rounded-lg bg-white shadow-sm text-amber-900 font-bold text-center transition';
-                document.getElementById('tab-hu').className = 'flex-1 py-2 rounded-lg text-amber-700 hover:text-amber-900 text-center transition';
-                activeTaskId = TASKS.find(t => t.type === 'SÜ').id;
-                renderTaskList();
-                loadTask(activeTaskId);
-            };
-
-            document.getElementById('tab-hu').onclick = () => {
-                currentTab = 'HÜ';
-                document.getElementById('tab-hu').className = 'flex-1 py-2 rounded-lg bg-white shadow-sm text-amber-900 font-bold text-center transition';
-                document.getElementById('tab-su').className = 'flex-1 py-2 rounded-lg text-amber-700 hover:text-amber-900 text-center transition';
-                activeTaskId = TASKS.find(t => t.type === 'HÜ').id;
-                renderTaskList();
-                loadTask(activeTaskId);
-            };
-
-            document.querySelectorAll('.keypad-btn').forEach(btn => {
-                btn.onclick = () => handleKeypadPress(btn.dataset.key);
-            });
-
-            document.getElementById('btn-check-all').onclick = checkAllAnswers;
-
-            document.getElementById('btn-reset-progress').onclick = () => {
-                if (confirm('Möchtest du deinen gesamten Fortschritt zurücksetzen?')) {
-                    userProgress = {};
-                    saveProgress();
-                    renderTaskList();
-                    loadTask(activeTaskId);
-                }
-            };
-
-            // Modals
-            const deviceModal = document.getElementById('modal-device-code');
-            document.getElementById('btn-device-code').onclick = () => {
-                document.getElementById('export-code-input').value = getDeviceCode();
-                deviceModal.classList.remove('hidden');
-            };
-
-            document.getElementById('btn-copy-code').onclick = () => {
-                const codeInput = document.getElementById('export-code-input');
-                codeInput.select();
-                document.execCommand('copy');
-                alert('Code in die Zwischenablage kopiert!');
-            };
-
-            document.getElementById('btn-apply-code').onclick = () => {
-                const code = document.getElementById('import-code-input').value.trim();
-                if (applyDeviceCode(code)) {
-                    alert('Fortschritt erfolgreich geladen!');
-                    deviceModal.classList.add('hidden');
-                } else {
-                    alert('Ungültiger Code.');
-                }
-            };
-
-            const teacherModal = document.getElementById('modal-teacher-view');
-            document.getElementById('btn-teacher-view').onclick = () => {
-                renderTeacherView();
-                teacherModal.classList.remove('hidden');
-            };
-
-            document.querySelectorAll('.btn-close-modal').forEach(btn => {
-                btn.onclick = () => {
-                    deviceModal.classList.add('hidden');
-                    teacherModal.classList.add('hidden');
-                };
-            });
-        }
-    </script>
+  </div>
+
+  <div class="controls">
+    <div>
+      <label class="ctl-label" for="name">1. Dein Name</label>
+      <div class="namerow">
+        <input id="name" class="namein" placeholder="Vor- und Nachname">
+        <button class="next" id="nameOk">Starten</button>
+      </div>
+    </div>
+    <div style="border-top: 1px solid var(--line); padding-top: 12px; margin-top: 4px;">
+      <label class="ctl-label" for="codeInp">2. Bereits einen Speicher-Code von einem anderen Gerät?</label>
+      <div class="namerow">
+        <input id="codeInp" class="namein" placeholder="Zahlencode eingeben" inputmode="numeric">
+        <button class="next" id="codeOk" style="background:var(--muted)">Fortschritt laden</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="score" id="score">Gelöst: 0 von 10, davon fehlerfrei: 0</p>
+
+  <div class="grid">
+    <div class="sheet">
+      <p class="task" id="taskText"></p>
+      <div id="fig"></div>
+      <p class="way-title">Rechenweg</p>
+      <div class="way" id="way"></div>
+    </div>
+    <div>
+      <div class="steps" id="steps"></div>
+      <div class="done" id="done" hidden style="margin-top:16px;">
+        <p id="doneText" style="font-size:18px; margin-bottom:12px;"></p>
+        <button class="next" id="nextBtn">Nächste Aufgabe</button>
+      </div>
+    </div>
+  </div>
+
+  <section class="summary" id="summary" hidden></section>
+</div>
+
+<!-- Virtuelle Zusatztastatur -->
+<div class="keypad" id="keypad" hidden>
+  <div class="keypad-header">
+    <span>Bildschirm-Tastatur (Tippen oder physisch nutzen)</span>
+    <span style="cursor:pointer; color:var(--red)" onclick="closeKeypad()">✕ Schließen</span>
+  </div>
+  <div class="keypad-grid">
+    <button class="keybtn" onclick="keyPress('7')">7</button>
+    <button class="keybtn" onclick="keyPress('8')">8</button>
+    <button class="keybtn" onclick="keyPress('9')">9</button>
+    <button class="keybtn" onclick="keyPress('4')">4</button>
+    <button class="keybtn" onclick="keyPress('5')">5</button>
+    <button class="keybtn" onclick="keyPress('6')">6</button>
+    <button class="keybtn" onclick="keyPress('1')">1</button>
+    <button class="keybtn" onclick="keyPress('2')">2</button>
+    <button class="keybtn" onclick="keyPress('3')">3</button>
+    <button class="keybtn" onclick="keyPress(',')">,</button>
+    <button class="keybtn" onclick="keyPress('0')">0</button>
+    <button class="keybtn action" onclick="keyPress('back')">⌫</button>
+  </div>
+</div>
+
+<script>
+const TOTAL_TASKS = 10;
+const PRESETS = [
+  // --- SCHULÜBUNG (6 Aufgaben) ---
+  { 
+    section: 'Schulübung', num: 1, type: 'general', a: 900, b: 1400, c: 1600, h: 800, unit: 'm',
+    title: 'Waldstück aufforsten', 
+    text: 'Ein dreieckiges Waldstück soll mit Fichten neu aufgeforstet werden. Wie groß ist die Fläche A in m² und wie teuer ist das Holz, wenn 1 m² Fichtenpflanzen 2,50 € kosten?',
+    costPerUnit: 2.50, costName: 'Gesamtkosten', costUnit: '€', costType: 'A'
+  },
+  { 
+    section: 'Schulübung', num: 2, type: 'general', a: 800, b: 800, c: 1480, h: 680, unit: 'cm',
+    title: 'Hausgiebel verschalen', 
+    text: 'Der Giebel eines Hauses soll mit Holz verschalt werden (Grundseite c = 14,8 m = 1480 cm, Höhe h_c = 6,8 m = 680 cm). Berechne den Flächeninhalt A in m² (1 m² = 10 000 cm²) und die Holzkosten bei 38 € pro m².',
+    costPerUnit: 38, costName: 'Holzkosten', costUnit: '€', costType: 'A', convertToM2: true
+  },
+  { 
+    section: 'Schulübung', num: 3, type: 'general', a: 720, b: 720, c: 450, h: 700, unit: 'cm',
+    title: 'Kirchturmdach neu decken', 
+    text: 'Ein Kirchturmdach besteht aus 4 gleichen dreieckigen Flächen (c = 4,5 m = 450 cm, h_c = 7 m = 700 cm). Berechne die Gesamtfläche aller 4 Flächen in m² und die Gesamtkosten bei 280 € pro m²!',
+    costPerUnit: 280, costName: 'Gesamtkosten (4 Flächen)', costUnit: '€', costType: 'A_multi', multiplier: 4, convertToM2: true
+  },
+  { 
+    section: 'Schulübung', num: 4, type: 'right', a: 6, b: 8, c: 10, unit: 'm',
+    title: 'Rechtwinkliges Blumenbeet', 
+    text: 'Ein rechtwinkliges Blumenbeet mit den Katheten a = 6 m und b = 8 m soll mit Randsteinen eingefasst werden. Berechne den Umfang u in m und den Preis für den Zaun bei 15 € pro Meter.',
+    costPerUnit: 15, costName: 'Einfassungskosten', costUnit: '€', costType: 'u'
+  },
+  { 
+    section: 'Schulübung', num: 5, type: 'right', a: 3, b: 4, c: 5, unit: 'm',
+    title: 'Sonnensegel für den Garten', 
+    text: 'Ein rechtwinkliges Sonnensegel besitzt die Katheten 3 m und 4 m. Wie viel m² Stoff A werden benötigt und was kostet das Segel bei 22 € pro m²?',
+    costPerUnit: 22, costName: 'Segelkosten', costUnit: '€', costType: 'A'
+  },
+  { 
+    section: 'Schulübung', num: 6, type: 'general', a: 35, b: 42, c: 50, h: 28, unit: 'm',
+    title: 'Dreieckiger Parkteich', 
+    text: 'Ein Ententeich im Park ist dreieckig abgegrenzt (a = 35 m, b = 42 m, c = 50 m). Wie lang ist der Sicherheitszaun um den gesamten Teich (Umfang u) und was kostet der Zaun bei 18 € / m?',
+    costPerUnit: 18, costName: 'Zaunkosten', costUnit: '€', costType: 'u'
+  },
+
+  // --- HAUSÜBUNG (4 Aufgaben) ---
+  { 
+    section: 'Hausübung', num: 1, type: 'general', a: 24, b: 30, c: 36, h: 20, unit: 'm',
+    title: 'Gartengrundstück einzäunen', 
+    text: 'HÜ 1: Ein dreieckiger Garten (a = 24 m, b = 30 m, c = 36 m, h_c = 20 m) erhält einen neuen Maschendrahtzaun. Berechne den Umfang u und die Zaunkosten bei 12 € pro Meter.',
+    costPerUnit: 12, costName: 'Zaunkosten', costUnit: '€', costType: 'u'
+  },
+  { 
+    section: 'Hausübung', num: 2, type: 'right', a: 9, b: 12, c: 15, unit: 'm',
+    title: 'Rechtwinklige Dachfläche', 
+    text: 'HÜ 2: Eine rechtwinklige Dachfläche hat die Katheten 9 m und 12 m. Berechne die Fläche A in m² und die Eindeckungskosten bei 45 € pro m².',
+    costPerUnit: 45, costName: 'Dachkosten', costUnit: '€', costType: 'A'
+  },
+  { 
+    section: 'Hausübung', num: 3, type: 'general', a: 18, b: 22, c: 25, h: 16, unit: 'm',
+    title: 'Bauplatz Raseneinsaat', 
+    text: 'HÜ 3: Auf einem dreieckigen Bauplatz (c = 25 m, h_c = 16 m) soll Rasen gesät werden. Berechne die Fläche A in m² und die Saatgutkosten bei 1,50 € pro m².',
+    costPerUnit: 1.5, costName: 'Saatgutkosten', costUnit: '€', costType: 'A'
+  },
+  { 
+    section: 'Hausübung', num: 4, type: 'right', a: 60, b: 80, c: 100, unit: 'cm',
+    title: 'Verkehrsschild streichen', 
+    text: 'HÜ 4: Ein rechtwinkliges Warnschild mit Katheten 60 cm und 80 cm erhält eine Reflexionsfolie. Berechne A in cm² und die Kosten bei 0,05 € pro cm².',
+    costPerUnit: 0.05, costName: 'Folienkosten', costUnit: '€', costType: 'A'
+  }
+];
+
+const state = { solved: 0, perfect: 0, log: [], nameLocked: false, idx: 0, name: '' };
+let task = null, activeInput = null;
+
+const $ = s => document.querySelector(s);
+function fmt(x){ return String(Math.round(x * 100) / 100).replace('.', ','); }
+function parseNum(s){ if(!s) return NaN; return Number(String(s).trim().replace(',', '.')); }
+
+function openKeypad(inputEl) {
+  activeInput = inputEl;
+  $('#keypad').hidden = false;
+}
+function closeKeypad() {
+  $('#keypad').hidden = true;
+  activeInput = null;
+}
+function keyPress(key) {
+  if (!activeInput) return;
+  if (key === 'back') {
+    activeInput.value = activeInput.value.slice(0, -1);
+  } else {
+    if (key === ',' && activeInput.value.includes(',')) return;
+    activeInput.value += key;
+  }
+  activeInput.dispatchEvent(new Event('input'));
+}
+
+document.addEventListener('focusin', e => {
+  if (e.target.tagName === 'INPUT' && e.target.classList.contains('n')) {
+    openKeypad(e.target);
+  }
+});
+
+function renderBadges() {
+  const sList = PRESETS.filter(p => p.section === 'Schulübung');
+  const hList = PRESETS.filter(p => p.section === 'Hausübung');
+
+  $('#badgesSUE').innerHTML = sList.map(p => {
+    const globalIdx = PRESETS.indexOf(p);
+    const isDone = globalIdx < state.idx;
+    const isCurr = globalIdx === state.idx;
+    let cls = 'tbadge';
+    if (isDone) cls += ' solved-badge';
+    if (isCurr) cls += ' active';
+    return `<button class="${cls}" onclick="jumpTask(${globalIdx})">SÜ${p.num}</button>`;
+  }).join('');
+
+  $('#badgesHUE').innerHTML = hList.map(p => {
+    const globalIdx = PRESETS.indexOf(p);
+    const isDone = globalIdx < state.idx;
+    const isCurr = globalIdx === state.idx;
+    let cls = 'tbadge';
+    if (isDone) cls += ' solved-badge';
+    if (isCurr) cls += ' active';
+    return `<button class="${cls}" onclick="jumpTask(${globalIdx})">HÜ${p.num}</button>`;
+  }).join('');
+}
+
+function jumpTask(index) {
+  if (!state.nameLocked) {
+    alert('Bitte gib zuerst oben deinen Namen ein.');
+    return;
+  }
+  state.idx = index;
+  newTask();
+}
+
+function generateCode() {
+  let hash = 0;
+  const str = state.name + state.solved + state.perfect + state.idx;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash % 900000 + 100000);
+}
+
+function updateScore() {
+  $('#score').textContent = (state.name ? state.name + ': ' : '') + `Gelöst: ${state.solved} von ${TOTAL_TASKS}, davon fehlerfrei: ${state.perfect}`;
+  renderBadges();
+}
+
+function saveToLocalStorage() {
+  if (!state.nameLocked) return;
+  const data = { name: state.name, solved: state.solved, perfect: state.perfect, idx: state.idx, log: state.log };
+  localStorage.setItem('dreieck_sach_app_' + state.name.toLowerCase().replace(/\s+/g, ''), JSON.stringify(data));
+}
+
+function newTask() {
+  if (state.idx >= TOTAL_TASKS) {
+    showSummary();
+    return;
+  }
+  const p = PRESETS[state.idx];
+  
+  if (p.type === 'right') {
+    task = { ...p, u: p.a+p.b+p.c, A: (p.a*p.b)/2, selected: new Set(), errors: 0, t0: Date.now() };
+  } else {
+    task = { ...p, u: p.a+p.b+p.c, A: (p.c*p.h)/2, selected: new Set(), errors: 0, t0: Date.now() };
+  }
+
+  let targetVal = 0;
+  if (p.costType === 'u') targetVal = task.u;
+  else if (p.costType === 'A') {
+    targetVal = p.convertToM2 ? task.A / 10000 : task.A;
+  } else if (p.costType === 'A_multi') {
+    const singleM2 = p.convertToM2 ? task.A / 10000 : task.A;
+    targetVal = singleM2 * p.multiplier;
+  }
+  task.totalCost = targetVal * p.costPerUnit;
+
+  $('#steps').innerHTML = '';
+  $('#way').innerHTML = '';
+  $('#done').hidden = true;
+  $('#summary').hidden = true;
+  $('.grid').hidden = false;
+  $('.controls').hidden = false;
+  $('#score').hidden = false;
+
+  const tagText = `${p.section} ${p.num} (Gesamt: ${state.idx + 1}/${TOTAL_TASKS}) · ${p.title}`;
+  $('#taskText').innerHTML = `<span class="tag">${tagText}</span><br>${p.text}`;
+
+  draw();
+  updateScore();
+
+  if (!state.nameLocked) {
+    task.waiting = true;
+    $('#steps').innerHTML = '<div class="step"><p>Gib bitte zuerst oben deinen Namen ein oder nutze einen Speicher-Code.</p></div>';
+    return;
+  }
+  stepSelectSides();
+}
+
+function draw() {
+  const W = 360, H = 220;
+  let lines = '', hits = '', labels = '';
+
+  if (task.type === 'right') {
+    const pA = [50, 170], pB = [310, 170], pC = [50, 40];
+    const segs = {
+      'a': [pC, pA, `a = ${fmt(task.a)}${task.unit}`, [26, 105]],
+      'b': [pA, pB, `b = ${fmt(task.b)}${task.unit}`, [180, 192]],
+      'c': [pB, pC, `c = ${fmt(task.c)}${task.unit}`, [195, 95]]
+    };
+
+    lines += `<polygon class="tri" points="${pA.join(',')} ${pB.join(',')} ${pC.join(',')}"/>`;
+    lines += `<path class="ra" d="M50,155 L65,155 L65,170"/><circle class="dot" cx="57" cy="162" r="2"/>`;
+
+    for (const [key, [p1, p2, txt, pos]] of Object.entries(segs)) {
+      const isSel = task.selected.has(key);
+      lines += `<line x1="${p1[0]}" y1="${p1[1]}" x2="${p2[0]}" y2="${p2[1]}" class="side${isSel ? ' selected' : ''}"/>`;
+      if (task.selecting) {
+        hits += `<line x1="${p1[0]}" y1="${p1[1]}" x2="${p2[0]}" y2="${p2[1]}" class="hit" data-seg="${key}"/>`;
+      }
+      labels += `<text x="${pos[0]}" y="${pos[1]}" class="lbl" text-anchor="middle">${txt}</text>`;
+    }
+  } else {
+    const scale = 0.18;
+    const cPx = Math.min(task.c * scale, 240);
+    const xC = 50 + (cPx * 0.55);
+    const yC = 170 - Math.min(task.h * scale, 120);
+
+    const pA = [50, 170], pB = [50 + cPx, 170], pC = [xC, yC], pH = [xC, 170];
+    const segs = {
+      'b': [pA, pC, `b = ${fmt(task.b)}${task.unit}`, [(pA[0]+pC[0])/2 - 22, (pA[1]+pC[1])/2]],
+      'a': [pC, pB, `a = ${fmt(task.a)}${task.unit}`, [(pC[0]+pB[0])/2 + 22, (pC[1]+pB[1])/2]],
+      'c': [pA, pB, `c = ${fmt(task.c)}${task.unit}`, [50 + cPx/2, 192]],
+      'h': [pC, pH, `h_c = ${fmt(task.h)}${task.unit}`, [xC + 28, (pC[1]+pH[1])/2]]
+    };
+
+    lines += `<polygon class="tri" points="${pA.join(',')} ${pB.join(',')} ${pC.join(',')}"/>`;
+
+    for (const [key, [p1, p2, txt, pos]] of Object.entries(segs)) {
+      const isSel = task.selected.has(key);
+      const isH = key === 'h';
+      lines += `<line x1="${p1[0]}" y1="${p1[1]}" x2="${p2[0]}" y2="${p2[1]}" class="side${isH ? ' height-line' : ''}${isSel ? ' selected' : ''}"/>`;
+      if (task.selecting) {
+        hits += `<line x1="${p1[0]}" y1="${p1[1]}" x2="${p2[0]}" y2="${p2[1]}" class="hit" data-seg="${key}"/>`;
+      }
+      labels += `<text x="${pos[0]}" y="${pos[1]}" class="lbl" text-anchor="middle">${txt}</text>`;
+    }
+  }
+
+  const note = task.selecting ? `<text x="180" y="212" class="tapnote">👆 Klicke in der Skizze die nötigen Kanten/Höhen an!</text>` : '';
+  $('#fig').innerHTML = `<svg viewBox="0 0 ${W} ${H}">${lines}${labels}${hits}${note}</svg>`;
+
+  if (task.selecting) {
+    document.querySelectorAll('#fig .hit').forEach(el => {
+      el.onclick = () => {
+        const seg = el.dataset.seg;
+        if (task.selected.has(seg)) task.selected.delete(seg);
+        else task.selected.add(seg);
+        draw();
+      };
+    });
+  }
+}
+
+function addStep(num, title, body) {
+  const d = document.createElement('section');
+  d.className = 'step';
+  d.innerHTML = `<div class="step-head"><span class="num">${num}</span><h3>${title}</h3></div><div class="body">${body}</div><div class="fb"></div>`;
+  $('#steps').appendChild(d);
+  return d;
+}
+
+function wrong(d, msg) {
+  task.errors++;
+  const fb = d.querySelector('.fb');
+  fb.className = 'fb bad';
+  fb.textContent = msg;
+}
+
+function right(d, msg) {
+  d.classList.add('solved');
+  const fb = d.querySelector('.fb');
+  fb.className = 'fb ok';
+  fb.textContent = '✓ ' + msg;
+  d.querySelectorAll('input,button,select').forEach(e => e.disabled = true);
+  closeKeypad();
+}
+
+function addWay(text, cls = '') {
+  const el = document.createElement('div');
+  el.className = 'wline' + (cls ? ' ' + cls : '');
+  el.textContent = text;
+  $('#way').appendChild(el);
+}
+
+function stepSelectSides() {
+  task.selecting = true;
+  draw();
+  const isU = task.costType === 'u';
+  const instruction = isU ? 'Für den Umfang u benötigst du die 3 Außenseiten a, b und c.' : (task.type === 'right' ? 'Für die Fläche im rechtwinkligen Dreieck brauchst du die Katheten a und b.' : 'Für die Fläche brauchst du die Grundseite c und die Höhe h_c.');
+
+  const d = addStep(1, 'Welche Linien brauchst du für die Berechnung?', 
+    `<p>${instruction} Klicke sie in der Skizze an und bestätige.</p>
+     <button class="check">Auswahl überprüfen</button>`);
+
+  d.querySelector('.check').onclick = () => {
+    const sel = Array.from(task.selected);
+    let ok = false;
+    if (isU) {
+      ok = sel.length === 3 && sel.includes('a') && sel.includes('b') && sel.includes('c');
+    } else if (task.type === 'right') {
+      ok = sel.length === 2 && sel.includes('a') && sel.includes('b');
+    } else {
+      ok = sel.length === 2 && sel.includes('c') && sel.includes('h');
+    }
+
+    if (ok) {
+      task.selecting = false;
+      draw();
+      right(d, 'Richtig! Die Auswahl der Linien passt perfekt.');
+      stepFormulaChoice();
+    } else {
+      wrong(d, isU ? 'Wähle alle 3 Außenkanten a, b und c aus.' : (task.type === 'right' ? 'Wähle die beiden Katheten a und b aus.' : 'Wähle die Grundseite c und die zugehörige Höhe h_c aus.'));
+    }
+  };
+}
+
+function stepFormulaChoice() {
+  const isU = task.costType === 'u';
+  let correctOpt = isU ? 'u = a + b + c' : (task.type === 'right' ? 'A = (a · b) / 2' : 'A = (c · h_c) / 2');
+  let opt2 = isU ? 'u = a · b · c' : 'A = (a · b) / 2';
+  let opt3 = isU ? 'u = (a · b) / 2' : 'A = (a · h_c) / 2';
+
+  const d = addStep(2, 'Formel aufstellen', 
+    `<p>Wähle die passende Formel aus:</p>
+     <div class="opts">
+       <button class="opt" data-f="${correctOpt}">${correctOpt}</button>
+       <button class="opt" data-f="${opt2}">${opt2}</button>
+       <button class="opt" data-f="${opt3}">${opt3}</button>
+     </div>`);
+
+  d.querySelectorAll('.opt').forEach(btn => {
+    btn.onclick = () => {
+      if (btn.dataset.f === correctOpt) {
+        btn.classList.add('good');
+        right(d, `Richtig! ${correctOpt}`);
+        addWay(correctOpt);
+        stepInsertValues(isU);
+      } else {
+        btn.classList.add('wrongb');
+        wrong(d, 'Das ist nicht die korrekte Formel für diese Anforderung.');
+      }
+    };
+  });
+}
+
+function stepInsertValues(isU) {
+  let bodyHTML = '';
+  if (isU) {
+    bodyHTML = `<div class="eq"><span>u =</span><input class="n" id="v1"><span>+</span><input class="n" id="v2"><span>+</span><input class="n" id="v3"><button class="check" id="insBtn">Prüfen</button></div>`;
+  } else if (task.type === 'right') {
+    bodyHTML = `<div class="eq"><span>A =</span><div class="frac"><div class="frac-top"><input class="n" id="v1"><span>·</span><input class="n" id="v2"></div><div class="frac-bot"><input class="n" value="2" id="vBot" style="width:45px"></div></div><button class="check" id="insBtn">Prüfen</button></div>`;
+  } else {
+    bodyHTML = `<div class="eq"><span>A =</span><div class="frac"><div class="frac-top"><input class="n" id="v1"><span>·</span><input class="n" id="v2"></div><div class="frac-bot"><input class="n" value="2" id="vBot" style="width:45px"></div></div><button class="check" id="insBtn">Prüfen</button></div>`;
+  }
+
+  const d = addStep(3, 'Zahlen in die Formel einsetzen', `<p>Trage die Werte aus der Skizze ein:</p>` + bodyHTML);
+
+  $('#insBtn').onclick = () => {
+    if (isU) {
+      const v1 = parseNum($('#v1').value);
+      const v2 = parseNum($('#v2').value);
+      const v3 = parseNum($('#v3').value);
+      const vals = [v1, v2, v3].filter(x => !isNaN(x)).sort((x,y)=>x-y);
+      const exp = [task.a, task.b, task.c].sort((x,y)=>x-y);
+      if (vals.length === 3 && Math.abs(vals[0]-exp[0]) < 0.05 && Math.abs(vals[1]-exp[1]) < 0.05 && Math.abs(vals[2]-exp[2]) < 0.05) {
+        right(d, 'Richtig eingesetzt!');
+        addWay(`u = ${fmt(task.a)} + ${fmt(task.b)} + ${fmt(task.c)}`);
+        stepCalculateMain(true);
+      } else {
+        wrong(d, 'Vergleiche die Eingaben mit den Kantenlängen in der Skizze.');
+      }
+    } else {
+      const t1 = parseNum($('#v1').value);
+      const t2 = parseNum($('#v2').value);
+      const bot = parseNum($('#vBot').value);
+      const exp1 = task.type === 'right' ? task.a : task.c;
+      const exp2 = task.type === 'right' ? task.b : task.h;
+      const topOk = (Math.abs(t1 - exp1) < 0.05 && Math.abs(t2 - exp2) < 0.05) || (Math.abs(t1 - exp2) < 0.05 && Math.abs(t2 - exp1) < 0.05);
+      if (topOk && bot === 2) {
+        right(d, 'Sehr gut eingesetzt!');
+        addWay(`A = (${fmt(exp1)} · ${fmt(exp2)}) / 2`);
+        stepCalculateMain(false);
+      } else {
+        wrong(d, 'Überprüfe Zähler und Nenner (unten muss 2 stehen).');
+      }
+    }
+  };
+}
+
+function stepCalculateMain(isU) {
+  const stepNum = $('#steps').children.length + 1;
+  const targetVal = isU ? task.u : task.A;
+  const unitStr = isU ? task.unit : task.unit + '²';
+
+  const d = addStep(stepNum, isU ? 'Umfang u berechnen' : 'Flächeninhalt A berechnen', 
+    `<p>Rechne das Zwischenergebnis aus:</p>
+     <div class="eq"><span>${isU ? 'u' : 'A'} =</span><input class="n wide" id="resInp"><span>${unitStr}</span><button class="check" id="resBtn">Prüfen</button></div>`);
+
+  $('#resBtn').onclick = () => {
+    const val = parseNum($('#resInp').value);
+    if (Math.abs(val - targetVal) < 0.05) {
+      right(d, `Korrekt! ${isU ? 'u' : 'A'} = ${fmt(targetVal)} ${unitStr}`);
+      addWay(`${isU ? 'u' : 'A'} = ${fmt(targetVal)} ${unitStr}`);
+      
+      if (task.convertToM2) {
+        stepConvertM2();
+      } else if (task.multiplier) {
+        stepMultiplier();
+      } else {
+        stepCalcCost();
+      }
+    } else {
+      wrong(d, 'Rechenfehler. Überprüfe deine Rechnung.');
+    }
+  };
+}
+
+function stepConvertM2() {
+  const aM2 = task.A / 10000;
+  const d = addStep(5, 'Umrechnung in m²', 
+    `<p>Rechne A = ${fmt(task.A)} cm² in m² um (durch 10 000 teilen):</p>
+     <div class="eq"><span>A =</span><input class="n wide" id="m2Inp"><span>m²</span><button class="check" id="m2Btn">Prüfen</button></div>`);
+
+  $('#m2Btn').onclick = () => {
+    const val = parseNum($('#m2Inp').value);
+    if (Math.abs(val - aM2) < 0.005) {
+      right(d, `Richtig! A = ${fmt(aM2)} m²`);
+      addWay(`A = ${fmt(aM2)} m²`);
+      if (task.multiplier) stepMultiplier();
+      else stepCalcCost();
+    } else {
+      wrong(d, `Teile ${fmt(task.A)} durch 10 000.`);
+    }
+  };
+}
+
+function stepMultiplier() {
+  const singleM2 = task.convertToM2 ? task.A / 10000 : task.A;
+  const totalM2 = singleM2 * task.multiplier;
+  const d = addStep(6, 'Gesamtfläche berechnen', 
+    `<p>Multipliziere mit der Anzahl der Flächen (${task.multiplier}):</p>
+     <div class="eq"><span>A_gesamt =</span><input class="n wide" id="multiInp"><span>m²</span><button class="check" id="multiBtn">Prüfen</button></div>`);
+
+  $('#multiInp').onclick = () => {
+    const val = parseNum($('#multiInp').value);
+    if (Math.abs(val - totalM2) < 0.05) {
+      right(d, `Gesamte Fläche = ${fmt(totalM2)} m²`);
+      addWay(`A_gesamt = ${fmt(totalM2)} m²`);
+      stepCalcCost();
+    } else {
+      wrong(d, `Multipliziere ${fmt(singleM2)} mit ${task.multiplier}.`);
+    }
+  };
+}
+
+function stepCalcCost() {
+  const stepNum = $('#steps').children.length + 1;
+  const d = addStep(stepNum, 'Kostenberechnung', 
+    `<p>Berechne die Endkosten (${fmt(task.costPerUnit)} ${task.costUnit} pro Einheit):</p>
+     <div class="eq"><span>Kosten =</span><input class="n wide" id="cInp"><span>€</span><button class="check" id="cBtn">Prüfen</button></div>`);
+
+  $('#cBtn').onclick = () => {
+    const val = parseNum($('#cInp').value);
+    if (Math.abs(val - task.totalCost) < 0.1) {
+      right(d, `Perfekt! ${task.costName} = ${fmt(task.totalCost)} €`);
+      addWay(`Ergebnis: ${fmt(task.totalCost)} €`, 'final');
+      finish();
+    } else {
+      wrong(d, `Multipliziere den Wert mit dem Preis von ${fmt(task.costPerUnit)} €.`);
+    }
+  };
+}
+
+function finish() {
+  state.solved++;
+  if (task.errors === 0) state.perfect++;
+  state.idx++;
+  
+  state.log.push({
+    title: task.title,
+    section: task.section,
+    res: fmt(task.totalCost) + ' €',
+    errors: task.errors,
+    time: Math.round((Date.now() - task.t0) / 1000) + 's'
+  });
+
+  saveToLocalStorage();
+  updateScore();
+
+  const code = generateCode();
+  const isFinalEnd = state.idx >= TOTAL_TASKS;
+
+  let btnText = 'Nächste Aufgabe';
+  if (state.idx === 6) btnText = 'Zu den Hausübungen (HÜ 1–4)';
+  else if (isFinalEnd) btnText = 'Zur Gesamtauswertung';
+
+  $('#doneText').innerHTML = (task.errors === 0 
+    ? '<b>Perfekt gelöst ohne Fehler!</b>' 
+    : `Aufgabe geschafft mit ${task.errors} Fehlversuch(en).`) + 
+    `<div class="homework-box">
+       <h4>📝 Schulheft-Eintrag</h4>
+       <p>Übertrage die Aufgabe sauber in dein Heft (Angabe, Skizze, Formeln, Einsetzen, Antwortsatz).</p>
+       <hr style="border:0; border-top:1px dashed var(--pen); margin:8px 0;">
+       <p style="margin:0; font-size:14px;">Dein aktueller <b>Geräte-Wechsel-Code</b>:</p>
+       <div class="codebox">${code}</div>
+     </div>`;
+
+  $('#nextBtn').textContent = btnText;
+  $('#done').hidden = false;
+}
+
+function showSummary() {
+  closeKeypad();
+  const s = $('#summary');
+  let rows = state.log.map((l, i) => 
+    `<tr><td>${i+1}</td><td>${l.section}</td><td>${l.title}</td><td>${l.res}</td><td>${l.errors}</td><td>${l.time}</td></tr>`
+  ).join('');
+
+  s.innerHTML = `
+    <h2>Zusammenfassung für ${state.name || 'Schüler/in'}</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Nr.</th><th>Teil</th><th>Aufgabe</th><th>Gesamtkosten</th><th>Fehler</th><th>Zeit</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+    <div class="homework-box">
+      <h4>Super gemacht!</h4>
+      <p>Du hast alle 6 Schulübungen und 4 Hausübungen erfolgreich bearbeitet.</p>
+    </div>
+    <br>
+    <button class="next" onclick="location.reload()">Neustarten</button>
+  `;
+
+  $('.grid').hidden = true;
+  $('.controls').hidden = true;
+  $('#score').hidden = true;
+  s.hidden = false;
+}
+
+$('#nameOk').onclick = () => {
+  const name = $('#name').value.trim();
+  if (!name) { alert('Bitte gib deinen Namen ein.'); return; }
+  state.name = name;
+  state.nameLocked = true;
+  $('#name').disabled = true;
+  $('#nameOk').hidden = true;
+  
+  const saved = localStorage.getItem('dreieck_sach_app_' + name.toLowerCase().replace(/\s+/g, ''));
+  if (saved) {
+    if (confirm('Gespeicherten Stand für "' + name + '" laden?')) {
+      const data = JSON.parse(saved);
+      state.solved = data.solved;
+      state.perfect = data.perfect;
+      state.idx = data.idx;
+      state.log = data.log;
+    }
+  }
+
+  updateScore();
+  if (task && task.waiting) {
+    task.waiting = false;
+    $('#steps').innerHTML = '';
+    newTask();
+  }
+};
+
+$('#codeOk').onclick = () => {
+  const codeVal = $('#codeInp').value.trim();
+  if (!codeVal) { alert('Bitte gib einen Code ein.'); return; }
+  
+  let found = false;
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key.startsWith('dreieck_sach_app_')) {
+      const data = JSON.parse(localStorage.getItem(key));
+      state.name = data.name;
+      if (String(generateCode()) === codeVal) {
+        state.solved = data.solved;
+        state.perfect = data.perfect;
+        state.idx = data.idx;
+        state.log = data.log;
+        state.nameLocked = true;
+        $('#name').value = data.name;
+        $('#name').disabled = true;
+        $('#nameOk').hidden = true;
+        found = true;
+        break;
+      }
+    }
+  }
+
+  if (found) {
+    alert('Fortschritt geladen! Willkommen zurück, ' + state.name + '.');
+    updateScore();
+    if (task && task.waiting) {
+      task.waiting = false;
+      $('#steps').innerHTML = '';
+      newTask();
+    }
+  } else {
+    alert('Ungültiger Code.');
+  }
+};
+
+$('#nextBtn').onclick = () => {
+  if (state.idx >= TOTAL_TASKS) showSummary();
+  else newTask();
+};
+
+newTask();
+</script>
 </body>
 </html>
