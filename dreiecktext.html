@@ -20,10 +20,10 @@
         }
         .handwritten { font-family: 'Patrick Hand', cursive; }
         
-        /* Custom paper effect */
+        /* Papier-Effekt (Karo-Muster) */
         .paper-card {
             background-color: #ffffff;
-            background-image: radial-gradient(#e2e8f0 0.75px, transparent 0.75px);
+            background-image: radial-gradient(#cbd5e1 0.8px, transparent 0.8px);
             background-size: 16px 16px;
             box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.03);
         }
@@ -32,18 +32,29 @@
             @apply bg-amber-50 hover:bg-amber-100 active:bg-amber-200 text-amber-900 font-bold py-2.5 rounded-lg text-lg transition-colors border border-amber-200 shadow-sm flex items-center justify-center select-none cursor-pointer;
         }
 
-        /* SVG Interactive Elements */
-        .svg-selectable {
+        /* SVG Interaktive Elemente & Hitboxen */
+        .svg-hitbox {
             cursor: pointer;
+            stroke: transparent;
+            stroke-width: 20px;
+            fill: none;
             transition: all 0.2s ease;
         }
-        .svg-selectable:hover {
-            stroke-width: 4px;
-            filter: drop-shadow(0 0 3px rgba(79, 70, 229, 0.5));
+        .svg-visible-line {
+            transition: all 0.2s ease;
+            pointer-events: none;
         }
-        .svg-selected {
+        .svg-hitbox:hover + .svg-visible-line, .svg-hitbox:hover {
+            filter: drop-shadow(0 0 4px rgba(37, 99, 235, 0.6));
+        }
+        .svg-selected-line {
             stroke: #2563eb !important;
             stroke-width: 4px !important;
+        }
+        .svg-label {
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s ease;
         }
         .svg-label-selected {
             fill: #2563eb !important;
@@ -53,7 +64,7 @@
 </head>
 <body class="min-h-screen flex flex-col">
 
-    <!-- Top Navigation Header -->
+    <!-- Header Navigation -->
     <header class="bg-amber-800 text-amber-50 border-b-4 border-amber-900 shadow-md">
         <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
             <div class="flex items-center space-x-3">
@@ -62,25 +73,31 @@
                 </div>
                 <div>
                     <h1 class="font-bold text-xl leading-tight handwritten text-2xl tracking-wide">Geometrie-Lernheft</h1>
-                    <p class="text-xs text-amber-200">Dreiecksberechnungen: Umfang, Fläche & Kosten</p>
+                    <p class="text-xs text-amber-200">Dreiecke: Umfang, Fläche & Sachaufgaben</p>
                 </div>
             </div>
             
             <div class="flex items-center gap-2">
+                <!-- Schüler Name Input -->
+                <div class="bg-amber-900/60 px-3 py-1 rounded-lg border border-amber-700/50 flex items-center gap-2">
+                    <i class="fa-solid fa-user-graduate text-xs text-amber-300"></i>
+                    <input type="text" id="student-name" placeholder="Dein Name..." class="bg-transparent border-b border-amber-400/40 text-xs text-white focus:outline-none focus:border-amber-200 w-28 sm:w-36">
+                </div>
+
                 <button id="btn-device-code" class="bg-amber-700/80 hover:bg-amber-700 text-xs sm:text-sm px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 border border-amber-500/30">
-                    <i class="fa-solid fa-key"></i> <span class="hidden sm:inline">Geräte-Code</span>
+                    <i class="fa-solid fa-key"></i> <span class="hidden sm:inline">Code</span>
                 </button>
                 <button id="btn-teacher-view" class="bg-emerald-700 hover:bg-emerald-800 text-xs sm:text-sm px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 font-medium shadow-sm border border-emerald-600">
-                    <i class="fa-solid fa-chalkboard-user"></i> <span>Lehrkraft-Ansicht</span>
+                    <i class="fa-solid fa-chalkboard-user"></i> <span>Lehrkraft</span>
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- Main Workspace -->
+    <!-- Main Content -->
     <main class="max-w-6xl mx-auto w-full px-4 py-6 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-        <!-- Sidebar Navigation (Tasks List) -->
+        <!-- Sidebar Navigation (Aufgabenheft) -->
         <aside class="lg:col-span-4 bg-white rounded-2xl p-4 shadow-sm border border-amber-200/60 flex flex-col h-fit">
             <div class="flex items-center justify-between mb-3 pb-2 border-b border-amber-100">
                 <h2 class="font-bold text-amber-900 flex items-center gap-2 handwritten text-xl">
@@ -95,9 +112,9 @@
                 <button id="tab-hu" class="flex-1 py-2 rounded-lg text-amber-700 hover:text-amber-900 text-center transition">Hausübung (4)</button>
             </div>
 
-            <!-- Task List Container -->
+            <!-- Dynamic Task List -->
             <div id="taskList" class="space-y-2 max-h-[520px] overflow-y-auto pr-1">
-                <!-- Dynamically Populated Tasks -->
+                <!-- Task Items inserted via JS -->
             </div>
 
             <!-- Reset Button -->
@@ -132,19 +149,19 @@
                 <div class="bg-amber-50/30 rounded-xl p-4 border border-amber-200/60 flex flex-col items-center">
                     <div class="w-full flex justify-between items-center mb-2">
                         <span class="text-xs font-bold text-amber-900 flex items-center gap-1.5">
-                            <i class="fa-solid fa-pointer text-amber-600"></i> Schritt 1: Klicke in der Skizze die benötigten Bestimmungsstücke an!
+                            <i class="fa-solid fa-pointer text-amber-600"></i> Schritt 1: Klicke in der Skizze die benötigten Linien an!
                         </span>
                         <span id="svg-selection-counter" class="text-xs font-mono font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded">0 gewählt</span>
                     </div>
 
                     <div class="w-full bg-white rounded-xl p-3 border border-amber-100 flex justify-center relative min-h-[220px]">
                         <svg id="triangle-svg" viewBox="0 0 300 180" class="w-full max-w-md h-auto overflow-visible select-none">
-                            <!-- SVG Dynamic Diagram -->
+                            <!-- Dynamic Diagram -->
                         </svg>
                     </div>
                     
                     <p id="svg-help-text" class="text-xs text-amber-700 mt-2 font-medium text-center">
-                        Tipp: Wähle alle Maße/Seiten aus, die du für die gesuchte Größe brauchst.
+                        Tipp: Klicke die Linien direkt an, die du für die gesuchte Größe brauchst.
                     </p>
                 </div>
             </div>
@@ -159,8 +176,7 @@
                         <span>Erstelle die passende Formel:</span>
                     </div>
 
-                    <!-- Formula Builder Interface -->
-                    <div class="pl-8 space-y-2">
+                    <div class="pl-2 sm:pl-8 space-y-2">
                         <div class="flex flex-wrap items-center gap-2 bg-amber-50 p-3 rounded-xl border border-amber-200/80 text-base font-mono">
                             <span id="formula-target-label" class="font-bold text-amber-900 text-lg">A =</span>
                             <div id="formula-builder-slots" class="flex items-center gap-1.5 flex-wrap">
@@ -170,7 +186,7 @@
 
                         <!-- Variable / Operator Palette Buttons -->
                         <div id="formula-palette" class="flex flex-wrap gap-1.5 pt-1">
-                            <!-- Variable tags inserted dynamically -->
+                            <!-- Buttons dynamically added -->
                         </div>
                     </div>
                 </div>
@@ -182,12 +198,12 @@
                         <span>Werte einsetzen und Hauptgröße berechnen:</span>
                     </div>
 
-                    <div class="pl-8 space-y-3">
+                    <div class="pl-2 sm:pl-8 space-y-3">
                         <div class="flex flex-wrap items-center gap-2 font-mono bg-amber-50 p-3 rounded-xl border border-amber-200/80" id="step3-values-builder">
-                            <!-- Dynamic value inputs -->
+                            <!-- Dynamic inputs for step 3 -->
                         </div>
 
-                        <div class="flex items-center gap-3">
+                        <div class="flex flex-wrap items-center gap-3">
                             <span class="font-bold text-slate-700 text-sm">Ergebnis:</span>
                             <input type="text" id="main-result-input" readonly placeholder="Ergebnis..." class="w-36 bg-white border border-amber-300 rounded-lg px-3 py-1.5 text-lg font-bold text-indigo-700 text-center focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer">
                             <span id="main-result-unit" class="font-bold text-slate-700">m²</span>
@@ -195,22 +211,22 @@
                     </div>
                 </div>
 
-                <!-- Step 4: Kosten / Anwendung berechnen -->
+                <!-- Step 4: Kosten / Sachaufgabe -->
                 <div id="step-4-container" class="space-y-3 opacity-50 pointer-events-none transition-all">
                     <div class="flex items-center gap-2 text-sm font-bold text-amber-950">
                         <span class="w-6 h-6 rounded-full bg-amber-800 text-white flex items-center justify-center text-xs">4</span>
-                        <span>Anwendungsaufgabe / Gesamtkosten berechnen:</span>
+                        <span>Sachaufgabe / Gesamtkosten berechnen:</span>
                     </div>
 
-                    <div class="pl-8 space-y-3">
+                    <div class="pl-2 sm:pl-8 space-y-3">
                         <p id="step4-question-text" class="text-xs sm:text-sm text-slate-700 bg-amber-50/80 p-3 rounded-lg border border-amber-100 font-medium">
-                            <!-- Question logic -->
+                            <!-- Question text -->
                         </p>
                         <div class="flex flex-wrap items-center gap-3">
-                            <span class="font-bold text-slate-700 text-sm">Gesamtergebnis / Kosten:</span>
+                            <span class="font-bold text-slate-700 text-sm">Gesamtergebnis:</span>
                             <input type="text" id="final-cost-input" readonly placeholder="Betrag..." class="w-40 bg-white border border-amber-300 rounded-lg px-3 py-1.5 text-lg font-bold text-emerald-700 text-center focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer">
                             <span id="cost-unit" class="font-bold text-slate-700">€</span>
-                            <button id="btn-check-all" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2 rounded-lg transition shadow-sm ml-auto text-sm flex items-center gap-2">
+                            <button id="btn-check-all" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2 rounded-lg transition shadow-sm ml-auto text-sm flex items-center gap-2 cursor-pointer">
                                 <i class="fa-solid fa-check"></i> Antwort Prüfen
                             </button>
                         </div>
@@ -220,8 +236,8 @@
                 <!-- On-Screen Keypad -->
                 <div id="keypad-panel" class="pt-4 border-t border-amber-100">
                     <div class="flex justify-between items-center mb-2">
-                        <span class="text-xs font-bold text-amber-800 uppercase tracking-wider">Eingabe-Tastatur</span>
-                        <span id="active-input-label" class="text-xs text-indigo-700 font-bold bg-indigo-50 px-2.5 py-0.5 rounded border border-indigo-100">Wähle ein Eingabefeld</span>
+                        <span class="text-xs font-bold text-amber-800 uppercase tracking-wider"><i class="fa-solid fa-calculator mr-1"></i> Virtuelle Tastatur</span>
+                        <span id="active-input-label" class="text-xs text-indigo-700 font-bold bg-indigo-50 px-2.5 py-0.5 rounded border border-indigo-100">Klicke ein Eingabefeld an</span>
                     </div>
                     <div class="grid grid-cols-4 gap-2 max-w-xs sm:max-w-sm mx-auto">
                         <button class="keypad-btn" data-key="7">7</button>
@@ -257,23 +273,23 @@
                 <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2 handwritten text-xl">
                     <i class="fa-solid fa-key text-amber-600"></i> Fortschritt Speichern / Laden
                 </h3>
-                <button class="btn-close-modal text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+                <button class="btn-close-modal text-slate-400 hover:text-slate-600 cursor-pointer"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
             <p class="text-xs text-slate-600 leading-relaxed">
-                Kopiere deinen Code, um deinen Fortschritt auf einem anderen Gerät fortzusetzen, oder füge einen vorhanden Code ein.
+                Kopiere deinen Code, um deinen Fortschritt auf einem anderen Gerät fortzusetzen.
             </p>
             <div class="space-y-2">
                 <label class="text-xs font-bold text-slate-700">Dein aktueller Code:</label>
                 <div class="flex gap-2">
                     <input type="text" id="export-code-input" readonly class="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 font-mono text-xs text-slate-700">
-                    <button id="btn-copy-code" class="bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold px-3 py-2 rounded-lg text-xs transition">Kopieren</button>
+                    <button id="btn-copy-code" class="bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold px-3 py-2 rounded-lg text-xs transition cursor-pointer">Kopieren</button>
                 </div>
             </div>
             <div class="pt-2 border-t border-slate-100 space-y-2">
                 <label class="text-xs font-bold text-slate-700">Code eingeben:</label>
                 <div class="flex gap-2">
                     <input type="text" id="import-code-input" placeholder="Code einfügen..." class="flex-1 border border-slate-300 rounded-lg px-3 py-2 font-mono text-xs focus:ring-2 focus:ring-amber-500 focus:outline-none">
-                    <button id="btn-apply-code" class="bg-amber-800 hover:bg-amber-900 text-white font-bold px-4 py-2 rounded-lg text-xs transition">Laden</button>
+                    <button id="btn-apply-code" class="bg-amber-800 hover:bg-amber-900 text-white font-bold px-4 py-2 rounded-lg text-xs transition cursor-pointer">Laden</button>
                 </div>
             </div>
         </div>
@@ -286,11 +302,11 @@
                 <div class="flex items-center gap-2.5">
                     <div class="p-2.5 bg-emerald-100 text-emerald-800 rounded-xl"><i class="fa-solid fa-chalkboard-user text-xl"></i></div>
                     <div>
-                        <h3 class="font-bold text-slate-800 text-lg handwritten text-2xl">Lehrkraft-Kontrollansicht</h3>
-                        <p class="text-xs text-slate-500">Übersicht aller gelösten Aufgaben und Teilschritte</p>
+                        <h3 class="font-bold text-slate-800 text-lg handwritten text-2xl">Lehrkraft-Übersicht</h3>
+                        <p class="text-xs text-slate-500" id="teacher-student-info">Schüler/in: Nicht angegeben</p>
                     </div>
                 </div>
-                <button class="btn-close-modal text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+                <button class="btn-close-modal text-slate-400 hover:text-slate-600 cursor-pointer"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
 
             <!-- Stats Overview -->
@@ -317,9 +333,8 @@
                             <th class="p-3">Aufgabe</th>
                             <th class="p-3">Typ</th>
                             <th class="p-3">Status</th>
-                            <th class="p-3 text-center">Skizze / Formel</th>
                             <th class="p-3 text-right">Hauptwert</th>
-                            <th class="p-3 text-right">Endpreis/Kosten</th>
+                            <th class="p-3 text-right">Kosten / Ergebnis</th>
                         </tr>
                     </thead>
                     <tbody id="teacher-table-body" class="divide-y divide-slate-100 font-mono">
@@ -329,44 +344,42 @@
             </div>
 
             <div class="pt-2 flex justify-end">
-                <button class="btn-close-modal bg-amber-900 text-white font-bold px-5 py-2 rounded-xl text-xs hover:bg-amber-950 transition">Schließen</button>
+                <button class="btn-close-modal bg-amber-900 text-white font-bold px-5 py-2 rounded-xl text-xs hover:bg-amber-950 transition cursor-pointer">Schließen</button>
             </div>
         </div>
     </div>
 
     <!-- Application Script Logic -->
     <script>
-        // --- DATA STRUCTURE FOR ALL 10 TASKS (6 SÜ + 4 HÜ) ---
+        // --- TASKS DEFINITION (10 TASKS) ---
         const TASKS = [
-            // Schulübungen (SÜ)
+            // Schulübungen (1-6)
             {
                 id: 'su_1',
                 type: 'SÜ',
                 number: 1,
                 title: 'Waldstück neu aufforsten',
-                description: 'Ein dreieckiges Waldstück soll mit jungen Eichen neu bepflanzt werden. Die Grundseite des Dreiecks beträgt g = 120 m und die zugehörige Höhe h_c = 75 m. Wie groß ist die aufzuforstende Fläche?',
+                description: 'Ein dreieckiges Waldstück soll mit jungen Eichen bepflanzt werden. Die Grundseite beträgt g = 120 m und die Höhe h_c = 75 m. Berechne die Fläche des Waldstücks.',
                 triangleType: 'general',
                 requiredVars: ['g', 'h_c'],
                 target: 'A',
-                formulaStructure: ['(', 'VAR_1', '*', 'VAR_2', ')', '/', '2'], // (g*h)/2
                 formulaAllowedVars: ['g', 'h_c', 'a', 'b', 'c'],
                 correctValues: [120, 75],
                 mainResult: 4500, // (120*75)/2
                 mainUnit: 'm²',
-                costQuestion: 'Ein Eichensteckling reicht für 15 m² Waldfläche und kostet 4,50 €. Wie hoch sind die Gesamtkosten für die Bepflanzung?',
-                costResult: 1350, // (4500 / 15) * 4.50 = 1350 €
+                costQuestion: 'Ein Eichensteckling reicht für 15 m² und kostet 4,50 €. Wie hoch sind die Gesamtkosten für die Bepflanzung?',
+                costResult: 1350, // (4500/15) * 4.5 = 1350 €
                 costUnit: '€'
             },
             {
                 id: 'su_2',
                 type: 'SÜ',
                 number: 2,
-                title: 'Hausgiebel mit Holz verschalen',
-                description: 'Die dreieckige Giebelfront eines Hauses hat eine Grundseite von g = 10 m und eine Höhe von h_c = 4,8 m. Berechne die Fläche der Giebelfront in Quadratmetern.',
+                title: 'Hausgiebel aus Holz verschalen',
+                description: 'Die dreieckige Giebelfront eines Hauses hat eine Grundseite g = 10 m und eine Höhe h_c = 4,8 m. Berechne die Fläche der Giebelfront.',
                 triangleType: 'general',
                 requiredVars: ['g', 'h_c'],
                 target: 'A',
-                formulaStructure: ['(', 'VAR_1', '*', 'VAR_2', ')', '/', '2'],
                 formulaAllowedVars: ['g', 'h_c', 'a', 'b'],
                 correctValues: [10, 4.8],
                 mainResult: 24, // (10*4.8)/2
@@ -379,18 +392,17 @@
                 id: 'su_3',
                 type: 'SÜ',
                 number: 3,
-                title: 'Kirchturmdach eindecken',
-                description: 'Ein Kirchturmdach besteht aus 4 gleichen dreieckigen Dachflächen. Eine einzelne Dachfläche hat die Grundseite g = 6 m und eine Höhe von h_c = 14 m. Berechne die Fläche EINER Dachseite.',
+                title: 'Kirchturmdach neu decken',
+                description: 'Ein Kirchturmdach besteht aus 4 gleichen dreieckigen Dachflächen. Eine einzelnen Fläche hat die Grundseite g = 6 m und eine Höhe h_c = 14 m. Berechne die Fläche EINER Dachseite.',
                 triangleType: 'general',
                 requiredVars: ['g', 'h_c'],
                 target: 'A',
-                formulaStructure: ['(', 'VAR_1', '*', 'VAR_2', ')', '/', '2'],
                 formulaAllowedVars: ['g', 'h_c', 'a', 'b'],
                 correctValues: [6, 14],
                 mainResult: 42, // (6*14)/2
                 mainUnit: 'm²',
-                costQuestion: 'Die Eindeckung aller 4 Dachseiten kostet 85,00 € pro m². Wie teuer ist die Neueindeckung des gesamten Daches (4 Flächen)?',
-                costResult: 14280, // 4 * 42 = 168 m² * 85 € = 14280 €
+                costQuestion: 'Die Eindeckung kostet 85,00 € pro m². Wie teuer ist die Neueindeckung des GESAMTEN Daches (alle 4 Flächen)?',
+                costResult: 14280, // 4 * 42 * 85 = 14280 €
                 costUnit: '€'
             },
             {
@@ -398,16 +410,15 @@
                 type: 'SÜ',
                 number: 4,
                 title: 'Rechtwinkliges Blumenbeet',
-                description: 'Ein rechtwinkliges Blumenbeet hat die Katheten a = 4 m und b = 3 m sowie die Hypotenuse c = 5 m. Das Beet soll mit einem Zierzaun eingefasst werden. Berechne den Umfang u des Beets.',
+                description: 'Ein rechtwinkliges Blumenbeet hat die Katheten a = 4 m und b = 3 m sowie die Hypotenuse c = 5 m. Berechne den Umfang u des Beets.',
                 triangleType: 'right',
                 requiredVars: ['a', 'b', 'c'],
                 target: 'u',
-                formulaStructure: ['VAR_1', '+', 'VAR_2', '+', 'VAR_3'],
                 formulaAllowedVars: ['a', 'b', 'c', 'h_c'],
                 correctValues: [4, 3, 5],
                 mainResult: 12, // 4+3+5
                 mainUnit: 'm',
-                costQuestion: 'Der Zierzaun kostet 14,50 € pro laufendem Meter. Wie teuer ist die gesamte Umzäunung des Beets?',
+                costQuestion: 'Der Zierzaun kostet 14,50 € pro Meter. Wie teuer ist die gesamte Einfassung des Beets?',
                 costResult: 174, // 12 * 14.50 = 174 €
                 costUnit: '€'
             },
@@ -416,11 +427,10 @@
                 type: 'SÜ',
                 number: 5,
                 title: 'Rechtwinkliges Sonnensegel',
-                description: 'Ein rechtwinkliges Sonnensegel für einen Garten hat die beiden Katheten a = 3,5 m und b = 4 m. Wie groß ist die Tuchfläche des Sonnensegels?',
+                description: 'Ein rechtwinkliges Sonnensegel für den Garten hat die beiden Katheten a = 3,5 m und b = 4 m. Berechne die Fläche des Sonnensegels.',
                 triangleType: 'right',
                 requiredVars: ['a', 'b'],
                 target: 'A',
-                formulaStructure: ['(', 'VAR_1', '*', 'VAR_2', ')', '/', '2'],
                 formulaAllowedVars: ['a', 'b', 'c'],
                 correctValues: [3.5, 4],
                 mainResult: 7, // (3.5*4)/2
@@ -433,32 +443,30 @@
                 id: 'su_6',
                 type: 'SÜ',
                 number: 6,
-                title: 'Dreieckiger Parkteich',
-                description: 'Ein dreieckiger Ententeich im Stadtpark hat die Seitenlängen a = 24 m, b = 18 m und c = 30 m. Wie lang ist das Ufer des Teichs insgesamt (Umfang u)?',
+                title: 'Parkteich einzäunen',
+                description: 'Ein dreieckiger Ententeich im Stadtpark hat die Seitenlängen a = 24 m, b = 18 m und c = 30 m. Berechne den Umfang u des Teichs.',
                 triangleType: 'general',
                 requiredVars: ['a', 'b', 'c'],
                 target: 'u',
-                formulaStructure: ['VAR_1', '+', 'VAR_2', '+', 'VAR_3'],
                 formulaAllowedVars: ['a', 'b', 'c', 'g', 'h_c'],
                 correctValues: [24, 18, 30],
                 mainResult: 72, // 24+18+30
                 mainUnit: 'm',
-                costQuestion: 'Um den Teich wird ein Schutzzaun aufgestellt, der 22,50 € pro Meter kostet. Wie hoch sind die Zaunkosten?',
+                costQuestion: 'Ein Schutzzaun kostet 22,50 € pro Meter. Wie hoch sind die Gesamtkosten für die Umzäunung?',
                 costResult: 1620, // 72 * 22.50 = 1620 €
                 costUnit: '€'
             },
 
-            // Hausübungen (HÜ)
+            // Hausübungen (7-10)
             {
                 id: 'hu_1',
                 type: 'HÜ',
                 number: 1,
-                title: 'Gartengrundstück Maschendrahtzaun',
+                title: 'Gartengrundstück einzäunen',
                 description: 'Ein dreieckiges Gartengrundstück besitzt die drei Außenseiten a = 35 m, b = 42 m und c = 28 m. Berechne den Umfang u des Grundstücks.',
                 triangleType: 'general',
                 requiredVars: ['a', 'b', 'c'],
                 target: 'u',
-                formulaStructure: ['VAR_1', '+', 'VAR_2', '+', 'VAR_3'],
                 formulaAllowedVars: ['a', 'b', 'c', 'g', 'h_c'],
                 correctValues: [35, 42, 28],
                 mainResult: 105, // 35+42+28
@@ -472,11 +480,10 @@
                 type: 'HÜ',
                 number: 2,
                 title: 'Rechtwinklige Dachfläche',
-                description: 'Ein rechtwinkliges Schleppdach an einer Scheune hat die beiden Katheten a = 6 m und b = 8.5 m. Berechne die Fläche dieses Daches.',
+                description: 'Ein rechtwinkliges Schleppdach an einer Scheune hat die beiden Katheten a = 6 m und b = 8,5 m. Berechne die Fläche dieses Daches.',
                 triangleType: 'right',
                 requiredVars: ['a', 'b'],
                 target: 'A',
-                formulaStructure: ['(', 'VAR_1', '*', 'VAR_2', ')', '/', '2'],
                 formulaAllowedVars: ['a', 'b', 'c'],
                 correctValues: [6, 8.5],
                 mainResult: 25.5, // (6*8.5)/2
@@ -494,7 +501,6 @@
                 triangleType: 'general',
                 requiredVars: ['g', 'h_c'],
                 target: 'A',
-                formulaStructure: ['(', 'VAR_1', '*', 'VAR_2', ')', '/', '2'],
                 formulaAllowedVars: ['g', 'h_c', 'a', 'b', 'c'],
                 correctValues: [50, 32],
                 mainResult: 800, // (50*32)/2
@@ -507,12 +513,11 @@
                 id: 'hu_4',
                 type: 'HÜ',
                 number: 4,
-                title: 'Verkehrsschild Reflexionsfolie',
-                description: 'Ein rechtwinkliges Hinweisschild aus Metall hat die Ankatheten/Katheten a = 80 cm und b = 60 cm. Berechne die Vorderfläche des Schildes in cm².',
+                title: 'Gefahrenschild Folie',
+                description: 'Ein rechtwinkliges Verkehrsschild aus Metall hat die Katheten a = 80 cm und b = 60 cm. Berechne die Vorderfläche des Schildes in cm².',
                 triangleType: 'right',
                 requiredVars: ['a', 'b'],
                 target: 'A',
-                formulaStructure: ['(', 'VAR_1', '*', 'VAR_2', ')', '/', '2'],
                 formulaAllowedVars: ['a', 'b', 'c'],
                 correctValues: [80, 60],
                 mainResult: 2400, // (80*60)/2
@@ -529,7 +534,8 @@
         let selectedSvgVars = new Set();
         let userFormulaSlots = [];
         let activeInputEl = null;
-        let userProgress = {}; // { taskId: { completed: bool, selectedVars: [], formula: [], mainVal: str, costVal: str } }
+        let studentName = '';
+        let userProgress = {}; // { taskId: { completed: bool, mainVal: str, costVal: str } }
 
         // --- INITIALIZATION ---
         window.addEventListener('DOMContentLoaded', () => {
@@ -540,14 +546,20 @@
         });
 
         function loadProgress() {
-            const saved = localStorage.getItem('geo_dreieck_v2_progress');
+            const saved = localStorage.getItem('geo_dreieck_v3_progress');
             if (saved) {
                 try { userProgress = JSON.parse(saved); } catch(e) { userProgress = {}; }
+            }
+            const savedName = localStorage.getItem('geo_student_name');
+            if (savedName) {
+                studentName = savedName;
+                document.getElementById('student-name').value = studentName;
             }
         }
 
         function saveProgress() {
-            localStorage.setItem('geo_dreieck_v2_progress', JSON.stringify(userProgress));
+            localStorage.setItem('geo_dreieck_v3_progress', JSON.stringify(userProgress));
+            localStorage.setItem('geo_student_name', studentName);
             updateOverallProgressUI();
         }
 
@@ -600,7 +612,7 @@
             updateOverallProgressUI();
         }
 
-        // --- LOAD TASK INTO INTERFACE ---
+        // --- LOAD TASK ---
         function loadTask(taskId) {
             const task = TASKS.find(t => t.id === taskId);
             if (!task) return;
@@ -608,7 +620,7 @@
             selectedSvgVars.clear();
             userFormulaSlots = [];
 
-            // Task Meta
+            // Task Header & Descriptions
             document.getElementById('task-category-badge').textContent = task.type === 'SÜ' ? 'Schulübung' : 'Hausübung';
             document.getElementById('task-category-badge').className = `inline-block text-[10px] uppercase tracking-wider font-bold px-2.5 py-0.5 rounded border mb-1 ${
                 task.type === 'SÜ' ? 'bg-amber-100 text-amber-900 border-amber-300' : 'bg-indigo-100 text-indigo-900 border-indigo-200'
@@ -616,7 +628,7 @@
             document.getElementById('task-title').textContent = `${task.number}. ${task.title}`;
             document.getElementById('task-description').textContent = task.description;
 
-            // Status Badge
+            // Task Status Badge
             const isDone = userProgress[taskId] && userProgress[taskId].completed;
             const statusBadge = document.getElementById('task-status-badge');
             if (isDone) {
@@ -627,25 +639,28 @@
                 statusBadge.innerHTML = '<i class="fa-regular fa-circle"></i> Offen';
             }
 
-            // Step 4 Question Text
+            // Step 4 Text
             document.getElementById('step4-question-text').textContent = task.costQuestion;
             document.getElementById('main-result-unit').textContent = task.mainUnit;
             document.getElementById('cost-unit').textContent = task.costUnit;
+
+            // Clear inputs
+            document.getElementById('main-result-input').value = '';
+            document.getElementById('final-cost-input').value = '';
 
             // Render SVG
             renderInteractiveSVG(task);
             updateSvgSelectionState(task);
 
-            // Setup Formula Builder
+            // Formula Builder
             setupFormulaBuilder(task);
 
-            // Hide feedback
             hideFeedback();
             activeInputEl = null;
-            document.getElementById('active-input-label').textContent = 'Wähle ein Eingabefeld';
+            document.getElementById('active-input-label').textContent = 'Klicke ein Eingabefeld an';
         }
 
-        // --- STEP 1: INTERACTIVE SVG SELECTION ---
+        // --- STEP 1: INTERACTIVE SVG WITH ENLARGED TOUCH HITBOXES ---
         function renderInteractiveSVG(task) {
             const svg = document.getElementById('triangle-svg');
             svg.innerHTML = '';
@@ -659,66 +674,78 @@
                     <path d="M 50 125 L 65 125 L 65 140" fill="none" stroke="#d97706" stroke-width="1.5"/>
                     <circle cx="56" cy="133" r="2" fill="#d97706"/>
 
-                    <!-- Selectable Side 'a' (Bottom) -->
-                    <line x1="50" y1="140" x2="250" y2="140" class="svg-selectable" data-var="a" stroke="#d97706" stroke-width="3"/>
-                    <text x="150" y="160" text-anchor="middle" font-size="13" class="svg-label font-bold fill-slate-700" data-var-label="a">a (${task.correctValues[0] || '4'} m)</text>
+                    <!-- Side 'a' (Bottom) -->
+                    <line x1="50" y1="140" x2="250" y2="140" class="svg-hitbox" data-var="a"/>
+                    <line x1="50" y1="140" x2="250" y2="140" class="svg-visible-line" data-var-line="a" stroke="#d97706" stroke-width="3"/>
+                    <text x="150" y="162" text-anchor="middle" font-size="13" class="svg-label font-bold fill-slate-700" data-var-label="a">a</text>
 
-                    <!-- Selectable Side 'b' (Left vertical) -->
-                    <line x1="50" y1="140" x2="50" y2="30" class="svg-selectable" data-var="b" stroke="#d97706" stroke-width="3"/>
-                    <text x="35" y="85" text-anchor="middle" font-size="13" class="svg-label font-bold fill-slate-700" data-var-label="b">b (${task.correctValues[1] || '3'} m)</text>
+                    <!-- Side 'b' (Left vertical) -->
+                    <line x1="50" y1="140" x2="50" y2="30" class="svg-hitbox" data-var="b"/>
+                    <line x1="50" y1="140" x2="50" y2="30" class="svg-visible-line" data-var-line="b" stroke="#d97706" stroke-width="3"/>
+                    <text x="32" y="85" text-anchor="middle" font-size="13" class="svg-label font-bold fill-slate-700" data-var-label="b">b</text>
 
-                    <!-- Selectable Side 'c' (Hypotenuse) -->
-                    <line x1="250" y1="140" x2="50" y2="30" class="svg-selectable" data-var="c" stroke="#d97706" stroke-width="3"/>
-                    <text x="160" y="75" text-anchor="middle" font-size="13" class="svg-label font-bold fill-slate-700" data-var-label="c">c (${task.correctValues[2] || '5'} m)</text>
+                    <!-- Side 'c' (Hypotenuse) -->
+                    <line x1="250" y1="140" x2="50" y2="30" class="svg-hitbox" data-var="c"/>
+                    <line x1="250" y1="140" x2="50" y2="30" class="svg-visible-line" data-var-line="c" stroke="#d97706" stroke-width="3"/>
+                    <text x="160" y="75" text-anchor="middle" font-size="13" class="svg-label font-bold fill-slate-700" data-var-label="c">c</text>
                 `;
             } else {
                 // General Triangle
+                const baseVar = task.requiredVars.includes('g') ? 'g' : 'c';
                 content = `
                     <polygon points="40,140 260,140 170,30" fill="rgba(245, 158, 11, 0.08)" stroke="#d97706" stroke-width="2" stroke-linejoin="round"/>
 
-                    <!-- Base 'g' or 'c' -->
-                    <line x1="40" y1="140" x2="260" y2="140" class="svg-selectable" data-var="${task.requiredVars.includes('g') ? 'g' : 'c'}" stroke="#d97706" stroke-width="3"/>
-                    <text x="150" y="160" text-anchor="middle" font-size="13" class="svg-label font-bold fill-slate-700" data-var-label="${task.requiredVars.includes('g') ? 'g' : 'c'}">${task.requiredVars.includes('g') ? 'g' : 'c'}</text>
+                    <!-- Base 'g' / 'c' -->
+                    <line x1="40" y1="140" x2="260" y2="140" class="svg-hitbox" data-var="${baseVar}"/>
+                    <line x1="40" y1="140" x2="260" y2="140" class="svg-visible-line" data-var-line="${baseVar}" stroke="#d97706" stroke-width="3"/>
+                    <text x="150" y="162" text-anchor="middle" font-size="13" class="svg-label font-bold fill-slate-700" data-var-label="${baseVar}">${baseVar}</text>
 
-                    <!-- Side 'a' (Left) -->
-                    <line x1="40" y1="140" x2="170" y2="30" class="svg-selectable" data-var="a" stroke="#d97706" stroke-width="3"/>
-                    <text x="90" y="80" text-anchor="middle" font-size="13" class="svg-label font-bold fill-slate-700" data-var-label="a">a</text>
+                    <!-- Side 'a' -->
+                    <line x1="260" y1="140" x2="170" y2="30" class="svg-hitbox" data-var="a"/>
+                    <line x1="260" y1="140" x2="170" y2="30" class="svg-visible-line" data-var-line="a" stroke="#d97706" stroke-width="3"/>
+                    <text x="225" y="80" text-anchor="middle" font-size="13" class="svg-label font-bold fill-slate-700" data-var-label="a">a</text>
 
-                    <!-- Side 'b' (Right) -->
-                    <line x1="260" y1="140" x2="170" y2="30" class="svg-selectable" data-var="b" stroke="#d97706" stroke-width="3"/>
-                    <text x="225" y="80" text-anchor="middle" font-size="13" class="svg-label font-bold fill-slate-700" data-var-label="b">b</text>
+                    <!-- Side 'b' -->
+                    <line x1="40" y1="140" x2="170" y2="30" class="svg-hitbox" data-var="b"/>
+                    <line x1="40" y1="140" x2="170" y2="30" class="svg-visible-line" data-var-line="b" stroke="#d97706" stroke-width="3"/>
+                    <text x="90" y="80" text-anchor="middle" font-size="13" class="svg-label font-bold fill-slate-700" data-var-label="b">b</text>
 
                     <!-- Height h_c -->
-                    <line x1="170" y1="30" x2="170" y2="140" class="svg-selectable" data-var="h_c" stroke="#dc2626" stroke-width="2.5" stroke-dasharray="4,4"/>
+                    <line x1="170" y1="30" x2="170" y2="140" class="svg-hitbox" data-var="h_c"/>
+                    <line x1="170" y1="30" x2="170" y2="140" class="svg-visible-line" data-var-line="h_c" stroke="#dc2626" stroke-width="2.5" stroke-dasharray="4,4"/>
                     <text x="185" y="85" text-anchor="middle" font-size="13" class="svg-label font-bold fill-rose-600" data-var-label="h_c">h_c</text>
                 `;
             }
 
             svg.innerHTML = content;
 
-            // Bind click handlers to SVG elements
-            svg.querySelectorAll('.svg-selectable').forEach(el => {
-                el.onclick = () => {
-                    const varName = el.dataset.var;
-                    if (selectedSvgVars.has(varName)) {
-                        selectedSvgVars.delete(varName);
-                    } else {
-                        selectedSvgVars.add(varName);
-                    }
-                    updateSvgSelectionState(task);
-                };
+            // Bind click events on SVG hitboxes and labels
+            const toggleVar = (varName) => {
+                if (selectedSvgVars.has(varName)) {
+                    selectedSvgVars.delete(varName);
+                } else {
+                    selectedSvgVars.add(varName);
+                }
+                updateSvgSelectionState(task);
+            };
+
+            svg.querySelectorAll('.svg-hitbox').forEach(el => {
+                el.onclick = () => toggleVar(el.dataset.var);
+            });
+            svg.querySelectorAll('.svg-label').forEach(el => {
+                el.onclick = () => toggleVar(el.dataset.varLabel);
             });
         }
 
         function updateSvgSelectionState(task) {
             const svg = document.getElementById('triangle-svg');
             
-            svg.querySelectorAll('.svg-selectable').forEach(el => {
-                const varName = el.dataset.var;
+            svg.querySelectorAll('.svg-visible-line').forEach(el => {
+                const varName = el.dataset.varLine;
                 if (selectedSvgVars.has(varName)) {
-                    el.classList.add('svg-selected');
+                    el.classList.add('svg-selected-line');
                 } else {
-                    el.classList.remove('svg-selected');
+                    el.classList.remove('svg-selected-line');
                 }
             });
 
@@ -733,7 +760,7 @@
 
             document.getElementById('svg-selection-counter').textContent = `${selectedSvgVars.size} gewählt`;
 
-            // Validate if user selected all required variables for step 1
+            // Validate Step 1
             const requiredSet = new Set(task.requiredVars);
             const isSvgCorrect = requiredSet.size === selectedSvgVars.size && [...requiredSet].every(v => selectedSvgVars.has(v));
 
@@ -751,16 +778,13 @@
             const palette = document.getElementById('formula-palette');
             palette.innerHTML = '';
 
-            // Palette buttons: Variables + Operators
             const items = [...task.formulaAllowedVars, '+', '*', '/', '(', ')'];
 
             items.forEach(item => {
                 const btn = document.createElement('button');
-                btn.className = 'px-3 py-1.5 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold text-xs border border-amber-300 transition shadow-sm';
+                btn.className = 'px-3 py-1.5 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold text-xs border border-amber-300 transition shadow-sm cursor-pointer';
                 btn.textContent = item;
-                btn.onclick = () => {
-                    addFormulaToken(task, item);
-                };
+                btn.onclick = () => addFormulaToken(task, item);
                 palette.appendChild(btn);
             });
 
@@ -790,7 +814,7 @@
 
             userFormulaSlots.forEach((token, idx) => {
                 const tag = document.createElement('span');
-                tag.className = 'inline-flex items-center gap-1 bg-amber-200 text-amber-950 font-bold px-2 py-0.5 rounded text-sm border border-amber-300 cursor-pointer hover:bg-rose-200 hover:text-rose-900 transition';
+                tag.className = 'inline-flex items-center gap-1 bg-amber-200 text-amber-950 font-bold px-2.5 py-1 rounded text-sm border border-amber-300 cursor-pointer hover:bg-rose-200 hover:text-rose-900 transition';
                 tag.innerHTML = `${token} <i class="fa-solid fa-xmark text-[10px]"></i>`;
                 tag.onclick = () => removeFormulaToken(task, idx);
                 container.appendChild(tag);
@@ -798,13 +822,10 @@
         }
 
         function checkFormulaValidity(task) {
-            // Check formula equivalence
             const formulaStr = userFormulaSlots.join('');
-            
             let isFormulaCorrect = false;
 
             if (task.target === 'u') {
-                // u = a + b + c (any order)
                 const hasA = formulaStr.includes('a');
                 const hasB = formulaStr.includes('b');
                 const hasC = formulaStr.includes('c');
@@ -813,7 +834,6 @@
                     isFormulaCorrect = true;
                 }
             } else {
-                // A = (g * h_c) / 2 or (a * b) / 2
                 const hasMul = formulaStr.includes('*');
                 const hasDiv2 = formulaStr.includes('/2');
                 const v1 = task.requiredVars[0];
@@ -830,7 +850,7 @@
             }
         }
 
-        // --- STEP 3 & STEP 4 ACTIVATION ---
+        // --- STEP 3 & 4 ACTIVATION ---
         function activateStep2(task) {
             document.getElementById('step-2-container').classList.remove('opacity-50', 'pointer-events-none');
         }
@@ -861,7 +881,6 @@
                 `;
             }
 
-            // Bind click events on Step 3 and Step 4 inputs for keypad
             builder.querySelectorAll('.step3-input').forEach((inp, i) => {
                 inp.onclick = (e) => setActiveInput(e.target, `Schritt 3: Wert ${i+1}`);
             });
@@ -877,7 +896,7 @@
             step4.classList.remove('opacity-50', 'pointer-events-none');
 
             const costInput = document.getElementById('final-cost-input');
-            costInput.onclick = (e) => setActiveInput(e.target, 'Schritt 4: Gesamtkosten');
+            costInput.onclick = (e) => setActiveInput(e.target, 'Schritt 4: Gesamtergebnis');
         }
 
         function disableStepsFrom(stepNum) {
@@ -892,7 +911,7 @@
             }
         }
 
-        // --- KEYPAD INPUT ENGINE ---
+        // --- KEYPAD ENGINE ---
         function setActiveInput(el, label) {
             if (activeInputEl) {
                 activeInputEl.classList.remove('ring-2', 'ring-amber-500', 'border-amber-500');
@@ -918,13 +937,14 @@
             activeInputEl.value = val;
         }
 
-        // --- CHECK ALL ANSWERS ---
+        // --- CHECK ANSWERS ---
         function checkAllAnswers() {
             const task = TASKS.find(t => t.id === activeTaskId);
             if (!task) return;
 
             // Step 3 Main Result Validation
-            const mainVal = parseFloat(document.getElementById('main-result-input').value.replace(',', '.'));
+            const mainValStr = document.getElementById('main-result-input').value.replace(',', '.');
+            const mainVal = parseFloat(mainValStr);
             if (isNaN(mainVal)) {
                 showFeedback('Bitte berechne zuerst das Hauptergebnis in Schritt 3.', 'error');
                 return;
@@ -936,19 +956,20 @@
             }
 
             // Step 4 Cost Validation
-            const costVal = parseFloat(document.getElementById('final-cost-input').value.replace(',', '.'));
+            const costValStr = document.getElementById('final-cost-input').value.replace(',', '.');
+            const costVal = parseFloat(costValStr);
             if (isNaN(costVal)) {
-                showFeedback('Bitte berechne die Gesamtkosten/Anwendung in Schritt 4.', 'error');
+                showFeedback('Bitte berechne das Gesamtergebnis / die Kosten in Schritt 4.', 'error');
                 return;
             }
 
             if (Math.abs(costVal - task.costResult) > 0.5) {
-                showFeedback('Die Gesamtkosten in Schritt 4 stimmen noch nicht ganz. Prüfe den Preisansatz!', 'error');
+                showFeedback('Das Gesamtergebnis in Schritt 4 stimmt noch nicht ganz. Prüfe deine Rechnung!', 'error');
                 return;
             }
 
-            // SUCCESS!
-            showFeedback('Hervorragend! Alle Schritte und die Gesamtkosten sind perfekt berechnet! 🎉', 'success');
+            // SUCCESS
+            showFeedback('Hervorragend! Alle Schritte und Ergebnisse wurden richtig berechnet! 🎉', 'success');
 
             if (!userProgress[task.id]) userProgress[task.id] = {};
             userProgress[task.id].completed = true;
@@ -980,8 +1001,12 @@
             document.getElementById('feedback-box').classList.add('hidden');
         }
 
-        // --- TEACHER VIEW & DEVICE CODE LOGIC ---
+        // --- TEACHER VIEW & DEVICE CODES ---
         function renderTeacherView() {
+            document.getElementById('teacher-student-info').textContent = studentName 
+                ? `Schüler/in: ${studentName}` 
+                : 'Schüler/in: Nicht angegeben';
+
             const completedSU = TASKS.filter(t => t.type === 'SÜ' && userProgress[t.id] && userProgress[t.id].completed).length;
             const completedHU = TASKS.filter(t => t.type === 'HÜ' && userProgress[t.id] && userProgress[t.id].completed).length;
             const total = completedSU + completedHU;
@@ -1006,23 +1031,26 @@
                             ${isDone ? 'Erledigt' : 'Offen'}
                         </span>
                     </td>
-                    <td class="p-3 text-center text-slate-600">${isDone ? '<i class="fa-solid fa-check text-emerald-600"></i>' : '-'}</td>
                     <td class="p-3 text-right font-bold text-slate-700">${isDone ? `${prog.mainVal} ${task.mainUnit}` : '-'}</td>
-                    <td class="p-3 text-right font-bold text-emerald-700">${isDone ? `${prog.costVal} €` : '-'}</td>
+                    <td class="p-3 text-right font-bold text-emerald-700">${isDone ? `${prog.costVal} ${task.costUnit}` : '-'}</td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
         function getDeviceCode() {
-            return btoa(JSON.stringify(userProgress));
+            return btoa(JSON.stringify({ name: studentName, progress: userProgress }));
         }
 
         function applyDeviceCode(code) {
             try {
                 const decoded = JSON.parse(atob(code));
-                if (typeof decoded === 'object') {
-                    userProgress = decoded;
+                if (decoded && typeof decoded === 'object') {
+                    if (decoded.progress) userProgress = decoded.progress;
+                    if (decoded.name) {
+                        studentName = decoded.name;
+                        document.getElementById('student-name').value = studentName;
+                    }
                     saveProgress();
                     renderTaskList();
                     loadTask(activeTaskId);
@@ -1032,8 +1060,13 @@
             return false;
         }
 
-        // --- BIND EVENT LISTENERS ---
+        // --- EVENT LISTENERS ---
         function setupEventListeners() {
+            document.getElementById('student-name').oninput = (e) => {
+                studentName = e.target.value;
+                saveProgress();
+            };
+
             document.getElementById('tab-su').onclick = () => {
                 currentTab = 'SÜ';
                 document.getElementById('tab-su').className = 'flex-1 py-2 rounded-lg bg-white shadow-sm text-amber-900 font-bold text-center transition';
@@ -1078,13 +1111,13 @@
                 const codeInput = document.getElementById('export-code-input');
                 codeInput.select();
                 document.execCommand('copy');
-                alert('Code kopiert!');
+                alert('Code in die Zwischenablage kopiert!');
             };
 
             document.getElementById('btn-apply-code').onclick = () => {
                 const code = document.getElementById('import-code-input').value.trim();
                 if (applyDeviceCode(code)) {
-                    alert('Fortschritt geladen!');
+                    alert('Fortschritt erfolgreich geladen!');
                     deviceModal.classList.add('hidden');
                 } else {
                     alert('Ungültiger Code.');
