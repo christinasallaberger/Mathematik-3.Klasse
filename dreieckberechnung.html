@@ -70,8 +70,11 @@ svg{width:100%;height:auto;display:block}
 .opt.wrongb{background:var(--red-soft);border-color:var(--red);color:var(--red);text-decoration:line-through}
 .opt:disabled{cursor:default}
 .eq{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-family:"Patrick Hand",cursive;font-size:24px}
-.n{font:inherit;font-family:"Patrick Hand",cursive;font-size:22px;width:80px;padding:2px 8px;border:2px solid var(--ink);border-radius:8px;background:var(--paper);color:var(--pen);text-align:center}
-.n.wide{width:110px}
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 4px}
+.frac-top{border-bottom:2px solid var(--ink);padding-bottom:2px;display:flex;align-items:center;gap:4px}
+.frac-bot{padding-top:2px;display:flex;align-items:center;justify-content:center}
+.n{font:inherit;font-family:"Patrick Hand",cursive;font-size:22px;width:65px;padding:2px 4px;border:2px solid var(--ink);border-radius:8px;background:var(--paper);color:var(--pen);text-align:center}
+.n.wide{width:95px}
 .check,.next{font:inherit;font-size:16px;font-weight:700;padding:8px 16px;border-radius:10px;border:0;background:var(--btn);color:var(--btn-ink);cursor:pointer}
 .fb{font-size:15px;margin-top:8px}
 .fb:empty{display:none}
@@ -96,7 +99,7 @@ th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
 <div class="wrap">
   <header>
     <h1>Dreiecke: Umfang & Flächeninhalt</h1>
-    <p>Wähle zuerst die passende Formel mit Variablen, setze die Zahlen ein und berechne Umfang $u$ und Flächeninhalt $A$.</p>
+    <p>Wähle die passende Formel, setze die Zahlen selbst in die Formel ein und berechne Umfang $u$ und Flächeninhalt $A$.</p>
   </header>
 
   <div class="controls">
@@ -154,14 +157,13 @@ function fmt(x){ return String(Math.round(x * 100) / 100).replace('.', ','); }
 function parseNum(s){ return Number(String(s).trim().replace(',', '.')); }
 
 function generateCode() {
-  // Generiert einen einzigartigen Zahlencode basierend auf Name, gelösten Aufgaben und Fehlern
   let hash = 0;
   const str = state.name + state.solved + state.perfect + state.idx;
   for (let i = 0; i < str.length; i++) {
     hash = ((hash << 5) - hash) + str.charCodeAt(i);
     hash |= 0;
   }
-  return Math.abs(hash % 900000 + 100000); // 6-stelliger Zahlencode
+  return Math.abs(hash % 900000 + 100000);
 }
 
 function updateScore() {
@@ -201,13 +203,13 @@ function newTask() {
   $('#done').hidden = true;
 
   const figName = task.type === 'right' ? 'Rechtwinkliges Dreieck' : 'Allgemeines Dreieck';
-  $('#taskText').innerHTML = `<span class="tag">Aufgabe ${state.idx % ROUND + 1} von ${ROUND} · ${figName}</span><br>Stelle die Formeln auf und berechne <b>u</b> und <b>A</b>.`;
+  $('#taskText').innerHTML = `<span class="tag">Aufgabe ${state.idx % ROUND + 1} von ${ROUND} · ${figName}</span><br>Stelle die Formeln auf, setze die Zahlen ein und berechne <b>u</b> und <b>A</b>.`;
 
   draw();
 
   if (!state.nameLocked) {
     task.waiting = true;
-    $('#steps').innerHTML = '<div class="step"><p>Gib bitte zuerst oben deinen Namen ein oder gib einen Code ein, um fortzufahren.</p></div>';
+    $('#steps').innerHTML = '<div class="step"><p>Gib bitte zuerst oben deinen Namen ein oder verwende einen Speicher-Code.</p></div>';
     return;
   }
   stepSelectSides();
@@ -304,12 +306,12 @@ function addWay(text, cls = '') {
   $('#way').appendChild(el);
 }
 
-// Schritt 1: Seiten für den Umfang antippen
+// Schritt 1: Seiten anklicken
 function stepSelectSides() {
   task.selecting = true;
   draw();
   const d = addStep(1, 'Welche Seiten brauchst du für den Umfang u?', 
-    `<p>Klicke in der Skizze die <b>3 Außenseiten</b> an und drücke dann auf Bestätigen.</p>
+    `<p>Klicke in der Skizze die <b>3 Außenseiten</b> an und drücke auf Bestätigen.</p>
      <button class="check">Auswahl überprüfen</button>`);
 
   d.querySelector('.check').onclick = () => {
@@ -319,7 +321,7 @@ function stepSelectSides() {
     if (ok) {
       task.selecting = false;
       draw();
-      right(d, 'Richtig! Der Umfang u besteht genau aus den 3 Außenseiten a, b und c.');
+      right(d, 'Richtig! Der Umfang u besteht genau aus den 3 Außenseiten.');
       stepFormulaU();
     } else {
       if (sel.includes('h')) {
@@ -331,14 +333,14 @@ function stepSelectSides() {
   };
 }
 
-// Schritt 2: Umfang-Formel eingeben
+// Schritt 2: Umfang-Formel
 function stepFormulaU() {
-  const d = addStep(2, 'Formel für den Umfang u aufstellen', 
-    `<p>Wähle die richtige Variablen-Formel für den Umfang:</p>
+  const d = addStep(2, 'Formel für den Umfang u', 
+    `<p>Wähle die passende Variablen-Formel für den Umfang:</p>
      <div class="opts">
        <button class="opt" data-f="1">u = a + b + c</button>
        <button class="opt" data-f="2">u = a · b · c</button>
-       <button class="opt" data-f="3">u = (a · h) / 2</button>
+       <button class="opt" data-f="3">u = (a · b) / 2</button>
      </div>`);
 
   d.querySelectorAll('.opt').forEach(btn => {
@@ -347,74 +349,80 @@ function stepFormulaU() {
         btn.classList.add('good');
         right(d, 'Richtig! u = a + b + c');
         addWay('u = a + b + c');
-        stepCalcU();
+        stepInsertU();
       } else {
         btn.classList.add('wrongb');
-        wrong(d, 'Beim Umfang werden alle Seiten miteinander addiert (+).');
+        wrong(d, 'Beim Umfang werden alle 3 Außenseiten addiert (+).');
       }
     };
   });
 }
 
-// Schritt 3: Umfang ausrechnen
+// Schritt 3: Zahlen in Umfang-Formel einsetzen
+function stepInsertU() {
+  const d = addStep(3, 'Zahlen in die Umfang-Formel einsetzen', 
+    `<p>Setze die Längen aus der Skizze ein:</p>
+     <div class="eq">
+       <span>u =</span>
+       <input class="n" id="uA"><span>+</span>
+       <input class="n" id="uB"><span>+</span>
+       <input class="n" id="uC">
+       <button class="check" id="uInsBtn">Prüfen</button>
+     </div>`);
+
+  $('#uInsBtn').onclick = () => {
+    const vA = parseNum($('#uA').value);
+    const vB = parseNum($('#uB').value);
+    const vC = parseNum($('#uC').value);
+    
+    const vals = [vA, vB, vC].sort((x,y)=>x-y);
+    const expected = [task.a, task.b, task.c].sort((x,y)=>x-y);
+
+    if (Math.abs(vals[0] - expected[0]) < 0.05 && Math.abs(vals[1] - expected[1]) < 0.05 && Math.abs(vals[2] - expected[2]) < 0.05) {
+      right(d, 'Richtig eingesetzt!');
+      addWay(`u = ${fmt(task.a)} + ${fmt(task.b)} + ${fmt(task.c)}`);
+      stepCalcU();
+    } else {
+      wrong(d, `Setze die drei Seitenlängen (${fmt(task.a)}, ${fmt(task.b)} und ${fmt(task.c)}) ein.`);
+    }
+  };
+}
+
+// Schritt 4: Umfang berechnen
 function stepCalcU() {
-  const d = addStep(3, 'Umfang u berechnen', 
-    `<p>Setze die Zahlen ein (u = ${fmt(task.a)} + ${fmt(task.b)} + ${fmt(task.c)}):</p>
+  const d = addStep(4, 'Umfang u berechnen', 
+    `<p>Rechne das Ergebnis aus:</p>
      <div class="eq"><span>u =</span><input class="n wide" id="uInp"><span>cm</span><button class="check" id="uBtn">Prüfen</button></div>`);
 
   $('#uBtn').onclick = () => {
     const val = parseNum($('#uInp').value);
     if (Math.abs(val - task.u) < 0.05) {
       right(d, `Korrekt! u = ${fmt(task.u)} cm`);
-      addWay(`u = ${fmt(task.a)} + ${fmt(task.b)} + ${fmt(task.c)} = ${fmt(task.u)} cm`);
-      stepGenFormulaA();
+      addWay(`u = ${fmt(task.u)} cm`);
+      stepFormulaA();
     } else {
-      wrong(d, `Addiere die drei Seiten: ${fmt(task.a)} + ${fmt(task.b)} + ${fmt(task.c)}`);
+      wrong(d, `Addiere die drei Zahlen korrekt zusammen.`);
     }
   };
 }
 
-// Schritt 4: Allgemeine Formel für Flächeninhalt
-function stepGenFormulaA() {
-  const d = addStep(4, 'Allgemeine Formel für den Flächeninhalt A', 
-    `<p>Welche Grundformel gilt für den Flächeninhalt von Dreiecken?</p>
-     <div class="opts">
-       <button class="opt" data-f="1">A = (g · h) / 2</button>
-       <button class="opt" data-f="2">A = g · h</button>
-       <button class="opt" data-f="3">A = a + b + c</button>
-     </div>`);
-
-  d.querySelectorAll('.opt').forEach(btn => {
-    btn.onclick = () => {
-      if (btn.dataset.f === '1') {
-        btn.classList.add('good');
-        right(d, 'Richtig! Ein Dreieck ist halb so groß wie das zugehörige Rechteck: A = (g · h) / 2.');
-        stepSpecFormulaA();
-      } else {
-        btn.classList.add('wrongb');
-        wrong(d, 'Achtung: Vergiss nicht die Halbe (/ 2)!');
-      }
-    };
-  });
-}
-
-// Schritt 5: Spezifische Formel aus der Skizze wählen
-function stepSpecFormulaA() {
-  let correctFormula, opt1, opt2, opt3;
+// Schritt 5: Flächeninhalts-Formel wählen
+function stepFormulaA() {
+  let opt1, opt2, opt3, correctFormula;
   if (task.type === 'right') {
     correctFormula = 'A = (a · b) / 2';
     opt1 = 'A = (a · b) / 2';
-    opt2 = 'A = (c · h) / 2';
-    opt3 = 'A = (a · c) / 2';
+    opt2 = 'A = (a · c) / 2';
+    opt3 = 'A = a + b + c';
   } else {
     correctFormula = 'A = (c · h) / 2';
-    opt1 = 'A = (a · ha) / 2';
+    opt1 = 'A = (a · h_a) / 2';
     opt2 = 'A = (c · h) / 2';
-    opt3 = 'A = (b · hb) / 2';
+    opt3 = 'A = (b · h_b) / 2';
   }
 
-  const d = addStep(5, 'Formel an diese Skizze anpassen', 
-    `<p>Welche Formel passt exakt zu den Beschriftungen in unserer Skizze?</p>
+  const d = addStep(5, 'Formel für den Flächeninhalt A wählen', 
+    `<p>Welche Formel passt zur Beschriftung in unserer Skizze?</p>
      <div class="opts">
        <button class="opt" data-f="${opt1}">${opt1}</button>
        <button class="opt" data-f="${opt2}">${opt2}</button>
@@ -425,42 +433,73 @@ function stepSpecFormulaA() {
     btn.onclick = () => {
       if (btn.dataset.f === correctFormula) {
         btn.classList.add('good');
-        right(d, `Richtig! In dieser Skizze lautet die Formel: ${correctFormula}`);
+        right(d, `Richtig! Formel: ${correctFormula}`);
         addWay(correctFormula);
-        stepCalcA();
+        stepInsertA();
       } else {
         btn.classList.add('wrongb');
-        if (task.type === 'right') {
-          wrong(d, 'Im rechtwinkligen Dreieck stehen die Katheten a und b normal aufeinander.');
-        } else {
-          wrong(d, 'Achte darauf, welche Höhe h eingezeichnet ist.');
-        }
+        wrong(d, task.type === 'right' ? 'Im rechtwinkligen Dreieck lautet die Formel (a · b) / 2.' : 'Achte darauf, welche Höhe (h) eingezeichnet ist.');
       }
     };
   });
 }
 
-// Schritt 6: Flächeninhalt berechnen
-function stepCalcA() {
-  let subText;
-  if (task.type === 'right') {
-    subText = `A = (${fmt(task.a)} · ${fmt(task.b)}) / 2`;
-  } else {
-    subText = `A = (${fmt(task.c)} · ${fmt(task.h)}) / 2`;
-  }
+// Schritt 6: Zahlen in die Bruch-Formel einsetzen
+function stepInsertA() {
+  const d = addStep(6, 'Zahlen in die Bruch-Formel einsetzen', 
+    `<p>Trage die Werte in den Bruch ein:</p>
+     <div class="eq">
+       <span>A =</span>
+       <div class="frac">
+         <div class="frac-top">
+           <input class="n" id="aTop1"><span>·</span><input class="n" id="aTop2">
+         </div>
+         <div class="frac-bot">
+           <input class="n" id="aBot" value="2" style="width:45px">
+         </div>
+       </div>
+       <button class="check" id="aInsBtn">Prüfen</button>
+     </div>`);
 
-  const d = addStep(6, 'Flächeninhalt A berechnen', 
-    `<p>Setze die Werte ein (${subText}) und berechne:</p>
+  $('#aInsBtn').onclick = () => {
+    const t1 = parseNum($('#aTop1').value);
+    const t2 = parseNum($('#aTop2').value);
+    const bot = parseNum($('#aBot').value);
+
+    const exp1 = task.type === 'right' ? task.a : task.c;
+    const exp2 = task.type === 'right' ? task.b : task.h;
+
+    const topOk = (Math.abs(t1 - exp1) < 0.05 && Math.abs(t2 - exp2) < 0.05) || (Math.abs(t1 - exp2) < 0.05 && Math.abs(t2 - exp1) < 0.05);
+    const botOk = bot === 2;
+
+    if (topOk && botOk) {
+      right(d, 'Richtig eingesetzt!');
+      addWay(`A = (${fmt(exp1)} · ${fmt(exp2)}) / 2`);
+      stepCalcA();
+    } else {
+      if (!botOk) {
+        wrong(d, 'Der Nenner unten muss beim Dreieck immer 2 sein!');
+      } else {
+        wrong(d, `Setze oben im Zähler die Werte ${fmt(exp1)} und ${fmt(exp2)} ein.`);
+      }
+    }
+  };
+}
+
+// Schritt 7: Flächeninhalt ausrechnen
+function stepCalcA() {
+  const d = addStep(7, 'Flächeninhalt A berechnen', 
+    `<p>Rechne das Ergebnis aus:</p>
      <div class="eq"><span>A =</span><input class="n wide" id="aInp"><span>cm²</span><button class="check" id="aBtn">Prüfen</button></div>`);
 
   $('#aBtn').onclick = () => {
     const val = parseNum($('#aInp').value);
     if (Math.abs(val - task.A) < 0.05) {
       right(d, `Hervorragend! A = ${fmt(task.A)} cm²`);
-      addWay(`${subText} = ${fmt(task.A)} cm²`, 'final');
+      addWay(`A = ${fmt(task.A)} cm²`, 'final');
       finish();
     } else {
-      wrong(d, `Rechne: Multipliziere die beiden Werte und teile das Ergebnis durch 2.`);
+      wrong(d, `Multipliziere die beiden Zahlen oben und teile das Ergebnis durch 2.`);
     }
   };
 }
@@ -519,7 +558,7 @@ function showSummary() {
     </div>
     <div class="homework-box">
       <h4>Wichtiger Hinweis zum Heft-Eintrag:</h4>
-      <p>Überprüfe, ob alle 4 Beispiele vollständig mit <b>Angaben (links)</b>, <b>Skizze (Mitte)</b> und <b>Rechenschritten (rechts)</b> im Heft stehen!</p>
+      <p>Überprüfe, ob alle Beispielemuster vollständig mit <b>Angaben (links)</b>, <b>Skizze (Mitte)</b> und <b>Rechenschritten (rechts)</b> im Heft stehen!</p>
     </div>
     <br>
     <button class="next" onclick="location.reload()">Neustarten</button>
@@ -539,7 +578,6 @@ $('#nameOk').onclick = () => {
   $('#name').disabled = true;
   $('#nameOk').hidden = true;
   
-  // Prüfen ob es schon einen gespeicherten Stand gibt
   const saved = localStorage.getItem('dreieck_app_' + name.toLowerCase().replace(/\s+/g, ''));
   if (saved) {
     if (confirm('Wir haben einen gespeicherten Stand für "' + name + '" gefunden. Möchtest du dort weitermachen?')) {
@@ -563,13 +601,11 @@ $('#codeOk').onclick = () => {
   const codeVal = $('#codeInp').value.trim();
   if (!codeVal) { alert('Bitte gib einen Code ein.'); return; }
   
-  // Alle LocalStorage Einträge durchsuchen, um den passenden Code zu finden
   let found = false;
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
     if (key.startsWith('dreieck_app_')) {
       const data = JSON.parse(localStorage.getItem(key));
-      // Testen durch Nachbilden des Codes
       state.name = data.name;
       if (String(generateCode()) === codeVal) {
         state.solved = data.solved;
