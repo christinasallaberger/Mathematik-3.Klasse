@@ -60,7 +60,7 @@ svg{width:100%;height:auto;display:block}
 .tri{fill:var(--tri)}
 .ra{fill:none;stroke:var(--ink);stroke-width:2}
 .dot{fill:var(--ink)}
-.lbl{font-family:"Patrick Hand",cursive;font-size:19px;fill:var(--ink)}
+.lbl{font-family:"Patrick Hand",cursive;font-size:18px;fill:var(--ink)}
 .hit{stroke:transparent;stroke-width:28;stroke-linecap:round;cursor:pointer;pointer-events:stroke}
 .tapnote{text-anchor:middle;font-weight:700;fill:var(--pen);font-size:15px}
 
@@ -112,8 +112,8 @@ th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
 .codebox{background:var(--paper);border:2px solid var(--ink);border-radius:8px;padding:8px 12px;font-family:monospace;font-size:18px;font-weight:bold;color:var(--pen);display:inline-block;margin:6px 0}
 
 .keypad{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:3px solid var(--pen);padding:10px 14px;box-shadow:0 -4px 20px rgba(0,0,0,0.15);display:flex;flex-direction:column;align-items:center;gap:8px;z-index:999}
-.keypad-header{display:flex;justify-content:space-between;width:100%;max-width:360px;font-size:14px;font-weight:bold;color:var(--muted)}
-.keypad-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;max-width:360px}
+.keypad-header{display:flex;justify-content:space-between;width:100%;max-width:380px;font-size:14px;font-weight:bold;color:var(--muted)}
+.keypad-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;max-width:380px}
 .keybtn{font-family:"Patrick Hand",cursive;font-size:24px;padding:8px;border:2px solid var(--ink);border-radius:8px;background:var(--paper);color:var(--ink);cursor:pointer;text-align:center}
 .keybtn:active{background:var(--tri)}
 .keybtn.action{background:var(--btn);color:var(--btn-ink);font-size:18px;font-family:sans-serif}
@@ -399,19 +399,20 @@ function newTask() {
 }
 
 function draw() {
-  const W = 360, H = 220;
+  const W = 380, H = 230;
   let lines = '', hits = '', labels = '';
 
   if (task.type === 'right') {
-    const pA = [50, 170], pB = [310, 170], pC = [50, 40];
+    // Vergrößertes Dreieck mit extra Randabstand
+    const pA = [60, 175], pB = [320, 175], pC = [60, 45];
     const segs = {
-      'a': [pC, pA, `a = ${fmt(task.a)}${task.unit}`, [26, 105]],
-      'b': [pA, pB, `b = ${fmt(task.b)}${task.unit}`, [180, 192]],
-      'c': [pB, pC, `c = ${fmt(task.c)}${task.unit}`, [195, 95]]
+      'a': [pC, pA, `a = ${fmt(task.a)}${task.unit}`, [20, 110]],
+      'b': [pA, pB, `b = ${fmt(task.b)}${task.unit}`, [190, 200]],
+      'c': [pB, pC, `c = ${fmt(task.c)}${task.unit}`, [210, 100]]
     };
 
     lines += `<polygon class="tri" points="${pA.join(',')} ${pB.join(',')} ${pC.join(',')}"/>`;
-    lines += `<path class="ra" d="M50,155 L65,155 L65,170"/><circle class="dot" cx="57" cy="162" r="2"/>`;
+    lines += `<path class="ra" d="M60,158 L77,158 L77,175"/><circle class="dot" cx="68" cy="166" r="2"/>`;
 
     for (const [key, [p1, p2, txt, pos]] of Object.entries(segs)) {
       const isSel = task.selected.has(key);
@@ -422,17 +423,18 @@ function draw() {
       labels += `<text x="${pos[0]}" y="${pos[1]}" class="lbl" text-anchor="middle">${txt}</text>`;
     }
   } else {
-    const scale = 0.18;
+    // Allgemeines Dreieck mit ausreichendem Sicherheitsabstand
+    const scale = 0.16;
     const cPx = Math.min(task.c * scale, 240);
-    const xC = 50 + (cPx * 0.55);
-    const yC = 170 - Math.min(task.h * scale, 120);
+    const xC = 60 + (cPx * 0.52);
+    const yC = 175 - Math.min(task.h * scale, 115);
 
-    const pA = [50, 170], pB = [50 + cPx, 170], pC = [xC, yC], pH = [xC, 170];
+    const pA = [60, 175], pB = [60 + cPx, 175], pC = [xC, yC], pH = [xC, 175];
     const segs = {
-      'b': [pA, pC, `b = ${fmt(task.b)}${task.unit}`, [(pA[0]+pC[0])/2 - 22, (pA[1]+pC[1])/2]],
-      'a': [pC, pB, `a = ${fmt(task.a)}${task.unit}`, [(pC[0]+pB[0])/2 + 22, (pC[1]+pB[1])/2]],
-      'c': [pA, pB, `c = ${fmt(task.c)}${task.unit}`, [50 + cPx/2, 192]],
-      'h': [pC, pH, `h_c = ${fmt(task.h)}${task.unit}`, [xC + 28, (pC[1]+pH[1])/2]]
+      'b': [pA, pC, `b = ${fmt(task.b)}${task.unit}`, [(pA[0]+pC[0])/2 - 32, (pA[1]+pC[1])/2 - 6]],
+      'a': [pC, pB, `a = ${fmt(task.a)}${task.unit}`, [(pC[0]+pB[0])/2 + 32, (pC[1]+pB[1])/2 - 6]],
+      'c': [pA, pB, `c = ${fmt(task.c)}${task.unit}`, [60 + cPx/2, 200]],
+      'h': [pC, pH, `h_c = ${fmt(task.h)}${task.unit}`, [xC + 38, (pC[1]+pH[1])/2]]
     };
 
     lines += `<polygon class="tri" points="${pA.join(',')} ${pB.join(',')} ${pC.join(',')}"/>`;
@@ -448,7 +450,7 @@ function draw() {
     }
   }
 
-  const note = task.selecting ? `<text x="180" y="212" class="tapnote">👆 Klicke in der Skizze die nötigen Kanten/Höhen an!</text>` : '';
+  const note = task.selecting ? `<text x="190" y="220" class="tapnote">👆 Klicke in der Skizze die nötigen Kanten/Höhen an!</text>` : '';
   $('#fig').innerHTML = `<svg viewBox="0 0 ${W} ${H}">${lines}${labels}${hits}${note}</svg>`;
 
   if (task.selecting) {
@@ -530,297 +532,4 @@ function stepFormulaChoice() {
   const isU = task.costType === 'u';
   let correctOpt = isU ? 'u = a + b + c' : (task.type === 'right' ? 'A = (a · b) / 2' : 'A = (c · h_c) / 2');
   let opt2 = isU ? 'u = a · b · c' : 'A = (a · b) / 2';
-  let opt3 = isU ? 'u = (a · b) / 2' : 'A = (a · h_c) / 2';
-
-  const d = addStep(2, 'Formel aufstellen', 
-    `<p>Wähle die passende Formel aus:</p>
-     <div class="opts">
-       <button class="opt" data-f="${correctOpt}">${correctOpt}</button>
-       <button class="opt" data-f="${opt2}">${opt2}</button>
-       <button class="opt" data-f="${opt3}">${opt3}</button>
-     </div>`);
-
-  d.querySelectorAll('.opt').forEach(btn => {
-    btn.onclick = () => {
-      if (btn.dataset.f === correctOpt) {
-        btn.classList.add('good');
-        right(d, `Richtig! ${correctOpt}`);
-        addWay(correctOpt);
-        stepInsertValues(isU);
-      } else {
-        btn.classList.add('wrongb');
-        wrong(d, 'Das ist nicht die korrekte Formel für diese Anforderung.');
-      }
-    };
-  });
-}
-
-function stepInsertValues(isU) {
-  let bodyHTML = '';
-  if (isU) {
-    bodyHTML = `<div class="eq"><span>u =</span><input class="n" id="v1"><span>+</span><input class="n" id="v2"><span>+</span><input class="n" id="v3"><button class="check" id="insBtn">Prüfen</button></div>`;
-  } else if (task.type === 'right') {
-    bodyHTML = `<div class="eq"><span>A =</span><div class="frac"><div class="frac-top"><input class="n" id="v1"><span>·</span><input class="n" id="v2"></div><div class="frac-bot"><input class="n" value="2" id="vBot" style="width:45px"></div></div><button class="check" id="insBtn">Prüfen</button></div>`;
-  } else {
-    bodyHTML = `<div class="eq"><span>A =</span><div class="frac"><div class="frac-top"><input class="n" id="v1"><span>·</span><input class="n" id="v2"></div><div class="frac-bot"><input class="n" value="2" id="vBot" style="width:45px"></div></div><button class="check" id="insBtn">Prüfen</button></div>`;
-  }
-
-  const d = addStep(3, 'Zahlen in die Formel einsetzen', `<p>Trage die Werte aus der Skizze ein:</p>` + bodyHTML);
-
-  $('#insBtn').onclick = () => {
-    if (isU) {
-      const v1 = parseNum($('#v1').value);
-      const v2 = parseNum($('#v2').value);
-      const v3 = parseNum($('#v3').value);
-      const vals = [v1, v2, v3].filter(x => !isNaN(x)).sort((x,y)=>x-y);
-      const exp = [task.a, task.b, task.c].sort((x,y)=>x-y);
-      if (vals.length === 3 && Math.abs(vals[0]-exp[0]) < 0.05 && Math.abs(vals[1]-exp[1]) < 0.05 && Math.abs(vals[2]-exp[2]) < 0.05) {
-        right(d, 'Richtig eingesetzt!');
-        addWay(`u = ${fmt(task.a)} + ${fmt(task.b)} + ${fmt(task.c)}`);
-        stepCalculateMain(true);
-      } else {
-        wrong(d, 'Vergleiche die Eingaben mit den Kantenlängen in der Skizze.');
-      }
-    } else {
-      const t1 = parseNum($('#v1').value);
-      const t2 = parseNum($('#v2').value);
-      const bot = parseNum($('#vBot').value);
-      const exp1 = task.type === 'right' ? task.a : task.c;
-      const exp2 = task.type === 'right' ? task.b : task.h;
-      const topOk = (Math.abs(t1 - exp1) < 0.05 && Math.abs(t2 - exp2) < 0.05) || (Math.abs(t1 - exp2) < 0.05 && Math.abs(t2 - exp1) < 0.05);
-      if (topOk && bot === 2) {
-        right(d, 'Sehr gut eingesetzt!');
-        addWay(`A = (${fmt(exp1)} · ${fmt(exp2)}) / 2`);
-        stepCalculateMain(false);
-      } else {
-        wrong(d, 'Überprüfe Zähler und Nenner (unten muss 2 stehen).');
-      }
-    }
-  };
-}
-
-function stepCalculateMain(isU) {
-  const stepNum = $('#steps').children.length + 1;
-  const targetVal = isU ? task.u : task.A;
-  const unitStr = isU ? task.unit : task.unit + '²';
-
-  const d = addStep(stepNum, isU ? 'Umfang u berechnen' : 'Flächeninhalt A berechnen', 
-    `<p>Rechne das Zwischenergebnis aus:</p>
-     <div class="eq"><span>${isU ? 'u' : 'A'} =</span><input class="n wide" id="resInp"><span>${unitStr}</span><button class="check" id="resBtn">Prüfen</button></div>`);
-
-  $('#resBtn').onclick = () => {
-    const val = parseNum($('#resInp').value);
-    if (Math.abs(val - targetVal) < 0.05) {
-      right(d, `Korrekt! ${isU ? 'u' : 'A'} = ${fmt(targetVal)} ${unitStr}`);
-      addWay(`${isU ? 'u' : 'A'} = ${fmt(targetVal)} ${unitStr}`);
-      
-      if (task.convertToM2) {
-        stepConvertM2();
-      } else if (task.multiplier) {
-        stepMultiplier();
-      } else {
-        stepCalcCost();
-      }
-    } else {
-      wrong(d, 'Rechenfehler. Überprüfe deine Rechnung.');
-    }
-  };
-}
-
-function stepConvertM2() {
-  const aM2 = task.A / 10000;
-  const d = addStep(5, 'Umrechnung in m²', 
-    `<p>Rechne A = ${fmt(task.A)} cm² in m² um (durch 10 000 teilen):</p>
-     <div class="eq"><span>A =</span><input class="n wide" id="m2Inp"><span>m²</span><button class="check" id="m2Btn">Prüfen</button></div>`);
-
-  $('#m2Btn').onclick = () => {
-    const val = parseNum($('#m2Inp').value);
-    if (Math.abs(val - aM2) < 0.005) {
-      right(d, `Richtig! A = ${fmt(aM2)} m²`);
-      addWay(`A = ${fmt(aM2)} m²`);
-      if (task.multiplier) stepMultiplier();
-      else stepCalcCost();
-    } else {
-      wrong(d, `Teile ${fmt(task.A)} durch 10 000.`);
-    }
-  };
-}
-
-function stepMultiplier() {
-  const singleM2 = task.convertToM2 ? task.A / 10000 : task.A;
-  const totalM2 = singleM2 * task.multiplier;
-  const d = addStep(6, 'Gesamtfläche berechnen', 
-    `<p>Multipliziere mit der Anzahl der Flächen (${task.multiplier}):</p>
-     <div class="eq"><span>A_gesamt =</span><input class="n wide" id="multiInp"><span>m²</span><button class="check" id="multiBtn">Prüfen</button></div>`);
-
-  $('#multiInp').onclick = () => {
-    const val = parseNum($('#multiInp').value);
-    if (Math.abs(val - totalM2) < 0.05) {
-      right(d, `Gesamte Fläche = ${fmt(totalM2)} m²`);
-      addWay(`A_gesamt = ${fmt(totalM2)} m²`);
-      stepCalcCost();
-    } else {
-      wrong(d, `Multipliziere ${fmt(singleM2)} mit ${task.multiplier}.`);
-    }
-  };
-}
-
-function stepCalcCost() {
-  const stepNum = $('#steps').children.length + 1;
-  const d = addStep(stepNum, 'Kostenberechnung', 
-    `<p>Berechne die Endkosten (${fmt(task.costPerUnit)} ${task.costUnit} pro Einheit):</p>
-     <div class="eq"><span>Kosten =</span><input class="n wide" id="cInp"><span>€</span><button class="check" id="cBtn">Prüfen</button></div>`);
-
-  $('#cBtn').onclick = () => {
-    const val = parseNum($('#cInp').value);
-    if (Math.abs(val - task.totalCost) < 0.1) {
-      right(d, `Perfekt! ${task.costName} = ${fmt(task.totalCost)} €`);
-      addWay(`Ergebnis: ${fmt(task.totalCost)} €`, 'final');
-      finish();
-    } else {
-      wrong(d, `Multipliziere den Wert mit dem Preis von ${fmt(task.costPerUnit)} €.`);
-    }
-  };
-}
-
-function finish() {
-  state.solved++;
-  if (task.errors === 0) state.perfect++;
-  state.idx++;
-  
-  state.log.push({
-    title: task.title,
-    section: task.section,
-    res: fmt(task.totalCost) + ' €',
-    errors: task.errors,
-    time: Math.round((Date.now() - task.t0) / 1000) + 's'
-  });
-
-  saveToLocalStorage();
-  updateScore();
-
-  const code = generateCode();
-  const isFinalEnd = state.idx >= TOTAL_TASKS;
-
-  let btnText = 'Nächste Aufgabe';
-  if (state.idx === 6) btnText = 'Zu den Hausübungen (HÜ 1–4)';
-  else if (isFinalEnd) btnText = 'Zur Gesamtauswertung';
-
-  $('#doneText').innerHTML = (task.errors === 0 
-    ? '<b>Perfekt gelöst ohne Fehler!</b>' 
-    : `Aufgabe geschafft mit ${task.errors} Fehlversuch(en).`) + 
-    `<div class="homework-box">
-       <h4>📝 Schulheft-Eintrag</h4>
-       <p>Übertrage die Aufgabe sauber in dein Heft (Angabe, Skizze, Formeln, Einsetzen, Antwortsatz).</p>
-       <hr style="border:0; border-top:1px dashed var(--pen); margin:8px 0;">
-       <p style="margin:0; font-size:14px;">Dein aktueller <b>Geräte-Wechsel-Code</b>:</p>
-       <div class="codebox">${code}</div>
-     </div>`;
-
-  $('#nextBtn').textContent = btnText;
-  $('#done').hidden = false;
-}
-
-function showSummary() {
-  closeKeypad();
-  const s = $('#summary');
-  let rows = state.log.map((l, i) => 
-    `<tr><td>${i+1}</td><td>${l.section}</td><td>${l.title}</td><td>${l.res}</td><td>${l.errors}</td><td>${l.time}</td></tr>`
-  ).join('');
-
-  s.innerHTML = `
-    <h2>Zusammenfassung für ${state.name || 'Schüler/in'}</h2>
-    <div class="tablewrap">
-      <table>
-        <thead><tr><th>Nr.</th><th>Teil</th><th>Aufgabe</th><th>Gesamtkosten</th><th>Fehler</th><th>Zeit</th></tr></thead>
-        <tbody>${rows}</tbody>
-      </table>
-    </div>
-    <div class="homework-box">
-      <h4>Super gemacht!</h4>
-      <p>Du hast alle 6 Schulübungen und 4 Hausübungen erfolgreich bearbeitet.</p>
-    </div>
-    <br>
-    <button class="next" onclick="location.reload()">Neustarten</button>
-  `;
-
-  $('.grid').hidden = true;
-  $('.controls').hidden = true;
-  $('#score').hidden = true;
-  s.hidden = false;
-}
-
-$('#nameOk').onclick = () => {
-  const name = $('#name').value.trim();
-  if (!name) { alert('Bitte gib deinen Namen ein.'); return; }
-  state.name = name;
-  state.nameLocked = true;
-  $('#name').disabled = true;
-  $('#nameOk').hidden = true;
-  
-  const saved = localStorage.getItem('dreieck_sach_app_' + name.toLowerCase().replace(/\s+/g, ''));
-  if (saved) {
-    if (confirm('Gespeicherten Stand für "' + name + '" laden?')) {
-      const data = JSON.parse(saved);
-      state.solved = data.solved;
-      state.perfect = data.perfect;
-      state.idx = data.idx;
-      state.log = data.log;
-    }
-  }
-
-  updateScore();
-  if (task && task.waiting) {
-    task.waiting = false;
-    $('#steps').innerHTML = '';
-    newTask();
-  }
-};
-
-$('#codeOk').onclick = () => {
-  const codeVal = $('#codeInp').value.trim();
-  if (!codeVal) { alert('Bitte gib einen Code ein.'); return; }
-  
-  let found = false;
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
-    if (key.startsWith('dreieck_sach_app_')) {
-      const data = JSON.parse(localStorage.getItem(key));
-      state.name = data.name;
-      if (String(generateCode()) === codeVal) {
-        state.solved = data.solved;
-        state.perfect = data.perfect;
-        state.idx = data.idx;
-        state.log = data.log;
-        state.nameLocked = true;
-        $('#name').value = data.name;
-        $('#name').disabled = true;
-        $('#nameOk').hidden = true;
-        found = true;
-        break;
-      }
-    }
-  }
-
-  if (found) {
-    alert('Fortschritt geladen! Willkommen zurück, ' + state.name + '.');
-    updateScore();
-    if (task && task.waiting) {
-      task.waiting = false;
-      $('#steps').innerHTML = '';
-      newTask();
-    }
-  } else {
-    alert('Ungültiger Code.');
-  }
-};
-
-$('#nextBtn').onclick = () => {
-  if (state.idx >= TOTAL_TASKS) showSummary();
-  else newTask();
-};
-
-newTask();
-</script>
-</body>
-</html>
+  let opt3 = isU ? 'u = (a ·
