@@ -1,680 +1,1109 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Textaufgaben: Umfang & Flächeninhalt am Dreieck</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Patrick+Hand&display=swap" rel="stylesheet">
-<style>
-:root{
-  --paper:#fdfdf9; --grid:#d6e4f2; --ink:#1b2a4a; --pen:#1d4ed8; --muted:#5b6b85;
-  --red:#c62828; --red-soft:#fdecea; --green:#2e7d32; --green-soft:#e6f4e7;
-  --marker:#ffe36e; --tri:#eaf1fb; --card:#ffffff; --line:#c9d6e6; --btn:#1b2a4a; --btn-ink:#ffffff;
-  color-scheme:light;
-  box-sizing:border-box;
-}
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --paper:#151b26; --grid:#222d3e; --ink:#e6ecf5; --pen:#8fb1ff; --muted:#9aa8bf;
-    --red:#ff7a7a; --red-soft:#3a1e22; --green:#6fd17a; --green-soft:#17301c;
-    --marker:#7a6516; --tri:#1e2a3e; --card:#1b2231; --line:#33415a; --btn:#e6ecf5; --btn-ink:#151b26;
-    color-scheme:dark;
-  }
-}
-*,*::before,*::after{box-sizing:inherit}
-body{
-  margin:0; color:var(--ink); background-color:var(--paper);
-  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
-  background-size:22px 22px;
-  font-family:"Atkinson Hyperlegible",system-ui,-apple-system,sans-serif; font-size:17px; line-height:1.5;
-  padding-bottom:260px;
-}
-.wrap{max-width:1080px;margin:0 auto;padding:28px 18px 60px}
-header h1{font-family:"Patrick Hand",cursive;font-weight:400;font-size:clamp(32px,5.5vw,48px);line-height:1.05;margin:0 0 6px;color:var(--pen)}
-header p{margin:0 0 20px;color:var(--muted);max-width:65ch}
-.controls{display:flex;flex-direction:column;gap:12px;margin-bottom:22px;background:var(--card);border:2px solid var(--line);border-radius:14px;padding:16px}
-.ctl-label{display:block;font-size:14px;font-weight:700;color:var(--ink);margin-bottom:4px}
-.namein{font:inherit;font-size:16px;padding:7px 12px;border:2px solid var(--ink);border-radius:10px;background:var(--card);color:var(--ink);width:260px;max-width:100%}
-.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:22px;align-items:start}
-@media (max-width:820px){.grid{grid-template-columns:1fr}}
-.sheet{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:18px}
-.task{font-size:19px;margin:0 0 12px;line-height:1.4}
-.task b{font-family:"Patrick Hand",cursive;font-size:24px;color:var(--pen);font-weight:400}
-svg{width:100%;height:auto;display:block}
-.side{stroke:var(--ink);stroke-width:3;stroke-linecap:round}
-.side.height-line{stroke:var(--red);stroke-width:2.5;stroke-dasharray:6 4}
-.tri{fill:var(--tri)}
-.ra{fill:none;stroke:var(--ink);stroke-width:2}
-.dot{fill:var(--ink)}
-.lbl{font-family:"Patrick Hand",cursive;font-size:19px;fill:var(--ink)}
-.way-title{margin:18px 0 4px;font-size:15px;color:var(--muted)}
-.way{font-family:"Patrick Hand",cursive;font-size:23px;line-height:1.5;color:var(--pen);min-height:44px;border-left:3px solid var(--pen);padding-left:14px}
-.way:empty::before{content:"Hier entsteht dein Rechenweg.";color:var(--muted);font-size:18px}
-.wline{animation:write .35s ease-out}
-@keyframes write{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:none}}
-.wline.final{display:inline-block;border-bottom:3px double var(--pen);margin-top:2px;font-weight:bold}
-.steps{display:flex;flex-direction:column;gap:12px}
-.step{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:14px 16px}
-.step.solved{border-color:var(--green)}
-.step-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.num{flex:none;width:30px;height:30px;border-radius:50%;border:2px solid var(--ink);display:grid;place-items:center;font-weight:700;font-size:15px}
-.step.solved .num{background:var(--green);border-color:var(--green);color:var(--card)}
-.step h3{margin:0;font-size:18px}
-.step p{margin:0 0 8px}
-.opts{display:flex;flex-wrap:wrap;gap:8px}
-.opt{font:inherit;font-family:"Patrick Hand",cursive;font-size:21px;min-width:56px;padding:4px 14px;border:2px solid var(--ink);border-radius:10px;background:var(--card);color:var(--ink);cursor:pointer}
-.opt:hover:not(:disabled){background:var(--tri)}
-.opt.good{background:var(--green-soft);border-color:var(--green);color:var(--green)}
-.opt.wrongb{background:var(--red-soft);border-color:var(--red);color:var(--red);text-decoration:line-through}
-.opt:disabled{cursor:default}
-.eq{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-family:"Patrick Hand",cursive;font-size:23px}
-.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 4px}
-.frac-top{border-bottom:2px solid var(--ink);padding-bottom:2px;display:flex;align-items:center;gap:4px}
-.frac-bot{padding-top:2px;display:flex;align-items:center;justify-content:center}
-.n{font:inherit;font-family:"Patrick Hand",cursive;font-size:21px;width:75px;padding:2px 4px;border:2px solid var(--ink);border-radius:8px;background:var(--paper);color:var(--pen);text-align:center}
-.n:focus{outline:3px solid var(--pen)}
-.n.wide{width:110px}
-.check,.next{font:inherit;font-size:16px;font-weight:700;padding:8px 16px;border-radius:10px;border:0;background:var(--btn);color:var(--btn-ink);cursor:pointer}
-.fb{font-size:15px;margin-top:8px}
-.fb:empty{display:none}
-.fb.bad{color:var(--red);background:var(--red-soft);padding:8px 10px;border-radius:8px}
-.fb.ok{color:var(--green)}
-.score{font-size:15px;color:var(--muted);margin:0 0 12px}
-.namerow{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
-.summary{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:20px}
-.summary h2{font-family:"Patrick Hand",cursive;font-size:32px;color:var(--pen);margin:0 0 14px}
-.tablewrap{overflow-x:auto;margin-bottom:14px}
-table{border-collapse:collapse;width:100%;font-size:15px}
-th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
-.tag{font-size:14px;color:var(--muted);font-weight:bold}
-.homework-box{background:var(--tri);border:2px dashed var(--pen);border-radius:10px;padding:12px 14px;margin-top:14px;font-size:15px}
-.homework-box h4{margin:0 0 6px;color:var(--pen);font-size:17px}
-.codebox{background:var(--paper);border:2px solid var(--ink);border-radius:8px;padding:8px 12px;font-family:monospace;font-size:18px;font-weight:bold;color:var(--pen);display:inline-block;margin:6px 0}
-.keypad{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:3px solid var(--pen);padding:10px 14px;box-shadow:0 -4px 20px rgba(0,0,0,0.15);display:flex;flex-direction:column;align-items:center;gap:8px;z-index:999}
-.keypad-header{display:flex;justify-content:space-between;width:100%;max-width:360px;font-size:14px;font-weight:bold;color:var(--muted)}
-.keypad-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;max-width:360px}
-.keybtn{font-family:"Patrick Hand",cursive;font-size:24px;padding:8px;border:2px solid var(--ink);border-radius:8px;background:var(--paper);color:var(--ink);cursor:pointer;text-align:center}
-.keybtn:active{background:var(--tri)}
-.keybtn.action{background:var(--btn);color:var(--btn-ink);font-size:18px;font-family:sans-serif}
-</style>
-</head>
-<body>
-<div class="wrap">
-  <header>
-    <h1>Textaufgaben: Dreiecke in der Praxis</h1>
-    <p>Berechne Umfang, Flächeninhalt und Folgekosten bei Sachaufgaben aus dem Alltag. (6 Schulübungen & 4 Hausübungen)</p>
-  </header>
-
-  <div class="controls">
-    <div>
-      <label class="ctl-label" for="name">1. Dein Name</label>
-      <div class="namerow">
-        <input id="name" class="namein" placeholder="Vor- und Nachname">
-        <button class="next" id="nameOk">Starten</button>
-      </div>
-    </div>
-    <div style="border-top: 1px solid var(--line); padding-top: 12px; margin-top: 4px;">
-      <label class="ctl-label" for="codeInp">2. Bereits einen Speicher-Code von einem anderen Gerät?</label>
-      <div class="namerow">
-        <input id="codeInp" class="namein" placeholder="Zahlencode eingeben" inputmode="numeric">
-        <button class="next" id="codeOk" style="background:var(--muted)">Fortschritt laden</button>
-      </div>
-    </div>
-  </div>
-
-  <p class="score" id="score">Gelöst: 0 von 10, davon fehlerfrei: 0</p>
-
-  <div class="grid">
-    <div class="sheet">
-      <p class="task" id="taskText"></p>
-      <div id="fig"></div>
-      <p class="way-title">Rechenweg</p>
-      <div class="way" id="way"></div>
-    </div>
-    <div>
-      <div class="steps" id="steps"></div>
-      <div class="done" id="done" hidden style="margin-top:16px;">
-        <p id="doneText" style="font-size:18px; margin-bottom:12px;"></p>
-        <button class="next" id="nextBtn">Nächste Aufgabe</button>
-      </div>
-    </div>
-  </div>
-
-  <section class="summary" id="summary" hidden></section>
-</div>
-
-<div class="keypad" id="keypad" hidden>
-  <div class="keypad-header">
-    <span>Eingabe über Tastatur / Touch</span>
-    <span style="cursor:pointer; color:var(--red)" onclick="closeKeypad()">✕ Schließen</span>
-  </div>
-  <div class="keypad-grid">
-    <button class="keybtn" onclick="keyPress('7')">7</button>
-    <button class="keybtn" onclick="keyPress('8')">8</button>
-    <button class="keybtn" onclick="keyPress('9')">9</button>
-    <button class="keybtn" onclick="keyPress('4')">4</button>
-    <button class="keybtn" onclick="keyPress('5')">5</button>
-    <button class="keybtn" onclick="keyPress('6')">6</button>
-    <button class="keybtn" onclick="keyPress('1')">1</button>
-    <button class="keybtn" onclick="keyPress('2')">2</button>
-    <button class="keybtn" onclick="keyPress('3')">3</button>
-    <button class="keybtn" onclick="keyPress(',')">,</button>
-    <button class="keybtn" onclick="keyPress('0')">0</button>
-    <button class="keybtn action" onclick="keyPress('back')">⌫</button>
-  </div>
-</div>
-
-<script>
-const TOTAL_TASKS = 10;
-const PRESETS = [
-  // --- SCHULÜBUNG (6 Aufgaben) ---
-  { 
-    section: 'Schulübung', roundNum: 1, roundMax: 3,
-    title: 'Waldstück aufforsten', 
-    type: 'general', a: 900, b: 1400, c: 1600, h: 800, unit: 'm',
-    text: 'Ein dreieckiges Waldstück soll mit Fichten neu aufgeforstet werden. Wie groß ist die Fläche A in m² und wie teuer ist das Holz, wenn 1 m² Fichtenpflanzen 2,50 € kosten?',
-    costPerUnit: 2.50, costName: 'Gesamtkosten', costUnit: '€', costType: 'A'
-  },
-  { 
-    section: 'Schulübung', roundNum: 2, roundMax: 3,
-    title: 'Hausgiebel verschalen', 
-    type: 'general', a: 800, b: 800, c: 1480, h: 680, unit: 'cm',
-    text: 'Der Giebel eines Hauses soll mit Holz verschalt werden. Grundseite c = 14,8 m (1480 cm) und Höhe h = 6,8 m (680 cm). Berechne den Flächeninhalt A in m² (1 m² = 10 000 cm²). Wie viel kostet das Holz bei 38 € pro m²?',
-    costPerUnit: 38, costName: 'Holzkosten', costUnit: '€', costType: 'A', convertToM2: true
-  },
-  { 
-    section: 'Schulübung', roundNum: 3, roundMax: 3,
-    title: 'Kirchturmdach neu decken', 
-    type: 'general', a: 720, b: 720, c: 450, h: 700, unit: 'cm',
-    text: 'Ein Kirchturmdach besteht aus 4 gleichen dreieckigen Flächen (c = 4,5 m = 450 cm, h = 7 m = 700 cm). Berechne die Fläche EINER Dreiecksseite A in m² und danach die Gesamtkosten für alle 4 Flächen bei 280 € pro m²!',
-    costPerUnit: 280, costName: 'Gesamtkosten (4 Flächen)', costUnit: '€', costType: 'A_multi', multiplier: 4, convertToM2: true
-  },
-  { 
-    section: 'Schulübung', roundNum: 4, roundMax: 6,
-    title: 'Rechtwinkliges Blumenbeet', 
-    type: 'right', a: 6, b: 8, c: 10, unit: 'm',
-    text: 'Ein rechtwinkliges Blumenbeet mit den Katheten a = 6 m und b = 8 m soll mit Platten eingefasst werden. Berechne den Umfang u in m und den Preis für den Zaun/Randstein bei 15 € pro Meter.',
-    costPerUnit: 15, costName: 'Einfassungskosten', costUnit: '€', costType: 'u'
-  },
-  { 
-    section: 'Schulübung', roundNum: 5, roundMax: 6,
-    title: 'Sonnensegel für den Garten', 
-    type: 'right', a: 3, b: 4, c: 5, unit: 'm',
-    text: 'Ein rechtwinkliges Sonnensegel besitzt die Katheten 3 m und 4 m. Wie viel m² Stoff A werden benötigt und was kostet das Segel bei 22 € pro m²?',
-    costPerUnit: 22, costName: 'Segelkosten', costUnit: '€', costType: 'A'
-  },
-  { 
-    section: 'Schulübung', roundNum: 6, roundMax: 6,
-    title: 'Dreieckiger Parkteich (Zaun)', 
-    type: 'general', a: 35, b: 42, c: 50, h: 28, unit: 'm',
-    text: 'Ein Ententeich im Park ist dreieckig abgegrenzt (a = 35 m, b = 42 m, c = 50 m). Wie lang ist der Sicherheitszaun um den gesamten Teich (Umfang u) und was kostet der Zaun bei 18 € / m?',
-    costPerUnit: 18, costName: 'Zaunkosten', costUnit: '€', costType: 'u'
-  },
-
-  // --- HAUSÜBUNG (4 Aufgaben) ---
-  { 
-    section: 'Hausübung', roundNum: 1, roundMax: 4,
-    title: 'Gartengrundstück einzäunen', 
-    type: 'general', a: 24, b: 30, c: 36, h: 20, unit: 'm',
-    text: 'HÜ 1: Ein dreieckiger Garten (a = 24 m, b = 30 m, c = 36 m, h = 20 m) erhält einen neuen Maschendrahtzaun. Berechne den Umfang u und die Zaunkosten bei 12 € pro Meter.',
-    costPerUnit: 12, costName: 'Zaunkosten', costUnit: '€', costType: 'u'
-  },
-  { 
-    section: 'Hausübung', roundNum: 2, roundMax: 4,
-    title: 'Rechtwinklige Dachfläche', 
-    type: 'right', a: 9, b: 12, c: 15, unit: 'm',
-    text: 'HÜ 2: Eine rechtwinklige Dachfläche hat die Katheten 9 m und 12 m. Berechne die Fläche A in m² und die Eindeckungskosten bei 45 € pro m².',
-    costPerUnit: 45, costName: 'Dachkosten', costUnit: '€', costType: 'A'
-  },
-  { 
-    section: 'Hausübung', roundNum: 3, roundMax: 4,
-    title: 'Bauplatz Raseneinsaat', 
-    type: 'general', a: 18, b: 22, c: 25, h: 16, unit: 'm',
-    text: 'HÜ 3: Auf einem dreieckigen Bauplatz (c = 25 m, h = 16 m) soll Rasen gesät werden. Berechne die Fläche A in m² und die Saatgutkosten bei 1,50 € pro m².',
-    costPerUnit: 1.5, costName: 'Saatgutkosten', costUnit: '€', costType: 'A'
-  },
-  { 
-    section: 'Hausübung', roundNum: 4, roundMax: 4,
-    title: 'Verkehrsschild streichen', 
-    type: 'right', a: 60, b: 80, c: 100, unit: 'cm',
-    text: 'HÜ 4: Ein rechtwinkliges Warnschild mit Katheten 60 cm und 80 cm erhält eine Reflexionsfolie. Berechne A in cm² und die Kosten bei 0,05 € pro cm².',
-    costPerUnit: 0.05, costName: 'Folienkosten', costUnit: '€', costType: 'A'
-  }
-];
-
-const state = { solved: 0, perfect: 0, log: [], nameLocked: false, idx: 0, name: '' };
-let task = null, activeInput = null;
-
-const $ = s => document.querySelector(s);
-function fmt(x){ return String(Math.round(x * 100) / 100).replace('.', ','); }
-function parseNum(s){ if(!s) return NaN; return Number(String(s).trim().replace(',', '.')); }
-
-function openKeypad(inputEl) {
-  activeInput = inputEl;
-  $('#keypad').hidden = false;
-}
-function closeKeypad() {
-  $('#keypad').hidden = true;
-  activeInput = null;
-}
-function keyPress(key) {
-  if (!activeInput) return;
-  if (key === 'back') {
-    activeInput.value = activeInput.value.slice(0, -1);
-  } else {
-    if (key === ',' && activeInput.value.includes(',')) return;
-    activeInput.value += key;
-  }
-  activeInput.dispatchEvent(new Event('input'));
-}
-
-document.addEventListener('focusin', e => {
-  if (e.target.tagName === 'INPUT' && e.target.classList.contains('n')) {
-    openKeypad(e.target);
-  }
-});
-
-function generateCode() {
-  let hash = 0;
-  const str = state.name + state.solved + state.perfect + state.idx;
-  for (let i = 0; i < str.length; i++) {
-    hash = ((hash << 5) - hash) + str.charCodeAt(i);
-    hash |= 0;
-  }
-  return Math.abs(hash % 900000 + 100000);
-}
-
-function updateScore() {
-  $('#score').textContent = (state.name ? state.name + ': ' : '') + `Gelöst: ${state.solved} von ${TOTAL_TASKS}, davon fehlerfrei: ${state.perfect}`;
-}
-
-function saveToLocalStorage() {
-  if (!state.nameLocked) return;
-  const data = { name: state.name, solved: state.solved, perfect: state.perfect, idx: state.idx, log: state.log };
-  localStorage.setItem('dreieck_text_app_' + state.name.toLowerCase().replace(/\s+/g, ''), JSON.stringify(data));
-}
-
-function newTask() {
-  const p = PRESETS[state.idx % TOTAL_TASKS];
-  
-  if (p.type === 'right') {
-    task = { ...p, u: p.a+p.b+p.c, A: (p.a*p.b)/2, errors: 0, t0: Date.now() };
-  } else {
-    task = { ...p, u: p.a+p.b+p.c, A: (p.c*p.h)/2, errors: 0, t0: Date.now() };
-  }
-
-  // Kostenberechnung vorbereiten
-  let targetVal = 0;
-  if (p.costType === 'u') targetVal = task.u;
-  else if (p.costType === 'A') {
-    targetVal = p.convertToM2 ? task.A / 10000 : task.A;
-  } else if (p.costType === 'A_multi') {
-    const singleM2 = p.convertToM2 ? task.A / 10000 : task.A;
-    targetVal = singleM2 * p.multiplier;
-  }
-  task.totalCost = targetVal * p.costPerUnit;
-
-  $('#steps').innerHTML = '';
-  $('#way').innerHTML = '';
-  $('#done').hidden = true;
-
-  const tagText = `${p.section} · Aufgabe ${p.roundNum} von ${p.roundMax} (Gesamt: ${state.idx + 1}/${TOTAL_TASKS}) · ${p.title}`;
-  $('#taskText').innerHTML = `<span class="tag">${tagText}</span><br>${p.text}`;
-
-  draw();
-
-  if (!state.nameLocked) {
-    task.waiting = true;
-    $('#steps').innerHTML = '<div class="step"><p>Gib bitte zuerst oben deinen Namen ein oder nutze einen Speicher-Code.</p></div>';
-    return;
-  }
-  stepFormulaChoice();
-}
-
-function draw() {
-  const W = 360, H = 220;
-  let lines = '', labels = '';
-
-  if (task.type === 'right') {
-    const pA = [50, 170], pB = [310, 170], pC = [50, 40];
-    lines += `<polygon class="tri" points="${pA.join(',')} ${pB.join(',')} ${pC.join(',')}"/>`;
-    lines += `<path class="ra" d="M50,155 L65,155 L65,170"/><circle class="dot" cx="57" cy="162" r="2"/>`;
-
-    lines += `<line x1="${pC[0]}" y1="${pC[1]}" x2="${pA[0]}" y2="${pA[1]}" class="side"/>`;
-    lines += `<line x1="${pA[0]}" y1="${pA[1]}" x2="${pB[0]}" y2="${pB[1]}" class="side"/>`;
-    lines += `<line x1="${pB[0]}" y1="${pB[1]}" x2="${pC[0]}" y2="${pC[1]}" class="side"/>`;
-
-    labels += `<text x="28" y="110" class="lbl" text-anchor="middle">a=${fmt(task.a)}${task.unit}</text>`;
-    labels += `<text x="180" y="195" class="lbl" text-anchor="middle">b=${fmt(task.b)}${task.unit}</text>`;
-    labels += `<text x="195" y="95" class="lbl" text-anchor="middle">c=${fmt(task.c)}${task.unit}</text>`;
-  } else {
-    const scale = 0.18;
-    const cPx = Math.min(task.c * scale, 240);
-    const xC = 50 + (cPx * 0.55);
-    const yC = 170 - Math.min(task.h * scale, 120);
-
-    const pA = [50, 170], pB = [50 + cPx, 170], pC = [xC, yC], pH = [xC, 170];
-
-    lines += `<polygon class="tri" points="${pA.join(',')} ${pB.join(',')} ${pC.join(',')}"/>`;
-    lines += `<line x1="${pA[0]}" y1="${pA[1]}" x2="${pC[0]}" y2="${pC[1]}" class="side"/>`;
-    lines += `<line x1="${pC[0]}" y1="${pC[1]}" x2="${pB[0]}" y2="${pB[1]}" class="side"/>`;
-    lines += `<line x1="${pA[0]}" y1="${pA[1]}" x2="${pB[0]}" y2="${pB[1]}" class="side"/>`;
-    lines += `<line x1="${pC[0]}" y1="${pC[1]}" x2="${pH[0]}" y2="${pH[1]}" class="side height-line"/>`;
-
-    labels += `<text x="${(pA[0]+pC[0])/2 - 25}" y="${(pA[1]+pC[1])/2}" class="lbl">b=${fmt(task.b)}</text>`;
-    labels += `<text x="${(pC[0]+pB[0])/2 + 10}" y="${(pC[1]+pB[1])/2}" class="lbl">a=${fmt(task.a)}</text>`;
-    labels += `<text x="${pA[0] + cPx/2}" y="195" class="lbl" text-anchor="middle">c=${fmt(task.c)}${task.unit}</text>`;
-    labels += `<text x="${xC + 10}" y="${(pC[1]+pH[1])/2}" class="lbl">h=${fmt(task.h)}${task.unit}</text>`;
-  }
-
-  $('#fig').innerHTML = `<svg viewBox="0 0 ${W} ${H}">${lines}${labels}</svg>`;
-}
-
-function addStep(num, title, body) {
-  const d = document.createElement('section');
-  d.className = 'step';
-  d.innerHTML = `<div class="step-head"><span class="num">${num}</span><h3>${title}</h3></div><div class="body">${body}</div><div class="fb"></div>`;
-  $('#steps').appendChild(d);
-  return d;
-}
-
-function wrong(d, msg) {
-  task.errors++;
-  const fb = d.querySelector('.fb');
-  fb.className = 'fb bad';
-  fb.textContent = msg;
-}
-
-function right(d, msg) {
-  d.classList.add('solved');
-  const fb = d.querySelector('.fb');
-  fb.className = 'fb ok';
-  fb.textContent = '✓ ' + msg;
-  d.querySelectorAll('input,button,select').forEach(e => e.disabled = true);
-  closeKeypad();
-}
-
-function addWay(text, cls = '') {
-  const el = document.createElement('div');
-  el.className = 'wline' + (cls ? ' ' + cls : '');
-  el.textContent = text;
-  $('#way').appendChild(el);
-}
-
-function stepFormulaChoice() {
-  const isU = task.costType === 'u';
-  const d = addStep(1, 'Welche Formel benötigst du primär?', 
-    `<p>Lies den Fragetext genau: Benötigen wir den Umfang u (Zaun/Rand) oder den Flächeninhalt A?</p>
-     <div class="opts">
-       <button class="opt" data-f="u">Umfang u</button>
-       <button class="opt" data-f="A">Flächeninhalt A</button>
-     </div>`);
-
-  d.querySelectorAll('.opt').forEach(btn => {
-    btn.onclick = () => {
-      const choice = btn.dataset.f;
-      if ((isU && choice === 'u') || (!isU && choice === 'A')) {
-        btn.classList.add('good');
-        right(d, `Richtig! Für ${task.costName} benötigen wir zuerst ${isU ? 'den Umfang u' : 'die Fläche A'}.`);
-        if (isU) {
-          addWay('u = a + b + c');
-          stepCalcU();
-        } else {
-          const formStr = task.type === 'right' ? 'A = (a · b) / 2' : 'A = (c · h) / 2';
-          addWay(formStr);
-          stepCalcA();
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interaktives Geometrie-Heft: Dreiecke</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Atkinson Hyperlegible & Patrick Hand -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Patrick+Hand&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Atkinson Hyperlegible', sans-serif; 
+            background-color: #fbf9f4;
+            color: #2d3748;
         }
-      } else {
-        btn.classList.add('wrongb');
-        wrong(d, isU ? 'Ein Zaun oder Rand verläuft UM das Dreieck herum -> Umfang u!' : 'Eine Fläche (Wiese, Dach, Stoff) benötigt den Flächeninhalt A!');
-      }
-    };
-  });
-}
+        .handwritten { font-family: 'Patrick Hand', cursive; }
+        
+        /* Custom paper effect */
+        .paper-card {
+            background-color: #ffffff;
+            background-image: radial-gradient(#e2e8f0 0.75px, transparent 0.75px);
+            background-size: 16px 16px;
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.03);
+        }
 
-function stepCalcU() {
-  const d = addStep(2, 'Umfang u berechnen', 
-    `<p>Setze die Wände/Kanten ein und berechne u:</p>
-     <div class="eq"><span>u =</span><input class="n wide" id="uInp" readonly onclick="openKeypad(this)"><span>${task.unit}</span><button class="check" id="uBtn">Prüfen</button></div>`);
+        .keypad-btn {
+            @apply bg-amber-50 hover:bg-amber-100 active:bg-amber-200 text-amber-900 font-bold py-2.5 rounded-lg text-lg transition-colors border border-amber-200 shadow-sm flex items-center justify-center select-none cursor-pointer;
+        }
 
-  $('#uBtn').onclick = () => {
-    const val = parseNum($('#uInp').value);
-    if (Math.abs(val - task.u) < 0.05) {
-      right(d, `Korrekt! u = ${fmt(task.u)} ${task.unit}`);
-      addWay(`u = ${fmt(task.u)} ${task.unit}`);
-      stepCalcCost();
-    } else {
-      wrong(d, `Addiere die drei Außenseiten (${fmt(task.a)} + ${fmt(task.b)} + ${fmt(task.c)}).`);
-    }
-  };
-}
+        /* SVG Interactive Elements */
+        .svg-selectable {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .svg-selectable:hover {
+            stroke-width: 4px;
+            filter: drop-shadow(0 0 3px rgba(79, 70, 229, 0.5));
+        }
+        .svg-selected {
+            stroke: #2563eb !important;
+            stroke-width: 4px !important;
+        }
+        .svg-label-selected {
+            fill: #2563eb !important;
+            font-weight: bold !important;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
 
-function stepCalcA() {
-  const isRight = task.type === 'right';
-  const d = addStep(2, 'Flächeninhalt A berechnen', 
-    `<p>Berechne die Fläche A in ${task.unit}²:</p>
-     <div class="eq"><span>A =</span><input class="n wide" id="aInp" readonly onclick="openKeypad(this)"><span>${task.unit}²</span><button class="check" id="aBtn">Prüfen</button></div>`);
+    <!-- Top Navigation Header -->
+    <header class="bg-amber-800 text-amber-50 border-b-4 border-amber-900 shadow-md">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
+            <div class="flex items-center space-x-3">
+                <div class="bg-amber-100/10 p-2 rounded-xl border border-amber-400/20">
+                    <i class="fa-solid fa-ruler-combined text-2xl text-amber-200"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-xl leading-tight handwritten text-2xl tracking-wide">Geometrie-Lernheft</h1>
+                    <p class="text-xs text-amber-200">Dreiecksberechnungen: Umfang, Fläche & Kosten</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-2">
+                <button id="btn-device-code" class="bg-amber-700/80 hover:bg-amber-700 text-xs sm:text-sm px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 border border-amber-500/30">
+                    <i class="fa-solid fa-key"></i> <span class="hidden sm:inline">Geräte-Code</span>
+                </button>
+                <button id="btn-teacher-view" class="bg-emerald-700 hover:bg-emerald-800 text-xs sm:text-sm px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 font-medium shadow-sm border border-emerald-600">
+                    <i class="fa-solid fa-chalkboard-user"></i> <span>Lehrkraft-Ansicht</span>
+                </button>
+            </div>
+        </div>
+    </header>
 
-  $('#aBtn').onclick = () => {
-    const val = parseNum($('#aInp').value);
-    if (Math.abs(val - task.A) < 0.05) {
-      right(d, `Hervorragend! A = ${fmt(task.A)} ${task.unit}²`);
-      addWay(`A = ${fmt(task.A)} ${task.unit}²`);
-      if (task.convertToM2) {
-        stepConvertM2();
-      } else if (task.multiplier) {
-        stepMultiplier();
-      } else {
-        stepCalcCost();
-      }
-    } else {
-      wrong(d, isRight ? `Multipliziere Kathete a (${fmt(task.a)}) mit Kathete b (${fmt(task.b)}) und teile durch 2.` : `Multipliziere Grundseite c (${fmt(task.c)}) mit Höhe h (${fmt(task.h)}) und teile durch 2.`);
-    }
-  };
-}
+    <!-- Main Workspace -->
+    <main class="max-w-6xl mx-auto w-full px-4 py-6 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-function stepConvertM2() {
-  const aM2 = task.A / 10000;
-  const d = addStep(3, 'Umrechnung in m²', 
-    `<p>Da der Preis pro m² angegeben ist: Rechne A = ${fmt(task.A)} cm² in m² um (durch 10 000 teilen):</p>
-     <div class="eq"><span>A =</span><input class="n wide" id="m2Inp" readonly onclick="openKeypad(this)"><span>m²</span><button class="check" id="m2Btn">Prüfen</button></div>`);
+        <!-- Sidebar Navigation (Tasks List) -->
+        <aside class="lg:col-span-4 bg-white rounded-2xl p-4 shadow-sm border border-amber-200/60 flex flex-col h-fit">
+            <div class="flex items-center justify-between mb-3 pb-2 border-b border-amber-100">
+                <h2 class="font-bold text-amber-900 flex items-center gap-2 handwritten text-xl">
+                    <i class="fa-solid fa-book-bookmark text-amber-700"></i> Aufgabenheft
+                </h2>
+                <span id="overall-progress" class="text-xs bg-amber-100 text-amber-800 font-bold px-2.5 py-1 rounded-full border border-amber-200">0 / 10 Erledigt</span>
+            </div>
 
-  $('#m2Btn').onclick = () => {
-    const val = parseNum($('#m2Inp').value);
-    if (Math.abs(val - aM2) < 0.005) {
-      right(d, `Richtig! A = ${fmt(aM2)} m²`);
-      addWay(`A = ${fmt(aM2)} m²`);
-      if (task.multiplier) stepMultiplier();
-      else stepCalcCost();
-    } else {
-      wrong(d, `Teile ${fmt(task.A)} durch 10 000 (Komma um 4 Stellen nach links).`);
-    }
-  };
-}
+            <!-- Category Tabs -->
+            <div class="flex bg-amber-50 p-1 rounded-xl mb-4 text-xs font-semibold border border-amber-200/50">
+                <button id="tab-su" class="flex-1 py-2 rounded-lg bg-white shadow-sm text-amber-900 font-bold text-center transition">Schulübung (6)</button>
+                <button id="tab-hu" class="flex-1 py-2 rounded-lg text-amber-700 hover:text-amber-900 text-center transition">Hausübung (4)</button>
+            </div>
 
-function stepMultiplier() {
-  const singleM2 = task.convertToM2 ? task.A / 10000 : task.A;
-  const totalM2 = singleM2 * task.multiplier;
-  const d = addStep(4, 'Gesamtfläche berechnen', 
-    `<p>Das Dach hat ${task.multiplier} gleiche Flächen. Berechne die gesamte Fläche:</p>
-     <div class="eq"><span>A_gesamt =</span><input class="n wide" id="multiInp" readonly onclick="openKeypad(this)"><span>m²</span><button class="check" id="multiBtn">Prüfen</button></div>`);
+            <!-- Task List Container -->
+            <div id="taskList" class="space-y-2 max-h-[520px] overflow-y-auto pr-1">
+                <!-- Dynamically Populated Tasks -->
+            </div>
 
-  $('#multiBtn').onclick = () => {
-    const val = parseNum($('#multiInp').value);
-    if (Math.abs(val - totalM2) < 0.05) {
-      right(d, `Sehr gut! Gesamte Fläche = ${fmt(totalM2)} m²`);
-      addWay(`A_gesamt = ${fmt(totalM2)} m²`);
-      stepCalcCost();
-    } else {
-      wrong(d, `Multipliziere ${fmt(singleM2)} m² mit ${task.multiplier}.`);
-    }
-  };
-}
+            <!-- Reset Button -->
+            <div class="mt-4 pt-3 border-t border-amber-100 flex justify-between items-center">
+                <button id="btn-reset-progress" class="text-xs text-rose-600 hover:text-rose-800 flex items-center gap-1 font-medium">
+                    <i class="fa-solid fa-rotate-left"></i> Fortschritt zurücksetzen
+                </button>
+            </div>
+        </aside>
 
-function stepCalcCost() {
-  const stepNum = $('#steps').children.length + 1;
-  const d = addStep(stepNum, 'Kostenberechnung', 
-    `<p>Berechne die Gesamtkosten (${fmt(task.costPerUnit)} ${task.costUnit} pro Einheit):</p>
-     <div class="eq"><span>Kosten =</span><input class="n wide" id="cInp" readonly onclick="openKeypad(this)"><span>€</span><button class="check" id="cBtn">Prüfen</button></div>`);
+        <!-- Main Task Panel -->
+        <section class="lg:col-span-8 space-y-6">
 
-  $('#cBtn').onclick = () => {
-    const val = parseNum($('#cInp').value);
-    if (Math.abs(val - task.totalCost) < 0.1) {
-      right(d, `Perfekt! ${task.costName} = ${fmt(task.totalCost)} €`);
-      addWay(`Ergebnis: ${fmt(task.totalCost)} €`, 'final');
-      finish();
-    } else {
-      wrong(d, `Multipliziere den ermittelten Wert mit dem Einzelpreis von ${fmt(task.costPerUnit)} €.`);
-    }
-  };
-}
+            <!-- Active Task Description Card -->
+            <div class="paper-card rounded-2xl p-5 border border-amber-200/80 relative">
+                <div class="flex justify-between items-start mb-3">
+                    <div>
+                        <span id="task-category-badge" class="inline-block text-[10px] uppercase tracking-wider font-bold px-2.5 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-200 mb-1">Schulübung</span>
+                        <h2 id="task-title" class="text-2xl font-bold text-amber-950 handwritten">1. Waldstück neu aufforsten</h2>
+                    </div>
+                    <span id="task-status-badge" class="px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-500 flex items-center gap-1.5 border border-slate-200">
+                        <i class="fa-regular fa-circle"></i> Offen
+                    </span>
+                </div>
 
-function finish() {
-  state.solved++;
-  if (task.errors === 0) state.perfect++;
-  state.idx++;
-  
-  state.log.push({
-    title: task.title,
-    section: task.section,
-    res: fmt(task.totalCost) + ' €',
-    errors: task.errors,
-    time: Math.round((Date.now() - task.t0) / 1000) + 's'
-  });
+                <!-- Problem Text -->
+                <p id="task-description" class="text-slate-700 text-sm sm:text-base leading-relaxed bg-amber-50/60 p-4 rounded-xl border border-amber-100 mb-4">
+                    <!-- Task Text Populated Here -->
+                </p>
 
-  saveToLocalStorage();
-  updateScore();
+                <!-- Step 1: Interactive SVG Triangle Selection -->
+                <div class="bg-amber-50/30 rounded-xl p-4 border border-amber-200/60 flex flex-col items-center">
+                    <div class="w-full flex justify-between items-center mb-2">
+                        <span class="text-xs font-bold text-amber-900 flex items-center gap-1.5">
+                            <i class="fa-solid fa-pointer text-amber-600"></i> Schritt 1: Klicke in der Skizze die benötigten Bestimmungsstücke an!
+                        </span>
+                        <span id="svg-selection-counter" class="text-xs font-mono font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded">0 gewählt</span>
+                    </div>
 
-  const code = generateCode();
-  const isFinalEnd = state.idx >= TOTAL_TASKS;
+                    <div class="w-full bg-white rounded-xl p-3 border border-amber-100 flex justify-center relative min-h-[220px]">
+                        <svg id="triangle-svg" viewBox="0 0 300 180" class="w-full max-w-md h-auto overflow-visible select-none">
+                            <!-- SVG Dynamic Diagram -->
+                        </svg>
+                    </div>
+                    
+                    <p id="svg-help-text" class="text-xs text-amber-700 mt-2 font-medium text-center">
+                        Tipp: Wähle alle Maße/Seiten aus, die du für die gesuchte Größe brauchst.
+                    </p>
+                </div>
+            </div>
 
-  let btnText = 'Nächste Aufgabe';
-  if (state.idx === 6) btnText = 'Hausübung starten (HÜ 1 - 4)';
-  else if (isFinalEnd) btnText = 'Zur Gesamtauswertung';
+            <!-- Steps Panel -->
+            <div class="paper-card rounded-2xl p-5 border border-amber-200/80 space-y-6">
+                
+                <!-- Step 2: Formel selbst erstellen -->
+                <div id="step-2-container" class="space-y-3 opacity-50 pointer-events-none transition-all border-b border-amber-100 pb-5">
+                    <div class="flex items-center gap-2 text-sm font-bold text-amber-950">
+                        <span class="w-6 h-6 rounded-full bg-amber-800 text-white flex items-center justify-center text-xs">2</span>
+                        <span>Erstelle die passende Formel:</span>
+                    </div>
 
-  $('#doneText').innerHTML = (task.errors === 0 
-    ? '<b>Perfekt gelöst ohne Fehler!</b>' 
-    : `Aufgabe geschafft mit ${task.errors} Fehlversuch(en).`) + 
-    `<div class="homework-box">
-       <h4>📝 Schulheft-Auftrag</h4>
-       <p>Übertrage die Beispielrechnung in dein Heft:</p>
-       <ul>
-         <li><b>Gegeben & Gesucht:</b> (z.B. c = ..., h = ..., Kosten = ?)</li>
-         <li><b>Skizze:</b> Sauber gezeichnet mit Beschriftung</li>
-         <li><b>Rechenweg & Antwortsatz:</b> Formel, Einsetzen, Ergebnis</li>
-       </ul>
-       <hr style="border:0; border-top:1px dashed var(--pen); margin:10px 0;">
-       <p style="margin:0; font-size:14px;">Dein aktueller <b>Geräte-Wechsel-Code</b> lautet:</p>
-       <div class="codebox">${code}</div>
-     </div>`;
+                    <!-- Formula Builder Interface -->
+                    <div class="pl-8 space-y-2">
+                        <div class="flex flex-wrap items-center gap-2 bg-amber-50 p-3 rounded-xl border border-amber-200/80 text-base font-mono">
+                            <span id="formula-target-label" class="font-bold text-amber-900 text-lg">A =</span>
+                            <div id="formula-builder-slots" class="flex items-center gap-1.5 flex-wrap">
+                                <!-- Interactive Formula Slots -->
+                            </div>
+                        </div>
 
-  $('#nextBtn').textContent = btnText;
-  $('#done').hidden = false;
-}
+                        <!-- Variable / Operator Palette Buttons -->
+                        <div id="formula-palette" class="flex flex-wrap gap-1.5 pt-1">
+                            <!-- Variable tags inserted dynamically -->
+                        </div>
+                    </div>
+                </div>
 
-function showSummary() {
-  closeKeypad();
-  const s = $('#summary');
-  let rows = state.log.map((l, i) => 
-    `<tr><td>${i+1}</td><td>${l.section}</td><td>${l.title}</td><td>${l.res}</td><td>${l.errors}</td><td>${l.time}</td></tr>`
-  ).join('');
+                <!-- Step 3: Werte einsetzen & Berechnen -->
+                <div id="step-3-container" class="space-y-3 opacity-50 pointer-events-none transition-all border-b border-amber-100 pb-5">
+                    <div class="flex items-center gap-2 text-sm font-bold text-amber-950">
+                        <span class="w-6 h-6 rounded-full bg-amber-800 text-white flex items-center justify-center text-xs">3</span>
+                        <span>Werte einsetzen und Hauptgröße berechnen:</span>
+                    </div>
 
-  s.innerHTML = `
-    <h2>Zusammenfassung für die Lehrkraft</h2>
-    <p><b>Name:</b> ${state.name || '–'}</p>
-    <div class="tablewrap">
-      <table>
-        <thead><tr><th>Nr.</th><th>Teil</th><th>Beispiel</th><th>Gesamtkosten</th><th>Fehler</th><th>Zeit</th></tr></thead>
-        <tbody>${rows}</tbody>
-      </table>
+                    <div class="pl-8 space-y-3">
+                        <div class="flex flex-wrap items-center gap-2 font-mono bg-amber-50 p-3 rounded-xl border border-amber-200/80" id="step3-values-builder">
+                            <!-- Dynamic value inputs -->
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <span class="font-bold text-slate-700 text-sm">Ergebnis:</span>
+                            <input type="text" id="main-result-input" readonly placeholder="Ergebnis..." class="w-36 bg-white border border-amber-300 rounded-lg px-3 py-1.5 text-lg font-bold text-indigo-700 text-center focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer">
+                            <span id="main-result-unit" class="font-bold text-slate-700">m²</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Kosten / Anwendung berechnen -->
+                <div id="step-4-container" class="space-y-3 opacity-50 pointer-events-none transition-all">
+                    <div class="flex items-center gap-2 text-sm font-bold text-amber-950">
+                        <span class="w-6 h-6 rounded-full bg-amber-800 text-white flex items-center justify-center text-xs">4</span>
+                        <span>Anwendungsaufgabe / Gesamtkosten berechnen:</span>
+                    </div>
+
+                    <div class="pl-8 space-y-3">
+                        <p id="step4-question-text" class="text-xs sm:text-sm text-slate-700 bg-amber-50/80 p-3 rounded-lg border border-amber-100 font-medium">
+                            <!-- Question logic -->
+                        </p>
+                        <div class="flex flex-wrap items-center gap-3">
+                            <span class="font-bold text-slate-700 text-sm">Gesamtergebnis / Kosten:</span>
+                            <input type="text" id="final-cost-input" readonly placeholder="Betrag..." class="w-40 bg-white border border-amber-300 rounded-lg px-3 py-1.5 text-lg font-bold text-emerald-700 text-center focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer">
+                            <span id="cost-unit" class="font-bold text-slate-700">€</span>
+                            <button id="btn-check-all" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2 rounded-lg transition shadow-sm ml-auto text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-check"></i> Antwort Prüfen
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- On-Screen Keypad -->
+                <div id="keypad-panel" class="pt-4 border-t border-amber-100">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-xs font-bold text-amber-800 uppercase tracking-wider">Eingabe-Tastatur</span>
+                        <span id="active-input-label" class="text-xs text-indigo-700 font-bold bg-indigo-50 px-2.5 py-0.5 rounded border border-indigo-100">Wähle ein Eingabefeld</span>
+                    </div>
+                    <div class="grid grid-cols-4 gap-2 max-w-xs sm:max-w-sm mx-auto">
+                        <button class="keypad-btn" data-key="7">7</button>
+                        <button class="keypad-btn" data-key="8">8</button>
+                        <button class="keypad-btn" data-key="9">9</button>
+                        <button class="keypad-btn bg-rose-100 hover:bg-rose-200 text-rose-800 border-rose-300" data-key="DEL"><i class="fa-solid fa-backspace"></i></button>
+                        <button class="keypad-btn" data-key="4">4</button>
+                        <button class="keypad-btn" data-key="5">5</button>
+                        <button class="keypad-btn" data-key="6">6</button>
+                        <button class="keypad-btn bg-slate-200 hover:bg-slate-300 text-slate-700 border-slate-300" data-key="CLR">C</button>
+                        <button class="keypad-btn" data-key="1">1</button>
+                        <button class="keypad-btn" data-key="2">2</button>
+                        <button class="keypad-btn" data-key="3">3</button>
+                        <button class="keypad-btn" data-key="*">*</button>
+                        <button class="keypad-btn" data-key="0">0</button>
+                        <button class="keypad-btn" data-key=",">,</button>
+                        <button class="keypad-btn" data-key="+">+</button>
+                        <button class="keypad-btn" data-key="/">/</button>
+                    </div>
+                </div>
+
+                <!-- Feedback Message Container -->
+                <div id="feedback-box" class="hidden p-4 rounded-xl text-sm font-medium transition-all"></div>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal: Device Code Import/Export -->
+    <div id="modal-device-code" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-amber-200">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2 handwritten text-xl">
+                    <i class="fa-solid fa-key text-amber-600"></i> Fortschritt Speichern / Laden
+                </h3>
+                <button class="btn-close-modal text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <p class="text-xs text-slate-600 leading-relaxed">
+                Kopiere deinen Code, um deinen Fortschritt auf einem anderen Gerät fortzusetzen, oder füge einen vorhanden Code ein.
+            </p>
+            <div class="space-y-2">
+                <label class="text-xs font-bold text-slate-700">Dein aktueller Code:</label>
+                <div class="flex gap-2">
+                    <input type="text" id="export-code-input" readonly class="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 font-mono text-xs text-slate-700">
+                    <button id="btn-copy-code" class="bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold px-3 py-2 rounded-lg text-xs transition">Kopieren</button>
+                </div>
+            </div>
+            <div class="pt-2 border-t border-slate-100 space-y-2">
+                <label class="text-xs font-bold text-slate-700">Code eingeben:</label>
+                <div class="flex gap-2">
+                    <input type="text" id="import-code-input" placeholder="Code einfügen..." class="flex-1 border border-slate-300 rounded-lg px-3 py-2 font-mono text-xs focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                    <button id="btn-apply-code" class="bg-amber-800 hover:bg-amber-900 text-white font-bold px-4 py-2 rounded-lg text-xs transition">Laden</button>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="homework-box">
-      <h4>Wichtiger Hinweis zum Heft-Eintrag:</h4>
-      <p>Überprüfe, ob alle 6 Schulübungen und 4 Hausübungen mit <b>Angaben</b>, <b>Skizze</b> und <b>Rechenweg</b> im Heft eingetragen sind!</p>
+
+    <!-- Modal: Teacher Summary Table -->
+    <div id="modal-teacher-view" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl max-w-4xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] flex flex-col border border-amber-200">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="p-2.5 bg-emerald-100 text-emerald-800 rounded-xl"><i class="fa-solid fa-chalkboard-user text-xl"></i></div>
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-lg handwritten text-2xl">Lehrkraft-Kontrollansicht</h3>
+                        <p class="text-xs text-slate-500">Übersicht aller gelösten Aufgaben und Teilschritte</p>
+                    </div>
+                </div>
+                <button class="btn-close-modal text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+
+            <!-- Stats Overview -->
+            <div class="grid grid-cols-3 gap-3">
+                <div class="bg-amber-50 p-3 rounded-xl border border-amber-200/60 text-center">
+                    <span class="block text-2xl font-bold text-amber-900" id="teacher-stat-total">0/10</span>
+                    <span class="text-[11px] text-amber-700 font-bold uppercase">Gesamt</span>
+                </div>
+                <div class="bg-indigo-50 p-3 rounded-xl border border-indigo-100 text-center">
+                    <span class="block text-2xl font-bold text-indigo-900" id="teacher-stat-su">0/6</span>
+                    <span class="text-[11px] text-indigo-700 font-bold uppercase">Schulübungen</span>
+                </div>
+                <div class="bg-amber-50 p-3 rounded-xl border border-amber-200/60 text-center">
+                    <span class="block text-2xl font-bold text-amber-800" id="teacher-stat-hu">0/4</span>
+                    <span class="text-[11px] text-amber-700 font-bold uppercase">Hausübungen</span>
+                </div>
+            </div>
+
+            <!-- Progress Table -->
+            <div class="overflow-y-auto flex-1 border border-slate-200 rounded-xl">
+                <table class="w-full text-left text-xs">
+                    <thead class="bg-slate-100 text-slate-700 font-bold sticky top-0">
+                        <tr>
+                            <th class="p-3">Aufgabe</th>
+                            <th class="p-3">Typ</th>
+                            <th class="p-3">Status</th>
+                            <th class="p-3 text-center">Skizze / Formel</th>
+                            <th class="p-3 text-right">Hauptwert</th>
+                            <th class="p-3 text-right">Endpreis/Kosten</th>
+                        </tr>
+                    </thead>
+                    <tbody id="teacher-table-body" class="divide-y divide-slate-100 font-mono">
+                        <!-- Dynamic Rows -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pt-2 flex justify-end">
+                <button class="btn-close-modal bg-amber-900 text-white font-bold px-5 py-2 rounded-xl text-xs hover:bg-amber-950 transition">Schließen</button>
+            </div>
+        </div>
     </div>
-    <br>
-    <button class="next" onclick="location.reload()">Neustarten</button>
-  `;
 
-  $('.grid').hidden = true;
-  $('.controls').hidden = true;
-  $('#score').hidden = true;
-  s.hidden = false;
-}
+    <!-- Application Script Logic -->
+    <script>
+        // --- DATA STRUCTURE FOR ALL 10 TASKS (6 SÜ + 4 HÜ) ---
+        const TASKS = [
+            // Schulübungen (SÜ)
+            {
+                id: 'su_1',
+                type: 'SÜ',
+                number: 1,
+                title: 'Waldstück neu aufforsten',
+                description: 'Ein dreieckiges Waldstück soll mit jungen Eichen neu bepflanzt werden. Die Grundseite des Dreiecks beträgt g = 120 m und die zugehörige Höhe h_c = 75 m. Wie groß ist die aufzuforstende Fläche?',
+                triangleType: 'general',
+                requiredVars: ['g', 'h_c'],
+                target: 'A',
+                formulaStructure: ['(', 'VAR_1', '*', 'VAR_2', ')', '/', '2'], // (g*h)/2
+                formulaAllowedVars: ['g', 'h_c', 'a', 'b', 'c'],
+                correctValues: [120, 75],
+                mainResult: 4500, // (120*75)/2
+                mainUnit: 'm²',
+                costQuestion: 'Ein Eichensteckling reicht für 15 m² Waldfläche und kostet 4,50 €. Wie hoch sind die Gesamtkosten für die Bepflanzung?',
+                costResult: 1350, // (4500 / 15) * 4.50 = 1350 €
+                costUnit: '€'
+            },
+            {
+                id: 'su_2',
+                type: 'SÜ',
+                number: 2,
+                title: 'Hausgiebel mit Holz verschalen',
+                description: 'Die dreieckige Giebelfront eines Hauses hat eine Grundseite von g = 10 m und eine Höhe von h_c = 4,8 m. Berechne die Fläche der Giebelfront in Quadratmetern.',
+                triangleType: 'general',
+                requiredVars: ['g', 'h_c'],
+                target: 'A',
+                formulaStructure: ['(', 'VAR_1', '*', 'VAR_2', ')', '/', '2'],
+                formulaAllowedVars: ['g', 'h_c', 'a', 'b'],
+                correctValues: [10, 4.8],
+                mainResult: 24, // (10*4.8)/2
+                mainUnit: 'm²',
+                costQuestion: 'Das Holz für die Verschalung kostet 32,00 € pro m². Berechne die Materialkosten für den Giebel.',
+                costResult: 768, // 24 * 32 = 768 €
+                costUnit: '€'
+            },
+            {
+                id: 'su_3',
+                type: 'SÜ',
+                number: 3,
+                title: 'Kirchturmdach eindecken',
+                description: 'Ein Kirchturmdach besteht aus 4 gleichen dreieckigen Dachflächen. Eine einzelne Dachfläche hat die Grundseite g = 6 m und eine Höhe von h_c = 14 m. Berechne die Fläche EINER Dachseite.',
+                triangleType: 'general',
+                requiredVars: ['g', 'h_c'],
+                target: 'A',
+                formulaStructure: ['(', 'VAR_1', '*', 'VAR_2', ')', '/', '2'],
+                formulaAllowedVars: ['g', 'h_c', 'a', 'b'],
+                correctValues: [6, 14],
+                mainResult: 42, // (6*14)/2
+                mainUnit: 'm²',
+                costQuestion: 'Die Eindeckung aller 4 Dachseiten kostet 85,00 € pro m². Wie teuer ist die Neueindeckung des gesamten Daches (4 Flächen)?',
+                costResult: 14280, // 4 * 42 = 168 m² * 85 € = 14280 €
+                costUnit: '€'
+            },
+            {
+                id: 'su_4',
+                type: 'SÜ',
+                number: 4,
+                title: 'Rechtwinkliges Blumenbeet',
+                description: 'Ein rechtwinkliges Blumenbeet hat die Katheten a = 4 m und b = 3 m sowie die Hypotenuse c = 5 m. Das Beet soll mit einem Zierzaun eingefasst werden. Berechne den Umfang u des Beets.',
+                triangleType: 'right',
+                requiredVars: ['a', 'b', 'c'],
+                target: 'u',
+                formulaStructure: ['VAR_1', '+', 'VAR_2', '+', 'VAR_3'],
+                formulaAllowedVars: ['a', 'b', 'c', 'h_c'],
+                correctValues: [4, 3, 5],
+                mainResult: 12, // 4+3+5
+                mainUnit: 'm',
+                costQuestion: 'Der Zierzaun kostet 14,50 € pro laufendem Meter. Wie teuer ist die gesamte Umzäunung des Beets?',
+                costResult: 174, // 12 * 14.50 = 174 €
+                costUnit: '€'
+            },
+            {
+                id: 'su_5',
+                type: 'SÜ',
+                number: 5,
+                title: 'Rechtwinkliges Sonnensegel',
+                description: 'Ein rechtwinkliges Sonnensegel für einen Garten hat die beiden Katheten a = 3,5 m und b = 4 m. Wie groß ist die Tuchfläche des Sonnensegels?',
+                triangleType: 'right',
+                requiredVars: ['a', 'b'],
+                target: 'A',
+                formulaStructure: ['(', 'VAR_1', '*', 'VAR_2', ')', '/', '2'],
+                formulaAllowedVars: ['a', 'b', 'c'],
+                correctValues: [3.5, 4],
+                mainResult: 7, // (3.5*4)/2
+                mainUnit: 'm²',
+                costQuestion: 'Spezial-Markisenstoff kostet 28,00 € pro Quadratmeter. Was kostet der Stoff für das Sonnensegel?',
+                costResult: 196, // 7 * 28 = 196 €
+                costUnit: '€'
+            },
+            {
+                id: 'su_6',
+                type: 'SÜ',
+                number: 6,
+                title: 'Dreieckiger Parkteich',
+                description: 'Ein dreieckiger Ententeich im Stadtpark hat die Seitenlängen a = 24 m, b = 18 m und c = 30 m. Wie lang ist das Ufer des Teichs insgesamt (Umfang u)?',
+                triangleType: 'general',
+                requiredVars: ['a', 'b', 'c'],
+                target: 'u',
+                formulaStructure: ['VAR_1', '+', 'VAR_2', '+', 'VAR_3'],
+                formulaAllowedVars: ['a', 'b', 'c', 'g', 'h_c'],
+                correctValues: [24, 18, 30],
+                mainResult: 72, // 24+18+30
+                mainUnit: 'm',
+                costQuestion: 'Um den Teich wird ein Schutzzaun aufgestellt, der 22,50 € pro Meter kostet. Wie hoch sind die Zaunkosten?',
+                costResult: 1620, // 72 * 22.50 = 1620 €
+                costUnit: '€'
+            },
 
-$('#nameOk').onclick = () => {
-  const name = $('#name').value.trim();
-  if (!name) { alert('Bitte gib deinen Namen ein.'); return; }
-  state.name = name;
-  state.nameLocked = true;
-  $('#name').disabled = true;
-  $('#nameOk').hidden = true;
-  
-  const saved = localStorage.getItem('dreieck_text_app_' + name.toLowerCase().replace(/\s+/g, ''));
-  if (saved) {
-    if (confirm('Wir haben einen gespeicherten Stand für "' + name + '" gefunden. Möchtest du dort weitermachen?')) {
-      const data = JSON.parse(saved);
-      state.solved = data.solved;
-      state.perfect = data.perfect;
-      state.idx = data.idx;
-      state.log = data.log;
-    }
-  }
+            // Hausübungen (HÜ)
+            {
+                id: 'hu_1',
+                type: 'HÜ',
+                number: 1,
+                title: 'Gartengrundstück Maschendrahtzaun',
+                description: 'Ein dreieckiges Gartengrundstück besitzt die drei Außenseiten a = 35 m, b = 42 m und c = 28 m. Berechne den Umfang u des Grundstücks.',
+                triangleType: 'general',
+                requiredVars: ['a', 'b', 'c'],
+                target: 'u',
+                formulaStructure: ['VAR_1', '+', 'VAR_2', '+', 'VAR_3'],
+                formulaAllowedVars: ['a', 'b', 'c', 'g', 'h_c'],
+                correctValues: [35, 42, 28],
+                mainResult: 105, // 35+42+28
+                mainUnit: 'm',
+                costQuestion: 'Der Maschendrahtzaun kostet 12,00 € pro Meter. Wie viel kostet das Material für die Umzäunung?',
+                costResult: 1260, // 105 * 12 = 1260 €
+                costUnit: '€'
+            },
+            {
+                id: 'hu_2',
+                type: 'HÜ',
+                number: 2,
+                title: 'Rechtwinklige Dachfläche',
+                description: 'Ein rechtwinkliges Schleppdach an einer Scheune hat die beiden Katheten a = 6 m und b = 8.5 m. Berechne die Fläche dieses Daches.',
+                triangleType: 'right',
+                requiredVars: ['a', 'b'],
+                target: 'A',
+                formulaStructure: ['(', 'VAR_1', '*', 'VAR_2', ')', '/', '2'],
+                formulaAllowedVars: ['a', 'b', 'c'],
+                correctValues: [6, 8.5],
+                mainResult: 25.5, // (6*8.5)/2
+                mainUnit: 'm²',
+                costQuestion: 'Dachziegel kosten 18,00 € pro Quadratmeter. Was kostet das Eindecken der Dachfläche?',
+                costResult: 459, // 25.5 * 18 = 459 €
+                costUnit: '€'
+            },
+            {
+                id: 'hu_3',
+                type: 'HÜ',
+                number: 3,
+                title: 'Bauplatz Rasensaat',
+                description: 'Auf einem dreieckigen Bauplatz mit der Grundseite g = 50 m und der Höhe h_c = 32 m soll Rasen gesät werden. Berechne die Fläche des Bauplatzes.',
+                triangleType: 'general',
+                requiredVars: ['g', 'h_c'],
+                target: 'A',
+                formulaStructure: ['(', 'VAR_1', '*', 'VAR_2', ')', '/', '2'],
+                formulaAllowedVars: ['g', 'h_c', 'a', 'b', 'c'],
+                correctValues: [50, 32],
+                mainResult: 800, // (50*32)/2
+                mainUnit: 'm²',
+                costQuestion: 'Ein Sack Rasensamen reicht für 100 m² und kostet 15,00 €. Wie teuer ist der Rasensamen insgesamt?',
+                costResult: 120, // (800 / 100) * 15 = 120 €
+                costUnit: '€'
+            },
+            {
+                id: 'hu_4',
+                type: 'HÜ',
+                number: 4,
+                title: 'Verkehrsschild Reflexionsfolie',
+                description: 'Ein rechtwinkliges Hinweisschild aus Metall hat die Ankatheten/Katheten a = 80 cm und b = 60 cm. Berechne die Vorderfläche des Schildes in cm².',
+                triangleType: 'right',
+                requiredVars: ['a', 'b'],
+                target: 'A',
+                formulaStructure: ['(', 'VAR_1', '*', 'VAR_2', ')', '/', '2'],
+                formulaAllowedVars: ['a', 'b', 'c'],
+                correctValues: [80, 60],
+                mainResult: 2400, // (80*60)/2
+                mainUnit: 'cm²',
+                costQuestion: 'Die reflektierende Spezialfolie kostet 0,02 € pro cm². Wie hoch sind die Folienkosten pro Schild?',
+                costResult: 48, // 2400 * 0.02 = 48 €
+                costUnit: '€'
+            }
+        ];
 
-  updateScore();
-  if (task && task.waiting) {
-    task.waiting = false;
-    $('#steps').innerHTML = '';
-    newTask();
-  }
-};
+        // --- APP STATE ---
+        let currentTab = 'SÜ';
+        let activeTaskId = 'su_1';
+        let selectedSvgVars = new Set();
+        let userFormulaSlots = [];
+        let activeInputEl = null;
+        let userProgress = {}; // { taskId: { completed: bool, selectedVars: [], formula: [], mainVal: str, costVal: str } }
 
-$('#codeOk').onclick = () => {
-  const codeVal = $('#codeInp').value.trim();
-  if (!codeVal) { alert('Bitte gib einen Code ein.'); return; }
-  
-  let found = false;
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
-    if (key.startsWith('dreieck_text_app_')) {
-      const data = JSON.parse(localStorage.getItem(key));
-      state.name = data.name;
-      if (String(generateCode()) === codeVal) {
-        state.solved = data.solved;
-        state.perfect = data.perfect;
-        state.idx = data.idx;
-        state.log = data.log;
-        state.nameLocked = true;
-        $('#name').value = data.name;
-        $('#name').disabled = true;
-        $('#nameOk').hidden = true;
-        found = true;
-        break;
-      }
-    }
-  }
+        // --- INITIALIZATION ---
+        window.addEventListener('DOMContentLoaded', () => {
+            loadProgress();
+            renderTaskList();
+            loadTask(activeTaskId);
+            setupEventListeners();
+        });
 
-  if (found) {
-    alert('Fortschritt erfolgreich geladen! Willkommen zurück, ' + state.name + '.');
-    updateScore();
-    if (task && task.waiting) {
-      task.waiting = false;
-      $('#steps').innerHTML = '';
-      newTask();
-    }
-  } else {
-    alert('Ungültiger Code oder kein passender Speicherstand auf diesem Gerät gefunden.');
-  }
-};
+        function loadProgress() {
+            const saved = localStorage.getItem('geo_dreieck_v2_progress');
+            if (saved) {
+                try { userProgress = JSON.parse(saved); } catch(e) { userProgress = {}; }
+            }
+        }
 
-$('#nextBtn').onclick = () => {
-  if (state.idx >= TOTAL_TASKS) showSummary();
-  else newTask();
-};
+        function saveProgress() {
+            localStorage.setItem('geo_dreieck_v2_progress', JSON.stringify(userProgress));
+            updateOverallProgressUI();
+        }
 
-newTask();
-</script>
+        function updateOverallProgressUI() {
+            const completedCount = Object.keys(userProgress).filter(k => userProgress[k].completed).length;
+            document.getElementById('overall-progress').textContent = `${completedCount} / ${TASKS.length} Erledigt`;
+        }
+
+        // --- RENDER TASK LIST ---
+        function renderTaskList() {
+            const taskListEl = document.getElementById('taskList');
+            taskListEl.innerHTML = '';
+
+            const filtered = TASKS.filter(t => t.type === currentTab);
+
+            filtered.forEach(task => {
+                const isCompleted = userProgress[task.id] && userProgress[task.id].completed;
+                const isActive = task.id === activeTaskId;
+
+                const item = document.createElement('div');
+                item.className = `p-3 rounded-xl cursor-pointer border transition flex items-center justify-between ${
+                    isActive 
+                        ? 'bg-amber-100/80 border-amber-400 font-bold text-amber-950 shadow-sm' 
+                        : 'bg-white border-amber-100 hover:bg-amber-50 text-slate-700'
+                }`;
+
+                item.onclick = () => {
+                    activeTaskId = task.id;
+                    renderTaskList();
+                    loadTask(task.id);
+                };
+
+                item.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <span class="w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center ${
+                            isCompleted ? 'bg-emerald-600 text-white' : 'bg-amber-200 text-amber-900'
+                        }">
+                            ${isCompleted ? '<i class="fa-solid fa-check"></i>' : task.number}
+                        </span>
+                        <div>
+                            <div class="text-xs font-bold">${task.title}</div>
+                            <div class="text-[10px] text-slate-500">${task.target === 'A' ? 'Fläche (A)' : 'Umfang (u)'}</div>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-xs ${isActive ? 'text-amber-700' : 'text-slate-300'}"></i>
+                `;
+
+                taskListEl.appendChild(item);
+            });
+            updateOverallProgressUI();
+        }
+
+        // --- LOAD TASK INTO INTERFACE ---
+        function loadTask(taskId) {
+            const task = TASKS.find(t => t.id === taskId);
+            if (!task) return;
+
+            selectedSvgVars.clear();
+            userFormulaSlots = [];
+
+            // Task Meta
+            document.getElementById('task-category-badge').textContent = task.type === 'SÜ' ? 'Schulübung' : 'Hausübung';
+            document.getElementById('task-category-badge').className = `inline-block text-[10px] uppercase tracking-wider font-bold px-2.5 py-0.5 rounded border mb-1 ${
+                task.type === 'SÜ' ? 'bg-amber-100 text-amber-900 border-amber-300' : 'bg-indigo-100 text-indigo-900 border-indigo-200'
+            }`;
+            document.getElementById('task-title').textContent = `${task.number}. ${task.title}`;
+            document.getElementById('task-description').textContent = task.description;
+
+            // Status Badge
+            const isDone = userProgress[taskId] && userProgress[taskId].completed;
+            const statusBadge = document.getElementById('task-status-badge');
+            if (isDone) {
+                statusBadge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1.5';
+                statusBadge.innerHTML = '<i class="fa-solid fa-circle-check"></i> Gelöst';
+            } else {
+                statusBadge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-500 border border-slate-200 flex items-center gap-1.5';
+                statusBadge.innerHTML = '<i class="fa-regular fa-circle"></i> Offen';
+            }
+
+            // Step 4 Question Text
+            document.getElementById('step4-question-text').textContent = task.costQuestion;
+            document.getElementById('main-result-unit').textContent = task.mainUnit;
+            document.getElementById('cost-unit').textContent = task.costUnit;
+
+            // Render SVG
+            renderInteractiveSVG(task);
+            updateSvgSelectionState(task);
+
+            // Setup Formula Builder
+            setupFormulaBuilder(task);
+
+            // Hide feedback
+            hideFeedback();
+            activeInputEl = null;
+            document.getElementById('active-input-label').textContent = 'Wähle ein Eingabefeld';
+        }
+
+        // --- STEP 1: INTERACTIVE SVG SELECTION ---
+        function renderInteractiveSVG(task) {
+            const svg = document.getElementById('triangle-svg');
+            svg.innerHTML = '';
+
+            let content = '';
+
+            if (task.triangleType === 'right') {
+                // Right Triangle
+                content = `
+                    <polygon points="50,140 250,140 50,30" fill="rgba(245, 158, 11, 0.08)" stroke="#d97706" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M 50 125 L 65 125 L 65 140" fill="none" stroke="#d97706" stroke-width="1.5"/>
+                    <circle cx="56" cy="133" r="2" fill="#d97706"/>
+
+                    <!-- Selectable Side 'a' (Bottom) -->
+                    <line x1="50" y1="140" x2="250" y2="140" class="svg-selectable" data-var="a" stroke="#d97706" stroke-width="3"/>
+                    <text x="150" y="160" text-anchor="middle" font-size="13" class="svg-label font-bold fill-slate-700" data-var-label="a">a (${task.correctValues[0] || '4'} m)</text>
+
+                    <!-- Selectable Side 'b' (Left vertical) -->
+                    <line x1="50" y1="140" x2="50" y2="30" class="svg-selectable" data-var="b" stroke="#d97706" stroke-width="3"/>
+                    <text x="35" y="85" text-anchor="middle" font-size="13" class="svg-label font-bold fill-slate-700" data-var-label="b">b (${task.correctValues[1] || '3'} m)</text>
+
+                    <!-- Selectable Side 'c' (Hypotenuse) -->
+                    <line x1="250" y1="140" x2="50" y2="30" class="svg-selectable" data-var="c" stroke="#d97706" stroke-width="3"/>
+                    <text x="160" y="75" text-anchor="middle" font-size="13" class="svg-label font-bold fill-slate-700" data-var-label="c">c (${task.correctValues[2] || '5'} m)</text>
+                `;
+            } else {
+                // General Triangle
+                content = `
+                    <polygon points="40,140 260,140 170,30" fill="rgba(245, 158, 11, 0.08)" stroke="#d97706" stroke-width="2" stroke-linejoin="round"/>
+
+                    <!-- Base 'g' or 'c' -->
+                    <line x1="40" y1="140" x2="260" y2="140" class="svg-selectable" data-var="${task.requiredVars.includes('g') ? 'g' : 'c'}" stroke="#d97706" stroke-width="3"/>
+                    <text x="150" y="160" text-anchor="middle" font-size="13" class="svg-label font-bold fill-slate-700" data-var-label="${task.requiredVars.includes('g') ? 'g' : 'c'}">${task.requiredVars.includes('g') ? 'g' : 'c'}</text>
+
+                    <!-- Side 'a' (Left) -->
+                    <line x1="40" y1="140" x2="170" y2="30" class="svg-selectable" data-var="a" stroke="#d97706" stroke-width="3"/>
+                    <text x="90" y="80" text-anchor="middle" font-size="13" class="svg-label font-bold fill-slate-700" data-var-label="a">a</text>
+
+                    <!-- Side 'b' (Right) -->
+                    <line x1="260" y1="140" x2="170" y2="30" class="svg-selectable" data-var="b" stroke="#d97706" stroke-width="3"/>
+                    <text x="225" y="80" text-anchor="middle" font-size="13" class="svg-label font-bold fill-slate-700" data-var-label="b">b</text>
+
+                    <!-- Height h_c -->
+                    <line x1="170" y1="30" x2="170" y2="140" class="svg-selectable" data-var="h_c" stroke="#dc2626" stroke-width="2.5" stroke-dasharray="4,4"/>
+                    <text x="185" y="85" text-anchor="middle" font-size="13" class="svg-label font-bold fill-rose-600" data-var-label="h_c">h_c</text>
+                `;
+            }
+
+            svg.innerHTML = content;
+
+            // Bind click handlers to SVG elements
+            svg.querySelectorAll('.svg-selectable').forEach(el => {
+                el.onclick = () => {
+                    const varName = el.dataset.var;
+                    if (selectedSvgVars.has(varName)) {
+                        selectedSvgVars.delete(varName);
+                    } else {
+                        selectedSvgVars.add(varName);
+                    }
+                    updateSvgSelectionState(task);
+                };
+            });
+        }
+
+        function updateSvgSelectionState(task) {
+            const svg = document.getElementById('triangle-svg');
+            
+            svg.querySelectorAll('.svg-selectable').forEach(el => {
+                const varName = el.dataset.var;
+                if (selectedSvgVars.has(varName)) {
+                    el.classList.add('svg-selected');
+                } else {
+                    el.classList.remove('svg-selected');
+                }
+            });
+
+            svg.querySelectorAll('.svg-label').forEach(el => {
+                const varName = el.dataset.varLabel;
+                if (selectedSvgVars.has(varName)) {
+                    el.classList.add('svg-label-selected');
+                } else {
+                    el.classList.remove('svg-label-selected');
+                }
+            });
+
+            document.getElementById('svg-selection-counter').textContent = `${selectedSvgVars.size} gewählt`;
+
+            // Validate if user selected all required variables for step 1
+            const requiredSet = new Set(task.requiredVars);
+            const isSvgCorrect = requiredSet.size === selectedSvgVars.size && [...requiredSet].every(v => selectedSvgVars.has(v));
+
+            if (isSvgCorrect) {
+                activateStep2(task);
+            } else {
+                disableStepsFrom(2);
+            }
+        }
+
+        // --- STEP 2: FORMULA BUILDER ---
+        function setupFormulaBuilder(task) {
+            document.getElementById('formula-target-label').textContent = `${task.target} =`;
+            
+            const palette = document.getElementById('formula-palette');
+            palette.innerHTML = '';
+
+            // Palette buttons: Variables + Operators
+            const items = [...task.formulaAllowedVars, '+', '*', '/', '(', ')'];
+
+            items.forEach(item => {
+                const btn = document.createElement('button');
+                btn.className = 'px-3 py-1.5 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold text-xs border border-amber-300 transition shadow-sm';
+                btn.textContent = item;
+                btn.onclick = () => {
+                    addFormulaToken(task, item);
+                };
+                palette.appendChild(btn);
+            });
+
+            renderFormulaSlots(task);
+        }
+
+        function addFormulaToken(task, token) {
+            userFormulaSlots.push(token);
+            renderFormulaSlots(task);
+            checkFormulaValidity(task);
+        }
+
+        function removeFormulaToken(task, index) {
+            userFormulaSlots.splice(index, 1);
+            renderFormulaSlots(task);
+            checkFormulaValidity(task);
+        }
+
+        function renderFormulaSlots(task) {
+            const container = document.getElementById('formula-builder-slots');
+            container.innerHTML = '';
+
+            if (userFormulaSlots.length === 0) {
+                container.innerHTML = '<span class="text-xs text-amber-600/70 italic">Klicke unten auf Variablen/Operatoren...</span>';
+                return;
+            }
+
+            userFormulaSlots.forEach((token, idx) => {
+                const tag = document.createElement('span');
+                tag.className = 'inline-flex items-center gap-1 bg-amber-200 text-amber-950 font-bold px-2 py-0.5 rounded text-sm border border-amber-300 cursor-pointer hover:bg-rose-200 hover:text-rose-900 transition';
+                tag.innerHTML = `${token} <i class="fa-solid fa-xmark text-[10px]"></i>`;
+                tag.onclick = () => removeFormulaToken(task, idx);
+                container.appendChild(tag);
+            });
+        }
+
+        function checkFormulaValidity(task) {
+            // Check formula equivalence
+            const formulaStr = userFormulaSlots.join('');
+            
+            let isFormulaCorrect = false;
+
+            if (task.target === 'u') {
+                // u = a + b + c (any order)
+                const hasA = formulaStr.includes('a');
+                const hasB = formulaStr.includes('b');
+                const hasC = formulaStr.includes('c');
+                const plusCount = (formulaStr.match(/\+/g) || []).length;
+                if (hasA && hasB && hasC && plusCount === 2) {
+                    isFormulaCorrect = true;
+                }
+            } else {
+                // A = (g * h_c) / 2 or (a * b) / 2
+                const hasMul = formulaStr.includes('*');
+                const hasDiv2 = formulaStr.includes('/2');
+                const v1 = task.requiredVars[0];
+                const v2 = task.requiredVars[1];
+                if (hasMul && hasDiv2 && formulaStr.includes(v1) && formulaStr.includes(v2)) {
+                    isFormulaCorrect = true;
+                }
+            }
+
+            if (isFormulaCorrect) {
+                activateStep3(task);
+            } else {
+                disableStepsFrom(3);
+            }
+        }
+
+        // --- STEP 3 & STEP 4 ACTIVATION ---
+        function activateStep2(task) {
+            document.getElementById('step-2-container').classList.remove('opacity-50', 'pointer-events-none');
+        }
+
+        function activateStep3(task) {
+            const step3 = document.getElementById('step-3-container');
+            step3.classList.remove('opacity-50', 'pointer-events-none');
+
+            const builder = document.getElementById('step3-values-builder');
+            builder.innerHTML = '';
+
+            if (task.target === 'A') {
+                builder.innerHTML = `
+                    <span class="font-bold text-amber-900">A = (</span>
+                    <input type="text" readonly data-step3="0" placeholder="Wert 1" class="step3-input w-20 bg-white border border-amber-300 rounded px-2 py-1 text-center font-bold focus:ring-2 focus:ring-amber-500 focus:outline-none cursor-pointer">
+                    <span class="font-bold text-amber-900">·</span>
+                    <input type="text" readonly data-step3="1" placeholder="Wert 2" class="step3-input w-20 bg-white border border-amber-300 rounded px-2 py-1 text-center font-bold focus:ring-2 focus:ring-amber-500 focus:outline-none cursor-pointer">
+                    <span class="font-bold text-amber-900">) / 2</span>
+                `;
+            } else {
+                builder.innerHTML = `
+                    <span class="font-bold text-amber-900">u =</span>
+                    <input type="text" readonly data-step3="0" placeholder="a" class="step3-input w-16 bg-white border border-amber-300 rounded px-2 py-1 text-center font-bold focus:ring-2 focus:ring-amber-500 focus:outline-none cursor-pointer">
+                    <span class="font-bold text-amber-900">+</span>
+                    <input type="text" readonly data-step3="1" placeholder="b" class="step3-input w-16 bg-white border border-amber-300 rounded px-2 py-1 text-center font-bold focus:ring-2 focus:ring-amber-500 focus:outline-none cursor-pointer">
+                    <span class="font-bold text-amber-900">+</span>
+                    <input type="text" readonly data-step3="2" placeholder="c" class="step3-input w-16 bg-white border border-amber-300 rounded px-2 py-1 text-center font-bold focus:ring-2 focus:ring-amber-500 focus:outline-none cursor-pointer">
+                `;
+            }
+
+            // Bind click events on Step 3 and Step 4 inputs for keypad
+            builder.querySelectorAll('.step3-input').forEach((inp, i) => {
+                inp.onclick = (e) => setActiveInput(e.target, `Schritt 3: Wert ${i+1}`);
+            });
+
+            const mainResultInput = document.getElementById('main-result-input');
+            mainResultInput.onclick = (e) => setActiveInput(e.target, 'Schritt 3: Haupt-Ergebnis');
+
+            activateStep4(task);
+        }
+
+        function activateStep4(task) {
+            const step4 = document.getElementById('step-4-container');
+            step4.classList.remove('opacity-50', 'pointer-events-none');
+
+            const costInput = document.getElementById('final-cost-input');
+            costInput.onclick = (e) => setActiveInput(e.target, 'Schritt 4: Gesamtkosten');
+        }
+
+        function disableStepsFrom(stepNum) {
+            if (stepNum <= 2) {
+                document.getElementById('step-2-container').classList.add('opacity-50', 'pointer-events-none');
+            }
+            if (stepNum <= 3) {
+                document.getElementById('step-3-container').classList.add('opacity-50', 'pointer-events-none');
+            }
+            if (stepNum <= 4) {
+                document.getElementById('step-4-container').classList.add('opacity-50', 'pointer-events-none');
+            }
+        }
+
+        // --- KEYPAD INPUT ENGINE ---
+        function setActiveInput(el, label) {
+            if (activeInputEl) {
+                activeInputEl.classList.remove('ring-2', 'ring-amber-500', 'border-amber-500');
+            }
+            activeInputEl = el;
+            activeInputEl.classList.add('ring-2', 'ring-amber-500', 'border-amber-500');
+            document.getElementById('active-input-label').textContent = label;
+        }
+
+        function handleKeypadPress(key) {
+            if (!activeInputEl) return;
+
+            let val = activeInputEl.value;
+
+            if (key === 'DEL') {
+                val = val.slice(0, -1);
+            } else if (key === 'CLR') {
+                val = '';
+            } else {
+                val += key;
+            }
+
+            activeInputEl.value = val;
+        }
+
+        // --- CHECK ALL ANSWERS ---
+        function checkAllAnswers() {
+            const task = TASKS.find(t => t.id === activeTaskId);
+            if (!task) return;
+
+            // Step 3 Main Result Validation
+            const mainVal = parseFloat(document.getElementById('main-result-input').value.replace(',', '.'));
+            if (isNaN(mainVal)) {
+                showFeedback('Bitte berechne zuerst das Hauptergebnis in Schritt 3.', 'error');
+                return;
+            }
+
+            if (Math.abs(mainVal - task.mainResult) > 0.1) {
+                showFeedback('Das Hauptergebnis in Schritt 3 ist leider nicht korrekt. Prüfe deine Berechnung!', 'error');
+                return;
+            }
+
+            // Step 4 Cost Validation
+            const costVal = parseFloat(document.getElementById('final-cost-input').value.replace(',', '.'));
+            if (isNaN(costVal)) {
+                showFeedback('Bitte berechne die Gesamtkosten/Anwendung in Schritt 4.', 'error');
+                return;
+            }
+
+            if (Math.abs(costVal - task.costResult) > 0.5) {
+                showFeedback('Die Gesamtkosten in Schritt 4 stimmen noch nicht ganz. Prüfe den Preisansatz!', 'error');
+                return;
+            }
+
+            // SUCCESS!
+            showFeedback('Hervorragend! Alle Schritte und die Gesamtkosten sind perfekt berechnet! 🎉', 'success');
+
+            if (!userProgress[task.id]) userProgress[task.id] = {};
+            userProgress[task.id].completed = true;
+            userProgress[task.id].mainVal = mainVal;
+            userProgress[task.id].costVal = costVal;
+            saveProgress();
+
+            renderTaskList();
+
+            const statusBadge = document.getElementById('task-status-badge');
+            statusBadge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1.5';
+            statusBadge.innerHTML = '<i class="fa-solid fa-circle-check"></i> Gelöst';
+        }
+
+        function showFeedback(msg, type) {
+            const box = document.getElementById('feedback-box');
+            box.classList.remove('hidden', 'bg-rose-50', 'text-rose-900', 'border-rose-300', 'bg-emerald-50', 'text-emerald-900', 'border-emerald-300');
+
+            if (type === 'error') {
+                box.classList.add('bg-rose-50', 'text-rose-900', 'border', 'border-rose-300');
+                box.innerHTML = `<i class="fa-solid fa-circle-exclamation mr-2 text-rose-600"></i> ${msg}`;
+            } else {
+                box.classList.add('bg-emerald-50', 'text-emerald-900', 'border', 'border-emerald-300');
+                box.innerHTML = `<i class="fa-solid fa-circle-check mr-2 text-emerald-600"></i> ${msg}`;
+            }
+        }
+
+        function hideFeedback() {
+            document.getElementById('feedback-box').classList.add('hidden');
+        }
+
+        // --- TEACHER VIEW & DEVICE CODE LOGIC ---
+        function renderTeacherView() {
+            const completedSU = TASKS.filter(t => t.type === 'SÜ' && userProgress[t.id] && userProgress[t.id].completed).length;
+            const completedHU = TASKS.filter(t => t.type === 'HÜ' && userProgress[t.id] && userProgress[t.id].completed).length;
+            const total = completedSU + completedHU;
+
+            document.getElementById('teacher-stat-total').textContent = `${total}/${TASKS.length}`;
+            document.getElementById('teacher-stat-su').textContent = `${completedSU}/6`;
+            document.getElementById('teacher-stat-hu').textContent = `${completedHU}/4`;
+
+            const tbody = document.getElementById('teacher-table-body');
+            tbody.innerHTML = '';
+
+            TASKS.forEach(task => {
+                const prog = userProgress[task.id];
+                const isDone = prog && prog.completed;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-slate-800">${task.number}. ${task.title}</td>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${task.type === 'SÜ' ? 'bg-amber-100 text-amber-900' : 'bg-indigo-100 text-indigo-900'}">${task.type}</span></td>
+                    <td class="p-3">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${isDone ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-500'}">
+                            ${isDone ? 'Erledigt' : 'Offen'}
+                        </span>
+                    </td>
+                    <td class="p-3 text-center text-slate-600">${isDone ? '<i class="fa-solid fa-check text-emerald-600"></i>' : '-'}</td>
+                    <td class="p-3 text-right font-bold text-slate-700">${isDone ? `${prog.mainVal} ${task.mainUnit}` : '-'}</td>
+                    <td class="p-3 text-right font-bold text-emerald-700">${isDone ? `${prog.costVal} €` : '-'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function getDeviceCode() {
+            return btoa(JSON.stringify(userProgress));
+        }
+
+        function applyDeviceCode(code) {
+            try {
+                const decoded = JSON.parse(atob(code));
+                if (typeof decoded === 'object') {
+                    userProgress = decoded;
+                    saveProgress();
+                    renderTaskList();
+                    loadTask(activeTaskId);
+                    return true;
+                }
+            } catch(e) { return false; }
+            return false;
+        }
+
+        // --- BIND EVENT LISTENERS ---
+        function setupEventListeners() {
+            document.getElementById('tab-su').onclick = () => {
+                currentTab = 'SÜ';
+                document.getElementById('tab-su').className = 'flex-1 py-2 rounded-lg bg-white shadow-sm text-amber-900 font-bold text-center transition';
+                document.getElementById('tab-hu').className = 'flex-1 py-2 rounded-lg text-amber-700 hover:text-amber-900 text-center transition';
+                activeTaskId = TASKS.find(t => t.type === 'SÜ').id;
+                renderTaskList();
+                loadTask(activeTaskId);
+            };
+
+            document.getElementById('tab-hu').onclick = () => {
+                currentTab = 'HÜ';
+                document.getElementById('tab-hu').className = 'flex-1 py-2 rounded-lg bg-white shadow-sm text-amber-900 font-bold text-center transition';
+                document.getElementById('tab-su').className = 'flex-1 py-2 rounded-lg text-amber-700 hover:text-amber-900 text-center transition';
+                activeTaskId = TASKS.find(t => t.type === 'HÜ').id;
+                renderTaskList();
+                loadTask(activeTaskId);
+            };
+
+            document.querySelectorAll('.keypad-btn').forEach(btn => {
+                btn.onclick = () => handleKeypadPress(btn.dataset.key);
+            });
+
+            document.getElementById('btn-check-all').onclick = checkAllAnswers;
+
+            document.getElementById('btn-reset-progress').onclick = () => {
+                if (confirm('Möchtest du deinen gesamten Fortschritt zurücksetzen?')) {
+                    userProgress = {};
+                    saveProgress();
+                    renderTaskList();
+                    loadTask(activeTaskId);
+                }
+            };
+
+            // Modals
+            const deviceModal = document.getElementById('modal-device-code');
+            document.getElementById('btn-device-code').onclick = () => {
+                document.getElementById('export-code-input').value = getDeviceCode();
+                deviceModal.classList.remove('hidden');
+            };
+
+            document.getElementById('btn-copy-code').onclick = () => {
+                const codeInput = document.getElementById('export-code-input');
+                codeInput.select();
+                document.execCommand('copy');
+                alert('Code kopiert!');
+            };
+
+            document.getElementById('btn-apply-code').onclick = () => {
+                const code = document.getElementById('import-code-input').value.trim();
+                if (applyDeviceCode(code)) {
+                    alert('Fortschritt geladen!');
+                    deviceModal.classList.add('hidden');
+                } else {
+                    alert('Ungültiger Code.');
+                }
+            };
+
+            const teacherModal = document.getElementById('modal-teacher-view');
+            document.getElementById('btn-teacher-view').onclick = () => {
+                renderTeacherView();
+                teacherModal.classList.remove('hidden');
+            };
+
+            document.querySelectorAll('.btn-close-modal').forEach(btn => {
+                btn.onclick = () => {
+                    deviceModal.classList.add('hidden');
+                    teacherModal.classList.add('hidden');
+                };
+            });
+        }
+    </script>
 </body>
 </html>
