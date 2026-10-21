@@ -60,8 +60,8 @@ svg{width:100%;height:auto;display:block}
 .tri{fill:var(--tri)}
 .ra{fill:none;stroke:var(--ink);stroke-width:2}
 .dot{fill:var(--ink)}
-.lbl{font-family:"Patrick Hand",cursive;font-size:18px;fill:var(--ink)}
-.hit{stroke:transparent;stroke-width:28;stroke-linecap:round;cursor:pointer;pointer-events:stroke}
+.lbl{font-family:"Patrick Hand",cursive;font-size:19px;fill:var(--ink)}
+.hit{stroke:transparent;stroke-width:32;stroke-linecap:round;cursor:pointer;pointer-events:stroke}
 .tapnote{text-anchor:middle;font-weight:700;fill:var(--pen);font-size:15px}
 
 .way-title{margin:18px 0 4px;font-size:15px;color:var(--muted)}
@@ -235,7 +235,7 @@ const PRESETS = [
   { 
     section: 'Schulübung', num: 6, type: 'general', a: 35, b: 42, c: 50, h: 28, unit: 'm',
     title: 'Dreieckiger Parkteich', 
-    text: 'Ein Ententeich im Park ist dreieckig abgegrenzt (a = 35 m, b = 42 m, c = 50 m). Wie lang ist der Sicherheitszaun um den gesamten Teich (Umfang u) und was kostet der Zaun bei 18 € / m?',
+    text: 'Ein Ententeich im Park ist dreieckig abgegrenzt (a = 35 m, b = 42 m, c = 50 m). Wie lang ist der Sicherheitszaun um den gesamten Teich (Umfang u) und was kostet the Zaun bei 18 € / m?',
     costPerUnit: 18, costName: 'Zaunkosten', costUnit: '€', costType: 'u'
   },
 
@@ -343,193 +343,4 @@ function generateCode() {
 }
 
 function updateScore() {
-  $('#score').textContent = (state.name ? state.name + ': ' : '') + `Gelöst: ${state.solved} von ${TOTAL_TASKS}, davon fehlerfrei: ${state.perfect}`;
-  renderBadges();
-}
-
-function saveToLocalStorage() {
-  if (!state.nameLocked) return;
-  const data = { name: state.name, solved: state.solved, perfect: state.perfect, idx: state.idx, log: state.log };
-  localStorage.setItem('dreieck_sach_app_' + state.name.toLowerCase().replace(/\s+/g, ''), JSON.stringify(data));
-}
-
-function newTask() {
-  if (state.idx >= TOTAL_TASKS) {
-    showSummary();
-    return;
-  }
-  const p = PRESETS[state.idx];
-  
-  if (p.type === 'right') {
-    task = { ...p, u: p.a+p.b+p.c, A: (p.a*p.b)/2, selected: new Set(), errors: 0, t0: Date.now() };
-  } else {
-    task = { ...p, u: p.a+p.b+p.c, A: (p.c*p.h)/2, selected: new Set(), errors: 0, t0: Date.now() };
-  }
-
-  let targetVal = 0;
-  if (p.costType === 'u') targetVal = task.u;
-  else if (p.costType === 'A') {
-    targetVal = p.convertToM2 ? task.A / 10000 : task.A;
-  } else if (p.costType === 'A_multi') {
-    const singleM2 = p.convertToM2 ? task.A / 10000 : task.A;
-    targetVal = singleM2 * p.multiplier;
-  }
-  task.totalCost = targetVal * p.costPerUnit;
-
-  $('#steps').innerHTML = '';
-  $('#way').innerHTML = '';
-  $('#done').hidden = true;
-  $('#summary').hidden = true;
-  $('.grid').hidden = false;
-  $('.controls').hidden = false;
-  $('#score').hidden = false;
-
-  const tagText = `${p.section} ${p.num} (Gesamt: ${state.idx + 1}/${TOTAL_TASKS}) · ${p.title}`;
-  $('#taskText').innerHTML = `<span class="tag">${tagText}</span><br>${p.text}`;
-
-  draw();
-  updateScore();
-
-  if (!state.nameLocked) {
-    task.waiting = true;
-    $('#steps').innerHTML = '<div class="step"><p>Gib bitte zuerst oben deinen Namen ein oder nutze einen Speicher-Code.</p></div>';
-    return;
-  }
-  stepSelectSides();
-}
-
-function draw() {
-  const W = 380, H = 230;
-  let lines = '', hits = '', labels = '';
-
-  if (task.type === 'right') {
-    // Vergrößertes Dreieck mit extra Randabstand
-    const pA = [60, 175], pB = [320, 175], pC = [60, 45];
-    const segs = {
-      'a': [pC, pA, `a = ${fmt(task.a)}${task.unit}`, [20, 110]],
-      'b': [pA, pB, `b = ${fmt(task.b)}${task.unit}`, [190, 200]],
-      'c': [pB, pC, `c = ${fmt(task.c)}${task.unit}`, [210, 100]]
-    };
-
-    lines += `<polygon class="tri" points="${pA.join(',')} ${pB.join(',')} ${pC.join(',')}"/>`;
-    lines += `<path class="ra" d="M60,158 L77,158 L77,175"/><circle class="dot" cx="68" cy="166" r="2"/>`;
-
-    for (const [key, [p1, p2, txt, pos]] of Object.entries(segs)) {
-      const isSel = task.selected.has(key);
-      lines += `<line x1="${p1[0]}" y1="${p1[1]}" x2="${p2[0]}" y2="${p2[1]}" class="side${isSel ? ' selected' : ''}"/>`;
-      if (task.selecting) {
-        hits += `<line x1="${p1[0]}" y1="${p1[1]}" x2="${p2[0]}" y2="${p2[1]}" class="hit" data-seg="${key}"/>`;
-      }
-      labels += `<text x="${pos[0]}" y="${pos[1]}" class="lbl" text-anchor="middle">${txt}</text>`;
-    }
-  } else {
-    // Allgemeines Dreieck mit ausreichendem Sicherheitsabstand
-    const scale = 0.16;
-    const cPx = Math.min(task.c * scale, 240);
-    const xC = 60 + (cPx * 0.52);
-    const yC = 175 - Math.min(task.h * scale, 115);
-
-    const pA = [60, 175], pB = [60 + cPx, 175], pC = [xC, yC], pH = [xC, 175];
-    const segs = {
-      'b': [pA, pC, `b = ${fmt(task.b)}${task.unit}`, [(pA[0]+pC[0])/2 - 32, (pA[1]+pC[1])/2 - 6]],
-      'a': [pC, pB, `a = ${fmt(task.a)}${task.unit}`, [(pC[0]+pB[0])/2 + 32, (pC[1]+pB[1])/2 - 6]],
-      'c': [pA, pB, `c = ${fmt(task.c)}${task.unit}`, [60 + cPx/2, 200]],
-      'h': [pC, pH, `h_c = ${fmt(task.h)}${task.unit}`, [xC + 38, (pC[1]+pH[1])/2]]
-    };
-
-    lines += `<polygon class="tri" points="${pA.join(',')} ${pB.join(',')} ${pC.join(',')}"/>`;
-
-    for (const [key, [p1, p2, txt, pos]] of Object.entries(segs)) {
-      const isSel = task.selected.has(key);
-      const isH = key === 'h';
-      lines += `<line x1="${p1[0]}" y1="${p1[1]}" x2="${p2[0]}" y2="${p2[1]}" class="side${isH ? ' height-line' : ''}${isSel ? ' selected' : ''}"/>`;
-      if (task.selecting) {
-        hits += `<line x1="${p1[0]}" y1="${p1[1]}" x2="${p2[0]}" y2="${p2[1]}" class="hit" data-seg="${key}"/>`;
-      }
-      labels += `<text x="${pos[0]}" y="${pos[1]}" class="lbl" text-anchor="middle">${txt}</text>`;
-    }
-  }
-
-  const note = task.selecting ? `<text x="190" y="220" class="tapnote">👆 Klicke in der Skizze die nötigen Kanten/Höhen an!</text>` : '';
-  $('#fig').innerHTML = `<svg viewBox="0 0 ${W} ${H}">${lines}${labels}${hits}${note}</svg>`;
-
-  if (task.selecting) {
-    document.querySelectorAll('#fig .hit').forEach(el => {
-      el.onclick = () => {
-        const seg = el.dataset.seg;
-        if (task.selected.has(seg)) task.selected.delete(seg);
-        else task.selected.add(seg);
-        draw();
-      };
-    });
-  }
-}
-
-function addStep(num, title, body) {
-  const d = document.createElement('section');
-  d.className = 'step';
-  d.innerHTML = `<div class="step-head"><span class="num">${num}</span><h3>${title}</h3></div><div class="body">${body}</div><div class="fb"></div>`;
-  $('#steps').appendChild(d);
-  return d;
-}
-
-function wrong(d, msg) {
-  task.errors++;
-  const fb = d.querySelector('.fb');
-  fb.className = 'fb bad';
-  fb.textContent = msg;
-}
-
-function right(d, msg) {
-  d.classList.add('solved');
-  const fb = d.querySelector('.fb');
-  fb.className = 'fb ok';
-  fb.textContent = '✓ ' + msg;
-  d.querySelectorAll('input,button,select').forEach(e => e.disabled = true);
-  closeKeypad();
-}
-
-function addWay(text, cls = '') {
-  const el = document.createElement('div');
-  el.className = 'wline' + (cls ? ' ' + cls : '');
-  el.textContent = text;
-  $('#way').appendChild(el);
-}
-
-function stepSelectSides() {
-  task.selecting = true;
-  draw();
-  const isU = task.costType === 'u';
-  const instruction = isU ? 'Für den Umfang u benötigst du die 3 Außenseiten a, b und c.' : (task.type === 'right' ? 'Für die Fläche im rechtwinkligen Dreieck brauchst du die Katheten a und b.' : 'Für die Fläche brauchst du die Grundseite c und die Höhe h_c.');
-
-  const d = addStep(1, 'Welche Linien brauchst du für die Berechnung?', 
-    `<p>${instruction} Klicke sie in der Skizze an und bestätige.</p>
-     <button class="check">Auswahl überprüfen</button>`);
-
-  d.querySelector('.check').onclick = () => {
-    const sel = Array.from(task.selected);
-    let ok = false;
-    if (isU) {
-      ok = sel.length === 3 && sel.includes('a') && sel.includes('b') && sel.includes('c');
-    } else if (task.type === 'right') {
-      ok = sel.length === 2 && sel.includes('a') && sel.includes('b');
-    } else {
-      ok = sel.length === 2 && sel.includes('c') && sel.includes('h');
-    }
-
-    if (ok) {
-      task.selecting = false;
-      draw();
-      right(d, 'Richtig! Die Auswahl der Linien passt perfekt.');
-      stepFormulaChoice();
-    } else {
-      wrong(d, isU ? 'Wähle alle 3 Außenkanten a, b und c aus.' : (task.type === 'right' ? 'Wähle die beiden Katheten a und b aus.' : 'Wähle die Grundseite c und die zugehörige Höhe h_c aus.'));
-    }
-  };
-}
-
-function stepFormulaChoice() {
-  const isU = task.costType === 'u';
-  let correctOpt = isU ? 'u = a + b + c' : (task.type === 'right' ? 'A = (a · b) / 2' : 'A = (c · h_c) / 2');
-  let opt2 = isU ? 'u = a · b · c' : 'A = (a · b) / 2';
-  let opt3 = isU ? 'u = (a ·
+  $('#score').textContent = (state.name ? state.name + ': ' : '') + `Gelöst: ${state.solved} von${TOTAL_TASKS
