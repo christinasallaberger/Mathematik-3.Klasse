@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dreiecke und ihre Eigenschaften</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f7f9fc; --sheet:#ffffff; --grid:#dfe6f2; --ink:#1f4fa0; --text:#1c2333; --muted:#5d6679;
+  --line:#c3cde0; --red:#c8323c; --green:#1c7c3e; --bar:#edf2fa;
+  --spitz:#e07a3f; --recht:#2f9a52; --stumpf:#8e4fb0; --seitig:#2f6fd0; --schenkel:#d0573a; --allg:#6b7487;
+  --hl:rgba(255,196,0,.32);
+  color-scheme:light; box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#141a25; --sheet:#1b2230; --grid:#263043; --ink:#9db8ff; --text:#e8ecf4; --muted:#9ba4b7;
+    --line:#38445c; --red:#ff7e7e; --green:#6fd38f; --bar:#1a2130;
+    --spitz:#ff9d63; --recht:#5ccc7f; --stumpf:#c48ae6; --seitig:#79a8ff; --schenkel:#ff8a6b; --allg:#a3abbd;
+    --hl:rgba(255,196,0,.22);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#141a25; --sheet:#1b2230; --grid:#263043; --ink:#9db8ff; --text:#e8ecf4; --muted:#9ba4b7;
+  --line:#38445c; --red:#ff7e7e; --green:#6fd38f; --bar:#1a2130;
+  --spitz:#ff9d63; --recht:#5ccc7f; --stumpf:#c48ae6; --seitig:#79a8ff; --schenkel:#ff8a6b; --allg:#a3abbd;
+  --hl:rgba(255,196,0,.22); color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--paper);color:var(--text);font-family:"Atkinson Hyperlegible",system-ui,sans-serif;font-size:18px;line-height:1.5;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:26px 26px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bar)}
+.wrap{max-width:980px;margin:0 auto;padding:20px 14px 60px}
+h1{font-family:"Patrick Hand",cursive;font-weight:400;font-size:clamp(34px,6vw,48px);line-height:1.05;margin:6px 0 6px;color:var(--ink)}
+.lead{max-width:64ch;margin:0 0 14px}
+button{font:inherit;cursor:pointer;color:inherit}
+button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+
+.namebox{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;background:var(--sheet);border:2px solid var(--ink);border-radius:12px;padding:12px 14px;margin-bottom:14px}
+.namebox label{font-weight:700;color:var(--ink)}
+.namebox input{font:inherit;padding:6px 10px;border:1.5px solid var(--line);border-radius:8px;background:var(--sheet);color:var(--text);flex:1 1 220px;max-width:340px}
+.namebox input:disabled{border-color:var(--green);font-weight:700;opacity:1}
+.btn{border:2px solid var(--ink);color:var(--ink);background:var(--sheet);border-radius:10px;padding:6px 14px;font-weight:700}
+.btn.solid{background:var(--ink);color:var(--sheet)}
+.btn:disabled{opacity:.5;cursor:default}
+.nmsg{width:100%;margin:0;font-weight:700;color:var(--green)}
+.nmsg:empty{display:none}.nmsg.bad{color:var(--red)}
+
+.stnav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;flex-wrap:wrap;gap:6px;align-items:center;background:var(--bar);border:1px solid var(--line);border-radius:12px;padding:8px;margin-bottom:14px}
+.stbtn{border:2px solid var(--line);background:var(--sheet);border-radius:10px;padding:5px 12px;font-size:16px;display:flex;gap:6px;align-items:center}
+.stbtn .no{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--grid);font-weight:700;font-size:14px}
+.stbtn[aria-current="step"]{border-color:var(--ink);color:var(--ink);font-weight:700}
+.stbtn.done .no{background:var(--green);color:var(--sheet)}
+.stnav .rnd{margin-left:auto;color:var(--muted);font-size:15px}
+@media (max-width:640px){.stnav{position:static}.stbtn{padding:4px 9px;font-size:15px}}
+body.waiting .stnav,body.waiting #stage{opacity:.35;pointer-events:none}
+
+.stage{background:var(--sheet);border:1px solid var(--line);border-radius:14px;padding:16px 16px 20px}
+.stage h2{font-family:"Patrick Hand",cursive;font-weight:400;font-size:32px;margin:0 0 4px;color:var(--ink);line-height:1.1}
+.stage .task{margin:0 0 14px;max-width:70ch}
+.stdone{margin-top:16px;padding:12px 14px;border:2px solid var(--green);border-radius:12px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.stdone p{margin:0;color:var(--green);font-weight:700}
+
+/* Dreiecke benennen */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
+.tcard{border:1.5px solid var(--line);border-radius:12px;padding:8px 10px 10px;background:var(--paper)}
+.tcard.ok{border-color:var(--green)}
+.tcard .nr{font-size:14px;color:var(--muted)}
+svg.tri{width:100%;height:auto;display:block}
+.tp{fill:color-mix(in srgb,var(--ink) 7%,transparent);stroke:var(--ink);stroke-width:2.5;stroke-linejoin:round}
+.vl{font:700 17px "Atkinson Hyperlegible",sans-serif;fill:var(--text)}
+.sl{font:22px "Patrick Hand",cursive;fill:var(--ink)}
+.al{font:20px "Patrick Hand",cursive;fill:var(--text)}
+.arc{fill:color-mix(in srgb,var(--spitz) 55%,transparent);stroke:none}
+.arc.st{fill:color-mix(in srgb,var(--stumpf) 60%,transparent)}
+.rq{fill:none;stroke:var(--recht);stroke-width:2}
+.rdot{fill:var(--recht)}
+.choices{display:flex;flex-direction:column;gap:6px;margin-top:6px}
+.choice{text-align:left;border:2px solid var(--line);background:var(--sheet);border-radius:10px;padding:7px 12px;font-size:16px;display:flex;gap:8px;align-items:center}
+.choice .sw{width:14px;height:14px;border-radius:4px;flex:none}
+.choice:hover:not(:disabled){border-color:var(--ink)}
+.choice.good{border-color:var(--green);color:var(--green);font-weight:700}
+.choice.wrongb{border-color:var(--red);color:var(--red);text-decoration:line-through}
+.choice:disabled{cursor:default}
+.fb{margin-top:6px;font-size:16px;min-height:0}
+.fb.ok{color:var(--green);font-weight:700}
+.fb.bad{color:var(--red)}
+.fb:empty{display:none}
+.smile{font-size:20px;vertical-align:-2px}
+
+/* Ziehen */
+.chip{touch-action:none;-webkit-user-select:none;user-select:none;border:2px solid var(--ink);background:var(--sheet);color:var(--text);border-radius:10px;padding:8px 12px;font-size:16px;line-height:1.35;text-align:left;box-shadow:0 2px 0 var(--line);cursor:grab}
+.chip.sel{background:var(--hl);border-color:#d9a400;box-shadow:0 0 0 3px rgba(217,164,0,.5)}
+.chip.dragging{opacity:.35}
+.chip.ghost{position:fixed;z-index:50;pointer-events:none;opacity:.95;transform:rotate(-2deg);box-shadow:0 8px 22px rgba(0,0,0,.25);cursor:grabbing}
+.chip.placed{cursor:default;border-color:var(--green);box-shadow:none;background:color-mix(in srgb,var(--green) 10%,var(--sheet))}
+.chip.shake{animation:shake .45s}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+@media (prefers-reduced-motion:reduce){.chip.shake{animation:none}}
+.pool{display:flex;flex-wrap:wrap;gap:8px;padding:10px;border:2px dashed var(--line);border-radius:12px;min-height:58px;margin-bottom:14px;background:var(--paper)}
+.pool:empty::after{content:"Alle Kärtchen sind zugeordnet.";color:var(--muted)}
+.boxes{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.box{border:3px solid var(--line);border-radius:14px;padding:10px;background:var(--sheet);min-height:200px;display:flex;flex-direction:column;gap:8px}
+.box h3{margin:0;font-size:18px;display:flex;gap:10px;align-items:center}
+.box h3 svg{width:64px;height:52px;flex:none}
+.box.hot,.spot.hot{background:var(--hl);border-color:#d9a400}
+.box[data-k="seitig"]{border-color:color-mix(in srgb,var(--seitig) 55%,var(--line))}
+.box[data-k="schenkel"]{border-color:color-mix(in srgb,var(--schenkel) 55%,var(--line))}
+.box[data-k="recht"]{border-color:color-mix(in srgb,var(--recht) 55%,var(--line))}
+.box .in{display:flex;flex-direction:column;gap:6px}
+.hint{font-size:15px;color:var(--muted);margin:-6px 0 12px}
+
+/* Beschriften */
+.labwrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.labpart{border:1.5px solid var(--line);border-radius:12px;padding:10px;background:var(--paper)}
+.labpart h3{margin:0 0 6px;font-size:18px}
+.lab{position:relative}
+.spot{position:absolute;transform:translate(-50%,-50%);min-width:92px;padding:4px 8px;border:2px dashed var(--ink);border-radius:9px;background:var(--sheet);font-size:15px;text-align:center;color:var(--muted)}
+.spot.ang{min-width:0;padding:2px 9px;border-radius:999px}
+@media (max-width:640px){.spot{min-width:64px;font-size:13px;padding:2px 5px}}
+.spot.filled{border-style:solid;border-color:var(--green);color:var(--green);font-weight:700}
+.labpart .pool{margin:8px 0 0;min-height:52px}
+.labpart .pool:empty::after{content:"Fertig beschriftet!"}
+
+/* Formen */
+.forms{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(220px,1fr);gap:14px;align-items:start}
+@media (max-width:720px){.forms{grid-template-columns:1fr}}
+.board{background:var(--paper);border:1.5px solid var(--line);border-radius:12px;padding:4px}
+svg.geo{width:100%;height:auto;display:block}
+.gl{stroke:var(--grid);stroke-width:1}
+.gtri{fill:color-mix(in srgb,var(--ink) 9%,transparent);stroke:var(--ink);stroke-width:3;stroke-linejoin:round}
+.fix{fill:var(--ink)}
+.hand{fill:var(--red);stroke:var(--sheet);stroke-width:3;cursor:grab;touch-action:none}
+.halo{fill:color-mix(in srgb,var(--red) 18%,transparent);touch-action:none;cursor:grab}
+.tick{stroke:var(--red);stroke-width:3}
+.ftask{font-size:19px;font-weight:700;color:var(--ink);margin:0 0 8px}
+.meas{font-size:16px;border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin:8px 0;background:var(--paper)}
+.meas table{border-collapse:collapse;width:100%}
+.meas td{padding:2px 6px}
+.meas td:first-child{color:var(--muted)}
+.fsteps{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.fsteps span{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--line);font-weight:700;font-size:15px}
+.fsteps span.cur{border-color:var(--ink);color:var(--ink)}
+.fsteps span.ok{background:var(--green);border-color:var(--green);color:var(--sheet)}
+
+/* Auswertung */
+.summary{margin-top:26px;background:var(--sheet);border:1.5px solid var(--line);border-radius:14px;padding:14px 16px}
+.summary h2{font-family:"Patrick Hand",cursive;font-weight:400;font-size:30px;color:var(--ink);margin:0 0 6px}
+.livetag{font-family:"Atkinson Hyperlegible",sans-serif;font-size:14px;color:var(--muted);margin-left:8px}
+.sumhead,.sumstats{display:flex;flex-wrap:wrap;gap:8px 22px;margin:4px 0 12px}
+.sumhead div,.sumstats div{display:flex;flex-direction:column}
+.sumhead span,.sumstats span{font-size:14px;color:var(--muted)}
+.sumstats b{font-size:22px;color:var(--ink)}
+.tablewrap{overflow-x:auto}
+.summary table{border-collapse:collapse;width:100%;font-size:16px}
+.summary th,.summary td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left}
+.summary th{font-size:14px;color:var(--muted)}
+.summary h3{font-size:17px;margin:16px 0 6px}
+.miss{margin:0;padding-left:20px;font-size:15px}
+.sumnote{color:var(--muted);font-size:15px}
+</style>
+</head>
+<body class="waiting">
+<div class="wrap">
+  <h1>Dreiecke und ihre Eigenschaften</h1>
+  <p class="lead">Fünf Stationen: Du benennst Dreiecke, sortierst Eigenschaften, beschriftest Dreiecke und formst selbst welche. Zum Zuordnen kannst du die Kärtchen <b>ziehen</b> – oder ein Kärtchen antippen und dann das Ziel antippen.</p>
+
+  <div class="namebox">
+    <label for="name">Dein Name</label>
+    <input id="name" autocomplete="off" placeholder="Vor- und Nachname">
+    <button class="btn solid" id="nameOk">Los geht's</button>
+    <p class="nmsg" id="nameMsg" role="status"></p>
+  </div>
+
+  <nav class="stnav" id="stnav" aria-label="Stationen"></nav>
+  <main class="stage" id="stage"></main>
+  <section class="summary" id="summary" hidden></section>
+</div>
+
+<script>
+// ================= Grundlagen =================
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;}}
+let R = Math.random;
+const rnd = (a,b) => a + Math.floor(R()*(b-a+1));
+const pick = a => a[Math.floor(R()*a.length)];
+function shuffleR(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(R()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+const STATIONS = [
+  {t:"Winkel", title:"Dreiecke nach ihren Winkeln benennen"},
+  {t:"Seiten", title:"Dreiecke nach ihren Seiten benennen"},
+  {t:"Eigenschaften", title:"Eigenschaften zuordnen"},
+  {t:"Beschriften", title:"Dreiecke beschriften"},
+  {t:"Formen", title:"Dreiecke selbst formen"}
+];
+const state = {name:"", round:1, seed:1, cur:0, st:[], miss:[], hist:[]};
+function freshSt(){ return STATIONS.map(()=>({done:{}, err:0, ms:0})); }
+state.st = freshSt();
+const rngFor = i => { R = mulberry32(state.seed*7919 + i*104729 + 17); };
+
+// ================= Geometrie und Zeichnen =================
+const sub=(a,b)=>[a[0]-b[0],a[1]-b[1]], add=(a,b)=>[a[0]+b[0],a[1]+b[1]], mul=(a,k)=>[a[0]*k,a[1]*k];
+const len=a=>Math.hypot(a[0],a[1]), nrm=a=>{const l=len(a)||1;return [a[0]/l,a[1]/l];};
+const cross=(a,b)=>a[0]*b[1]-a[1]*b[0];
+const f1 = n => (Math.round(n*10)/10).toString().replace(".",",");
+function fromAngles(al,be,ga){const r=Math.PI/180,b=Math.sin(be*r)/Math.sin(ga*r);return [[0,0],[1,0],[b*Math.cos(al*r),b*Math.sin(al*r)]];}
+function fromSides(a,b,c){const x=(b*b+c*c-a*a)/(2*c),y=Math.sqrt(Math.max(0,b*b-x*x));return [[0,0],[c,0],[x,y]];}
+// mathematische Punkte (y nach oben) -> SVG, gedreht und eingepasst
+function prep(pts,rot,W,H,pad){
+  let P=pts.map(([x,y])=>[x,-y]);
+  const cx=(P[0][0]+P[1][0]+P[2][0])/3, cy=(P[0][1]+P[1][1]+P[2][1])/3, r=rot*Math.PI/180;
+  P=P.map(([x,y])=>{const dx=x-cx,dy=y-cy;return [dx*Math.cos(r)-dy*Math.sin(r),dx*Math.sin(r)+dy*Math.cos(r)];});
+  const xs=P.map(p=>p[0]),ys=P.map(p=>p[1]),mx=Math.min(...xs),my=Math.min(...ys),w=Math.max(...xs)-mx||1,h=Math.max(...ys)-my||1;
+  const s=Math.min((W-2*pad)/w,(H-2*pad)/h),ox=(W-w*s)/2-mx*s,oy=(H-h*s)/2-my*s;
+  return P.map(([x,y])=>[x*s+ox,y*s+oy]);
+}
+const centroid=P=>[(P[0][0]+P[1][0]+P[2][0])/3,(P[0][1]+P[1][1]+P[2][1])/3];
+const pt=p=>p[0].toFixed(1)+","+p[1].toFixed(1);
+function angleMark(P,i,deg,showText,cls){
+  const p=P[i],u=nrm(sub(P[(i+1)%3],p)),v=nrm(sub(P[(i+2)%3],p));
+  if(Math.abs(deg-90)<1e-9){
+    const s=18,a=add(p,mul(u,s)),c=add(p,mul(v,s)),b=add(p,add(mul(u,s),mul(v,s))),d=add(p,mul(add(u,v),s*0.5));
+    return `<polyline class="rq" points="${pt(a)} ${pt(b)} ${pt(c)}"/><circle class="rdot" cx="${d[0].toFixed(1)}" cy="${d[1].toFixed(1)}" r="2.6"/>`+
+      (showText?`<text class="al" x="${add(p,mul(nrm(add(u,v)),46))[0].toFixed(1)}" y="${(add(p,mul(nrm(add(u,v)),46))[1]+6).toFixed(1)}" text-anchor="middle">90°</text>`:"");
+  }
+  const r=deg>110?20:26,a=add(p,mul(u,r)),b=add(p,mul(v,r)),sw=cross(u,v)>0?1:0;
+  let h=`<path class="arc${cls?" "+cls:""}" d="M${pt(p)} L${pt(a)} A${r} ${r} 0 0 ${sw} ${pt(b)} Z"/>`;
+  if(showText){const q=add(p,mul(nrm(add(u,v)),r+(deg<45?30:22)));h+=`<text class="al" x="${q[0].toFixed(1)}" y="${(q[1]+6).toFixed(1)}" text-anchor="middle">${deg}°</text>`;}
+  return h;
+}
+function triSVG(P,o){
+  const W=o.W,H=o.H,c=centroid(P);
+  let g=`<svg viewBox="0 0 ${W} ${H}" class="tri" role="img" aria-label="${esc(o.label||"Dreieck")}"><polygon class="tp" points="${P.map(pt).join(" ")}"/>`;
+  if(o.angles) o.angles.forEach((d,i)=>{ if(d!=null) g+=angleMark(P,i,d,o.angleText!==false,d>90?"st":""); });
+  if(o.sides) o.sides.forEach((s,i)=>{
+    const p=P[(i+1)%3],q=P[(i+2)%3],m=mul(add(p,q),.5),out=nrm(sub(m,c)),l=add(m,mul(out,20));
+    g+=`<text class="sl" x="${l[0].toFixed(1)}" y="${(l[1]+7).toFixed(1)}" text-anchor="middle">${esc(s)}</text>`;
+  });
+  if(o.verts!==false) ["A","B","C"].forEach((n,i)=>{const l=add(P[i],mul(nrm(sub(P[i],c)),17));g+=`<text class="vl" x="${l[0].toFixed(1)}" y="${(l[1]+6).toFixed(1)}" text-anchor="middle">${n}</text>`;});
+  return g+"</svg>";
+}
+// kleine Symbole für die Kästen
+const ICON={
+  seitig:`<svg viewBox="0 0 64 52"><polygon points="6,46 58,46 32,2" fill="none" stroke="var(--seitig)" stroke-width="3"/></svg>`,
+  schenkel:`<svg viewBox="0 0 64 52"><polygon points="14,46 50,46 32,2" fill="none" stroke="var(--schenkel)" stroke-width="3"/></svg>`,
+  recht:`<svg viewBox="0 0 64 52"><polygon points="6,46 58,46 6,8" fill="none" stroke="var(--recht)" stroke-width="3"/><polyline points="6,36 16,36 16,46" fill="none" stroke="var(--recht)" stroke-width="2"/></svg>`
+};
+
+// ================= Ziehen oder Antippen =================
+let selChip=null;
+function deselect(){ if(selChip){ selChip.classList.remove("sel"); selChip.setAttribute("aria-pressed","false"); } selChip=null; }
+function dropTargetAt(x,y){ const el=document.elementFromPoint(x,y); return el ? el.closest("[data-drop]:not(.filled)") : null; }
+function clearHot(){ document.querySelectorAll(".hot").forEach(x=>x.classList.remove("hot")); }
+function makeChip(el,onDrop){
+  el._onDrop=onDrop; el.setAttribute("aria-pressed","false");
+  el.addEventListener("pointerdown",e=>{
+    if(el.classList.contains("placed")||e.button>0) return;
+    const sx=e.clientX,sy=e.clientY; let moved=false,ghost=null;
+    try{ el.setPointerCapture(e.pointerId); }catch(_){}
+    const mv=ev=>{
+      if(!moved && Math.hypot(ev.clientX-sx,ev.clientY-sy)>7){
+        moved=true; deselect(); ghost=el.cloneNode(true); ghost.classList.add("ghost"); ghost.style.width=el.offsetWidth+"px";
+        document.body.appendChild(ghost); el.classList.add("dragging");
+      }
+      if(moved){ ghost.style.left=(ev.clientX-el.offsetWidth/2)+"px"; ghost.style.top=(ev.clientY-22)+"px";
+        clearHot(); const t=dropTargetAt(ev.clientX,ev.clientY); if(t) t.classList.add("hot"); }
+    };
+    const up=ev=>{
+      el.removeEventListener("pointermove",mv); el.removeEventListener("pointerup",up); el.removeEventListener("pointercancel",up);
+      if(moved){ ghost.remove(); el.classList.remove("dragging"); clearHot(); const t=dropTargetAt(ev.clientX,ev.clientY); if(t) onDrop(t); }
+      else toggleSel(el);
+    };
+    el.addEventListener("pointermove",mv); el.addEventListener("pointerup",up); el.addEventListener("pointercancel",up);
+  });
+  el.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); toggleSel(el); } });
+}
+function toggleSel(el){
+  if(el.classList.contains("placed")) return;
+  if(selChip===el){ deselect(); return; }
+  deselect(); selChip=el; el.classList.add("sel"); el.setAttribute("aria-pressed","true");
+}
+document.addEventListener("click",e=>{
+  const t=e.target.closest("[data-drop]:not(.filled)");
+  if(t && selChip){ const c=selChip; deselect(); c._onDrop(t); }
+});
+function bounce(el){ el.classList.remove("shake"); void el.offsetWidth; el.classList.add("shake"); }
+
+// ================= Fehler, Zeit, Speichern =================
+const NOW=()=>Date.now();
+let tAct=null;
+function curMs(i){ return state.st[i].ms + (tAct && state.cur===i ? NOW()-tAct : 0); }
+function tStart(){ if(!tAct && state.name && !document.hidden) tAct=NOW(); }
+function tStop(){ if(tAct){ state.st[state.cur].ms += NOW()-tAct; tAct=null; } }
+document.addEventListener("visibilitychange",()=>{ if(document.hidden){ tStop(); save(); } else tStart(); });
+window.addEventListener("pagehide",()=>{ tStop(); save(); });
+const fmtT=ms=>{const s=Math.round(ms/1000);return Math.floor(s/60)+":"+String(s%60).padStart(2,"0");};
+function addErr(i,txt){ state.st[i].err++; if(txt){ state.miss.push(`Station ${i+1}: ${txt}`); if(state.miss.length>60) state.miss.shift(); } save(); renderSummary(); }
+function markDone(i,id){ state.st[i].done[id]=true; save(); renderNav(); renderSummary(); }
+const norm=s=>s.trim().replace(/\s+/g," ").toLowerCase();
+const KEY=()=>"mathe-fortschritt:dreiecke-eigenschaften:"+norm(state.name);
+function save(){ if(!state.name) return; try{ const st=state.st.map((s,i)=>({...s,ms:curMs(i)})); localStorage.setItem(KEY(),JSON.stringify({round:state.round,seed:state.seed,cur:state.cur,st,miss:state.miss,hist:state.hist})); }catch(_){} }
+function load(){ try{ const v=localStorage.getItem(KEY()); return v?JSON.parse(v):null; }catch(_){ return null; } }
+
+// ================= Station 1: nach Winkeln =================
+const NW={spitz:"spitzwinkeliges Dreieck",recht:"rechtwinkeliges Dreieck",stumpf:"stumpfwinkeliges Dreieck"};
+const NWD={spitz:"drei spitze Winkel",recht:"ein rechter Winkel (90°)",stumpf:"ein stumpfer Winkel"};
+function genS1(){
+  rngFor(1);
+  return shuffleR(["spitz","spitz","recht","recht","stumpf","stumpf"]).map(k=>{
+    let ang;
+    for(;;){
+      if(k==="spitz"){const a=5*rnd(8,16),b=5*rnd(8,16),c=180-a-b;if(c<35||c>85)continue;ang=[a,b,c];}
+      else if(k==="recht"){const a=5*rnd(5,13);ang=[90,a,90-a];}
+      else{const o=5*rnd(20,27),a=5*rnd(3,8),c=180-o-a;if(c<15)continue;ang=[o,a,c];}
+      break;
+    }
+    return {k,ang:shuffleR(ang),rot:rnd(0,359)};
+  });
+}
+// ================= Station 2: nach Seiten =================
+const NS={seitig:"gleichseitiges Dreieck",schenkel:"gleichschenkeliges Dreieck",allg:"allgemeines Dreieck"};
+function genS2(){
+  rngFor(2);
+  return shuffleR(["seitig","seitig","schenkel","schenkel","allg","allg"]).map(k=>{
+    let s;
+    for(;;){
+      if(k==="seitig"){const v=rnd(3,8);s=[v,v,v];}
+      else if(k==="schenkel"){const l=rnd(4,9),b=rnd(2,2*l-2);if(Math.abs(b-l)<2)continue;s=shuffleR([l,l,b]);}
+      else{const a=rnd(3,10),b=rnd(3,10),c=rnd(3,10);if(a===b||b===c||a===c)continue;if(a+b<=c+1||a+c<=b+1||b+c<=a+1)continue;s=[a,b,c];}
+      break;
+    }
+    return {k,s,rot:rnd(0,359)};
+  });
+}
+function renderNaming(i){
+  const isW=i===0, items=isW?genS1():genS2(), names=isW?NW:NS, keys=Object.keys(names);
+  const col={spitz:"var(--spitz)",recht:"var(--recht)",stumpf:"var(--stumpf)",seitig:"var(--seitig)",schenkel:"var(--schenkel)",allg:"var(--allg)"};
+  const st=state.st[i], wrap=document.createElement("div"); wrap.className="cards";
+  items.forEach((it,n)=>{
+    const P=isW?prep(fromAngles(...it.ang),it.rot,300,230,46):prep(fromSides(...it.s),it.rot,300,230,40);
+    const svg=isW?triSVG(P,{W:300,H:230,angles:it.ang,verts:false,label:"Dreieck mit den Winkeln "+it.ang.join("°, ")+"°"})
+                 :triSVG(P,{W:300,H:230,sides:[`a = ${it.s[0]} cm`,`b = ${it.s[1]} cm`,`c = ${it.s[2]} cm`],label:`Dreieck mit a = ${it.s[0]} cm, b = ${it.s[1]} cm, c = ${it.s[2]} cm`});
+    const c=document.createElement("div"); c.className="tcard";
+    c.innerHTML=`<div class="nr">Dreieck ${n+1}</div>${svg}<div class="choices">${keys.map(k=>`<button class="choice" data-v="${k}"><span class="sw" style="background:${col[k]}"></span>${names[k]}</button>`).join("")}</div><div class="fb" aria-live="polite"></div>`;
+    const fb=c.querySelector(".fb"), id="t"+n;
+    const solve=()=>{ c.classList.add("ok"); c.querySelector(`[data-v="${it.k}"]`).classList.add("good"); c.querySelectorAll(".choice").forEach(b=>b.disabled=true);
+      fb.className="fb ok"; fb.innerHTML=`<span class="smile">🙂</span> Richtig! ${isW?NWD[it.k]:{seitig:"Alle drei Seiten sind gleich lang.",schenkel:"Zwei Seiten sind gleich lang.",allg:"Alle Seiten sind unterschiedlich lang."}[it.k]}`; };
+    if(st.done[id]) solve();
+    c.querySelectorAll(".choice").forEach(b=>b.onclick=()=>{
+      const v=b.dataset.v; if(st.done[id]) return;
+      if(v===it.k){ solve(); markDone(i,id); checkStationDone(i); return; }
+      b.classList.add("wrongb"); b.disabled=true;
+      fb.className="fb bad"; fb.innerHTML=`<span class="smile">😟</span> ${hintNaming(isW,it.k,v)}`;
+      addErr(i,`${names[it.k]} als ${names[v]} benannt`);
+    });
+    wrap.appendChild(c);
+  });
+  return wrap;
+}
+function hintNaming(isW,k,v){
+  if(isW){
+    if(k==="spitz") return v==="recht"?"Schau genau: Kein Winkel ist genau 90°.":"Kein Winkel ist größer als 90°.";
+    if(k==="recht") return v==="spitz"?"Ein Winkel ist genau 90° – das ist ein rechter Winkel.":"Der größte Winkel ist genau 90°, nicht größer.";
+    return v==="spitz"?"Ein Winkel ist größer als 90° – ein stumpfer Winkel!":"Der große Winkel ist größer als 90°, nicht genau 90°.";
+  }
+  if(k==="seitig") return v==="schenkel"?"Hier sind sogar alle drei Seiten gleich lang – dafür gibt es einen eigenen Namen.":"Vergleiche die Seitenlängen: Sind welche gleich lang?";
+  if(k==="schenkel") return v==="seitig"?"Nicht alle drei Seiten sind gleich lang – nur zwei.":"Vergleiche genau: Zwei Seiten sind gleich lang!";
+  return "Vergleiche genau: Alle drei Seiten sind unterschiedlich lang.";
+}
+
+// ================= Station 3: Eigenschaften zuordnen =================
+const BOXN={seitig:"Das gleichseitige Dreieck",schenkel:"Das gleichschenkelige Dreieck",recht:"Das rechtwinkelige Dreieck"};
+const BOXD={seitig:"gleichseitigen Dreieck",schenkel:"gleichschenkeligen Dreieck",recht:"rechtwinkeligen Dreieck"};
+const PROPS={
+  seitig:[
+    ["Alle Seiten sind gleich lang.","Das gilt nur, wenn wirklich alle drei Seiten gleich lang sind."],
+    ["Alle Winkel sind gleich groß (60°).","60° + 60° + 60° = 180°. Welches Dreieck hat drei gleiche Winkel?"],
+    ["Es gibt drei Symmetrieachsen.","Drei Symmetrieachsen hat nur das Dreieck, bei dem alle Seiten gleich lang sind."],
+    ["a = b = c","a = b = c heißt: alle drei Seiten sind gleich lang."],
+    ["α = β = γ = 60°","Alle drei Winkel sind gleich groß."]],
+  schenkel:[
+    ["Die Schenkel sind gleich lang.","Schenkel und Basis gibt es beim gleichschenkeligen Dreieck."],
+    ["Die dritte Seite heißt Basis.","Die Basis gehört zum gleichschenkeligen Dreieck."],
+    ["Die Winkel an der Basis heißen Basiswinkel. Sie sind gleich groß.","Basiswinkel liegen an der Basis. Wo gibt es eine Basis?"],
+    ["Es gibt genau eine Symmetrieachse.","Nur eine Symmetrieachse: Sie geht durch die Spitze und halbiert die Basis."],
+    ["Genau zwei Seiten sind gleich lang.","Genau zwei – nicht drei!"]],
+  recht:[
+    ["Ein Winkel ist genau 90°.","Ein Winkel mit 90° ist ein rechter Winkel."],
+    ["Die Hypotenuse liegt dem rechten Winkel gegenüber.","Hypotenuse und Katheten gibt es nur beim rechtwinkeligen Dreieck."],
+    ["Die Hypotenuse ist die längste Seite.","Das Wort Hypotenuse gehört zum rechtwinkeligen Dreieck."],
+    ["Die Katheten schließen den rechten Winkel ein.","Die Katheten liegen am rechten Winkel."],
+    ["α + β = 90°","Wenn γ = 90° ist, bleiben für α und β zusammen noch 90°."]]
+};
+function genS3(){ rngFor(3); const out=[]; Object.keys(PROPS).forEach(k=>shuffleR(PROPS[k].map((p,j)=>j)).slice(0,4).forEach(j=>out.push({k,j,id:k+j,txt:PROPS[k][j][0],hint:PROPS[k][j][1]}))); return shuffleR(out); }
+function renderProps(){
+  const i=2, st=state.st[i], cards=genS3(), root=document.createElement("div");
+  root.innerHTML=`<p class="hint">Ziehe jedes Kärtchen in den richtigen Kasten – oder tippe ein Kärtchen an und dann den Kasten.</p>
+    <div class="pool" id="pool3"></div><div class="fb" id="fb3" aria-live="polite"></div>
+    <div class="boxes">${Object.keys(BOXN).map(k=>`<div class="box" data-drop="box" data-k="${k}"><h3>${ICON[k]}${BOXN[k]}</h3><div class="in"></div></div>`).join("")}</div>`;
+  const pool=root.querySelector("#pool3"), fb=root.querySelector("#fb3");
+  cards.forEach(c=>{
+    const el=document.createElement("button"); el.type="button"; el.className="chip"; el.textContent=c.txt;
+    const place=()=>{ el.classList.add("placed"); el.disabled=true; root.querySelector(`.box[data-k="${c.k}"] .in`).appendChild(el); };
+    if(st.done[c.id]){ place(); return; }
+    makeChip(el,t=>{
+      if(t.dataset.k===c.k){ place(); fb.className="fb ok"; fb.innerHTML=`<span class="smile">🙂</span> Richtig – das gehört zum ${BOXD[c.k]}.`; markDone(i,c.id); checkStationDone(i); }
+      else{ bounce(el); fb.className="fb bad"; fb.innerHTML=`<span class="smile">😟</span> „${esc(c.txt)}“ passt nicht zum ${BOXD[t.dataset.k]}. ${esc(c.hint)}`;
+        addErr(i,`„${c.txt}“ zum ${BOXD[t.dataset.k]} gelegt`); }
+    });
+    pool.appendChild(el);
+  });
+  return root;
+}
+
+// ================= Station 4: Beschriften =================
+function genS4(){
+  rngFor(4);
+  const w=rnd(70,100),h=rnd(120,160),rotG=pick([-1,1])*rnd(0,28);
+  const p=rnd(150,190),q=rnd(100,130),rotR=pick([0,90,180,270])+rnd(-15,15);
+  return {g:{pts:[[-w,0],[w,0],[0,h]],rot:rotG},r:{pts:[[p,0],[0,q],[0,0]],rot:rotR}};
+}
+function spotsFor(P,kind){
+  const c=centroid(P), mid=(a,b,o)=>{const m=mul(add(P[a],P[b]),.5);return add(m,mul(nrm(sub(m,c)),o));};
+  const inA=(i,o)=>add(P[i],mul(nrm(add(nrm(sub(P[(i+1)%3],P[i])),nrm(sub(P[(i+2)%3],P[i])))),o));
+  if(kind==="g") return [
+    {id:"g1",k:"Schenkel",at:mid(0,2,34)},{id:"g2",k:"Schenkel",at:mid(1,2,34)},{id:"g3",k:"Basis",at:mid(0,1,30)},
+    {id:"g4",k:"Basiswinkel",at:inA(0,44),ang:1},{id:"g5",k:"Basiswinkel",at:inA(1,44),ang:1}];
+  return [
+    {id:"r1",k:"Hypotenuse",at:mid(0,1,32)},{id:"r2",k:"Kathete",at:mid(0,2,30)},{id:"r3",k:"Kathete",at:mid(1,2,30)},
+    {id:"r4",k:"rechter Winkel",at:inA(2,44),ang:1}];
+}
+const SIDE_K=["Schenkel","Basis","Hypotenuse","Kathete"];
+function hintLabel(spotK,chip,kind){
+  if(chip==="Hypotenuse"&&kind==="g") return "Eine Hypotenuse gibt es nur beim rechtwinkeligen Dreieck.";
+  if(chip==="Basis"&&kind==="r") return "Eine Basis gibt es beim gleichschenkeligen Dreieck, nicht hier.";
+  const spotSide=SIDE_K.includes(spotK), chipSide=SIDE_K.includes(chip);
+  if(spotSide&&!chipSide) return "Hier ist eine Seite gemeint, kein Winkel.";
+  if(!spotSide&&chipSide) return "Hier ist ein Winkel gemeint, keine Seite.";
+  if(spotK==="Basis") return "Die Basis ist die dritte Seite. Die Schenkel sind die beiden gleich langen Seiten.";
+  if(spotK==="Schenkel") return "Die Schenkel sind die beiden gleich langen Seiten. Die Basis liegt unten zwischen den Basiswinkeln.";
+  if(spotK==="Hypotenuse") return "Die Hypotenuse liegt dem rechten Winkel gegenüber. Sie ist die längste Seite.";
+  if(spotK==="Kathete") return "Die Katheten schließen den rechten Winkel ein. Sie liegen direkt am rechten Winkel.";
+  return "Schau dir die Zeichnung noch einmal genau an.";
+}
+function renderLabels(){
+  const i=3, st=state.st[i], g=genS4(), root=document.createElement("div"); root.className="labwrap";
+  [["g","Das gleichschenkelige Dreieck",["Schenkel","Schenkel","Basis","Basiswinkel","Basiswinkel","Hypotenuse"]],
+   ["r","Das rechtwinkelige Dreieck",["Hypotenuse","Kathete","Kathete","rechter Winkel","Basis"]]].forEach(([kind,title,chips])=>{
+    const W=340,H=300, P=prep(g[kind].pts,g[kind].rot,W,H,52);
+    const svg=kind==="g"?triSVG(P,{W,H,angles:[null,null,null],verts:false,label:"gleichschenkeliges Dreieck"}).replace("</svg>",angleMark(P,0,50,false)+angleMark(P,1,50,false)+"</svg>")
+                        :triSVG(P,{W,H,angles:[null,null,90],angleText:false,verts:false,label:"rechtwinkeliges Dreieck"});
+    const part=document.createElement("div"); part.className="labpart";
+    const spots=spotsFor(P,kind);
+    part.innerHTML=`<h3>${title}</h3><div class="lab">${svg}${spots.map(s=>`<div class="spot${s.ang?" ang":""}" data-drop="spot" data-id="${s.id}" data-k="${s.k}" style="left:${(s.at[0]/W*100).toFixed(2)}%;top:${(s.at[1]/H*100).toFixed(2)}%">?</div>`).join("")}</div><div class="pool"></div><div class="fb" aria-live="polite"></div>`;
+    const pool=part.querySelector(".pool"), fb=part.querySelector(".fb");
+    const fill=(sp,txt)=>{ sp.classList.add("filled"); sp.textContent=txt; };
+    // bereits gelöste Felder
+    const doneChips={};
+    spots.forEach(s=>{ if(st.done[s.id]){ fill(part.querySelector(`[data-id="${s.id}"]`),s.k); doneChips[s.k]=(doneChips[s.k]||0)+1; } });
+    shuffleR(chips).forEach(txt=>{
+      if(doneChips[txt]){ doneChips[txt]--; return; }
+      const el=document.createElement("button"); el.type="button"; el.className="chip"; el.textContent=txt;
+      makeChip(el,t=>{
+        if(t.dataset.drop!=="spot"||!part.contains(t)){ bounce(el); fb.className="fb bad"; fb.innerHTML='<span class="smile">😟</span> Leg das Kärtchen in ein Feld dieses Dreiecks.'; return; }
+        if(t.dataset.k===txt){ fill(t,txt); el.remove(); fb.className="fb ok"; fb.innerHTML=`<span class="smile">🙂</span> Richtig: ${esc(txt)}!`; markDone(i,t.dataset.id); checkStationDone(i); }
+        else{ bounce(el); fb.className="fb bad"; fb.innerHTML=`<span class="smile">😟</span> ${hintLabel(t.dataset.k,txt,kind)}`; addErr(i,`„${txt}“ statt „${t.dataset.k}“ eingetragen`); }
+      });
+      pool.appendChild(el);
+    });
+    root.appendChild(part);
+  });
+  return root;
+}
+
+// ================= Station 5: Formen =================
+const GX=14, GY=10, SC=30, M=18;
+const FT={
+  spitz:"Ziehe den roten Punkt C so, dass ein spitzwinkeliges Dreieck entsteht.",
+  recht:"Ziehe den roten Punkt C so, dass ein rechtwinkeliges Dreieck entsteht.",
+  stumpf:"Ziehe den roten Punkt C so, dass ein stumpfwinkeliges Dreieck entsteht.",
+  schenkel:"Ziehe den roten Punkt C so, dass ein gleichschenkeliges Dreieck entsteht.",
+  rschenkel:"Ziehe den roten Punkt C so, dass ein Dreieck entsteht, das rechtwinkelig und gleichschenkelig ist."
+};
+function info(A,B,C){
+  const P=[A,B,C], d=P.map((p,i)=>{const q=P[(i+1)%3],r=P[(i+2)%3];return (q[0]-p[0])*(r[0]-p[0])+(q[1]-p[1])*(r[1]-p[1]);});
+  const s2=P.map((p,i)=>{const q=P[(i+1)%3],r=P[(i+2)%3];return (q[0]-r[0])**2+(q[1]-r[1])**2;}); // Seite gegenüber Ecke i
+  const deg=cross(sub(B,A),sub(C,A))===0;
+  const ang=P.map((p,i)=>{const q=P[(i+1)%3],r=P[(i+2)%3],u=sub(q,p),v=sub(r,p);return Math.acos(Math.max(-1,Math.min(1,(u[0]*v[0]+u[1]*v[1])/(len(u)*len(v)||1))))*180/Math.PI;});
+  const right=d.findIndex(x=>x===0), obt=d.findIndex(x=>x<0);
+  const eq=[[0,1],[1,2],[0,2]].filter(([x,y])=>s2[x]===s2[y]);
+  return {deg,right,obt,eq,s2,ang,acute:!deg&&right<0&&obt<0};
+}
+const fits=(k,f)=>!f.deg&&({spitz:f.acute,recht:f.right>=0,stumpf:f.obt>=0,schenkel:f.eq.length>0,rschenkel:f.right>=0&&f.eq.length>0})[k];
+function genS5(){
+  rngFor(5);
+  return ["spitz","recht","stumpf","schenkel","rschenkel"].map(k=>{
+    for(;;){
+      const dx=2*rnd(2,5), dy=2*rnd(-2,2), x0=rnd(1,GX-1-dx), y0=rnd(Math.max(2,2-dy),Math.min(GY-1,GY-1-dy));
+      const A=[x0,y0],B=[x0+dx,y0+dy];
+      if(B[1]<1||B[1]>GY-1) continue;
+      const Mx=(A[0]+B[0])/2,My=(A[1]+B[1])/2, cands=[[Mx-dy/2,My+dx/2],[Mx+dy/2,My-dx/2]];
+      if(!cands.some(([x,y])=>x>=0&&x<=GX&&y>=0&&y<=GY)) continue;
+      let C,g=0;
+      do{ C=[rnd(0,GX),rnd(0,GY)]; g++; }while(g<200 && (info(A,B,C).deg || fits(k,info(A,B,C)) || Math.min(len(sub(C,A)),len(sub(C,B)))<2));
+      return {k,A,B,C0:C};
+    }
+  });
+}
+let s5=null;
+function renderForms(){
+  const i=4, st=state.st[i], tasks=genS5(), root=document.createElement("div");
+  let cur=tasks.findIndex((t,n)=>!st.done["f"+n]); if(cur<0) cur=tasks.length-1;
+  root.innerHTML=`<div class="fsteps" id="fsteps"></div><p class="ftask" id="ftask"></p><div class="forms"><div class="board"><svg class="geo" id="geo" viewBox="0 0 ${GX*SC+2*M} ${GY*SC+2*M}" role="application" aria-label="Zeichenfläche: Punkt C mit der Maus, dem Finger oder den Pfeiltasten verschieben"></svg></div>
+    <div><div class="meas" id="meas"></div>
+    <button class="btn solid" id="fcheck">Prüfen</button><div class="fb" id="ffb" aria-live="polite"></div></div></div>`;
+  s5={tasks,cur,C:[...tasks[cur].C0],root};
+  if(st.done["f"+cur]) s5.C=[...tasks[cur].C0];
+  setTimeout(()=>{ drawForms(); bindForms(); },0);
+  return root;
+}
+const X=v=>M+v*SC, Y=v=>M+v*SC;
+function drawForms(){
+  const {tasks,cur,C,root}=s5, t=tasks[cur], st=state.st[4], svg=root.querySelector("#geo");
+  const A=t.A,B=t.B,f=info(A,B,C), P=[A,B,C].map(p=>[X(p[0]),Y(p[1])]);
+  let g="";
+  for(let x=0;x<=GX;x++) g+=`<line class="gl" x1="${X(x)}" y1="${Y(0)}" x2="${X(x)}" y2="${Y(GY)}"/>`;
+  for(let y=0;y<=GY;y++) g+=`<line class="gl" x1="${X(0)}" y1="${Y(y)}" x2="${X(GX)}" y2="${Y(y)}"/>`;
+  g+=`<polygon class="gtri" points="${P.map(pt).join(" ")}"/>`;
+  if(!f.deg){
+    if(f.right>=0) g+=angleMark(P,f.right,90,false);
+    // gleich lange Seiten mit Strich markieren
+    f.eq.flat().filter((v,n,a)=>a.indexOf(v)===n).forEach(s=>{
+      const p=P[(s+1)%3],q=P[(s+2)%3],m=mul(add(p,q),.5),u=nrm(sub(q,p)),nv=[-u[1],u[0]],a=add(m,mul(nv,8)),b=add(m,mul(nv,-8));
+      g+=`<line class="tick" x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}"/>`;
+    });
+  }
+  const c=centroid(P);
+  ["A","B"].forEach((n,j)=>{const l=add(P[j],mul(nrm(sub(P[j],c)),20));g+=`<circle class="fix" cx="${P[j][0]}" cy="${P[j][1]}" r="6"/><text class="vl" x="${l[0].toFixed(1)}" y="${(l[1]+6).toFixed(1)}" text-anchor="middle">${n}</text>`;});
+  const lc=add(P[2],mul(nrm(sub(P[2],c)),26));
+  g+=`<text class="vl" x="${lc[0].toFixed(1)}" y="${(lc[1]+6).toFixed(1)}" text-anchor="middle" style="fill:var(--red)">C</text>`;
+  g+=`<circle class="halo" id="hhalo" cx="${P[2][0]}" cy="${P[2][1]}" r="22"/><circle class="hand" id="hand" tabindex="0" cx="${P[2][0]}" cy="${P[2][1]}" r="10" aria-label="Punkt C, Position ${C[0]} | ${C[1]}"/>`;
+  svg.innerHTML=g;
+  const fmtA=v=>Math.abs(v-90)<1e-9&&f.right>=0?"90°":f1(v)+"°";
+  const sideL=s=>f1(Math.sqrt(f.s2[s]));
+  root.querySelector("#meas").innerHTML=f.deg?"<b>A, B und C liegen auf einer Geraden – das ist kein Dreieck.</b>":
+    `<table><tr><td>Winkel</td><td>α = ${fmtA(f.ang[0])}</td><td>β = ${fmtA(f.ang[1])}</td><td>γ = ${fmtA(f.ang[2])}</td></tr>
+     <tr><td>Seiten</td><td>a ≈ ${sideL(0)}</td><td>b ≈ ${sideL(1)}</td><td>c ≈ ${sideL(2)}</td></tr></table>
+     <div style="font-size:14px;color:var(--muted);margin-top:4px">Seiten in Kästchen. Ein Strich zeigt gleich lange Seiten, das Quadrat einen rechten Winkel.</div>`;
+  root.querySelector("#ftask").textContent=FT[t.k];
+  root.querySelector("#fsteps").innerHTML=tasks.map((x,n)=>`<span class="${st.done["f"+n]?"ok":""} ${n===cur?"cur":""}" aria-label="Aufgabe ${n+1}${st.done["f"+n]?", gelöst":""}">${n+1}</span>`).join("");
+  const done=st.done["f"+cur], btn=root.querySelector("#fcheck");
+  btn.textContent=done?(tasks.findIndex((x,n)=>!st.done["f"+n])>=0?"Nächste Aufgabe":"Fertig"):"Prüfen";
+  btn.disabled=done && tasks.findIndex((x,n)=>!st.done["f"+n])<0;
+}
+function moveC(x,y){
+  x=Math.max(0,Math.min(GX,Math.round(x))); y=Math.max(0,Math.min(GY,Math.round(y)));
+  if(s5.C[0]===x&&s5.C[1]===y) return;
+  const st=state.st[4]; if(st.done["f"+s5.cur]) return;
+  s5.C=[x,y]; const ff=s5.root.querySelector("#ffb"); if(ff.classList.contains("bad")){ ff.className="fb"; ff.textContent=""; }
+  drawForms(); const h=s5.root.querySelector("#hand"); if(h&&document.activeElement!==h&&s5.kb) h.focus({preventScroll:true});
+}
+function svgPoint(svg,cx,cy){ const m=svg.getScreenCTM&&svg.getScreenCTM(); if(!m) return null; const p=svg.createSVGPoint(); p.x=cx; p.y=cy; const q=p.matrixTransform(m.inverse()); return [(q.x-M)/SC,(q.y-M)/SC]; }
+function bindForms(){
+  const svg=s5.root.querySelector("#geo"), btn=s5.root.querySelector("#fcheck"), fb=s5.root.querySelector("#ffb");
+  let drag=false;
+  svg.addEventListener("pointerdown",e=>{
+    const onHand=e.target.id==="hand"||e.target.id==="hhalo";
+    const p=svgPoint(svg,e.clientX,e.clientY); if(!p) return;
+    if(onHand){ drag=true; e.preventDefault(); try{ svg.setPointerCapture(e.pointerId); }catch(_){} }
+    else{ s5.kb=false; moveC(p[0],p[1]); }
+  });
+  svg.addEventListener("pointermove",e=>{ if(!drag) return; const p=svgPoint(svg,e.clientX,e.clientY); if(p){ s5.kb=false; moveC(p[0],p[1]); } });
+  const end=()=>{ drag=false; };
+  svg.addEventListener("pointerup",end); svg.addEventListener("pointercancel",end);
+  svg.addEventListener("keydown",e=>{
+    const m={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[e.key]; if(!m) return;
+    e.preventDefault(); s5.kb=true; moveC(s5.C[0]+m[0],s5.C[1]+m[1]);
+  });
+  btn.addEventListener("click",()=>{
+    const st=state.st[4], t=s5.tasks[s5.cur];
+    if(st.done["f"+s5.cur]){
+      const nx=s5.tasks.findIndex((x,n)=>!st.done["f"+n]); if(nx<0) return;
+      s5.cur=nx; s5.C=[...s5.tasks[nx].C0]; fb.className="fb"; fb.textContent=""; drawForms(); return;
+    }
+    const f=info(t.A,t.B,s5.C);
+    if(fits(t.k,f)){ fb.className="fb ok"; fb.innerHTML=`<span class="smile">🙂</span> Richtig! ${okText(t.k,f)}`; markDone(4,"f"+s5.cur); drawForms(); checkStationDone(4); return; }
+    fb.className="fb bad"; fb.innerHTML=`<span class="smile">😟</span> ${formHint(t.k,f)}`;
+    addErr(4,`Formen: ${({spitz:"spitzwinkelig",recht:"rechtwinkelig",stumpf:"stumpfwinkelig",schenkel:"gleichschenkelig",rschenkel:"rechtwinkelig und gleichschenkelig"})[t.k]} gesucht – ${describe(f)} geformt`);
+  });
+}
+const VN=["α","β","γ"];
+function describe(f){ if(f.deg) return "kein Dreieck"; const a=f.right>=0?"rechtwinkelig":f.obt>=0?"stumpfwinkelig":"spitzwinkelig"; return a+(f.eq.length?", gleichschenkelig":""); }
+function okText(k,f){
+  if(k==="spitz") return "Alle drei Winkel sind kleiner als 90°.";
+  if(k==="recht") return `${VN[f.right]} ist genau 90° – ein rechter Winkel.`;
+  if(k==="stumpf") return `${VN[f.obt]} ist größer als 90° – ein stumpfer Winkel.`;
+  if(k==="schenkel") return "Zwei Seiten sind gleich lang – siehst du die Striche?";
+  return "Ein rechter Winkel und zwei gleich lange Seiten.";
+}
+function formHint(k,f){
+  if(f.deg) return "Das ist kein Dreieck – A, B und C liegen auf einer Geraden.";
+  if(k==="spitz") return f.right>=0?`${VN[f.right]} ist genau 90°. Alle drei Winkel müssen kleiner als 90° sein.`:`${VN[f.obt]} ist größer als 90°. Alle drei Winkel müssen kleiner als 90° sein.`;
+  if(k==="recht") return "Kein Winkel ist genau 90°. Sobald ein rechter Winkel entsteht, erscheint ein kleines Quadrat mit Punkt.";
+  if(k==="stumpf") return "Kein Winkel ist größer als 90°. Ziehe C so, dass ein Winkel ganz weit aufgeht.";
+  if(k==="schenkel") return "Noch sind keine zwei Seiten genau gleich lang. Gleich lange Seiten bekommen einen roten Strich.";
+  if(f.right<0&&!f.eq.length) return "Es fehlen noch der rechte Winkel und zwei gleich lange Seiten.";
+  if(f.right<0) return "Zwei Seiten sind schon gleich lang – jetzt fehlt noch ein rechter Winkel.";
+  return "Der rechte Winkel passt – jetzt müssen noch zwei Seiten gleich lang sein.";
+}
+
+// ================= Ablauf =================
+const TOTAL=[6,6,12,9,5];
+const doneCount=i=>Object.keys(state.st[i].done).length;
+function renderNav(){
+  const nav=$("#stnav");
+  nav.innerHTML=STATIONS.map((s,i)=>`<button class="stbtn${doneCount(i)>=TOTAL[i]?" done":""}" data-i="${i}" ${i===state.cur?'aria-current="step"':""}><span class="no">${doneCount(i)>=TOTAL[i]?"✓":i+1}</span>${s.t}</button>`).join("")
+    +`<span class="rnd">Runde ${state.round}</span><button class="btn" id="newRound">🔄 Neue Runde</button>`;
+  nav.querySelectorAll(".stbtn").forEach(b=>b.onclick=()=>show(+b.dataset.i));
+  $("#newRound").onclick=startNewRound;
+}
+function show(i){
+  tStop(); state.cur=i; tStart(); deselect();
+  const stg=$("#stage"), s=STATIONS[i];
+  const task=["Benenne jedes Dreieck nach seinen Winkeln: spitzwinkelig, rechtwinkelig oder stumpfwinkelig.",
+    "Benenne jedes Dreieck nach seinen Seitenlängen: gleichseitig, gleichschenkelig oder allgemein.",
+    "Ordne die Eigenschaften dem richtigen Dreieck zu.",
+    "Ziehe die Kärtchen an die richtige Stelle. Ein Kärtchen passt jeweils nicht dazu.",
+    "Ziehe den roten Punkt C (oder tippe auf einen Gitterpunkt). A und B bleiben fest. Mit „Prüfen“ siehst du, ob es passt."][i];
+  stg.innerHTML=`<h2>Station ${i+1}: ${s.title}</h2><p class="task">${task}</p>`;
+  stg.appendChild([()=>renderNaming(0),()=>renderNaming(1),renderProps,renderLabels,renderForms][i]());
+  const d=document.createElement("div"); d.id="stdone"; stg.appendChild(d);
+  updateDoneBox(i); renderNav(); renderSummary(); save();
+}
+function updateDoneBox(i){
+  const d=$("#stdone"); if(!d) return;
+  if(doneCount(i)<TOTAL[i]){ d.className=""; d.innerHTML=""; return; }
+  const nx=STATIONS.findIndex((s,j)=>doneCount(j)<TOTAL[j]);
+  d.className="stdone"; d.innerHTML=`<p>✓ Station ${i+1} geschafft!</p>`+(nx>=0?`<button class="btn solid" id="toNext">Weiter zu Station ${nx+1}</button>`:`<button class="btn solid" id="toSum">Alle Stationen geschafft – zur Auswertung</button>`);
+  if(nx>=0) $("#toNext").onclick=()=>{ show(nx); window.scrollTo({top:0,behavior:"smooth"}); };
+  else $("#toSum").onclick=()=>$("#summary").scrollIntoView({behavior:"smooth"});
+}
+function checkStationDone(i){ if(doneCount(i)>=TOTAL[i]){ updateDoneBox(i); renderNav(); } }
+
+function renderSummary(){
+  const s=$("#summary"); if(!state.name){ s.hidden=true; return; }
+  const all=STATIONS.every((x,i)=>doneCount(i)>=TOTAL[i]);
+  const now=new Date(), dt=now.toLocaleDateString("de-AT")+", "+now.toLocaleTimeString("de-AT",{hour:"2-digit",minute:"2-digit"});
+  const err=state.st.reduce((a,x)=>a+x.err,0), ms=state.st.reduce((a,x,i)=>a+curMs(i),0), dn=STATIONS.reduce((a,x,i)=>a+Math.min(doneCount(i),TOTAL[i]),0);
+  const rows=STATIONS.map((x,i)=>`<tr><td>${i+1}</td><td>${x.title}</td><td>${Math.min(doneCount(i),TOTAL[i])} / ${TOTAL[i]}${doneCount(i)>=TOTAL[i]?" ✓":""}</td><td>${state.st[i].err}</td><td>${fmtT(curMs(i))}</td></tr>`).join("");
+  const miss=state.miss.length?`<h3>Verwechslungen (zum Nachbesprechen)</h3><ul class="miss">${state.miss.slice(-25).map(m=>`<li>${esc(m)}</li>`).join("")}</ul>`:"";
+  const hist=state.hist.length?`<h3>Frühere Runden</h3><div class="tablewrap"><table><thead><tr><th>Runde</th><th>erledigt</th><th>Fehlversuche</th><th>Zeit</th></tr></thead><tbody>${state.hist.map(h=>`<tr><td>${h.n}</td><td>${h.done} / 38</td><td>${h.err}</td><td>${fmtT(h.ms)}</td></tr>`).join("")}</tbody></table></div>`:"";
+  s.innerHTML=`<h2>Auswertung für die Lehrkraft${all?"":'<span class="livetag">wird laufend aktualisiert</span>'}</h2>
+    <div class="sumhead"><div><span>Name</span><b>${esc(state.name)}</b></div><div><span>Datum</span><b>${dt}</b></div><div><span>Übung</span><b>Dreiecke – Runde ${state.round}</b></div></div>
+    <div class="sumstats"><div><b>${dn} / 38</b><span>Aufgaben erledigt</span></div><div><b>${STATIONS.filter((x,i)=>doneCount(i)>=TOTAL[i]).length} / 5</b><span>Stationen fertig</span></div><div><b>${err}</b><span>Fehlversuche</span></div><div><b>${fmtT(ms)}</b><span>Bearbeitungszeit</span></div></div>
+    <div class="tablewrap"><table><thead><tr><th>Nr.</th><th>Station</th><th>erledigt</th><th>Fehlversuche</th><th>Zeit</th></tr></thead><tbody>${rows}</tbody></table></div>
+    ${miss}${hist}
+    <p class="sumnote">Zeige diese Auswertung deiner Lehrkraft.</p>`;
+  s.hidden=false;
+}
+function startNewRound(){
+  if(!state.name) return;
+  const open=38-STATIONS.reduce((a,x,i)=>a+Math.min(doneCount(i),TOTAL[i]),0);
+  if(!confirm(`Neue Runde mit neuen Dreiecken starten?${open?` ${open} Aufgaben sind noch offen.`:""} Die Ergebnisse dieser Runde bleiben in der Auswertung stehen.`)) return;
+  tStop();
+  state.hist.push({n:state.round,done:38-open,err:state.st.reduce((a,x)=>a+x.err,0),ms:state.st.reduce((a,x)=>a+x.ms,0)});
+  state.round++; state.seed=Math.floor(Math.random()*1e9)+1; state.st=freshSt(); state.miss=[];
+  show(0); window.scrollTo({top:0,behavior:"smooth"});
+}
+function lockName(){
+  const inp=$("#name"), msg=$("#nameMsg"); if(state.name) return;
+  const n=inp.value.trim().replace(/\s+/g," ");
+  if(!n){ msg.className="nmsg bad"; msg.textContent="Bitte gib zuerst deinen Namen ein."; inp.focus(); return; }
+  state.name=n; inp.value=n; inp.disabled=true; $("#nameOk").hidden=true; document.body.classList.remove("waiting");
+  const sv=load();
+  if(sv&&sv.st){ Object.assign(state,{round:sv.round||1,seed:sv.seed||1,st:sv.st,miss:sv.miss||[],hist:sv.hist||[]}); msg.className="nmsg"; msg.textContent="✓ Willkommen zurück! Dein Fortschritt wurde geladen."; show(sv.cur||0); }
+  else{ state.seed=Math.floor(Math.random()*1e9)+1; state.st=freshSt(); msg.textContent=""; show(0); }
+  tStart(); save();
+}
+$("#nameOk").addEventListener("click",lockName);
+$("#name").addEventListener("keydown",e=>{ if(e.key==="Enter") lockName(); });
+
+// Vorschau vor dem Start
+state.seed=Math.floor(Math.random()*1e9)+1;
+renderNav(); show(0);
+</script>
+</body>
+</html>
