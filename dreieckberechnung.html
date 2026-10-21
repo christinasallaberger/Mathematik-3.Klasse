@@ -30,29 +30,29 @@ body{
   background-size:22px 22px;
   font-family:"Atkinson Hyperlegible",system-ui,-apple-system,sans-serif; font-size:17px; line-height:1.5;
 }
-.wrap{max-width:1080px;margin:0 auto;padding:28px 18px 60px}
-header h1{font-family:"Patrick Hand",cursive;font-weight:400;font-size:clamp(34px,6vw,52px);line-height:1.05;margin:0 0 6px;color:var(--pen)}
-header p{margin:0 0 20px;color:var(--muted);max-width:60ch}
-.controls{display:flex;flex-direction:column;gap:12px;margin-bottom:22px;background:var(--card);border:2px solid var(--line);border-radius:14px;padding:16px}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 80px}
+header h1{font-family:"Patrick Hand",cursive;font-weight:400;font-size:clamp(32px,5vw,48px);line-height:1.05;margin:0 0 6px;color:var(--pen)}
+header p{margin:0 0 16px;color:var(--muted);max-width:65ch}
+.controls{display:flex;flex-direction:column;gap:12px;margin-bottom:20px;background:var(--card);border:2px solid var(--line);border-radius:14px;padding:16px}
 .ctl-label{display:block;font-size:14px;font-weight:700;color:var(--ink);margin-bottom:4px}
 .namein{font:inherit;font-size:16px;padding:7px 12px;border:2px solid var(--ink);border-radius:10px;background:var(--card);color:var(--ink);width:260px;max-width:100%}
-.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:22px;align-items:start}
-@media (max-width:820px){.grid{grid-template-columns:1fr}}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:20px;align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:1fr}}
 .sheet{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:18px}
-.task{font-size:20px;margin:0 0 8px}
+.task{font-size:19px;margin:0 0 8px}
 .task b{font-family:"Patrick Hand",cursive;font-size:26px;color:var(--pen);font-weight:400}
 svg{width:100%;height:auto;display:block}
-.side{stroke:var(--ink);stroke-width:3;stroke-linecap:round}
+.side{stroke:var(--ink);stroke-width:3.5;stroke-linecap:round}
 .side.height-line{stroke:var(--red);stroke-width:2.5;stroke-dasharray:6 4}
-.side.selected{stroke:var(--pen);stroke-width:5}
+.side.selected{stroke:var(--pen);stroke-width:6}
 .tri{fill:var(--tri)}
 .ra{fill:none;stroke:var(--ink);stroke-width:2}
 .dot{fill:var(--ink)}
 .lbl{font-family:"Patrick Hand",cursive;font-size:21px;fill:var(--ink)}
 .lbl-sub{font-size:14px}
-.way-title{margin:18px 0 4px;font-size:15px;color:var(--muted)}
-.way{font-family:"Patrick Hand",cursive;font-size:24px;line-height:1.55;color:var(--pen);min-height:44px;border-left:3px solid var(--pen);padding-left:14px}
-.way:empty::before{content:"Hier entsteht dein Rechenweg.";color:var(--muted);font-size:19px}
+.way-title{margin:16px 0 4px;font-size:15px;color:var(--muted)}
+.way{font-family:"Patrick Hand",cursive;font-size:23px;line-height:1.5;color:var(--pen);min-height:44px;border-left:3px solid var(--pen);padding-left:12px}
+.way:empty::before{content:"Hier entsteht dein Rechenweg.";color:var(--muted);font-size:18px}
 .wline{animation:write .35s ease-out}
 @keyframes write{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:none}}
 .wline.final{display:inline-block;border-bottom:3px double var(--pen);margin-top:2px;font-weight:bold}
@@ -71,7 +71,8 @@ svg{width:100%;height:auto;display:block}
 .opt.wrongb{background:var(--red-soft);border-color:var(--red);color:var(--red);text-decoration:line-through}
 .opt:disabled{cursor:default}
 .eq{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-family:"Patrick Hand",cursive;font-size:24px}
-.n{font:inherit;font-family:"Patrick Hand",cursive;font-size:22px;width:80px;padding:2px 8px;border:2px solid var(--ink);border-radius:8px;background:var(--paper);color:var(--pen);text-align:center}
+.n{font:inherit;font-family:"Patrick Hand",cursive;font-size:22px;width:75px;padding:2px 6px;border:2px solid var(--ink);border-radius:8px;background:var(--paper);color:var(--pen);text-align:center}
+.n:focus{outline:none;border-color:var(--pen);box-shadow:0 0 0 3px rgba(29,78,216,0.2)}
 .n.wide{width:110px}
 .check,.next{font:inherit;font-size:16px;font-weight:700;padding:8px 16px;border-radius:10px;border:0;background:var(--btn);color:var(--btn-ink);cursor:pointer}
 .fb{font-size:15px;margin-top:8px}
@@ -79,29 +80,35 @@ svg{width:100%;height:auto;display:block}
 .fb.bad{color:var(--red);background:var(--red-soft);padding:8px 10px;border-radius:8px}
 .fb.ok{color:var(--green)}
 .hit{stroke:transparent;stroke-width:28;stroke-linecap:round;cursor:pointer;pointer-events:stroke}
-.tapnote{text-align:center;font-weight:700;color:var(--pen);margin:6px 0 0;font-size:16px}
-.score{font-size:15px;color:var(--muted);margin:0 0 12px}
+.tapnote{text-align:center;font-weight:700;color:var(--pen);margin:6px 0 0;font-size:15px}
+.score{font-size:15px;color:var(--muted);margin:0 0 12px;font-weight:bold}
 .namerow{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
 .summary{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:20px}
 .summary h2{font-family:"Patrick Hand",cursive;font-size:32px;color:var(--pen);margin:0 0 14px}
 .tablewrap{overflow-x:auto;margin-bottom:14px}
 table{border-collapse:collapse;width:100%;font-size:15px}
 th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
-.tag{font-size:14px;color:var(--muted)}
+.tag{font-size:14px;color:var(--muted);font-weight:normal}
 .homework-box{background:var(--tri);border:2px dashed var(--pen);border-radius:10px;padding:12px 14px;margin-top:14px;font-size:15px}
 .homework-box h4{margin:0 0 6px;color:var(--pen);font-size:17px}
-.codebox{background:var(--paper);border:2px solid var(--ink);border-radius:8px;padding:8px 12px;font-family:monospace;font-size:18px;font-weight:bold;color:var(--pen);display:inline-block;margin:6px 0}
+.codebox{background:var(--paper);border:2px solid var(--ink);border-radius:8px;padding:6px 12px;font-family:monospace;font-size:18px;font-weight:bold;color:var(--pen);display:inline-block;margin:6px 0}
 /* Bruchdarstellung */
 .frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;padding:0 4px}
-.frac .numr{border-bottom:2px solid var(--ink);padding:0 2px}
-.frac .den{padding:0 2px}
+.frac-top{border-bottom:2px solid var(--ink);padding:0 2px;display:flex;align-items:center;gap:4px}
+.frac-bot{padding:2px 2px 0;display:flex;justify-content:center}
+
+/* Onscreen Keypad */
+.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:220px;margin-top:10px;padding:8px;background:var(--paper);border:1px solid var(--line);border-radius:10px}
+.keypad button{font-family:"Patrick Hand",cursive;font-size:22px;font-weight:bold;padding:6px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);cursor:pointer}
+.keypad button:active{background:var(--tri)}
+.round-banner{background:var(--pen);color:#fff;padding:8px 12px;border-radius:8px;font-weight:bold;margin-bottom:12px;display:inline-block}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
     <h1>Dreiecke: Umfang & Flächeninhalt</h1>
-    <p>Wähle zuerst die passende Formel mit Variablen, setze die Zahlen ein und berechne Umfang $u$ und Flächeninhalt $A$.</p>
+    <p>Bestimme Umfang $u$ und Flächeninhalt $A$ in 2 Runden (insgesamt 8 Aufgaben). Wähle die Formeln, setze die Werte ein und berechne das Ergebnis.</p>
   </header>
 
   <div class="controls">
@@ -121,7 +128,7 @@ th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
     </div>
   </div>
 
-  <p class="score" id="score">Gelöst: 0 von 4, davon fehlerfrei: 0</p>
+  <div class="score" id="score">Runde 1 · Gelöst: 0 von 8, davon fehlerfrei: 0</div>
 
   <div class="grid">
     <div class="sheet">
@@ -132,6 +139,26 @@ th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
     </div>
     <div>
       <div class="steps" id="steps"></div>
+
+      <!-- Onscreen Keypad -->
+      <div id="keypadContainer" style="display:none; margin-top:12px;">
+        <span style="font-size:13px; color:var(--muted);">Bildschirm-Tastatur:</span>
+        <div class="keypad">
+          <button type="button" onclick="kpPress('1')">1</button>
+          <button type="button" onclick="kpPress('2')">2</button>
+          <button type="button" onclick="kpPress('3')">3</button>
+          <button type="button" onclick="kpPress('4')">4</button>
+          <button type="button" onclick="kpPress('5')">5</button>
+          <button type="button" onclick="kpPress('6')">6</button>
+          <button type="button" onclick="kpPress('7')">7</button>
+          <button type="button" onclick="kpPress('8')">8</button>
+          <button type="button" onclick="kpPress('9')">9</button>
+          <button type="button" onclick="kpPress(',')">,</button>
+          <button type="button" onclick="kpPress('0')">0</button>
+          <button type="button" onclick="kpDel()">⌫</button>
+        </div>
+      </div>
+
       <div class="done" id="done" hidden style="margin-top:16px;">
         <p id="doneText" style="font-size:18px; margin-bottom:12px;"></p>
         <button class="next" id="nextBtn">Nächste Aufgabe</button>
@@ -143,21 +170,44 @@ th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
 </div>
 
 <script>
-const ROUND = 4;
-// Wechsel zwischen rechtwinkligen und allgemeinen Dreiecken mit variierenden Höhen
-const PLAN = [
-  { type: 'right' },
-  { type: 'general', heightSide: 'c' }, // h_c
-  { type: 'right' },
-  { type: 'general', heightSide: 'a' }  // h_a
+const TOTAL_TASKS = 8;
+const TASKS_PER_ROUND = 4;
+
+// 8 Festgelegte Aufgaben (Runde 1: 1-4, Runde 2: 5-8)
+const TASK_DEFINITIONS = [
+  // Runde 1
+  { round: 1, nr: 1, type: 'right', a: 6, b: 14, c: 15.23 },
+  { round: 1, nr: 2, type: 'general', heightSide: 'c', a: 11, b: 16, c: 20, h: 8 },
+  { round: 1, nr: 3, type: 'right', a: 8, b: 18, c: 19.70 },
+  { round: 1, nr: 4, type: 'general', heightSide: 'c', a: 13, b: 19, c: 24, h: 10 },
+  // Runde 2
+  { round: 2, nr: 5, type: 'right', a: 7, b: 15, c: 16.55 },
+  { round: 2, nr: 6, type: 'general', heightSide: 'c', a: 14, b: 22, c: 28, h: 11 },
+  { round: 2, nr: 7, type: 'right', a: 9, b: 12, c: 15 },
+  { round: 2, nr: 8, type: 'general', heightSide: 'c', a: 15, b: 20, c: 25, h: 12 }
 ];
 
-const state = { solved: 0, perfect: 0, log: [], nameLocked: false, idx: 0, name: '' };
+const state = { solved: 0, perfect: 0, log: [], nameLocked: false, idx: 0, name: '', activeInput: null };
 let task = null;
 
 const $ = s => document.querySelector(s);
 function fmt(x){ return String(Math.round(x * 100) / 100).replace('.', ','); }
 function parseNum(s){ return Number(String(s).trim().replace(',', '.')); }
+
+// Keypad-Funktionen
+function activeField(el) { state.activeInput = el; $('#keypadContainer').style.display = 'block'; }
+function kpPress(val) {
+  if (state.activeInput) {
+    state.activeInput.value += val;
+    state.activeInput.focus();
+  }
+}
+function kpDel() {
+  if (state.activeInput) {
+    state.activeInput.value = state.activeInput.value.slice(0, -1);
+    state.activeInput.focus();
+  }
+}
 
 function generateCode() {
   let hash = 0;
@@ -166,11 +216,12 @@ function generateCode() {
     hash = ((hash << 5) - hash) + str.charCodeAt(i);
     hash |= 0;
   }
-  return Math.abs(hash % 900000 + 100000); // 6-stelliger Zahlencode
+  return Math.abs(hash % 900000 + 100000);
 }
 
 function updateScore() {
-  $('#score').textContent = (state.name ? state.name + ': ' : '') + `Gelöst: ${state.solved} von ${ROUND}, davon fehlerfrei: ${state.perfect}`;
+  const curRound = state.idx < 4 ? 1 : 2;
+  $('#score').textContent = (state.name ? state.name + ' · ' : '') + `Runde ${curRound} · Gelöst: ${state.solved} von ${TOTAL_TASKS}, davon fehlerfrei: ${state.perfect}`;
 }
 
 function saveToLocalStorage() {
@@ -188,50 +239,39 @@ function saveToLocalStorage() {
 }
 
 function newTask() {
-  const p = PLAN[state.idx % ROUND];
+  if (state.idx >= TOTAL_TASKS) {
+    showSummary();
+    return;
+  }
+
+  const def = TASK_DEFINITIONS[state.idx];
   
-  if (p.type === 'right') {
-    const a = 3 + Math.floor(Math.random() * 5);
-    const b = 4 + Math.floor(Math.random() * 5);
-    const c = Math.sqrt(a*a + b*b);
+  if (def.type === 'right') {
+    const cVal = def.c || Math.sqrt(def.a * def.a + def.b * def.b);
     task = { 
-      type: 'right', 
-      a, b, c: Math.round(c*100)/100, 
-      u: a + b + c, 
-      A: (a * b) / 2, 
-      selected: new Set(), 
-      errors: 0, 
-      t0: Date.now() 
+      nr: def.nr, round: def.round, type: 'right', 
+      a: def.a, b: def.b, c: Math.round(cVal * 100) / 100, 
+      u: Math.round((def.a + def.b + cVal) * 100) / 100, 
+      A: Math.round(((def.a * def.b) / 2) * 100) / 100, 
+      selected: new Set(), errors: 0, t0: Date.now() 
     };
   } else {
-    const heightSide = p.heightSide || 'c';
-    const a = 5 + Math.floor(Math.random() * 4);
-    const b = 6 + Math.floor(Math.random() * 4);
-    const c = 7 + Math.floor(Math.random() * 4);
-    const h = 4 + Math.floor(Math.random() * 3);
-    
-    let baseVal = c;
-    if (heightSide === 'a') baseVal = a;
-    if (heightSide === 'b') baseVal = b;
-
     task = { 
-      type: 'general', 
-      heightSide, 
-      a, b, c, h, 
-      u: a + b + c, 
-      A: (baseVal * h) / 2, 
-      selected: new Set(), 
-      errors: 0, 
-      t0: Date.now() 
+      nr: def.nr, round: def.round, type: 'general', heightSide: 'c', 
+      a: def.a, b: def.b, c: def.c, h: def.h, 
+      u: def.a + def.b + def.c, 
+      A: (def.c * def.h) / 2, 
+      selected: new Set(), errors: 0, t0: Date.now() 
     };
   }
 
   $('#steps').innerHTML = '';
   $('#way').innerHTML = '';
   $('#done').hidden = true;
+  $('#keypadContainer').style.display = 'none';
 
   const figName = task.type === 'right' ? 'Rechtwinkliges Dreieck' : 'Allgemeines Dreieck';
-  $('#taskText').innerHTML = `<span class="tag">Aufgabe ${state.idx % ROUND + 1} von ${ROUND} · ${figName}</span><br>Stelle die Formeln auf und berechne <b>u</b> und <b>A</b>.`;
+  $('#taskText').innerHTML = `<span class="round-banner">Runde ${task.round}</span> <span class="tag">Aufgabe ${task.nr} von ${TOTAL_TASKS} · ${figName}</span><br>Bestimme Umfang <b>u</b> und Flächeninhalt <b>A</b>.`;
 
   draw();
 
@@ -244,22 +284,151 @@ function newTask() {
 }
 
 function draw() {
-  const W = 360, H = 240;
+  const W = 360, H = 220;
   let lines = '', hits = '', labels = '';
 
   if (task.type === 'right') {
-    const pA = [60, 190], pB = [280, 190], pC = [60, 60];
+    const pA = [60, 180], pB = [280, 180], pC = [60, 50];
     const segs = {
-      'a': [pC, pA, `a = ${fmt(task.a)} cm`, [35, 125]],
+      'a': [pC, pA, `a = ${fmt(task.a)} cm`, [32, 115]],
+      'b': [pA, pB, `b = ${fmt(task.b)} cm`, [170, 202]],
+      'c': [pC, pB, `c = ${fmt(task.c)} cm`, [180, 105]]
+    };
+
+    let pathD = `M ${pA[0]} ${pA[1]} L ${pB[0]} ${pB[1]} L ${pC[0]} ${pC[1]} Z`;
+    lines += `<path d="${pathD}" class="tri"/>`;
+
+    // Rechter Winkel
+    lines += `<path d="M 60 165 L 75 165 L 75 180" class="ra"/><circle cx="67" cy="173" r="2" class="dot"/>`;
+
+    for (let id in segs) {
+      const [p1, p2, txt, pos] = segs[id];
+      const sel = task.selected.has(id) ? ' selected' : '';
+      lines += `<line x1="${p1[0]}" y1="${p1[1]}" x2="${p2[0]}" y2="${p2[1]}" class="side${sel}" id="s_${id}"/>`;
+      hits += `<line x1="${p1[0]}" y1="${p1[1]}" x2="${p2[0]}" y2="${p2[1]}" class="hit" onclick="toggleSide('${id}')"/>`;
+      labels += `<text x="${pos[0]}" y="${pos[1]}" class="lbl" text-anchor="middle">${txt}</text>`;
+    }
+
+  } else {
+    // Allgemeines Dreieck mit Höhe h_c
+    const pA = [50, 180], pB = [290, 180], pC = [160, 50], pH = [160, 180];
+    const segs = {
+      'a': [pC, pB, `a = ${fmt(task.a)} cm`, [240, 110]],
+      'b': [pA, pC, `b = ${fmt(task.b)} cm`, [90, 110]],
+      'c': [pA, pB, `c = ${fmt(task.c)} cm`, [170, 202]]
+    };
+
+    let pathD = `M ${pA[0]} ${pA[1]} L ${pB[0]} ${pB[1]} L ${pC[0]} ${pC[1]} Z`;
+    lines += `<path d="${pathD}" class="tri"/>`;
+
+    // Höhe h_c
+    lines += `<line x1="${pH[0]}" y1="${pH[1]}" x2="${pC[0]}" y2="${pC[1]}" class="side height-line"/>`;
+    lines += `<path d="M 160 168 L 172 168 L 172 180" class="ra"/><circle cx="166" cy="174" r="2" class="dot"/>`;
+    labels += `<text x="180" y="125" class="lbl" fill="var(--red)">h<tspan font-size="14" dy="3">c</tspan><tspan font-size="21" dy="-3"> = ${fmt(task.h)} cm</tspan></text>`;
+
+    for (let id in segs) {
+      const [p1, p2, txt, pos] = segs[id];
+      const sel = task.selected.has(id) ? ' selected' : '';
+      lines += `<line x1="${p1[0]}" y1="${p1[1]}" x2="${p2[0]}" y2="${p2[1]}" class="side${sel}" id="s_${id}"/>`;
+      hits += `<line x1="${p1[0]}" y1="${p1[1]}" x2="${p2[0]}" y2="${p2[1]}" class="hit" onclick="toggleSide('${id}')"/>`;
+      labels += `<text x="${pos[0]}" y="${pos[1]}" class="lbl" text-anchor="middle">${txt}</text>`;
+    }
+  }
+
+  $('#fig').innerHTML = `<svg viewBox="0 0 ${W} ${H}">${lines}${hits}${labels}</svg>`;
+}
+
+function toggleSide(id) {
+  if (!$('#sideBtn')) return;
+  if (task.selected.has(id)) task.selected.delete(id);
+  else task.selected.add(id);
+  draw();
+}
+
+function addStep(num, title, html) {
+  const d = document.createElement('div');
+  d.className = 'step';
+  d.innerHTML = `<div class="step-head"><div class="num">${num}</div><h3>${title}</h3></div><div>${html}</div><div class="fb"></div>`;
+  $('#steps').appendChild(d);
+  d.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  return d;
+}
+
+function right(stepEl, msg) {
+  stepEl.classList.add('solved');
+  const fb = stepEl.querySelector('.fb');
+  fb.className = 'fb ok';
+  fb.textContent = msg;
+  stepEl.querySelectorAll('input, button').forEach(e => e.disabled = true);
+  $('#keypadContainer').style.display = 'none';
+}
+
+function wrong(stepEl, msg) {
+  task.errors++;
+  const fb = stepEl.querySelector('.fb');
+  fb.className = 'fb bad';
+  fb.textContent = msg;
+}
+
+function addWay(line, extraClass = '') {
+  const w = $('#way');
+  const div = document.createElement('div');
+  div.className = 'wline' + (extraClass ? ' ' + extraClass : '');
+  div.innerHTML = line;
+  w.appendChild(div);
+}
+
+// Schritt 1: 3 Umfangsseiten anklicken
+function stepSelectSides() {
+  const d = addStep(1, 'Umfangsseiten in der Skizze wählen', 
+    `<p>Klicke in der Skizze die <b>3 Außenseiten</b> an, die zusammen den Umfang $u$ bilden.</p>
+     <p class="tapnote">Tippe auf die Linien in der Skizze!</p>
+     <button class="check" id="sideBtn" style="margin-top:8px">Auswahl prüfen</button>`);
+
+  $('#sideBtn').onclick = () => {
+    if (task.selected.has('a') && task.selected.has('b') && task.selected.has('c') && task.selected.size === 3) {
+      right(d, 'Ausgezeichnet! Umfang = alle 3 Außenseiten.');
+      stepFormulaU();
+    } else {
+      wrong(d, 'Für den Umfang brauchst du genau die 3 äußeren Seiten a, b und c!');
+    }
+  };
+}
+
+// Schritt 2: Formel für Umfang u wählen
+function stepFormulaU() {
+  const d = addStep(2, 'Formel für den Umfang u wählen', 
+    `<p>Welche Formel beschreibt den Umfang des Dreiecks?</p>
+     <div class="opts">
+       <button class="opt" data-f="1">u = a + b + c</button>
+       <button class="opt" data-f="2">u = a · b · c</button>
+       <button class="opt" data-f="3">u = (a · b) / 2</button>
+     </div>`);
+
+  d.querySelectorAll('.opt').forEach(btn => {
+    btn.onclick = () => {
+      if (btn.dataset.f === '1') {
+        btn.classList.add('good');
+        right(d, 'Richtig! u = a + b + c');
+        addWay('u = a + b + c');
+        stepInsertU();
+      } else {
+        btn.classList.add('wrongb');
+        wrong(d, 'Der Umfang ist die Summe aller drei Außenseiten (+).');
+      }
+    };
+  });
+}
+
 // Schritt 3: Zahlen in Umfang-Formel einsetzen
 function stepInsertU() {
   const d = addStep(3, 'Zahlen in die Umfang-Formel einsetzen', 
-    `<p>Lies die Längen aus der Skizze ab und trage sie in die Felder ein:</p>
+    `<p>Lies die 3 Seitenlängen aus der Skizze ab und trage sie ein:</p>
      <div class="eq">
        <span>u =</span>
-       <input class="n" id="uA"><span>+</span>
-       <input class="n" id="uB"><span>+</span>
-       <input class="n" id="uC">
+       <input class="n" id="uA" onfocus="activeField(this)"><span>+</span>
+       <input class="n" id="uB" onfocus="activeField(this)"><span>+</span>
+       <input class="n" id="uC" onfocus="activeField(this)">
        <button class="check" id="uInsBtn">Prüfen</button>
      </div>`);
 
@@ -276,7 +445,7 @@ function stepInsertU() {
       addWay(`u = ${fmt(task.a)} + ${fmt(task.b)} + ${fmt(task.c)}`);
       stepCalcU();
     } else {
-      wrong(d, `Schau noch einmal genau auf die Skizze. Welche 3 Seitenlängen gehören zum Umfang?`);
+      wrong(d, `Schau genau auf die Skizze. Die Seiten sind: ${fmt(task.a)}, ${fmt(task.b)} und ${fmt(task.c)}.`);
     }
   };
 }
@@ -284,8 +453,8 @@ function stepInsertU() {
 // Schritt 4: Umfang berechnen
 function stepCalcU() {
   const d = addStep(4, 'Umfang u berechnen', 
-    `<p>Rechne das Ergebnis aus:</p>
-     <div class="eq"><span>u =</span><input class="n wide" id="uInp"><span>cm</span><button class="check" id="uBtn">Prüfen</button></div>`);
+    `<p>Berechne das Gesamtergebnis:</p>
+     <div class="eq"><span>u =</span><input class="n wide" id="uInp" onfocus="activeField(this)"><span>cm</span><button class="check" id="uBtn">Prüfen</button></div>`);
 
   $('#uBtn').onclick = () => {
     const val = parseNum($('#uInp').value);
@@ -294,12 +463,12 @@ function stepCalcU() {
       addWay(`u = ${fmt(task.u)} cm`);
       stepFormulaA();
     } else {
-      wrong(d, `Addiere die drei von dir eingesetzten Zahlen korrekt zusammen.`);
+      wrong(d, `Addiere die drei Zahlen: ${fmt(task.a)} + ${fmt(task.b)} + ${fmt(task.c)}`);
     }
   };
 }
 
-// Schritt 5: Flächeninhalts-Formel wählen
+// Schritt 5: Formel für Flächeninhalt A wählen
 function stepFormulaA() {
   let opt1, opt2, opt3, correctFormula;
   if (task.type === 'right') {
@@ -308,17 +477,17 @@ function stepFormulaA() {
     opt2 = 'A = (a · c) / 2';
     opt3 = 'A = a + b + c';
   } else {
-    correctFormula = 'A = (c · h) / 2';
-    opt1 = 'A = (a · h_a) / 2';
-    opt2 = 'A = (c · h) / 2';
-    opt3 = 'A = (b · h_b) / 2';
+    correctFormula = 'A = (c · h_c) / 2';
+    opt1 = 'A = (a · b) / 2';
+    opt2 = 'A = (c · h_c) / 2';
+    opt3 = 'A = a + b + c';
   }
 
-  const d = addStep(5, 'Formel für den Flächeninhalt A wählen', 
-    `<p>Welche Formel passt zur Beschriftung in unserer Skizze?</p>
+  const d = addStep(5, 'Formel für Flächeninhalt A wählen', 
+    `<p>Welche Formel passt zu den Angaben in unserer Skizze?</p>
      <div class="opts">
-       <button class="opt" data-f="${opt1}">${opt1}</button>
-       <button class="opt" data-f="${opt2}">${opt2}</button>
+       <button class="opt" data-f="${opt1}">${opt1.replace('h_c', 'h<sub>c</sub>')}</button>
+       <button class="opt" data-f="${opt2}">${opt2.replace('h_c', 'h<sub>c</sub>')}</button>
        <button class="opt" data-f="${opt3}">${opt3}</button>
      </div>`);
 
@@ -326,29 +495,29 @@ function stepFormulaA() {
     btn.onclick = () => {
       if (btn.dataset.f === correctFormula) {
         btn.classList.add('good');
-        right(d, `Richtig! Formel: ${correctFormula}`);
-        addWay(correctFormula);
+        right(d, `Richtig! Formel: ${correctFormula.replace('h_c', 'h_c')}`);
+        addWay(correctFormula.replace('h_c', 'h<sub>c</sub>'));
         stepInsertA();
       } else {
         btn.classList.add('wrongb');
-        wrong(d, task.type === 'right' ? 'Im rechtwinkligen Dreieck lautet die Formel (a · b) / 2.' : 'Achte darauf, welche Höhe (h) eingezeichnet ist.');
+        wrong(d, task.type === 'right' ? 'Im rechtwinkligen Dreieck lautet die Formel A = (a · b) / 2.' : 'Beim allgemeinen Dreieck nutzt du Grundseite c und die Höhe h_c!');
       }
     };
   });
 }
 
-// Schritt 6: Zahlen in die Bruch-Formel einsetzen
+// Schritt 6: Zahlen in Flächen-Formel einsetzen
 function stepInsertA() {
   const d = addStep(6, 'Zahlen in die Bruch-Formel einsetzen', 
-    `<p>Überlege genau, welche Werte aus der Skizze zueinander passen, und trage sie in den Bruch ein:</p>
+    `<p>Setze die passenden Werte aus der Skizze in den Bruch ein:</p>
      <div class="eq">
        <span>A =</span>
        <div class="frac">
          <div class="frac-top">
-           <input class="n" id="aTop1"><span>·</span><input class="n" id="aTop2">
+           <input class="n" id="aTop1" onfocus="activeField(this)"><span>·</span><input class="n" id="aTop2" onfocus="activeField(this)">
          </div>
          <div class="frac-bot">
-           <input class="n" id="aBot" value="2" style="width:45px">
+           <input class="n" id="aBot" value="2" style="width:45px" onfocus="activeField(this)">
          </div>
        </div>
        <button class="check" id="aInsBtn">Prüfen</button>
@@ -366,168 +535,43 @@ function stepInsertA() {
     const botOk = bot === 2;
 
     if (topOk && botOk) {
-      right(d, 'Richtig eingesetzt!');
+      right(d, 'Super eingesetzt!');
       addWay(`A = (${fmt(exp1)} · ${fmt(exp2)}) / 2`);
       stepCalcA();
     } else {
       if (!botOk) {
-        wrong(d, 'Der Nenner unten muss beim Dreieck immer 2 sein!');
+        wrong(d, 'Der Nenner beim Dreieck ist immer 2!');
       } else {
         wrong(d, task.type === 'right' 
-          ? 'Überlege: Für die Fläche des rechtwinkligen Dreiecks brauchst du die zwei Katheten (die Seiten am rechten Winkel).' 
-          : 'Überlege: Welche Grundseite passt genau zu der eingezeichneten Höhe h?');
+          ? `Nutze die beiden Katheten a (${fmt(task.a)}) und b (${fmt(task.b)}).` 
+          : `Nutze die Grundseite c (${fmt(task.c)}) und die Höhe h_c (${fmt(task.h)}).`);
       }
     }
   };
 }
 
-// Schritt 2: Umfang-Formel eingeben
-function stepFormulaU() {
-  const d = addStep(2, 'Formel für den Umfang u aufstellen', 
-    `<p>Wähle die richtige Formel für den Umfang:</p>
-     <div class="opts">
-       <button class="opt" data-f="1">u = a + b + c</button>
-       <button class="opt" data-f="2">u = a · b · c</button>
-       <button class="opt" data-f="3">u = <span class="frac"><span class="numr">a · h</span><span class="den">2</span></span></button>
-     </div>`);
-
-  d.querySelectorAll('.opt').forEach(btn => {
-    btn.onclick = () => {
-      if (btn.dataset.f === '1') {
-        btn.classList.add('good');
-        right(d, 'Richtig! u = a + b + c');
-        addWay('u = a + b + c');
-        stepCalcU();
-      } else {
-        btn.classList.add('wrongb');
-        wrong(d, 'Beim Umfang werden alle drei Außenseiten addiert (+).');
-      }
-    };
-  });
-}
-
-// Schritt 3: Umfang ausrechnen
-function stepCalcU() {
-  const d = addStep(3, 'Umfang u berechnen', 
-    `<p>Setze die Werte ein (u = ${fmt(task.a)} + ${fmt(task.b)} + ${fmt(task.c)}):</p>
-     <div class="eq"><span>u =</span><input class="n wide" id="uInp"><span>cm</span><button class="check" id="uBtn">Prüfen</button></div>`);
-
-  $('#uBtn').onclick = () => {
-    const val = parseNum($('#uInp').value);
-    if (Math.abs(val - task.u) < 0.05) {
-      right(d, `Korrekt! u = ${fmt(task.u)} cm`);
-      addWay(`u = ${fmt(task.a)} + ${fmt(task.b)} + ${fmt(task.c)} = ${fmt(task.u)} cm`);
-      stepGenFormulaA();
-    } else {
-      wrong(d, `Addiere die drei Seiten: ${fmt(task.a)} + ${fmt(task.b)} + ${fmt(task.c)}`);
-    }
-  };
-}
-
-// Schritt 4: Allgemeine Flächeninhaltsformel
-function stepGenFormulaA() {
-  const d = addStep(4, 'Allgemeine Formel für den Flächeninhalt A', 
-    `<p>Welche allgemeine Grundformel gilt für den Flächeninhalt von Dreiecken?</p>
-     <div class="opts">
-       <button class="opt" data-f="1">A = <span class="frac"><span class="numr">g · h</span><span class="den">2</span></span></button>
-       <button class="opt" data-f="2">A = g · h</button>
-       <button class="opt" data-f="3">A = a + b + c</button>
-     </div>`);
-
-  d.querySelectorAll('.opt').forEach(btn => {
-    btn.onclick = () => {
-      if (btn.dataset.f === '1') {
-        btn.classList.add('good');
-        right(d, 'Richtig! A = (g · h) / 2');
-        stepSpecFormulaA();
-      } else {
-        btn.classList.add('wrongb');
-        wrong(d, 'Ein Dreieck ist halb so groß wie das zugehörige Parallelogramm/Rechteck – achte auf den Bruchstrich durch 2!');
-      }
-    };
-  });
-}
-
-// Schritt 5: Spezifische Formel aus der Skizze wählen
-function stepSpecFormulaA() {
-  let correctOpt, opt1, opt2, opt3, displayWay;
-
-  if (task.type === 'right') {
-    correctOpt = 'right_ab';
-    opt1 = { id: 'right_ab', html: 'A = <span class="frac"><span class="numr">a · b</span><span class="den">2</span></span>' };
-    opt2 = { id: 'right_ch', html: 'A = <span class="frac"><span class="numr">c · h<sub>c</sub></span><span class="den">2</span></span>' };
-    opt3 = { id: 'right_ac', html: 'A = <span class="frac"><span class="numr">a · c</span><span class="den">2</span></span>' };
-    displayWay = 'A = <span class="frac"><span class="numr">a · b</span><span class="den">2</span></span>';
-  } else {
-    // Allgemeines Dreieck
-    opt1 = { id: 'gen_a', html: 'A = <span class="frac"><span class="numr">a · h<sub>a</sub></span><span class="den">2</span></span>' };
-    opt2 = { id: 'gen_b', html: 'A = <span class="frac"><span class="numr">b · h<sub>b</sub></span><span class="den">2</span></span>' };
-    opt3 = { id: 'gen_c', html: 'A = <span class="frac"><span class="numr">c · h<sub>c</sub></span><span class="den">2</span></span>' };
-
-    if (task.heightSide === 'a') {
-      correctOpt = 'gen_a';
-      displayWay = 'A = <span class="frac"><span class="numr">a · h<sub>a</sub></span><span class="den">2</span></span>';
-    } else if (task.heightSide === 'b') {
-      correctOpt = 'gen_b';
-      displayWay = 'A = <span class="frac"><span class="numr">b · h<sub>b</sub></span><span class="den">2</span></span>';
-    } else {
-      correctOpt = 'gen_c';
-      displayWay = 'A = <span class="frac"><span class="numr">c · h<sub>c</sub></span><span class="den">2</span></span>';
-    }
-  }
-
-  const d = addStep(5, 'Spezifische Formel für diese Skizze wählen', 
-    `<p>Welche Formel passt exakt zur vorliegenden Skizze?</p>
-     <div class="opts">
-       <button class="opt" data-id="${opt1.id}">${opt1.html}</button>
-       <button class="opt" data-id="${opt2.id}">${opt2.html}</button>
-       <button class="opt" data-id="${opt3.id}">${opt3.html}</button>
-     </div>`);
-
-  d.querySelectorAll('.opt').forEach(btn => {
-    btn.onclick = () => {
-      if (btn.dataset.id === correctOpt) {
-        btn.classList.add('good');
-        right(d, `Richtig! In dieser Skizze lautet die spezifische Formel genau so.`);
-        addWay(displayWay);
-        stepCalcA();
-      } else {
-        btn.classList.add('wrongb');
-        if (task.type === 'right') {
-          wrong(d, 'Beim rechtwinkligen Dreieck bilden die Katheten a und b die Grundlinie und die Höhe!');
-        } else {
-          wrong(d, 'Achte genau darauf, welche Seite und welche dazugehörige Höhe h in der Skizze gegeben sind.');
-        }
-      }
-    };
-  });
-}
-
-// Schritt 6: Flächeninhalt berechnen
+// Schritt 7: Flächeninhalt A berechnen
 function stepCalcA() {
-  let numText, baseVal;
+  let numText, val1, val2;
   if (task.type === 'right') {
-    numText = `${fmt(task.a)} · ${fmt(task.b)}`;
-    baseVal = task.a;
+    val1 = task.a; val2 = task.b;
   } else {
-    if (task.heightSide === 'a') baseVal = task.a;
-    else if (task.heightSide === 'b') baseVal = task.b;
-    else baseVal = task.c;
-    numText = `${fmt(baseVal)} · ${fmt(task.h)}`;
+    val1 = task.c; val2 = task.h;
   }
+  numText = `${fmt(val1)} · ${fmt(val2)}`;
 
-  const d = addStep(6, 'Flächeninhalt A berechnen', 
-    `<p>Setze die Zahlen ein (A = <span class="frac"><span class="numr">${numText}</span><span class="den">2</span></span>) und berechne:</p>
-     <div class="eq"><span>A =</span><input class="n wide" id="aInp"><span>cm²</span><button class="check" id="aBtn">Prüfen</button></div>`);
+  const d = addStep(7, 'Flächeninhalt A berechnen', 
+    `<p>Berechne: Zuerst Zähler mulitplizieren (${numText}), dann durch 2 teilen.</p>
+     <div class="eq"><span>A =</span><input class="n wide" id="aInp" onfocus="activeField(this)"><span>cm²</span><button class="check" id="aBtn">Prüfen</button></div>`);
 
   $('#aBtn').onclick = () => {
     const val = parseNum($('#aInp').value);
     if (Math.abs(val - task.A) < 0.05) {
       right(d, `Hervorragend! A = ${fmt(task.A)} cm²`);
-      addWay(`A = <span class="frac"><span class="numr">${numText}</span><span class="den">2</span></span> = ${fmt(task.A)} cm²`, 'final');
+      addWay(`A = (${numText}) / 2 = ${fmt(task.A)} cm²`, 'final');
       finish();
     } else {
-      wrong(d, `Rechne: Zuerst das Produkt im Zähler (${numText}) berechnen und dann durch 2 teilen.`);
+      wrong(d, `Berechne (${numText}) ÷ 2.`);
     }
   };
 }
@@ -538,6 +582,8 @@ function finish() {
   state.idx++;
   
   state.log.push({
+    round: task.round,
+    nr: task.nr,
     type: task.type === 'right' ? 'Rechtw. Dreieck' : 'Allg. Dreieck',
     u: fmt(task.u) + ' cm',
     A: fmt(task.A) + ' cm²',
@@ -549,44 +595,77 @@ function finish() {
   updateScore();
 
   const code = generateCode();
-  $('#doneText').innerHTML = (task.errors === 0 
-    ? '<b>Perfekt gelöst ohne Fehler!</b>' 
-    : `Aufgabe geschafft mit ${task.errors} Fehlversuch(en).`) + 
-    `<div class="homework-box">
-       <h4>📝 Schulheft-Auftrag</h4>
-       <p>Übertrage die Aufgabe sauber in dein Heft:</p>
-       <ul>
-         <li><b>Ganz links:</b> Die Angaben (Gegeben & Gesucht)</li>
-         <li><b>In der Mitte:</b> Die saubere Skizze mit Beschriftung</li>
-         <li><b>Ganz rechts:</b> Die Rechenschritte und Formeln</li>
-       </ul>
-       <hr style="border:0; border-top:1px dashed var(--pen); margin:10px 0;">
-       <p style="margin:0; font-size:14px;">Dein aktueller <b>Geräte-Wechsel-Code</b> lautet:</p>
-       <div class="codebox">${code}</div>
-     </div>`;
+  
+  if (state.idx === TASKS_PER_ROUND) {
+    // Ende von Runde 1
+    $('#doneText').innerHTML = `
+      <b>🎉 Runde 1 geschafft!</b><br>
+      Du hast 4 von 4 Aufgaben gelöst. Bereit für Runde 2 mit neuen Herausforderungen?
+      <div class="homework-box">
+        <h4>📝 Schulheft-Auftrag</h4>
+        <p>Übertrage Aufgabe ${task.nr} sauber in dein Heft:</p>
+        <ul>
+          <li><b>Links:</b> Angaben (Gegeben & Gesucht)</li>
+          <li><b>Mitte:</b> Skizze mit Beschriftung</li>
+          <li><b>Rechts:</b> Formeln & Rechenweg</li>
+        </ul>
+        <hr style="border:0; border-top:1px dashed var(--pen); margin:8px 0;">
+        <p style="margin:0; font-size:14px;">Geräte-Wechsel-Code: <b>${code}</b></p>
+      </div>`;
+    $('#nextBtn').textContent = 'Runde 2 starten 🚀';
+  } else if (state.idx >= TOTAL_TASKS) {
+    // Ende von Runde 2
+    $('#doneText').innerHTML = `
+      <b>🏆 Alle 2 Runden erfolgreich absolviert!</b><br>
+      Großartige Leistung! Alle 8 Aufgaben wurden gelöst.
+      <div class="homework-box">
+        <h4>📝 Schulheft-Auftrag</h4>
+        <p>Kontrolliere deine Eintrags-Seiten im Heft auf Vollständigkeit.</p>
+        <div class="codebox">Speicher-Code: ${code}</div>
+      </div>`;
+    $('#nextBtn').textContent = 'Zur Gesamt-Zusammenfassung';
+  } else {
+    // Normale Aufgabe gelöst
+    $('#doneText').innerHTML = (task.errors === 0 
+      ? '<b>Perfekt gelöst ohne Fehler!</b>' 
+      : `Aufgabe geschafft mit ${task.errors} Fehlversuch(en).`) + 
+      `<div class="homework-box">
+         <h4>📝 Schulheft-Auftrag</h4>
+         <p>Übertrage die Aufgabe sauber in dein Heft:</p>
+         <ul>
+           <li><b>Ganz links:</b> Die Angaben (Gegeben & Gesucht)</li>
+           <li><b>In der Mitte:</b> Die saubere Skizze mit Beschriftung</li>
+           <li><b>Ganz rechts:</b> Die Rechenschritte und Formeln</li>
+         </ul>
+         <hr style="border:0; border-top:1px dashed var(--pen); margin:10px 0;">
+         <p style="margin:0; font-size:14px;">Dein aktueller <b>Geräte-Wechsel-Code</b> lautet:</p>
+         <div class="codebox">${code}</div>
+       </div>`;
+    $('#nextBtn').textContent = 'Nächste Aufgabe';
+  }
 
-  $('#nextBtn').textContent = state.log.length >= ROUND ? 'Zur Zusammenfassung' : 'Nächste Aufgabe';
   $('#done').hidden = false;
 }
 
 function showSummary() {
   const s = $('#summary');
-  let rows = state.log.map((l, i) => 
-    `<tr><td>${i+1}</td><td>${l.type}</td><td>${l.u}</td><td>${l.A}</td><td>${l.errors}</td><td>${l.time}</td></tr>`
+  let rows = state.log.map((l) => 
+    `<tr><td>${l.nr} (Runde ${l.round})</td><td>${l.type}</td><td>${l.u}</td><td>${l.A}</td><td>${l.errors}</td><td>${l.time}</td></tr>`
   ).join('');
 
   s.innerHTML = `
-    <h2>Zusammenfassung für die Lehrkraft</h2>
-    <p><b>Name:</b> ${state.name || '–'}</p>
+    <h2>Gesamt-Zusammenfassung für die Lehrkraft</h2>
+    <p><b>Schüler/in:</b> ${state.name || '–'}</p>
+    <p><b>Ergebnis:</b> ${state.solved} von ${TOTAL_TASKS} Aufgaben gelöst (${state.perfect} fehlerfrei)</p>
     <div class="tablewrap">
       <table>
-        <thead><tr><th>Nr.</th><th>Typ</th><th>Umfang u</th><th>Fläche A</th><th>Fehler</th><th>Zeit</th></tr></thead>
+        <thead><tr><th>Aufgabe</th><th>Typ</th><th>Umfang u</th><th>Fläche A</th><th>Fehler</th><th>Zeit</th></tr></thead>
         <tbody>${rows}</tbody>
       </table>
     </div>
     <div class="homework-box">
       <h4>Wichtiger Hinweis zum Heft-Eintrag:</h4>
-      <p>Überprüfe, ob alle 4 Beispiele vollständig mit <b>Angaben (links)</b>, <b>Skizze (Mitte)</b> und <b>Rechenschritten (rechts)</b> im Heft stehen!</p>
+      <p>Überprüfe, ob alle 8 Aufgaben vollständig mit <b>Angaben (links)</b>, <b>Skizze (Mitte)</b> und <b>Rechenschritten (rechts)</b> im Heft stehen!</p>
     </div>
     <br>
     <button class="next" onclick="location.reload()">Neustarten</button>
@@ -656,7 +735,7 @@ $('#codeOk').onclick = () => {
 };
 
 $('#nextBtn').onclick = () => {
-  if (state.log.length >= ROUND) showSummary();
+  if (state.idx >= TOTAL_TASKS) showSummary();
   else newTask();
 };
 
@@ -664,4 +743,3 @@ newTask();
 </script>
 </body>
 </html>
-```
