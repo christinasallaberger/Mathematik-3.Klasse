@@ -56,7 +56,9 @@ svg{width:100%;height:auto;display:block}
 .tri{fill:var(--tri)}
 .ra{fill:none;stroke:var(--ink);stroke-width:2}
 .dot{fill:var(--ink)}
-.lbl{font-family:"Patrick Hand",cursive;font-size:20px;fill:var(--ink)}
+.lbl-bg{fill:var(--card);opacity:0.92;rx:6;ry:6}
+.lbl{font-family:"Patrick Hand",cursive;font-size:20px;fill:var(--ink);font-weight:bold}
+.lbl-h{fill:var(--red)}
 .way-title{margin:18px 0 4px;font-size:15px;color:var(--muted)}
 .way{font-family:"Patrick Hand",cursive;font-size:24px;line-height:1.55;color:var(--pen);min-height:44px;border-left:3px solid var(--pen);padding-left:14px}
 .way:empty::before{content:"Hier entsteht dein Rechenweg.";color:var(--muted);font-size:19px}
@@ -313,58 +315,73 @@ function newTask() {
   stepSelectSides();
 }
 
+function renderBadgeLabel(txt, x, y, anchor = 'middle', extraClass = '') {
+  const charWidth = 9;
+  const w = txt.length * charWidth + 16;
+  const h = 26;
+  let rx = x - w / 2;
+  if (anchor === 'start') rx = x;
+  if (anchor === 'end') rx = x - w;
+  const ry = y - 18;
+
+  return `
+    <g>
+      <rect x="${rx}" y="${ry}" width="${w}" height="${h}" class="lbl-bg"/>
+      <text x="${x}" y="${y}" class="lbl ${extraClass}" text-anchor="${anchor}">${txt}</text>
+    </g>
+  `;
+}
+
 function draw() {
-  const W = 380, H = 250;
+  const W = 400, H = 260;
   let lines = '', hits = '', labels = '';
 
   if (task.type === 'right') {
-    const pA = [65, 190], pB = [325, 190], pC = [65, 50];
+    const pA = [75, 205], pB = [345, 205], pC = [75, 45];
     const segs = {
-      'a': [pC, pA, `a = ${fmt(task.a)} cm`, [32, 120]],
-      'b': [pA, pB, `b = ${fmt(task.b)} cm`, [195, 222]],
-      'c': [pB, pC, `c = ${fmt(task.c)} cm`, [215, 105]]
+      'a': [pC, pA, `a = ${fmt(task.a)} cm`, [35, 125], 'end'],
+      'b': [pA, pB, `b = ${fmt(task.b)} cm`, [210, 240], 'middle'],
+      'c': [pB, pC, `c = ${fmt(task.c)} cm`, [225, 115], 'start']
     };
 
     lines += `<polygon class="tri" points="${pA.join(',')} ${pB.join(',')} ${pC.join(',')}"/>`;
-    lines += `<path class="ra" d="M65,175 L80,175 L80,190"/><circle class="dot" cx="72" cy="182" r="2"/>`;
+    lines += `<path class="ra" d="M75,190 L90,190 L90,205"/><circle class="dot" cx="82" cy="197" r="2"/>`;
 
-    for (const [key, [p1, p2, txt, pos]] of Object.entries(segs)) {
+    for (const [key, [p1, p2, txt, pos, anchor]] of Object.entries(segs)) {
       const isSel = task.selected.has(key);
       lines += `<line x1="${p1[0]}" y1="${p1[1]}" x2="${p2[0]}" y2="${p2[1]}" class="side${isSel ? ' selected' : ''}"/>`;
       if (task.selecting) {
         hits += `<line x1="${p1[0]}" y1="${p1[1]}" x2="${p2[0]}" y2="${p2[1]}" class="hit" data-seg="${key}"/>`;
       }
-      labels += `<text x="${pos[0]}" y="${pos[1]}" class="lbl" text-anchor="middle">${txt}</text>`;
+      labels += renderBadgeLabel(txt, pos[0], pos[1], anchor);
     }
   } else {
-    const scale = 10;
-    const cPx = task.c * scale;
-    const xC = 50 + ((task.b*task.b - task.a*task.a + task.c*task.c) / (2 * task.c)) * scale;
-    const yC = 190 - (task.h * scale);
-
-    const pA = [50, 190], pB = [50 + cPx, 190], pC = [xC, yC], pH = [xC, 190];
+    const pA = [45, 205], pB = [355, 205];
+    const xC = 175;
+    const yC = 55;
+    const pC = [xC, yC], pH = [xC, 205];
 
     const segs = {
-      'b': [pA, pC, `b = ${fmt(task.b)} cm`, [(pA[0]+pC[0])/2 - 32, (pA[1]+pC[1])/2 - 6]],
-      'a': [pC, pB, `a = ${fmt(task.a)} cm`, [(pC[0]+pB[0])/2 + 32, (pC[1]+pB[1])/2 - 6]],
-      'c': [pA, pB, `c = ${fmt(task.c)} cm`, [190, 222]],
-      'h': [pC, pH, `h_c = ${fmt(task.h)} cm`, [xC + 36, (pC[1]+pH[1])/2 + 4]]
+      'b': [pA, pC, `b = ${fmt(task.b)} cm`, [(pA[0]+pC[0])/2 - 18, (pA[1]+pC[1])/2 - 12], 'end'],
+      'a': [pC, pB, `a = ${fmt(task.a)} cm`, [(pC[0]+pB[0])/2 + 18, (pC[1]+pB[1])/2 - 12], 'start'],
+      'c': [pA, pB, `c = ${fmt(task.c)} cm`, [200, 240], 'middle'],
+      'h': [pC, pH, `h_c = ${fmt(task.h)} cm`, [xC + 14, (pC[1]+pH[1])/2 + 5], 'start']
     };
 
     lines += `<polygon class="tri" points="${pA.join(',')} ${pB.join(',')} ${pC.join(',')}"/>`;
 
-    for (const [key, [p1, p2, txt, pos]] of Object.entries(segs)) {
+    for (const [key, [p1, p2, txt, pos, anchor]] of Object.entries(segs)) {
       const isSel = task.selected.has(key);
       const isH = key === 'h';
       lines += `<line x1="${p1[0]}" y1="${p1[1]}" x2="${p2[0]}" y2="${p2[1]}" class="side${isH ? ' height-line' : ''}${isSel ? ' selected' : ''}"/>`;
       if (task.selecting) {
         hits += `<line x1="${p1[0]}" y1="${p1[1]}" x2="${p2[0]}" y2="${p2[1]}" class="hit" data-seg="${key}"/>`;
       }
-      labels += `<text x="${pos[0]}" y="${pos[1]}" class="lbl" text-anchor="middle">${txt}</text>`;
+      labels += renderBadgeLabel(txt, pos[0], pos[1], anchor, isH ? 'lbl-h' : '');
     }
   }
 
-  const note = task.selecting ? `<text x="190" y="244" class="tapnote">👆 Klicke in der Skizze die 3 Seiten für den Umfang an!</text>` : '';
+  const note = task.selecting ? `<text x="200" y="254" class="tapnote">👆 Klicke in der Skizze die 3 Seiten für den Umfang an!</text>` : '';
 
   $('#fig').innerHTML = `<svg viewBox="0 0 ${W} ${H}">${lines}${labels}${hits}${note}</svg>`;
 
