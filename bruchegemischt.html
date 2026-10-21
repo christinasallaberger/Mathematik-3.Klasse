@@ -188,6 +188,8 @@ tr.skiprow td:first-child{box-shadow:inset 4px 0 var(--marker)}
 .livetag{font-size:13px;font-weight:400;color:var(--muted);margin-left:8px}
 .histh{margin:1.2rem 0 .3rem;font-size:1.05rem}
 #summary{margin-top:28px}
+.grid.one{grid-template-columns:minmax(0,1fr);max-width:860px;margin-left:auto;margin-right:auto}
+.waysheet .way-title{margin-top:0;font-weight:700}
 .longfrac{display:inline-flex;flex-direction:column;align-items:center;gap:4px;vertical-align:middle}
 .longfrac .longnum,.longfrac .longden{display:flex;align-items:center;gap:4px;flex-wrap:wrap;justify-content:center;padding:2px 4px}
 .longfrac .longnum{border-bottom:3px solid var(--ink);padding-bottom:6px}
@@ -221,12 +223,10 @@ select.sg:disabled{opacity:.85;cursor:default}
   </div>
   <div class="tasknav" id="tasknav"></div>
   <p class="score" id="score"></p>
-  <div class="grid">
+  <div class="grid one">
     <div class="sheet">
       <div id="taskText"></div>
       <div id="fig"></div>
-      <p class="way-title">Rechenweg</p>
-      <div class="way" id="way"></div>
     </div>
     <div>
       <div class="steps" id="steps"></div>
@@ -235,6 +235,10 @@ select.sg:disabled{opacity:.85;cursor:default}
         <p id="doneText"></p>
         <button class="next" id="nextBtn">Nächste Aufgabe</button>
       </div>
+    </div>
+    <div class="sheet waysheet">
+      <p class="way-title">Rechenweg – zum Übertragen ins Heft</p>
+      <div class="way" id="way"></div>
     </div>
   </div>
 <section class="summary" id="summary" hidden></section>
@@ -313,7 +317,11 @@ function makeTask(op,i,used){
 }
 function newRound(){
   $('#steps').innerHTML='';$('#way').innerHTML='';
-  const used=new Set();state.tasks=shuffle(OPS).map((op,i)=>makeTask(op,i,used));
+  const used=new Set();
+  // abwechselnd: Punktrechnung, Strichrechnung, Punktrechnung, …
+  const P=shuffle(['·','·',':',':',pick(['·',':'])]),S=shuffle(['+','+','−','−',pick(['+','−'])]);
+  const order=[];for(let k=0;k<ROUND/2;k++)order.push(P[k],S[k]);
+  state.tasks=order.map((op,i)=>makeTask(op,i,used));
   showTask(0);
 }
 
@@ -635,8 +643,8 @@ const FS_ADAPTER={id:'brueche-gemischt',ver:11,
   nameInput:()=>document.getElementById('name'),startButton:()=>document.getElementById('nameOk'),
   codePlace:b=>document.getElementById('name').closest('.namerow').after(b),
   barPlace:b=>document.querySelector('header').after(b),
-  shortWidths:()=>FS_LVL?[1,20,6]:[20,6],
-  short(){let m=0;state.tasks.forEach((t,k)=>{if(t.status==='solved')m+=2**k;});const f=[[FS_SEED,20],[m,6]];if(FS_LVL)f.unshift([state.level==='ahs'?1:0,1]);return f;},
+  shortWidths:()=>FS_LVL?[1,20,ROUND]:[20,ROUND],
+  short(){let m=0;state.tasks.forEach((t,k)=>{if(t.status==='solved')m+=2**k;});const f=[[FS_SEED,20],[m,ROUND]];if(FS_LVL)f.unshift([state.level==='ahs'?1:0,1]);return f;},
   totals(){return {err:state.tasks.reduce((a,t)=>a+t.errors,0)+(FS_EXTRA.err||0),ms:state.tasks.reduce((a,t)=>a+(t.ms||0),0)+(FS_EXTRA.ms||0)};},
   dump(){return {seed:FS_SEED,round:FS_ROUND,level:state.level||null,tasks:state.tasks.map(t=>({status:t.status,errors:t.errors,shown:t.shown,es:[...t.errSteps],ms:t.ms||0,ws:!!t.wasSkipped,ans:t.answerText||null})),extra:FS_EXTRA};},
   pre(src){
