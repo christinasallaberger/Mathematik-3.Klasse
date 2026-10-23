@@ -206,7 +206,7 @@ select.sg:disabled{opacity:.85;cursor:default}
 <div class="wrap">
   <header>
     <h1>Brüche gemischt</h1>
-    <p>Addieren, Subtrahieren, Multiplizieren und Dividieren – mit gemischten Zahlen, positiv und negativ. Schau genau auf das Rechenzeichen und rechne Schritt für Schritt wie im Bruchtraining: Strichrechnungen über Kreuz, Punktrechnungen mit langem Bruchstrich.</p>
+    <p>Addieren, Subtrahieren, Multiplizieren und Dividieren – mit gemischten Zahlen, positiv und negativ. Schau genau auf das Rechenzeichen und rechne Schritt für Schritt wie im Bruchtraining: Strichrechnungen über Kreuz, Punktrechnungen mit langem Bruchstrich. Vor jedem Kürzen entscheidest du selbst: <b>Kann man kürzen?</b></p>
   </header>
   <div class="controls">
     <div>
@@ -456,7 +456,7 @@ function stepSum(){
   const d=addStep('Zusammenfassen',`<p>Fasse den Zähler zu einer Zahl zusammen (mit Vorzeichen, z. B. −7). Der Nenner bleibt.</p>
     <div class="eq"><span class="longfrac"><span class="longnum">${box('sum','Zähler','sm')}</span><span class="longden">${box('sd','Nenner','sm')}</span></span></div>${CHECK}`);
   const solve=()=>{sv(d,'sum',N);sv(d,'sd',BD);right(d,'Richtig zusammengefasst!');addWay('= '+sfrS(N,BD));
-    gcd(N,BD)>1?stepReduce(false):stepMixed();};
+    decideReduce(false);};
   bindCheck(d,()=>{const v=sumParse(gv(d,'sum')),z=num(d,'sd');if(v===null||z===null){note(d,'Bitte Zähler und Nenner eintragen.');return;}
     if(v===N&&z===BD){solve();return;}
     if(v===N)wrong(d,`Der Nenner bleibt gleich: ${BD}.`,solve);
@@ -465,12 +465,33 @@ function stepSum(){
     else wrong(d,`Rechne ${SG(t.p1)}${a1} ${SG(t.p2)} ${a2}.`,solve);});
 }
 
+/* ---------- Kann man kürzen? (Schüler entscheiden selbst) ---------- */
+function stepDecide(title,question,can,hintCan,hintCannot,onYes,onNo){
+  const d=addStep(title,`<p>${question}</p><div class="opts"><button class="opt word" data-v="1">Ja, man kann kürzen</button><button class="opt word" data-v="0">Nein, man kann nicht kürzen</button></div>`);
+  const solve=()=>{d.querySelector(`[data-v="${can?1:0}"]`).classList.add('good');
+    right(d,can?'Richtig – hier kann man kürzen.':'Richtig – hier kann man nicht kürzen. Es geht direkt weiter.');can?onYes():onNo();};
+  d.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+    if((b.dataset.v==='1')===can){solve();return;}
+    b.classList.add('wrongb');b.disabled=true;wrong(d,can?hintCan:hintCannot,solve);});
+}
+/* Bruch fertig: Kann man das Ergebnis noch kürzen? */
+function decideReduce(withG){
+  const t=task,src=withG?[t.sg*t.P[0],t.P[1]]:[t.N,t.BD],a=Math.abs(src[0]),b=src[1];
+  stepDecide(withG?'Kann man das Ergebnis noch kürzen?':'Kann man kürzen?',
+    `Schau dir ${sfrS(src[0],src[1])} an: Gibt es eine Zahl (2 oder größer), durch die man <b>Zähler und Nenner</b> teilen kann?`,
+    gcd(a,b)>1,
+    `Schau genau: ${a} und ${b} haben einen gemeinsamen Teiler. Teste 2, 3, 5, 7 …`,
+    `${a} und ${b} haben keinen gemeinsamen Teiler (außer 1) – hier kann man nicht kürzen.`,
+    ()=>stepReduce(withG),
+    ()=>{addWay('(nicht mehr kürzbar)');stepMixed();});
+}
+
 /* ---------- Punktrechnung (· / :) ---------- */
 function stepLong(){
   const t=task,kw=t.op===':',S=sgnOf(t.sg),A=Math.abs(t.a.n),C=Math.abs(t.b.n);
   const d=addStep('Langer Bruchstrich'+(kw?' (mit Kehrwert)':''),`<p>${kw?'Dividieren heißt: mit dem Kehrwert der zweiten Zahl multiplizieren. ':''}Zähler mal Zähler oben, Nenner mal Nenner unten. Wähle das Vorzeichen des Ergebnisses.</p><div class="eq">${longIn('l')}</div>${CHECK}`);
   const solve=()=>{sv(d,'ls',S);sv(d,'la',t.top[0]);sv(d,'lc',t.top[1]);sv(d,'lb',t.bot[0]);sv(d,'ld',t.bot[1]);right(d,'Richtig angeschrieben!');
-    addWay('= '+longTxt(SG(t.sg),t.top,t.bot));stepCut1();};
+    addWay('= '+longTxt(SG(t.sg),t.top,t.bot));decideCut();};
   bindCheck(d,()=>{const s=gv(d,'ls'),v=['la','lc','lb','ld'].map(k=>num(d,k));
     if(!s||v.some(x=>x===null)){note(d,'Bitte das Vorzeichen wählen und alle vier Zahlen eintragen.');return;}
     const [la,lc,lb,ld]=v.map(Math.abs),tOk=pair(la,lc,...t.top),bOk=pair(lb,ld,...t.bot);
@@ -480,24 +501,35 @@ function stepLong(){
     else if(pair(la,lc,t.top[0],t.bot[1])||pair(lb,ld,t.bot[0],t.top[1]))wrong(d,'Nicht über Kreuz: Zähler mal Zähler oben, Nenner mal Nenner unten.',solve);
     else wrong(d,kw?'Bilde zuerst den Kehrwert der zweiten Zahl. Dann kommen oben die Zähler, unten die Nenner.':'Oben stehen die beiden Zähler, unten die beiden Nenner.',solve);});
 }
+function decideCut(){
+  const t=task,can=pBest(t.top,t.bot).g>1;
+  stepDecide('Kann man kürzen?',
+    `Vor dem Multiplizieren: Gibt es einen <b>Zähler</b> (${t.top[0]} oder ${t.top[1]}) und einen <b>Nenner</b> (${t.bot[0]} oder ${t.bot[1]}), die man durch dieselbe Zahl (2 oder größer) teilen kann?`,
+    can,
+    'Schau genau: Ein Zähler und ein Nenner sind durch dieselbe Zahl teilbar. Prüfe jedes Paar – teste 2, 3, 5, 7 …',
+    'Prüfe nochmal: Kein Zähler hat mit einem Nenner einen gemeinsamen Teiler (außer 1). Hier kann man nicht kürzen.',
+    ()=>stepCut1(),
+    ()=>{t.base=[t.top[0],t.top[1],t.bot[0],t.bot[1]];addWay('(nichts zu kürzen)');stepMul();});
+}
 function stepCut1(){
   const t=task,S=sgnOf(t.sg),opts=pOptions(t.top,t.bot),best=pBest(t.top,t.bot);
-  const d=addStep('Einmal kürzen – Kürzzahl notieren',`<p>Teile genau einen Zähler und einen Nenner durch dieselbe Zahl. Ist nichts zu kürzen, trage 1 ein und schreib die Zahlen ab.</p><div class="eq"><span>gekürzt durch</span>${box('kg','Kürzzahl','sm')}</div><div class="eq">${longIn('k')}</div>${CHECK}`);
+  const d=addStep('Einmal kürzen – Kürzzahl notieren',`<p>Teile genau einen Zähler und einen Nenner durch dieselbe Zahl (2 oder größer). Die anderen beiden Zahlen schreibst du ab.</p><div class="eq"><span>gekürzt durch</span>${box('kg','Kürzzahl','sm')}</div><div class="eq">${longIn('k')}</div>${CHECK}`);
   const solve=o=>{o=o||best;t.base=o.v;sv(d,'kg',o.g);sv(d,'ks',S);['ka','kc','kb','kd'].forEach((k,j)=>sv(d,k,o.v[j]));
     right(d,o.g>1?'Richtig gekürzt!':'Richtig – hier gibt es nichts zu kürzen.');
     addWay(o.g>1?`gekürzt durch ${o.g}: `+longTxt(SG(t.sg),[o.v[0],o.v[1]],[o.v[2],o.v[3]]):'(nichts zu kürzen)');stepMul();};
   bindCheck(d,()=>{const s=gv(d,'ks'),kg=num(d,'kg'),kv=['ka','kc','kb','kd'].map(k=>num(d,k));
     if(!s||kg===null||kv.some(x=>x===null)){note(d,'Bitte Kürzzahl, Vorzeichen und alle vier Zahlen eintragen.');return;}
     const v=kv.map(Math.abs),found=opts.find(o=>o.g===kg&&o.v.every((x,j)=>x===v[j]));
-    if(found&&s===S){if(found.g===1&&best.g>1){wrong(d,'Hier kann man kürzen! Suche einen Zähler und einen Nenner, die durch dieselbe Zahl teilbar sind.',()=>solve());return;}solve(found);return;}
+    if(found&&s===S){if(found.g===1){wrong(d,'Die Kürzzahl muss 2 oder größer sein. Suche einen Zähler und einen Nenner, die durch dieselbe Zahl teilbar sind.',()=>solve());return;}solve(found);return;}
     if(found)wrong(d,'Das Vorzeichen bleibt beim Kürzen gleich.',solve);
     else if(kg>1&&!opts.some(o=>o.g===kg))wrong(d,`Durch ${kg} kannst du hier keinen Zähler und keinen Nenner gemeinsam teilen.`,solve);
-    else wrong(d,`Teile einen Zähler und einen Nenner durch ${kg>1?kg:'die Kürzzahl'} und schreib die anderen beiden Zahlen ab.`,solve);});
+    else if(kg<2)wrong(d,'Die Kürzzahl muss 2 oder größer sein.',solve);
+    else wrong(d,`Teile einen Zähler und einen Nenner durch ${kg} und schreib die anderen beiden Zahlen ab.`,solve);});
 }
 function stepMul(){
   const t=task,v=t.base,P1=v[0]*v[1],P2=v[2]*v[3];t.P=[P1,P2];
   const d=addStep('Faktoren multiplizieren',`<p>Multipliziere oben und unten die gekürzten Zahlen.</p><div class="eq">${ffr('m')}</div>${CHECK}`);
-  const solve=()=>{fillFF(d,'m',t.sg*P1,P2);right(d,'Richtig multipliziert!');addWay('= '+sfrS(t.sg*P1,P2));stepReduce(true);};
+  const solve=()=>{fillFF(d,'m',t.sg*P1,P2);right(d,'Richtig multipliziert!');addWay('= '+sfrS(t.sg*P1,P2));decideReduce(true);};
   bindCheck(d,()=>{const x=readFF(d,'m');if(!x.s||x.z===null||x.n===null){note(d,'Bitte Vorzeichen, Zähler und Nenner eintragen.');return;}
     if(x.s===sgnOf(t.sg)&&Math.abs(x.z)===P1&&x.n===P2){solve();return;}
     if(Math.abs(x.z)===P1&&x.n===P2)wrong(d,'Die Zahlen stimmen, aber das Vorzeichen bleibt so wie im Schritt davor.',solve);
@@ -508,14 +540,14 @@ function stepMul(){
 /* ---------- Ergebnis: Kürzen und gemischte Zahl getrennt ---------- */
 function stepReduce(withG){
   const t=task,[rn,rd]=t.res,S=sgnOf(rn),src=withG?[t.sg*t.P[0],t.P[1]]:[t.N,t.BD],g2=gcd(src[0],src[1]);
-  const d=addStep('Vollständig kürzen',`<p>${withG?'Notiere die Kürzzahl (1, wenn nichts mehr zu kürzen ist). ':''}Teile Zähler und Nenner durch dieselbe Zahl, bis nichts mehr zu kürzen ist. Wird der Nenner 1, schreib 1 in den Nenner.</p>${withG?`<div class="eq"><span>gekürzt durch</span>${box('fg','Kürzzahl','sm')}</div>`:''}<div class="eq"><span>${sfrS(src[0],src[1])} =</span>${ffr('r')}</div>${CHECK}`);
+  const d=addStep('Vollständig kürzen',`<p>${withG?'Notiere die Kürzzahl. ':''}Teile Zähler und Nenner durch die größte Zahl, durch die beide teilbar sind. Wird der Nenner 1, schreib 1 in den Nenner.</p>${withG?`<div class="eq"><span>gekürzt durch</span>${box('fg','Kürzzahl','sm')}</div>`:''}<div class="eq"><span>${sfrS(src[0],src[1])} =</span>${ffr('r')}</div>${CHECK}`);
   const solve=()=>{if(withG)sv(d,'fg',g2);fillFF(d,'r',rn,rd);right(d,g2>1?'Richtig gekürzt!':'Richtig – hier ist nichts mehr zu kürzen.');
     if(g2>1)addWay(`gekürzt durch ${g2}: ${sfrS(rn,rd)}`);stepMixed();};
   bindCheck(d,()=>{const x=readFF(d,'r'),fg=withG?num(d,'fg'):0;
     if(!x.s||x.z===null||x.n===null||x.n===0||fg===null){note(d,'Bitte '+(withG?'Kürzzahl, ':'')+'Vorzeichen, Zähler und Nenner eintragen.');return;}
     const z=Math.abs(x.z),same=z*rd===Math.abs(rn)*x.n;
     if(x.s===S&&z===Math.abs(rn)&&x.n===rd&&(!withG||fg===g2)){solve();return;}
-    if(withG&&fg!==g2)wrong(d,g2===1?'Hier ist nichts mehr zu kürzen – trage 1 als Kürzzahl ein und schreib den Bruch ab.':`Suche den größten gemeinsamen Teiler von ${Math.abs(src[0])} und ${src[1]}.`,solve);
+    if(withG&&fg!==g2)wrong(d,fg>1&&g2%fg===0?`Durch ${fg} kann man kürzen – aber es geht noch mehr. Suche die größte Zahl, durch die ${Math.abs(src[0])} und ${src[1]} teilbar sind.`:`Suche den größten gemeinsamen Teiler von ${Math.abs(src[0])} und ${src[1]}.`,solve);
     else if(same&&x.n!==rd)wrong(d,'Der Wert stimmt, aber du kannst noch weiter kürzen.',solve);
     else if(same)wrong(d,'Die Zahlen stimmen, aber das Vorzeichen bleibt beim Kürzen gleich.',solve);
     else wrong(d,withG?`Teile Zähler und Nenner durch die Kürzzahl ${g2}.`:`Suche den größten gemeinsamen Teiler von ${Math.abs(src[0])} und ${src[1]} und teile Zähler und Nenner dadurch.`,solve);});
