@@ -110,9 +110,6 @@ input.m{width:4.5rem;text-align:center}
 .tile.placed{border-color:var(--ink)}
 .slot{display:inline-block;width:3.2rem;height:2.2rem;border-bottom:2px solid var(--muted)}
 .lt{color:var(--muted);font-size:1.2rem}
-.levels{display:inline-flex;border:2px solid var(--ink);border-radius:999px;overflow:hidden;margin-top:1rem}
-.levels button{border:0;border-radius:0;background:transparent;color:var(--ink);padding:.45rem 1.1rem}
-.levels button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
 .fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;font-size:.8em;line-height:1.05;margin:0 .08em}
 .fr>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .15em}
 .pin .b{width:4.6rem}
@@ -151,10 +148,6 @@ body.kpad-on{padding-bottom:17rem}
     <div>
       <h1>Rechnen mit Potenzen<sup>n</sup></h1>
       <p class="sub">Jede Aufgabe wird sofort kontrolliert, sobald du sie fertig hast (Enter oder weiterklicken). Ist sie falsch, versuch es einfach nochmal.</p>
-      <div class="levels" role="group" aria-label="Niveau">
-        <button type="button" data-level="std" aria-pressed="true">Standard</button>
-        <button type="button" data-level="ahs" aria-pressed="false">Standard AHS</button>
-      </div>
     </div>
     <div class="top">
       <span class="score" id="score">0 von 0 richtig</span>
@@ -201,9 +194,6 @@ const LET=['a','b','m','n','x','y','z','k'];
 /* Basen */
 function intB(k){return {s:String(k),plain:k<0?'('+k+')':String(k),html:k<0?'(−'+(-k)+')':String(k),val:rat(B(k))};}
 function varB(x){return {s:x,plain:x,html:'<i>'+x+'</i>',val:null};}
-function fracB(n,d){const s=(n<0?'-':'')+Math.abs(n)+'/'+d;return {s,plain:'('+s+')',html:'('+(n<0?'−':'')+fracH(Math.abs(n),d)+')',val:rat(B(n),B(d))};}
-function decB(str){const neg=str[0]==='-',body=neg?str.slice(1):str,[i,f='']=body.split(',');
-  return {s:str,plain:'('+str+')',html:'('+(neg?'−':'')+body+')',val:rat(B((neg?'-':'')+i+f),10n**B(f.length))};}
 const powH=(b,e)=>e===1?b.html:'<span class="pw">'+b.html+'<sup>'+e+'</sup></span>';
 const potH=(b,m,n)=>'<span class="pw">('+powH(b,m)+')<sup>'+n+'</sup></span>';
 
@@ -221,13 +211,11 @@ function readRat(str){
   m=s.match(/^([+-]?)(\d*)(?:\.(\d+))?$/);if(!m||(!m[2]&&!m[3]))return null;
   const f=m[3]||'';return {r:rat(B(m[1]+(m[2]||'0')+f),10n**B(f.length)),frac:false};
 }
-function readMant(str){const s=str.replace(/\s/g,'').replace('.',',');const m=s.match(/^(\d+)(?:,(\d*))?$/);if(!m)return null;return {int:m[1].replace(/^0+(?=\d)/,''),frac:(m[2]||'').replace(/0+$/,'')};}
 function ratDec(r){let p=0;while(p<30&&(10n**B(p))%r.d!==0n)p++;const neg=r.n<0n;let s=((neg?-r.n:r.n)*(10n**B(p))/r.d).toString();
   if(p>0){s=s.padStart(p+1,'0');s=s.slice(0,s.length-p)+','+s.slice(s.length-p);}return (neg?'-':'')+s;}
 function valHTML(t){const r=t.value;if(t.valKind==='dec')return ratDec(r).replace('-','−');
   const neg=r.n<0n,n=neg?-r.n:r.n;if(r.d===1n)return (neg?'−':'')+group(String(n));return (neg?'−':'')+fracH(n,r.d);}
 function valPlain(t){const r=t.value;if(t.valKind==='dec')return ratDec(r);if(r.d===1n)return String(r.n);return r.n+'/'+r.d;}
-const isPrime=p=>{if(p<2)return false;for(let k=2;k*k<=p;k++)if(p%k===0)return false;return true;};
 function many(count,fn){const out=[],seen=new Set();let g=0;while(out.length<count&&g++<1000){const t=fn(out.length);if(t&&!seen.has(t.html)){seen.add(t.html);out.push(t);}}return shuffle(out);}
 
 const H_ADD='Beim Multiplizieren werden die Hochzahlen addiert, nicht multipliziert.';
@@ -261,7 +249,7 @@ function powSec(o){return Object.assign({row:powRow,check:powCheck,
   task:t=>t.html,
   solText:t=>powH(t.base,t.exp)+(t.value?' = '+valHTML(t):'')},o);}
 
-/* ---------- Generatoren Standard ---------- */
+/* ---------- Generatoren ---------- */
 function stdBase(i,noTen){const pat=['num','var','ten','num','var','num','var','num'];let k=pat[i%8];if(noTen&&k==='ten')k='num';
   return k==='num'?intB(rnd(2,9)):k==='ten'?intB(10):varB(pick(LET));}
 function g_mul(i){const b=stdBase(i),m=rnd(2,9),n=rnd(2,9);return {html:powH(b,m)+' · '+powH(b,n),base:b,exp:m+n,alt:{[m*n]:H_ADD}};}
@@ -283,42 +271,6 @@ function g_mix(i){
   const m=rnd(2,4),n=rnd(2,4),p=rnd(2,6);return {html:potH(b,m,n)+' · '+powH(b,p),base:b,exp:m*n+p,alt:{[m+n+p]:'Zuerst potenzieren (Hochzahlen multiplizieren), dann multiplizieren (Hochzahlen addieren).'}};
 }
 
-/* ---------- Generatoren AHS ---------- */
-const FR=[[-1,2,6],[1,2,6],[1,3,5],[-1,3,5],[2,3,4],[-2,3,4],[1,4,4],[-1,4,4],[1,10,4],[-1,10,4],[3,2,4],[-3,4,3]];
-const DEC=[['0,5',5],['0,1',5],['0,2',4],['0,3',4],['1,5',4],['2,5',3],['-0,5',5],['-0,1',4],['-1,2',3],['0,4',3],['0,01',3],['-2,5',3]];
-function sameBase(b,max,kind){
-  if(kind==='mul'){const m=rnd(1,max-1),n=rnd(1,max-m);return {html:powH(b,m)+' · '+powH(b,n),exp:m+n,alt:{[m*n]:H_ADD}};}
-  if(kind==='mul3'){const m=rnd(1,max-2),n=rnd(1,max-m-1),r=rnd(1,max-m-n);return {html:powH(b,m)+' · '+powH(b,n)+' · '+powH(b,r),exp:m+n+r};}
-  const e=rnd(2,max),n=rnd(1,4);return {html:powH(b,e+n)+' : '+powH(b,n),exp:e,alt:{[e+2*n]:H_SUB}};
-}
-function g_frac(i){const [n,d,max]=pick(FR),b=fracB(n,d),t=sameBase(b,max,['mul','div','mul3'][i%3]);t.base=b;t.value=rpow(b.val,t.exp);t.valKind='frac';return t;}
-function g_dec(i){const [s,max]=pick(DEC),b=decB(s),t=sameBase(b,max,['mul','div'][i%2]);t.base=b;t.value=rpow(b.val,t.exp);t.valKind='dec';return t;}
-const tStr=t=>t%10?Math.floor(t/10)+','+(t%10):String(t/10);
-function g_float(){
-  let v1,v2,p;do{v1=pick([20,30,40,11,12,13,14,15,16,21,22,23,24,31,32,41,42]);v2=rnd(2,4);p=v1*v2;}while(p>=100);
-  if(Math.random()<.5&&v1%10===0){[v1,v2]=[v2*10,v1/10];}
-  const a=rnd(1,7),b=rnd(1,7);
-  return {html:tStr(v1)+' · '+pw10(a)+' · '+tStr(v2*10)+' · '+pw10(b),p,e:a+b,a,b};
-}
-function g_prime(){for(;;){const k=rnd(1,3),ps=shuffle([2,3,5,7]).slice(0,k).sort((x,y)=>x-y);
-  const f=ps.map(p=>[p,rnd(1,p===2?5:p===3?4:3)]);const n=f.reduce((acc,[p,e])=>acc*p**e,1);
-  if(n<8||n>2500||!f.some(x=>x[1]>=2))continue;return {n,f,html:group(String(n))};}}
-function evalNum(u){if(/^\d+$/.test(u))return +u;let m=u.match(/^(\d+)[·*x×](\d+)$/);if(m)return m[1]*m[2];m=u.match(/^(\d+)[:\/](\d+)$/);if(m&&+m[2])return m[1]/m[2];return null;}
-function g_prod(i){
-  const kind=['numMul','varMul','numDiv'][i%3],n=rnd(2,5);
-  const H='Gleiche Hochzahl: Die Basen werden zusammengefasst, die Hochzahl bleibt gleich.';
-  if(kind==='numMul'){let b,c;do{b=rnd(2,6);c=rnd(2,6);}while(b===c||b*c>20);const r=b*c;
-    return {html:powH(intB(b),n)+' · '+powH(intB(c),n),base:{s:String(r),plain:String(r),html:String(r)},exp:n,accept:u=>evalNum(u)===r,baseHint:'Multipliziere die Basen: '+b+' · '+c+' = ?',alt:{[2*n]:H}};}
-  if(kind==='varMul'){const k=rnd(2,9),x=pick(LET);
-    return {html:powH(intB(k),n)+' · '+powH(varB(x),n),base:{s:k+x,plain:'('+k+x+')',html:'('+k+'<i>'+x+'</i>)'},exp:n,accept:u=>{const v=u.replace(/[·*]/g,'');return v===k+x||v===x+k;},baseHint:'Schreibe beide Basen zusammen in die Klammer, z. B. 3a',alt:{[2*n]:H}};}
-  const c=rnd(2,4),q=rnd(2,4),b=c*q;
-  return {html:powH(intB(b),n)+' : '+powH(intB(c),n),base:{s:String(q),plain:String(q),html:String(q)},exp:n,accept:u=>evalNum(u)===q,baseHint:'Dividiere die Basen: '+b+' : '+c+' = ?',alt:{[0]:H}};
-}
-function g_potA(i){
-  const kinds=[()=>{const [n,d]=pick(FR);return fracB(n,d);},()=>decB(pick(DEC)[0]),()=>intB(-rnd(2,5)),()=>varB(pick(LET))];
-  const b=kinds[i%4](),m=rnd(2,4),n=rnd(2,4);return {html:potH(b,m,n),base:b,exp:m*n,alt:{[m+n]:H_MUL}};
-}
-
 /* ---------- Abschnitte ---------- */
 const R=(f,a,b)=>'<p class="rule">'+f+'</p><p>'+a+(b?'<br>'+b:'')+'</p>';
 const SECS=[
@@ -334,60 +286,22 @@ const SECS=[
  {id:'st4',level:'std',title:'Schreibe als Potenz mit einer Hochzahl und berechne ihren Wert!',name:'Potenz und Wert',
   hint:'Kontrolliere den Wert mit dem Taschenrechner.',cfg:powSec({gen:()=>many(8,g_val)})},
  {id:'st5',level:'std',title:'Vermischt: Schreibe als Potenz mit einer Hochzahl!',name:'Vermischt',
-  hint:'Rechne Schritt für Schritt. Klammern zuerst!',cfg:powSec({gen:()=>many(8,g_mix)})},
-
- {id:'ah1',level:'ahs',title:'Schreibe als Potenz mit einer Hochzahl und berechne ihren Wert!',name:'Brüche',
-  hint:'Brüche mit / eingeben, z. B. -1/2 – mit oder ohne Klammer. Den Wert als Bruch, z. B. -1/32',cfg:powSec({gen:()=>many(6,g_frac)})},
- {id:'ah2',level:'ahs',title:'Schreibe als Potenz mit einer Hochzahl und berechne ihren Wert!',name:'Dezimalzahlen',
-  hint:'Dezimalzahlen mit Komma eingeben, z. B. 0,5. Überprüfe mit dem Taschenrechner.',cfg:powSec({gen:()=>many(6,g_dec)})},
- {id:'ah3',level:'ahs',title:'Berechne das Produkt!',name:'Produkte mit Zehnerpotenzen',
-  info:'<p class="rule">2 · 10<sup>4</sup> · 3 · 10<sup>2</sup> = 2 · 3 · 10<sup>4</sup> · 10<sup>2</sup> = 6 · 10<sup>6</sup></p><p>Vorzahlen multiplizieren, Hochzahlen der Zehnerpotenzen addieren.</p>',
-  cfg:{gen:()=>many(6,g_float),
-   row:t=>'<span class="expr">'+t.html+'</span><span class="eq">=</span><input class="m" data-k="m" inputmode="decimal" aria-label="Vorzahl" autocomplete="off"><span class="eq">·</span><span class="pin10">10<input class="e" data-k="e" inputmode="numeric" aria-label="Hochzahl" autocomplete="off"></span>',
-   check:(t,el)=>{const m=readMant(val(el,'m')),e=readExp(val(el,'e'));
-     if(!m||m.frac.length>1)return 'Multipliziere die Vorzahlen: Das Ergebnis hat höchstens eine Nachkommastelle.';
-     const tv=+m.int*10+(+(m.frac||0));const okM=tv===t.p;
-     if(!okM)return e===t.e?'Die Hochzahl stimmt – multipliziere die Vorzahlen nochmal!':false;
-     if(e!==t.e)return e===t.a*t.b?'Die Hochzahlen der Zehnerpotenzen werden addiert, nicht multipliziert.':'Die Vorzahl stimmt – addiere die Hochzahlen der Zehnerpotenzen!';
-     return true;},
-   solve:(t,el)=>{put(el,'m',tStr(t.p));put(el,'e',t.e);},task:t=>t.html,solText:t=>tStr(t.p)+' · '+pw10(t.e)}},
- {id:'ah4',level:'ahs',title:'Zerlege die Zahlen in ihre Primfaktoren! Schreibe sie als Multiplikation mit Potenzen an!',name:'Primfaktoren',
-  info:'<p class="rule">50 = 2 · 5 · 5 = 2 · 5<sup>2</sup></p><p>Hochzahlen mit ^ eingeben: 2 · 5^2 &nbsp;oder&nbsp; 2*5^2</p>',
-  cfg:{gen:()=>many(6,g_prime),
-   row:t=>'<span class="expr">'+t.html+'</span><span class="eq">=</span><input class="prod" data-k="f" aria-label="Primfaktoren" autocomplete="off" placeholder="z. B. 2^3 · 5">',
-   check:(t,el)=>{
-     const s=val(el,'f').replace(/²/g,'^2').replace(/³/g,'^3').replace(/\s/g,'');
-     const parts=s.split(/[·*×.x•]+/).filter(Boolean);if(!parts.length)return false;
-     const map={};let rep=false,prod=1;
-     for(const p of parts){const m=p.match(/^(\d+)(?:\^(\d+))?$/);if(!m)return 'Schreibe z. B. 2^3 · 5 – Hochzahlen mit ^.';
-       const q=+m[1],e=m[2]?+m[2]:1;if(q===1)continue;prod*=q**e;
-       if(!isPrime(q))return 'Zerlege so weit, bis nur noch Primzahlen übrig sind.';
-       if(map[q])rep=true;map[q]=(map[q]||0)+e;}
-     if(prod!==t.n)return 'Das Produkt ergibt nicht '+t.n+'. Kontrolliere deine Zerlegung!';
-     if(rep)return 'Richtig zerlegt – fasse gleiche Faktoren noch zu einer Potenz zusammen!';
-     return true;},
-   solve:(t,el)=>put(el,'f',t.f.map(([p,e])=>e>1?p+'^'+e:p).join(' · ')),task:t=>t.html,
-   solText:t=>t.f.map(([p,e])=>e>1?p+'<sup>'+e+'</sup>':p).join(' · ')}},
- {id:'ah5',level:'ahs',title:'Schreibe als eine Potenz!',name:'Gleiche Hochzahl',
-  info:R('a<sup>n</sup> · b<sup>n</sup> = (a · b)<sup>n</sup> &nbsp;&nbsp;&nbsp; a<sup>n</sup> : b<sup>n</sup> = (a : b)<sup>n</sup>','Bei <b>gleicher Hochzahl</b> werden die Basen zusammengefasst.','z. B. 2<sup>3</sup> · a<sup>3</sup> = (2a)<sup>3</sup> &nbsp;&nbsp; 2<sup>3</sup> · 4<sup>3</sup> = 8<sup>3</sup>'),
-  hint:'Basis mit Variable z. B. als 2a eingeben.',cfg:powSec({gen:()=>many(6,g_prod)})},
- {id:'ah6',level:'ahs',title:'Schreibe als Potenz mit einer Hochzahl!',name:'Potenzieren',
-  hint:'Die Basis darfst du mit oder ohne Klammer schreiben, Brüche mit /.',cfg:powSec({gen:()=>many(6,g_potA)})}
+  hint:'Rechne Schritt für Schritt. Klammern zuerst!',cfg:powSec({gen:()=>many(8,g_mix)})}
 ];
 const sections={};SECS.forEach(s=>{sections[s.id]=Object.assign({name:s.name,level:s.level},s.cfg);});
 
 /* DOM der Abschnitte erzeugen */
 (function(){
-  const box=document.getElementById('secs');const nr={std:0,ahs:0};
-  box.innerHTML=SECS.map(s=>{nr[s.level]++;return '<section id="'+s.id+'" data-level="'+s.level+'"><div class="head"><span class="num">'+nr[s.level]+'</span><h2>'+s.title+'</h2></div>'+
+  const box=document.getElementById('secs');let nr=0;
+  box.innerHTML=SECS.map(s=>{nr++;return '<section id="'+s.id+'" data-level="'+s.level+'"><div class="head"><span class="num">'+nr+'</span><h2>'+s.title+'</h2></div>'+
     (s.info?'<div class="info">'+s.info+'</div>':'')+(s.hint?'<p class="hint">'+s.hint+'</p>':'')+
     '<div class="tasks"></div><div class="actions"><button class="ghost" data-check>Alle überprüfen</button><span class="res"></span></div></section>';}).join('');
-  const n2={std:0,ahs:0};SECS.forEach(s=>{n2[s.level]++;sections[s.id].name=n2[s.level]+' '+s.name;});
+  let n2=0;SECS.forEach(s=>{n2++;sections[s.id].name=n2+' '+s.name;});
 })();
 
 /* ---------- Ablauf ---------- */
-const state={};let summaryRequested=false;let level=location.hash==='#ahs'?'ahs':'std';
-const curIds=()=>SECS.filter(s=>s.level===level).map(s=>s.id);
+const state={};let summaryRequested=false;let level='std';
+const curIds=()=>SECS.map(s=>s.id);
 
 function build(id){
   const cfg=sections[id],sec=document.getElementById(id),box=sec.querySelector('.tasks');
@@ -457,17 +371,16 @@ function updateSummary(){
   else if(pct>=.5)msg='Gut! Mit ein bisschen Übung klappt der Rest auch.';
   else msg='Übe noch ein bisschen weiter – klick auf „Neue Aufgaben“ und probier es nochmal.';
   if(!allDone)msg='Noch nicht alles erledigt: '+T.open+' Aufgabe'+(T.open===1?' ist':'n sind')+' noch offen. '+msg;
-  document.getElementById('sumTitle').textContent=(allDone?'Geschafft! Deine Auswertung':'Zwischenstand')+' ('+(level==='ahs'?'Standard AHS':'Standard')+')';
+  document.getElementById('sumTitle').textContent=allDone?'Geschafft! Deine Auswertung':'Zwischenstand';
   document.getElementById('sumMsg').textContent=msg;
   document.getElementById('sumShown').innerHTML=shownList.length?'Bei diesen Aufgaben hast du die Lösung angesehen – schau sie dir nochmal an:<ul>'+shownList.map(x=>'<li>'+x+'</li>').join('')+'</ul>':'';
   const wasHidden=sum.hidden;sum.hidden=false;
   if(wasHidden)setTimeout(()=>sum.scrollIntoView({behavior:'smooth',block:'start'}),300);
 }
-function setLevel(l){
-  level=l;summaryRequested=false;
-  document.querySelectorAll('.levels button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.level===l?'true':'false'));
-  SECS.forEach(s=>{document.getElementById(s.id).hidden=s.level!==l;});
-  try{if(!/fortschritt=/.test(location.hash))history.replaceState(null,'',l==='ahs'?'#ahs':'#standard');}catch(e){}
+/* Es gibt nur noch das Niveau Standard. Ein alter Speicherstand mit „ahs“ wird einfach als Standard geladen. */
+function setLevel(){
+  level='std';summaryRequested=false;
+  SECS.forEach(s=>{document.getElementById(s.id).hidden=false;});
   document.getElementById('summary').hidden=true;updateScore();updateSummary();
 }
 
@@ -482,12 +395,11 @@ SECS.forEach(({id})=>{
     if(state[id].results[i]===true){const nt=taskEl(id,i+1);if(nt){const f=nt.querySelector('input');if(f)f.focus();}}else e.target.select();
   });
 });
-document.querySelectorAll('.levels button').forEach(b=>b.addEventListener('click',()=>{setLevel(b.dataset.level);window.scrollTo({top:0,behavior:'smooth'});}));
-function newAll(){summaryRequested=false;curIds().forEach(build);document.getElementById('summary').hidden=true;window.scrollTo({top:0,behavior:'smooth'});}
+function newAll(){summaryRequested=false;curIds().forEach(id=>build(id));document.getElementById('summary').hidden=true;window.scrollTo({top:0,behavior:'smooth'});}
 document.getElementById('newAll').addEventListener('click',newAll);
 document.getElementById('newAll2').addEventListener('click',newAll);
 document.getElementById('showSum').addEventListener('click',()=>{summaryRequested=true;document.getElementById('summary').hidden=true;updateSummary();});
-setLevel(level);
+setLevel();
 
 /* ---------- Weitere Runden pro Übung ---------- */
 const ROUNDS={};
@@ -622,22 +534,25 @@ function fsApply(id,res,tries){
     if(r==='shown'){st.results[i]='shown';el.classList.remove('ok','bad');el.classList.add('shown');const d=el.querySelector('.sol');if(d){d.className='sol shown';d.innerHTML='Lösung: '+sections[id].solText(t);}}});
   if(tries)st.tries=tries.slice();
 }
+/* Der Code-Aufbau bleibt wie in der Version mit Standard AHS (1 Bit Niveau + 11 Übungen),
+   damit bereits ausgegebene Fortschritts-Codes weiter funktionieren. */
+const FS_OLD_SECTIONS=11;
 const FS_ADAPTER={id:'rechnen-mit-potenzen-uebung',ver:3,
   started:()=>!!studentName,
   nameInput:()=>document.getElementById('nameIn'),startButton:()=>document.getElementById('startBtn'),
   codePlace:b=>document.getElementById('start').appendChild(b),
   barPlace:b=>document.querySelector('header').after(b),
-  shortWidths:()=>[1,Object.keys(sections).length],
+  shortWidths:()=>[1,FS_OLD_SECTIONS],
   short(){const ids=Object.keys(sections);let m=0;ids.forEach((id,k)=>{if(state[id].results.length&&state[id].results.every(r=>r===true||r==='shown'))m+=2**k;});
-    return [[typeof level!=='undefined'&&level==='ahs'?1:0,1],[m,ids.length]];},
+    return [[0,1],[m,FS_OLD_SECTIONS]];},
   totals(){let err=0,ms=0;Object.keys(sections).forEach(id=>{err+=state[id].tries.reduce((a,b)=>a+b,0);(TIMES[id]||[]).forEach(x=>{if(x.ms)ms+=x.ms;});});
     return {err:err+(FS_EXTRA.err||0),ms:ms+(FS_EXTRA.ms||0)};},
   dump(){const sec={};Object.keys(sections).forEach(id=>{sec[id]={r:FSR[id],rounds:ROUNDS[id],res:state[id].results,tries:state[id].tries,times:TIMES[id]};});
-    return {seed:FS_SEED,level:typeof level!=='undefined'?level:null,tStartAll:tStartAll,sec,extra:FS_EXTRA};},
+    return {seed:FS_SEED,level:'std',tStartAll:tStartAll,sec,extra:FS_EXTRA};},
   pre(src){
     const full=src&&src.type==='full'?src.data:null;
     FS_SEED=full?full.seed:Math.random().toString(36).slice(2,10);
-    if(typeof setLevel==='function'){if(full&&full.level)setLevel(full.level);else if(src&&src.type==='short'&&src.vals[0]===1)setLevel('ahs');}
+    setLevel();
     Object.keys(sections).forEach((id,k)=>{
       const s=full&&full.sec?full.sec[id]:null;
       FSR[id]=s&&s.r?s.r-1:0;build(id);ROUNDS[id]=s&&s.rounds?s.rounds:1;
