@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Formeltrainer – Umfang und Flächeninhalt von Dreiecken und Vierecken</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fraunces:opsz,wght@9..144,600;9..144,800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F7F9FC; --grid:#DCE6F2; --ink:#1B2F6B; --text:#1E2533; --muted:#5B6578;
+  --card:#FFFFFF; --line:#C9D5E6; --ok:#217A4B; --okbg:#E3F4EA; --bad:#B3261E; --badbg:#FBE7E5;
+  --mark:#FFE873; --field:#FFFFFF; --info:#EAF1FB; --accent:#147D92; --tri:#E4EEFA; --hgt:#C2410C;
+  color-scheme: light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#111827; --grid:#1C2638; --ink:#A9C1FF; --text:#E6EAF2; --muted:#9AA4B8;
+    --card:#172033; --line:#2C3A55; --ok:#5FD08E; --okbg:#173326; --bad:#FF8A80; --badbg:#3A1C1C;
+    --mark:#6B5A12; --field:#0F1726; --info:#1A2740; --accent:#5CC8DC; --tri:#1E2A40; --hgt:#FFA071; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#111827; --grid:#1C2638; --ink:#A9C1FF; --text:#E6EAF2; --muted:#9AA4B8;
+  --card:#172033; --line:#2C3A55; --ok:#5FD08E; --okbg:#173326; --bad:#FF8A80; --badbg:#3A1C1C;
+  --mark:#6B5A12; --field:#0F1726; --info:#1A2740; --accent:#5CC8DC; --tri:#1E2A40; --hgt:#FFA071; color-scheme: dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+[hidden]{display:none!important}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0; color:var(--text); font-family:"Atkinson Hyperlegible",system-ui,"Segoe UI",Arial,sans-serif;
+  font-size:1.0625rem; line-height:1.5;
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+}
+.wrap{max-width:60rem;margin:0 auto;padding:1.5rem 1rem 4rem}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:1rem;margin:1rem 0 2rem}
+h1{font-family:Fraunces,Georgia,serif;font-weight:800;color:var(--ink);font-size:clamp(2rem,6vw,3.3rem);line-height:1.05;margin:0;letter-spacing:-.01em}
+h1 .acc{color:var(--accent)}
+.sub{color:var(--muted);margin:.5rem 0 0;max-width:42rem}
+.top{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
+.score{font-weight:700;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:999px;padding:.35rem .9rem}
+button{font:inherit;cursor:pointer;border-radius:.5rem;border:2px solid var(--ink);background:var(--ink);color:var(--paper);padding:.45rem .9rem;font-weight:700}
+button.ghost{background:transparent;color:var(--ink)}
+button:disabled{cursor:default;opacity:.45}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--mark);outline-offset:2px}
+button.mini{font-size:.85rem;padding:.1rem .55rem;background:transparent;color:var(--ink);border-width:1.5px}
+section{background:var(--card);border:2px solid var(--line);border-radius:.75rem;padding:1.25rem 1.25rem 1rem;margin:0 0 1.5rem}
+.head{display:flex;gap:.8rem;align-items:baseline;flex-wrap:wrap}
+h2{font-size:1.2rem;margin:0}
+h3{font-size:1.05rem;margin:0 0 .4rem;color:var(--ink)}
+sub{font-size:.7em}
+input{font:inherit;font-size:1.1rem;color:var(--text);background:var(--field);border:2px solid var(--line);border-radius:.4rem;padding:.2rem .4rem}
+.actions{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;margin-top:.6rem}
+.hint{color:var(--muted);font-size:.95rem;margin:.4rem 0 0}
+.msg{margin:.6rem 0 0;font-size:.97rem;display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+.msg.ok{color:var(--ok);font-weight:700}.msg.bad{color:var(--bad)}.msg.shown{color:var(--muted)}
+
+details.info{background:var(--info);border:0;border-left:6px solid var(--ink);border-radius:.5rem;padding:.7rem 1rem;margin:0 0 1.5rem}
+details.info summary{cursor:pointer;font-weight:700;color:var(--ink)}
+details.info p{margin:.4rem 0}
+.copy{background:var(--mark);color:var(--text);border-radius:.4rem;padding:.4rem .7rem;margin:.6rem 0!important}
+.ftab{border-collapse:collapse;width:100%;min-width:0}
+.ftab td{padding:.4rem .6rem;border-bottom:1px solid var(--line);vertical-align:middle}
+.ftab td:first-child{font-weight:700;color:var(--ink)}
+.ftab td.f{font-size:1.15rem;white-space:nowrap}
+
+/* Lernstand */
+.prog{display:flex;flex-wrap:wrap;gap:.4rem;margin:0 0 1rem}
+.pchip{font-size:.85rem;border:2px solid var(--line);border-radius:999px;padding:.15rem .6rem;background:var(--field);color:var(--muted)}
+.pchip b{letter-spacing:.1em;color:var(--accent)}
+.pchip.m{border-color:var(--ok);background:var(--okbg);color:var(--ok)}
+.pchip.cur{border-color:var(--ink);box-shadow:0 0 0 3px var(--mark);color:var(--ink)}
+.bar{height:.7rem;background:var(--grid);border-radius:999px;overflow:hidden;margin:.2rem 0 1rem}
+.bar i{display:block;height:100%;background:var(--ok);width:0;transition:width .4s}
+@media (prefers-reduced-motion: reduce){.bar i{transition:none}}
+
+.cardgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1rem;align-items:start}
+@media (max-width:760px){.cardgrid{grid-template-columns:1fr}}
+.want{font-size:1.2rem;margin:.3rem 0 .6rem}
+.want b{color:var(--accent)}
+.fig{background:var(--paper);border:2px dashed var(--line);border-radius:.6rem;padding:.3rem}
+.fig svg{width:100%;height:auto;display:block}
+.fig .tri{fill:var(--tri)}
+.fig .side{stroke:var(--text);stroke-width:3;stroke-linecap:round}
+.fig .side.h{stroke:var(--hgt);stroke-width:2.5;stroke-dasharray:7 5}
+.fig .side.sel{stroke:var(--accent);stroke-width:7;stroke-dasharray:none}
+.fig .ra{fill:none;stroke:var(--text);stroke-width:1.5}
+.fig .lbl{font-size:19px;font-weight:700;font-style:italic;fill:var(--text);font-family:Georgia,"Times New Roman",serif}
+.fig .lbl.hl{fill:var(--hgt)}
+.fig .hit{stroke:transparent;stroke-width:34;stroke-linecap:round;cursor:pointer;pointer-events:stroke}
+.stepcard{border:2px solid var(--line);border-radius:.6rem;padding:.8rem 1rem;margin-top:.8rem}
+.stepcard.active{border-color:var(--ink)}
+.stepcard.done{border-color:var(--ok)}
+.stepcard p{margin:.3rem 0}
+.donetxt{color:var(--ok);font-weight:700}
+.fline{display:flex;flex-wrap:wrap;align-items:center;gap:.25rem;min-height:2.8rem;font-size:1.5rem;padding:.3rem .5rem;border:2px solid var(--line);border-radius:.5rem;background:var(--field);margin:.4rem 0}
+.fline .lhs{font-style:italic;font-family:Georgia,serif;color:var(--ink)}
+.fline .tok{font-family:Georgia,serif}
+.fline .tok.v{font-style:italic}
+.fline .ph{color:var(--muted);font-size:1rem}
+.tiles{display:flex;flex-wrap:wrap;gap:.4rem;margin:.4rem 0}
+.tile{min-width:3rem;font-size:1.3rem;font-weight:700;padding:.35rem .6rem;background:var(--field);color:var(--text);border:2px solid var(--line)}
+.tile.v{font-style:italic;font-family:Georgia,serif;color:var(--ink);border-color:var(--accent)}
+.tile.op{background:var(--info)}
+.tile.ctl{font-size:1rem}
+.success{margin-top:.9rem;padding:.9rem 1rem;border-radius:.6rem;background:var(--okbg);border:2px solid var(--ok)}
+.success .big{font-size:1.6rem;font-family:Georgia,serif;color:var(--ink);margin:.3rem 0}
+.success .big i{font-style:italic}
+
+.startcard{border-color:var(--ink);border-width:3px}
+.startcard h2{font-family:Fraunces,Georgia,serif;font-size:1.5rem;color:var(--ink)}
+#pname{width:16rem;max-width:100%;font-size:1.15rem}
+#startDone{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap}
+.who{font-weight:700;color:var(--ink);display:inline-flex;align-items:center;gap:.4rem;font-size:1.1rem}
+#codeAsk{margin-top:1rem}
+#codeAsk summary{cursor:pointer;color:var(--ink);font-weight:700}
+#pcode{width:17rem;max-width:100%;font-family:ui-monospace,Consolas,"Courier New",monospace;text-transform:uppercase;letter-spacing:.05em}
+#pnameErr{color:var(--bad);margin:.6rem 0 0}
+#startMsg{flex-basis:100%;margin:0;color:var(--ok);font-weight:700}
+#startMsg:empty{display:none}
+#codeBox{flex-basis:100%;background:var(--info);border-left:6px solid var(--ink);border-radius:.5rem;padding:.7rem 1rem}
+#codeBox p{margin:.3rem 0}
+.code{font-family:ui-monospace,Consolas,"Courier New",monospace;font-size:1.35rem;font-weight:700;letter-spacing:.06em;color:var(--ink);word-break:break-all}
+.finish{display:flex;justify-content:center;margin:0 0 1.5rem}
+#summary{border-color:var(--ink);border-width:3px}
+#summary .who{margin:.4rem 0 0;color:var(--muted)}
+#summary .who b{color:var(--text)}
+.summsg{font-size:1.2rem;font-weight:700;color:var(--ink);margin:.6rem 0 1rem}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:30rem}
+th,td{text-align:left;padding:.4rem .6rem;border-bottom:1px solid var(--line)}
+td.c,th.c{text-align:center}
+tfoot td{font-weight:700;border-bottom:0;border-top:2px solid var(--ink)}
+.levels{display:inline-flex;border:2px solid var(--ink);border-radius:999px;overflow:hidden;margin-top:1rem}
+.levels button{border:0;border-radius:0;background:transparent;color:var(--ink);padding:.45rem 1.1rem}
+.levels button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.fig .side.d{stroke:var(--accent);stroke-width:2.5;stroke-dasharray:3 5}
+.fig .lbl.dl{fill:var(--accent)}
+body.locked #main{opacity:.35;filter:grayscale(.4);pointer-events:none;user-select:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Formeltrainer <span class="acc">Dreieck &amp; Viereck</span></h1>
+      <p class="sub">Umfang und Flächeninhalt – so lange üben, bis du alle Formeln kannst. Jede Formel kommt wieder, bis du sie <b>zweimal hintereinander fehlerfrei</b> geschafft hast.</p>
+      <div class="levels" role="group" aria-label="Welche Formeln üben?">
+        <button type="button" data-topic="tri" aria-pressed="true">Dreiecke</button>
+        <button type="button" data-topic="quad" aria-pressed="false">Vierecke</button>
+        <button type="button" data-topic="all" aria-pressed="false">Alle</button>
+      </div>
+    </div>
+    <div class="top"><span class="score" id="score">0 von 10 Formeln gekonnt</span></div>
+  </header>
+
+  <section id="start" class="startcard">
+    <div id="startAsk">
+      <h2>Wie heißt du?</h2>
+      <p class="hint">Gib zuerst deinen Namen ein. Er steht am Ende in deiner Auswertung und kann danach nicht mehr geändert werden. Hast du auf diesem Gerät schon geübt, machst du automatisch dort weiter, wo du aufgehört hast.</p>
+      <div class="actions"><input id="pname" placeholder="Vor- und Nachname" autocomplete="name" aria-label="Dein Name"><button id="startBtn" type="button">Los geht’s</button></div>
+      <details id="codeAsk">
+        <summary>Auf einem anderen Gerät angefangen? Code eingeben</summary>
+        <p class="hint">Schreib oben deinen Namen genau wie auf dem anderen Gerät und tippe hier den Code ein.</p>
+        <div class="actions"><input id="pcode" placeholder="z. B. K7MP-2XQ9" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Code vom anderen Gerät"></div>
+      </details>
+      <p id="pnameErr" hidden></p>
+    </div>
+    <div id="startDone" hidden>
+      <span class="who">👤 <b id="pnameShow"></b></span>
+      <button type="button" class="mini" id="codeBtn" aria-expanded="false">Auf anderem Gerät weitermachen</button>
+      <p id="startMsg" aria-live="polite"></p>
+      <div id="codeBox" hidden>
+        <p>Dein Code: <span class="code" id="codeShow"></span> <button type="button" class="mini" id="codeCopy">Kopieren</button></p>
+        <p class="hint">Öffne die Übung auf dem anderen Gerät, gib <b>genau denselben Namen</b> ein und tippe diesen Code ein. Der Code ändert sich, während du weiterarbeitest – schreib ihn dir erst auf, wenn du hier aufhörst.</p>
+      </div>
+    </div>
+  </section>
+
+  <div id="main">
+    <section id="exCard"></section>
+
+    <details class="info" id="howto" open>
+      <summary>Zusammenfassung – schreib sie in dein Heft!</summary>
+      <p class="copy">✏️ <b>Schreib alle Formeln mit einer kleinen Skizze ordentlich in dein Heft ab.</b></p>
+      <h3>Dreiecke</h3>
+      <div class="tablewrap"><table class="ftab">
+        <tr><td>Allgemeines Dreieck</td><td class="f"><i>u</i> = <i>a</i> + <i>b</i> + <i>c</i></td><td class="f"><i>A</i> = <i>c</i> · <i>h</i><sub>c</sub> : 2 = <i>a</i> · <i>h</i><sub>a</sub> : 2 = <i>b</i> · <i>h</i><sub>b</sub> : 2</td></tr>
+        <tr><td>Rechtwinkliges Dreieck</td><td class="f"><i>u</i> = <i>a</i> + <i>b</i> + <i>c</i></td><td class="f"><i>A</i> = <i>a</i> · <i>b</i> : 2 &nbsp;(Katheten <i>a</i>, <i>b</i>)</td></tr>
+        <tr><td>Gleichschenkliges Dreieck</td><td class="f"><i>u</i> = 2 · <i>a</i> + <i>c</i></td><td class="f"><i>A</i> = <i>c</i> · <i>h</i> : 2</td></tr>
+        <tr><td>Gleichseitiges Dreieck</td><td class="f"><i>u</i> = 3 · <i>a</i></td><td class="f"><i>A</i> = <i>a</i> · <i>h</i> : 2</td></tr>
+      </table></div>
+      <h3 style="margin-top:1rem">Vierecke</h3>
+      <div class="tablewrap"><table class="ftab">
+        <tr><td>Quadrat</td><td class="f"><i>u</i> = 4 · <i>a</i></td><td class="f"><i>A</i> = <i>a</i> · <i>a</i> = <i>a</i><sup>2</sup></td></tr>
+        <tr><td>Rechteck</td><td class="f"><i>u</i> = 2 · <i>a</i> + 2 · <i>b</i></td><td class="f"><i>A</i> = <i>a</i> · <i>b</i></td></tr>
+        <tr><td>Parallelogramm</td><td class="f"><i>u</i> = 2 · <i>a</i> + 2 · <i>b</i></td><td class="f"><i>A</i> = <i>a</i> · <i>h</i><sub>a</sub></td></tr>
+        <tr><td>Raute</td><td class="f"><i>u</i> = 4 · <i>a</i></td><td class="f"><i>A</i> = <i>e</i> · <i>f</i> : 2 &nbsp;(Diagonalen <i>e</i>, <i>f</i>)</td></tr>
+        <tr><td>Trapez</td><td class="f"><i>u</i> = <i>a</i> + <i>b</i> + <i>c</i> + <i>d</i></td><td class="f"><i>A</i> = (<i>a</i> + <i>c</i>) · <i>h</i> : 2 &nbsp;(<i>a</i>, <i>c</i> parallel)</td></tr>
+        <tr><td>Deltoid</td><td class="f"><i>u</i> = 2 · <i>a</i> + 2 · <i>b</i></td><td class="f"><i>A</i> = <i>e</i> · <i>f</i> : 2 &nbsp;(Diagonalen <i>e</i>, <i>f</i>)</td></tr>
+      </table></div>
+      <p><b>Merke:</b> Beim <b>Umfang</b> gehst du einmal rundherum – du addierst alle Seiten. Höhen und Diagonalen gehören nicht dazu!</p>
+      <p>Beim <b>Flächeninhalt</b> brauchst du die Strecken, die <b>senkrecht</b> aufeinander stehen: Seite und dazugehörige Höhe, beim Rechteck Länge und Breite, bei Raute und Deltoid die beiden Diagonalen.</p>
+    </details>
+
+    <div class="finish"><button class="ghost" id="showSum" type="button">Auswertung anzeigen</button></div>
+
+    <section id="summary" hidden>
+      <div class="head"><h2 id="sumTitle">Auswertung</h2></div>
+      <p id="sumWho" class="who"></p>
+      <p id="sumMsg" class="summsg"></p>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Formel</th><th>Stand</th><th class="c">Versuche</th><th class="c">Fehlversuche</th></tr></thead>
+        <tbody id="sumBody"></tbody>
+        <tfoot id="sumFoot"></tfoot>
+      </table></div>
+      <div class="actions" style="margin-top:1rem"><button type="button" id="restart">Alles nochmal von vorne üben</button></div>
+    </section>
+  </div>
+</div>
+
+<script>
+/* ================= Hilfsfunktionen ================= */
+const $=id=>document.getElementById(id);
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const rf=(a,b)=>a+Math.random()*(b-a);
+const pick=a=>a[rnd(0,a.length-1)];
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=rnd(0,i);[a[i],a[j]]=[a[j],a[i]];}return a;}
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+/* Variablennamen schön: h_c → h mit tiefgestelltem c */
+const vH=n=>n.includes('_')?'<i>'+n.split('_')[0]+'</i><sub>'+n.split('_')[1]+'</sub>':'<i>'+n+'</i>';
+const vSvg=n=>n.includes('_')?n.split('_')[0]+'<tspan dy="5" font-size="13">'+n.split('_')[1]+'</tspan>':n;
+const vTxt=n=>n.replace('_','');
+const VARS=['a','b','c','d','e','f','h','h_a','h_b','h_c'];
+const isSideLbl=n=>/^[a-d]$/.test(n);
+
+/* ================= Formelkarten ================= */
+/* need: richtige Auswahl (Beschriftungen, mehrfach = mehrere Seiten) · ok: richtige Formeln · show: Strecken in der Skizze */
+const CARDS=[
+  {id:'g_u',topic:'tri',short:'u allgemein',name:'Umfang – allgemeines Dreieck',shape:'gen',want:'u',show:()=>['a','b','c',pick(['h_a','h_b','h_c'])],need:[['a','b','c']],ok:['a+b+c'],formula:'u = a + b + c'},
+  {id:'g_Ac',topic:'tri',short:'A allgemein (h_c)',name:'Fläche – allgemeines Dreieck mit hc',shape:'gen',want:'A',show:()=>['a','b','c','h_c'],need:[['c','h_c']],ok:['c*h_c/2'],formula:'A = c · h_c : 2',half:'Ein Dreieck ist ein halbes Rechteck.'},
+  {id:'g_Aa',topic:'tri',short:'A allgemein (h_a)',name:'Fläche – allgemeines Dreieck mit ha',shape:'gen',want:'A',show:()=>['a','b','c','h_a'],need:[['a','h_a']],ok:['a*h_a/2'],formula:'A = a · h_a : 2',half:'Ein Dreieck ist ein halbes Rechteck.'},
+  {id:'g_Ab',topic:'tri',short:'A allgemein (h_b)',name:'Fläche – allgemeines Dreieck mit hb',shape:'gen',want:'A',show:()=>['a','b','c','h_b'],need:[['b','h_b']],ok:['b*h_b/2'],formula:'A = b · h_b : 2',half:'Ein Dreieck ist ein halbes Rechteck.'},
+  {id:'r_u',topic:'tri',short:'u rechtwinklig',name:'Umfang – rechtwinkliges Dreieck',shape:'right',want:'u',show:()=>['a','b','c','h_c'],need:[['a','b','c']],ok:['a+b+c'],formula:'u = a + b + c'},
+  {id:'r_A',topic:'tri',short:'A rechtwinklig',name:'Fläche – rechtwinkliges Dreieck',shape:'right',want:'A',show:()=>['a','b','c','h_c'],need:[['a','b'],['c','h_c']],ok:['a*b/2','c*h_c/2'],formula:'A = a · b : 2',half:'Ein rechtwinkliges Dreieck ist ein halbes Rechteck.',selTip:'Beim rechtwinkligen Dreieck brauchst du die beiden Katheten – die Seiten, die den rechten Winkel bilden.'},
+  {id:'i_u',topic:'tri',short:'u gleichschenklig',name:'Umfang – gleichschenkliges Dreieck',shape:'iso',want:'u',show:()=>['a','c','h'],need:[['a','a','c']],ok:['2*a+c'],formula:'u = 2 · a + c',
+    wrongs:[['a+c','Das gleichschenklige Dreieck hat zwei gleich lange Schenkel a – du brauchst a zweimal: 2 · a + c.']]},
+  {id:'i_A',topic:'tri',short:'A gleichschenklig',name:'Fläche – gleichschenkliges Dreieck',shape:'iso',want:'A',show:()=>['a','c','h'],need:[['c','h']],ok:['c*h/2'],formula:'A = c · h : 2',half:'Ein Dreieck ist ein halbes Rechteck.'},
+  {id:'e_u',topic:'tri',short:'u gleichseitig',name:'Umfang – gleichseitiges Dreieck',shape:'equi',want:'u',show:()=>['a','h'],need:[['a','a','a']],ok:['3*a'],formula:'u = 3 · a',
+    wrongs:[['a','Alle drei Seiten sind gleich lang – also 3 · a.']]},
+  {id:'e_A',topic:'tri',short:'A gleichseitig',name:'Fläche – gleichseitiges Dreieck',shape:'equi',want:'A',show:()=>['a','h'],need:[['a','h']],ok:['a*h/2'],formula:'A = a · h : 2',half:'Ein Dreieck ist ein halbes Rechteck.'},
+
+  {id:'q_u',topic:'quad',short:'u Quadrat',name:'Umfang – Quadrat',shape:'square',want:'u',show:()=>['a'],need:[['a','a','a','a']],ok:['4*a'],formula:'u = 4 · a',
+    wrongs:[['a*a','Das ist der Flächeninhalt. Beim Umfang gehst du rundherum: 4 gleich lange Seiten.'],['2*a','Das Quadrat hat 4 Seiten – also 4 · a.']]},
+  {id:'q_A',topic:'quad',short:'A Quadrat',name:'Fläche – Quadrat',shape:'square',want:'A',show:()=>['a'],need:[['a','a']],adj:true,ok:['a*a'],formula:'A = a · a',extra:['²'],
+    selTip:'Beim Quadrat brauchst du zwei Seiten, die an einer Ecke zusammenstoßen – Länge und Breite sind beide a.',
+    wrongs:[['4*a','Das ist der Umfang. Fläche heißt: Länge mal Breite – beim Quadrat a · a.'],['2*a','Nicht a + a oder 2 · a – die Fläche ist a · a.']]},
+  {id:'re_u',topic:'quad',short:'u Rechteck',name:'Umfang – Rechteck',shape:'rect',want:'u',show:()=>['a','b'],need:[['a','a','b','b']],ok:['2*a+2*b'],formula:'u = 2 · a + 2 · b',
+    wrongs:[['a+b','Jede Seite kommt zweimal vor – rundherum sind es a, b, a, b. Also 2 · a + 2 · b.'],['a*b','Das ist der Flächeninhalt. Beim Umfang addierst du die Seiten.']]},
+  {id:'re_A',topic:'quad',short:'A Rechteck',name:'Fläche – Rechteck',shape:'rect',want:'A',show:()=>['a','b'],need:[['a','b']],adj:true,ok:['a*b'],formula:'A = a · b',
+    selTip:'Beim Rechteck brauchst du Länge a und Breite b – zwei Seiten, die an einer Ecke zusammenstoßen.',
+    wrongs:[['2*a+2*b','Das ist der Umfang. Fläche heißt: Länge mal Breite.'],['a*b/2','Beim Rechteck wird nicht durch 2 dividiert – nur beim Dreieck.']]},
+  {id:'p_u',topic:'quad',short:'u Parallelogramm',name:'Umfang – Parallelogramm',shape:'para',want:'u',show:()=>['a','b','h_a'],need:[['a','a','b','b']],ok:['2*a+2*b'],formula:'u = 2 · a + 2 · b',
+    wrongs:[['a+b','Jede Seite kommt zweimal vor – rundherum sind es a, b, a, b. Also 2 · a + 2 · b.']]},
+  {id:'p_A',topic:'quad',short:'A Parallelogramm',name:'Fläche – Parallelogramm',shape:'para',want:'A',show:()=>['a','b','h_a'],need:[['a','h_a']],ok:['a*h_a'],formula:'A = a · h_a',
+    selTip:'Beim Parallelogramm brauchst du eine Seite und die Höhe, die darauf senkrecht steht – nicht die schräge Seite b.',
+    wrongs:[['a*b','Die schräge Seite b ist länger als die Höhe – du brauchst die Höhe: A = a · h_a.'],['a*h_a/2','Beim Parallelogramm wird nicht durch 2 dividiert – nur beim Dreieck.']]},
+  {id:'ra_u',topic:'quad',short:'u Raute',name:'Umfang – Raute',shape:'rhomb',want:'u',show:()=>['a','e','f'],need:[['a','a','a','a']],ok:['4*a'],formula:'u = 4 · a',
+    wrongs:[['e+f','Die Diagonalen liegen innen – beim Umfang zählen nur die 4 gleich langen Seiten.']]},
+  {id:'ra_A',topic:'quad',short:'A Raute',name:'Fläche – Raute',shape:'rhomb',want:'A',show:()=>['a','e','f'],need:[['e','f']],ok:['e*f/2'],formula:'A = e · f : 2',half:'Die Raute ist halb so groß wie das Rechteck aus den beiden Diagonalen.',
+    selTip:'Bei der Raute brauchst du die beiden Diagonalen e und f – sie stehen senkrecht aufeinander.'},
+  {id:'t_u',topic:'quad',short:'u Trapez',name:'Umfang – Trapez',shape:'trap',want:'u',show:()=>['a','b','c','d','h'],need:[['a','b','c','d']],ok:['a+b+c+d'],formula:'u = a + b + c + d'},
+  {id:'t_A',topic:'quad',short:'A Trapez',name:'Fläche – Trapez',shape:'trap',want:'A',show:()=>['a','b','c','d','h'],need:[['a','c','h']],ok:['(a+c)*h/2'],formula:'A = (a + c) · h : 2',half:'Du nimmst den Mittelwert der beiden parallelen Seiten.',
+    selTip:'Beim Trapez brauchst du die beiden parallelen Seiten a und c und die Höhe h.',
+    wrongs:[['a+c*h/2','Setz a + c in eine Klammer! Sonst wird nur c mit h multipliziert.'],['a*c*h/2','Die parallelen Seiten werden addiert: (a + c).'],['a*h/2','Du brauchst beide parallelen Seiten: (a + c) · h : 2.']]},
+  {id:'d_u',topic:'quad',short:'u Deltoid',name:'Umfang – Deltoid',shape:'kite',want:'u',show:()=>['a','b','e','f'],need:[['a','a','b','b']],ok:['2*a+2*b'],formula:'u = 2 · a + 2 · b',
+    wrongs:[['a+b','Das Deltoid hat je zwei gleich lange Seiten a und b – also 2 · a + 2 · b.'],['e+f','Die Diagonalen liegen innen – beim Umfang zählen nur die Seiten.']]},
+  {id:'d_A',topic:'quad',short:'A Deltoid',name:'Fläche – Deltoid',shape:'kite',want:'A',show:()=>['a','b','e','f'],need:[['e','f']],ok:['e*f/2'],formula:'A = e · f : 2',half:'Das Deltoid ist halb so groß wie das Rechteck aus den beiden Diagonalen.',
+    selTip:'Beim Deltoid brauchst du die beiden Diagonalen e und f – sie stehen senkrecht aufeinander.',
+    wrongs:[['a*b','Beim Deltoid brauchst du die Diagonalen: A = e · f : 2.']]}
+];
+const SHAPENAME={gen:'allgemeines Dreieck',right:'rechtwinkliges Dreieck',iso:'gleichschenkliges Dreieck',equi:'gleichseitiges Dreieck',
+  square:'Quadrat',rect:'Rechteck',para:'Parallelogramm',rhomb:'Raute',trap:'Trapez',kite:'Deltoid'};
+const GEN={gen:'eines allgemeinen Dreiecks',right:'eines rechtwinkligen Dreiecks',iso:'eines gleichschenkligen Dreiecks',equi:'eines gleichseitigen Dreiecks',
+  square:'eines Quadrats',rect:'eines Rechtecks',para:'eines Parallelogramms',rhomb:'einer Raute',trap:'eines Trapezes',kite:'eines Deltoids'};
+const TOPICS={tri:'Dreiecke',quad:'Vierecke',all:'Alle'};
+const MASTER=2; /* so oft hintereinander fehlerfrei */
+const TOKRE=/h_[a-c]|[a-z]|\d|[+·:()²]/g;
+const formulaH=f=>f.replace(/h_[a-c]|\b[a-hu]\b|A(?= =)/g,m=>vH(m)).replace(/²/g,'<sup>2</sup>');
+
+/* ================= Skizzen (jedes Mal anders gedreht) ================= */
+function foot(P,Q,R){const dx=R[0]-Q[0],dy=R[1]-Q[1],t=((P[0]-Q[0])*dx+(P[1]-Q[1])*dy)/(dx*dx+dy*dy);return [Q[0]+t*dx,Q[1]+t*dy];}
+/* liefert Ecken, Strecken {id, l (Beschriftung), P, Q, k: s(Seite)/h(Höhe)/d(Diagonale)} und rechte Winkel {V, P, Q} */
+function makeShape(kind){
+  let pts={},segs=[],ra=[];
+  const S=(id,l,P,Q)=>segs.push({id,l,P,Q,k:'s'}),Hh=(id,l,P,Q,base)=>{segs.push({id,l,P,Q,k:'h'});ra.push({V:Q,P,Q:base,h:l});},D=(id,l,P,Q)=>segs.push({id,l,P,Q,k:'d'});
+  if(kind==='gen'||kind==='right'||kind==='iso'||kind==='equi'){
+    let A,B,C;
+    if(kind==='gen'){for(;;){const c=10,d=c*rf(.25,.75),h=c*rf(.5,.85);if(h*h>d*(c-d)*1.15){A=[0,0];B=[c,0];C=[d,h];break;}}}
+    else if(kind==='right'){C=[0,0];A=[rf(5,9),0];B=[0,rf(5,8)];ra.push({V:C,P:A,Q:B});}
+    else if(kind==='iso'){const c=rf(8,10);A=[0,0];B=[c,0];C=[c/2,rf(5,8)];}
+    else{A=[0,0];B=[9,0];C=[4.5,9*Math.sqrt(3)/2];}
+    pts={A,B,C};
+    if(kind==='iso'){S('a1','a',B,C);S('a2','a',A,C);S('c','c',A,B);}
+    else if(kind==='equi'){S('a1','a',B,C);S('a2','a',A,C);S('a3','a',A,B);}
+    else{S('a','a',B,C);S('b','b',A,C);S('c','c',A,B);}
+    const fa=foot(A,B,C),fb=foot(B,A,C),fc=foot(C,A,B);
+    Hh('h_a','h_a',A,fa,B);Hh('h_b','h_b',B,fb,A);Hh('h_c','h_c',C,fc,B);
+    if(kind==='iso'||kind==='equi')Hh('h','h',C,fc,B);
+  }else{
+    let A,B,C,Dd;
+    if(kind==='square'){const s=8;A=[0,0];B=[s,0];C=[s,s];Dd=[0,s];ra.push({V:A,P:B,Q:Dd});
+      S('a1','a',A,B);S('a2','a',B,C);S('a3','a',C,Dd);S('a4','a',Dd,A);}
+    else if(kind==='rect'){const w=rf(9,11),h=rf(4.5,6);A=[0,0];B=[w,0];C=[w,h];Dd=[0,h];ra.push({V:A,P:B,Q:Dd});
+      S('a1','a',A,B);S('b1','b',B,C);S('a2','a',C,Dd);S('b2','b',Dd,A);}
+    else if(kind==='para'){const a=rf(8,10),o=rf(2,3.2),h=rf(4,5.2);A=[0,0];B=[a,0];C=[a+o,h];Dd=[o,h];
+      S('a1','a',A,B);S('b1','b',B,C);S('a2','a',C,Dd);S('b2','b',Dd,A);Hh('h_a','h_a',Dd,[o,0],B);}
+    else if(kind==='rhomb'){const e=rf(9,11),f=rf(5,7);A=[-e/2,0];B=[0,-f/2];C=[e/2,0];Dd=[0,f/2];
+      S('a1','a',A,B);S('a2','a',B,C);S('a3','a',C,Dd);S('a4','a',Dd,A);D('e','e',A,C);D('f','f',B,Dd);ra.push({V:[0,0],P:C,Q:Dd});}
+    else if(kind==='trap'){const a=rf(10,12),o1=rf(1.5,3),o2=rf(1,2.5),h=rf(4,5.5);A=[0,0];B=[a,0];C=[a-o2,h];Dd=[o1,h];
+      S('a','a',A,B);S('b','b',B,C);S('c','c',C,Dd);S('d','d',Dd,A);const hx=o1+(a-o1-o2)*rf(.3,.6);Hh('h','h',[hx,h],[hx,0],B);}
+    else{const w=rf(3,4),t=rf(2,3),bb=rf(6,7.5);A=[0,t];B=[-w,0];C=[0,-bb];Dd=[w,0];
+      S('a1','a',A,B);S('a2','a',Dd,A);S('b1','b',B,C);S('b2','b',C,Dd);D('e','e',B,Dd);D('f','f',A,C);ra.push({V:[0,0],P:Dd,Q:A});}
+    pts={A,B,C,D:Dd};
+  }
+  /* zufällig drehen (0/90/180/270°) und spiegeln, dann einpassen */
+  const rot=rnd(0,3),mir=Math.random()<.5;
+  const T=p=>{let [x,y]=p;if(mir)x=-x;for(let i=0;i<rot;i++)[x,y]=[-y,x];return [x,y];};
+  const all=Object.values(pts).map(T),xs=all.map(p=>p[0]),ys=all.map(p=>p[1]),W=420,H=280,pad=44;
+  const x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys);
+  const sc=Math.min((W-2*pad)/(x1-x0),(H-2*pad)/(y1-y0)),ox=(W-(x1-x0)*sc)/2,oy=(H-(y1-y0)*sc)/2;
+  const F=p=>{const q=T(p);return [ox+(q[0]-x0)*sc,H-oy-(q[1]-y0)*sc];};
+  Object.keys(pts).forEach(k=>{pts[k]=F(pts[k]);});
+  segs.forEach(s=>{s.P=F(s.P);s.Q=F(s.Q);});ra.forEach(r=>{r.V=F(r.V);r.P=F(r.P);r.Q=F(r.Q);});
+  const G=Object.values(pts).reduce((g,p)=>[g[0]+p[0]/Object.keys(pts).length,g[1]+p[1]/Object.keys(pts).length],[0,0]);
+  return {kind,pts,segs,ra,G,W,H};
+}
+function sketch(e){
+  const s=e.shape,click=e.step===0,vis=s.segs.filter(g=>e.show.includes(g.l));
+  const poly=Object.values(s.pts);
+  let h='<svg viewBox="0 0 '+s.W+' '+s.H+'" role="img" aria-label="Skizze: '+SHAPENAME[s.kind]+'"><polygon class="tri" points="'+poly.map(p=>p.map(v=>v.toFixed(1)).join(',')).join(' ')+'"/>';
+  /* rechte Winkel: nur bei den sichtbaren Höhen bzw. fest eingebauten */
+  const visH=vis.filter(g=>g.k==='h');
+  s.ra.forEach(r=>{if(r.h&&!visH.some(g=>g.l===r.h))return;
+    const u=(p,q)=>{const d=Math.hypot(q[0]-p[0],q[1]-p[1])||1;return [(q[0]-p[0])/d*13,(q[1]-p[1])/d*13];};
+    const v1=u(r.V,r.P),v2=u(r.V,r.Q);
+    h+='<path class="ra" d="M'+(r.V[0]+v1[0])+','+(r.V[1]+v1[1])+' L'+(r.V[0]+v1[0]+v2[0])+','+(r.V[1]+v1[1]+v2[1])+' L'+(r.V[0]+v2[0])+','+(r.V[1]+v2[1])+'"/>';});
+  vis.forEach(g=>{h+='<line class="side'+(g.k==='h'?' h':g.k==='d'?' d':'')+(e.sel.includes(g.id)?' sel':'')+'" x1="'+g.P[0]+'" y1="'+g.P[1]+'" x2="'+g.Q[0]+'" y2="'+g.Q[1]+'"/>';});
+  vis.forEach(g=>{let L;
+    if(g.k==='s'){const M=[(g.P[0]+g.Q[0])/2,(g.P[1]+g.Q[1])/2],d=Math.hypot(M[0]-s.G[0],M[1]-s.G[1])||1;L=[M[0]+(M[0]-s.G[0])/d*20,M[1]+(M[1]-s.G[1])/d*20];}
+    else{const t=g.k==='d'?.28:.5,M=[g.P[0]+(g.Q[0]-g.P[0])*t,g.P[1]+(g.Q[1]-g.P[1])*t],d=Math.hypot(g.Q[0]-g.P[0],g.Q[1]-g.P[1]),nx=-(g.Q[1]-g.P[1])/d,ny=(g.Q[0]-g.P[0])/d;L=[M[0]+nx*15,M[1]+ny*15];}
+    h+='<text class="lbl'+(g.k==='h'?' hl':g.k==='d'?' dl':'')+'" x="'+L[0]+'" y="'+(L[1]+6)+'" text-anchor="middle">'+vSvg(g.l)+'</text>';});
+  if(click)vis.forEach(g=>{h+='<line class="hit" data-seg="'+g.id+'" x1="'+g.P[0]+'" y1="'+g.P[1]+'" x2="'+g.Q[0]+'" y2="'+g.Q[1]+'"><title>'+vTxt(g.l)+'</title></line>';});
+  return h+'</svg>';
+}
+
+/* ================= Formel aus Bausteinen auswerten ================= */
+function evalTokens(toks,vals){
+  let i=0;const peek=()=>toks[i];
+  const isStart=t=>t!==undefined&&(t==='('||/^[0-9]$/.test(t)||/^[a-z]/.test(t));
+  function expr(){let v=term();while(peek()==='+'){i++;v+=term();}return v;}
+  function term(){let v=factor();for(;;){const t=peek();if(t==='·'){i++;v*=factor();}else if(t===':'){i++;v/=factor();}else if(isStart(t)){v*=factor();}else break;}return v;}
+  function factor(){let v=atom();while(peek()==='²'){i++;v=v*v;}return v;}
+  function atom(){const t=toks[i];if(t===undefined)throw 0;
+    if(/^[0-9]$/.test(t)){let s='';while(/^[0-9]$/.test(toks[i]||''))s+=toks[i++];return +s;}
+    if(/^[a-z]/.test(t)){i++;if(!(t in vals))throw 0;return vals[t];}
+    if(t==='('){i++;const v=expr();if(toks[i]!==')')throw 0;i++;return v;}
+    throw 0;}
+  const v=expr();if(i!==toks.length)throw 0;return v;
+}
+const evalStr=(s,vals)=>Function(...VARS,'return '+s)(...VARS.map(k=>vals[k]));
+const SETS=[0,1,2].map(()=>Object.fromEntries(VARS.map(k=>[k,2+Math.random()*7])));
+const same=(f,g)=>SETS.every(v=>{try{const x=f(v),y=g(v);return Math.abs(x-y)<1e-9*Math.max(1,Math.abs(y));}catch(e){return false;}});
+
+/* ================= Zustand ================= */
+const ST={};CARDS.forEach(c=>{ST[c.id]={streak:0,tries:0,err:0};});
+let topic='tri',queue=[],cur=null,PUPIL='',restoring=false,summaryRequested=false,lastId=null;
+const topicCards=()=>CARDS.filter(c=>topic==='all'||c.topic===topic);
+const mastered=()=>topicCards().filter(c=>ST[c.id].streak>=MASTER).length;
+function buildQueue(){queue=shuffle(topicCards().filter(c=>ST[c.id].streak<MASTER).map(c=>c.id));if(queue.length>1&&queue[0]===lastId)queue.push(queue.shift());}
+function newCard(id){const c=CARDS.find(x=>x.id===id);return {c,shape:makeShape(c.shape),show:c.show(),sel:[],toks:[],step:0,errs:0,shown:false,msg:{},tries:[0,0]};}
+function nextCard(){
+  if(!queue.length)buildQueue();
+  if(!queue.length){cur=null;summaryRequested=true;render();return;}
+  const id=queue.shift();lastId=id;cur=newCard(id);render();
+}
+
+/* ================= Prüfen ================= */
+function fail(s,text){const e=cur;e.errs++;e.tries[s]++;e.msg[s]={kind:'bad',text:text+(e.tries[s]===1?' Versuch es nochmal!':''),offer:e.tries[s]>=2};}
+const segOf=id=>cur.shape.segs.find(g=>g.id===id);
+const sharesCorner=(g1,g2)=>[g1.P,g1.Q].some(p=>[g2.P,g2.Q].some(q=>Math.hypot(p[0]-q[0],p[1]-q[1])<1));
+function check0(){
+  const e=cur,c=e.c,sel=e.sel.map(segOf),lbl=sel.map(g=>g.l).sort();
+  if(!sel.length){e.msg[0]={kind:'bad',text:'Tippe in der Skizze auf die Strecken, die du brauchst.'};return;}
+  const match=c.need.some(n=>n.length===lbl.length&&n.slice().sort().every((x,i)=>x===lbl[i]));
+  if(match&&(!c.adj||sharesCorner(sel[0],sel[1]))){e.step=1;e.msg[0]={kind:'ok',text:'Richtig! Genau diese Strecken brauchst du.'};return;}
+  if(match&&c.adj)return fail(0,'Nimm zwei Seiten, die an einer Ecke zusammenstoßen – Länge und Breite.');
+  const inner=sel.filter(g=>g.k!=='s'),sides=sel.filter(g=>g.k==='s'),allSides=e.shape.segs.filter(g=>g.k==='s'&&e.show.includes(g.l));
+  if(c.want==='u'){
+    if(inner.length)return fail(0,(inner.some(g=>g.k==='d')?'Die Diagonalen liegen innen':'Die Höhe liegt innen')+' – sie gehört nicht zum Umfang. Beim Umfang gehst du einmal rundherum.');
+    return fail(0,'Beim Umfang gehst du einmal rundherum – tippe '+(sides.length<allSides.length?'alle ':'')+'Seiten an ('+allSides.length+' Stück).');
+  }
+  if(new Set(lbl).size<lbl.length)return fail(0,'Für den Flächeninhalt brauchst du jede Strecke nur einmal'+(c.adj?'':' – z. B. nur eine Seite a')+'.');
+  if(c.selTip)return fail(0,c.selTip);
+  if(!inner.length)return fail(0,'Für den Flächeninhalt brauchst du eine Seite und die Höhe, die darauf senkrecht steht.');
+  if(sel.length>2)return fail(0,'Du brauchst nur zwei Strecken: eine Seite und die passende Höhe.');
+  return fail(0,'Die Höhe muss senkrecht auf der Seite stehen, die du nimmst – schau, wo der rechte Winkel ist.');
+}
+function check1(){
+  const e=cur,c=e.c;
+  if(!e.toks.length){e.msg[1]={kind:'bad',text:'Baue die Formel aus den Bausteinen.'};return;}
+  let f;try{evalTokens(e.toks,SETS[0]);f=v=>evalTokens(e.toks,v);}catch(x){e.msg[1]={kind:'bad',text:'Die Formel ist noch nicht vollständig – prüfe Rechenzeichen und Klammern.'};return;}
+  if(c.ok.some(o=>same(f,v=>evalStr(o,v)))){e.step=2;e.msg[1]={kind:'ok',text:'Richtig!'};finishCard();return;}
+  for(const [w,m] of (c.wrongs||[]))if(same(f,v=>evalStr(w,v)))return fail(1,m);
+  if(c.want==='A'){
+    if(c.half&&c.ok.some(o=>same(f,v=>2*evalStr(o,v))))return fail(1,'Fast! Du musst noch durch 2 dividieren. '+c.half);
+    const sides=e.show.filter(isSideLbl);
+    if(same(f,v=>sides.reduce((s,k)=>s+v[k],0)))return fail(1,'Das ist eine Summe von Seiten – so rechnet man den Umfang. Für die Fläche wird multipliziert.');
+    if(['a','b','c'].some(s=>['h_a','h_b','h_c','h'].some(hh=>same(f,v=>v[s]*v[hh]/2)||same(f,v=>v[s]*v[hh]))))return fail(1,'Seite und Höhe müssen zusammenpassen: Die Höhe steht senkrecht auf der Seite, die du nimmst.');
+    return fail(1,'Schau dir nochmal an, welche Strecken du ausgewählt hast – mit ihnen baust du die Formel.');
+  }
+  if(c.ok.some(o=>same(f,v=>evalStr(o,v)/2)))return fail(1,'Beim Umfang wird nicht durch 2 dividiert – nur addiert.');
+  if(['h','h_a','h_b','h_c','e','f'].some(hh=>c.ok.some(o=>same(f,v=>evalStr(o,v)+v[hh]))))return fail(1,'Höhen und Diagonalen gehören nicht zum Umfang – sie liegen innen. Addiere nur die Seiten.');
+  return fail(1,'Umfang heißt: alle Seiten einmal rundherum addieren.');
+}
+function showSolution(s){
+  const e=cur,c=e.c;e.shown=true;
+  if(s===0){const used=[];e.sel=c.need[0].map(l=>{const cand=e.shape.segs.filter(g=>g.l===l&&!used.includes(g.id));
+      let g=cand[0];if(c.adj&&used.length){const first=segOf(used[0]);g=cand.find(x=>sharesCorner(x,first))||g;}used.push(g.id);return g.id;});
+    e.step=1;e.msg[0]={kind:'shown',text:'Diese Strecken brauchst du – schau sie dir genau an.'};}
+  else{e.toks=c.formula.split('=')[1].match(TOKRE);e.step=2;e.msg[1]={kind:'shown',text:'So lautet die Formel – merk sie dir gut!'};finishCard();}
+}
+function finishCard(){
+  const e=cur,s=ST[e.c.id];s.tries++;s.err+=e.errs;
+  const perfect=!e.errs&&!e.shown;
+  s.streak=perfect?Math.min(MASTER,s.streak+1):0;
+  e.perfect=perfect;
+  if(s.streak<MASTER){const pos=Math.min(queue.length,perfect?4:2);queue.splice(pos,0,e.c.id);}
+  saveProgress();
+}
+
+/* ================= Anzeige ================= */
+function msgHTML(s){const m=cur.msg[s];if(!m)return '';return '<p class="msg '+m.kind+'">'+m.text+(m.offer&&cur.step===s?' <button type="button" class="mini" data-act="show'+s+'">Lösung zeigen</button>':'')+'</p>';}
+function tokH(t){return /^[a-z]/.test(t)?'<span class="tok v">'+vH(t)+'</span>':'<span class="tok">'+(t==='²'?'<sup>2</sup>':t)+'</span>';}
+const chipH=c=>c.short.replace(/^([uA]) /,(m,x)=>'<i>'+x+'</i> ').replace(/h_([abc])/,'<i>h</i><sub>$1</sub>');
+function render(focus){
+  const tc=topicCards(),m=mastered();
+  $('score').textContent=m+' von '+tc.length+' Formeln gekonnt';
+  let h='<div class="bar" aria-hidden="true"><i style="width:'+(m/tc.length*100)+'%"></i></div><div class="prog">'+
+    tc.map(c=>{const s=ST[c.id];return '<span class="pchip'+(s.streak>=MASTER?' m':'')+(cur&&cur.c.id===c.id?' cur':'')+'">'+chipH(c)+' <b>'+'●'.repeat(Math.min(s.streak,MASTER))+'○'.repeat(Math.max(0,MASTER-s.streak))+'</b></span>';}).join('')+'</div>';
+  if(!cur){
+    const other=topic==='tri'?'quad':topic==='quad'?'tri':null;
+    h+='<div class="success"><h2>🎉 Geschafft'+(PUPIL?', '+esc(PUPIL):'')+'! Du kannst alle Formeln'+(topic==='all'?'':' für '+TOPICS[topic])+'.</h2><p>Jede Formel hast du zweimal hintereinander fehlerfrei gebaut. Schreib die Zusammenfassung unten in dein Heft.</p>'+
+      (other&&topicCardsOf(other).some(c=>ST[c.id].streak<MASTER)?'<div class="actions"><button type="button" data-act="topic" data-to="'+other+'">Weiter mit den '+TOPICS[other]+'n ▶</button></div>':'')+'</div>';
+    $('exCard').innerHTML=h;updateSummary();return;
+  }
+  const e=cur,c=e.c;
+  h+='<div class="head"><h2>'+c.name+'</h2></div><p class="want">Gesucht: <b>'+(c.want==='u'?'Umfang <i>u</i>':'Flächeninhalt <i>A</i>')+'</b> '+GEN[c.shape]+'</p>';
+  h+='<div class="cardgrid"><div class="fig">'+sketch(e)+'</div><div>';
+  h+='<div class="stepcard '+(e.step===0?'active':'done')+'"><h3>1. Welche Strecken brauchst du?</h3>';
+  if(e.step===0)h+='<p>Tippe in der Skizze auf die Strecken, die du für '+(c.want==='u'?'den Umfang':'den Flächeninhalt')+' brauchst. Jede Strecke wird einzeln markiert – nochmal tippen hebt die Auswahl auf.</p><p class="hint">Ausgewählt: '+(e.sel.length?e.sel.map(id=>vH(segOf(id).l)).join(', '):'noch nichts')+'</p><div class="actions"><button type="button" data-act="check0">Auswahl prüfen</button></div>';
+  else h+='<p class="donetxt">✓ '+e.sel.map(id=>vH(segOf(id).l)).join(', ')+'</p>';
+  h+=msgHTML(0)+'</div>';
+  if(e.step>=1){
+    const vars=[...new Set(e.show)].sort();
+    h+='<div class="stepcard '+(e.step===1?'active':'done')+'"><h3>2. Baue die Formel</h3>';
+    h+='<div class="fline"><span class="lhs">'+c.want+'</span> = '+(e.toks.length?e.toks.map(tokH).join(' '):'<span class="ph">tippe auf die Bausteine</span>')+'</div>';
+    if(e.step===1){
+      h+='<div class="tiles">'+vars.map(v=>'<button type="button" class="tile v" data-tok="'+v+'">'+vH(v)+'</button>').join('')+
+        ['+','·',':','2','3','4','(',')'].concat(c.extra||[]).map(t=>'<button type="button" class="tile op" data-tok="'+t+'">'+(t==='²'?'□<sup>2</sup>':t)+'</button>').join('')+
+        '<button type="button" class="tile ctl" data-act="back" aria-label="Letzten Baustein löschen">⌫</button><button type="button" class="tile ctl" data-act="clear">Alles löschen</button></div>'+
+        '<div class="actions"><button type="button" data-act="check1">Formel prüfen</button></div>';
+    }
+    h+=msgHTML(1)+'</div>';
+  }
+  h+='</div></div>';
+  if(e.step===2){
+    const s=ST[c.id],left=tc.length-mastered();
+    h+='<div class="success"><b class="donetxt">'+(e.perfect?(s.streak>=MASTER?'✓ Diese Formel kannst du jetzt!':'✓ Fehlerfrei! Noch einmal fehlerfrei, dann kannst du sie.'):'Diese Formel kommt bald nochmal – dann schaffst du sie fehlerfrei!')+'</b>'+
+      '<div class="big">Merke: '+formulaH(c.formula)+'</div>'+
+      '<div class="actions"><button type="button" data-act="nextcard">'+(left?'Nächste Formel ▶':'Fertig ▶')+'</button></div></div>';
+  }
+  $('exCard').innerHTML=h;
+  document.querySelectorAll('#exCard .hit').forEach(l=>l.addEventListener('click',()=>{const id=l.dataset.seg;e.sel=e.sel.includes(id)?e.sel.filter(x=>x!==id):e.sel.concat(id);e.msg[0]=null;render();}));
+  if(focus){const f=document.querySelector(focus);if(f)f.focus({preventScroll:true});}
+  updateSummary();
+}
+const topicCardsOf=t=>CARDS.filter(c=>t==='all'||c.topic===t);
+
+/* ================= Auswertung ================= */
+function updateSummary(){
+  const sum=$('summary'),tc=topicCards(),all=mastered()===tc.length;
+  if(!summaryRequested){sum.hidden=true;return;}
+  let T={m:0,t:0,e:0},rows='';
+  tc.forEach(c=>{const s=ST[c.id];T.t+=s.tries;T.e+=s.err;if(s.streak>=MASTER)T.m++;
+    rows+='<tr><td>'+c.name+'<br><span class="hint" style="margin:0">'+formulaH(c.formula)+'</span></td><td>'+(s.streak>=MASTER?'✓ gekonnt':'noch üben ('+s.streak+' von '+MASTER+')')+'</td><td class="c">'+s.tries+'</td><td class="c">'+s.err+'</td></tr>';});
+  $('sumBody').innerHTML=rows;
+  $('sumFoot').innerHTML='<tr><td>Gesamt</td><td>'+T.m+' von '+tc.length+' gekonnt</td><td class="c">'+T.t+'</td><td class="c">'+T.e+'</td></tr>';
+  $('sumMsg').textContent=all?(T.e===0?'Perfekt! Alle Formeln ohne einen einzigen Fehler gelernt.':'Super – du kannst alle Formeln!'):'Noch nicht fertig: '+(tc.length-T.m)+' Formel'+(tc.length-T.m===1?'':'n')+' musst du noch üben.';
+  $('sumTitle').textContent=(all?'Geschafft'+(PUPIL?', '+PUPIL:'')+'! Deine Auswertung':'Zwischenstand'+(PUPIL?' von '+PUPIL:''))+' ('+TOPICS[topic]+')';
+  const now=new Date(),who=$('sumWho');
+  who.innerHTML='👤 <b></b> · '+now.toLocaleDateString('de-AT')+', '+now.toLocaleTimeString('de-AT',{hour:'2-digit',minute:'2-digit'})+' Uhr · '+TOPICS[topic];
+  who.querySelector('b').textContent=PUPIL||'(kein Name)';
+  const wasHidden=sum.hidden;sum.hidden=false;
+  if(wasHidden&&!restoring&&all)setTimeout(()=>sum.scrollIntoView({behavior:'smooth',block:'start'}),300);
+}
+
+/* ================= Bedienung ================= */
+function setTopic(t){
+  topic=t;queue=[];lastId=null;
+  document.querySelectorAll('[data-topic]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.topic===t?'true':'false'));
+  try{if(PUPIL)localStorage.setItem(STORE+'topic',t);}catch(x){}
+  summaryRequested=mastered()===topicCards().length;
+  if(!PUPIL){cur=newCard(topicCards()[0].id);render();return;}
+  if(summaryRequested){cur=null;render();}else nextCard();
+}
+document.querySelectorAll('[data-topic]').forEach(b=>b.addEventListener('click',()=>setTopic(b.dataset.topic)));
+$('exCard').addEventListener('click',ev=>{
+  const b=ev.target.closest('button');if(!b)return;
+  if(b.dataset.act==='topic'){setTopic(b.dataset.to);window.scrollTo({top:0,behavior:'smooth'});return;}
+  if(!cur)return;const e=cur;
+  if(b.dataset.tok!==undefined&&e.step===1){if(e.toks.length<24)e.toks.push(b.dataset.tok);e.msg[1]=null;render('[data-tok="'+b.dataset.tok+'"]');return;}
+  const a=b.dataset.act;
+  if(a==='back'&&e.step===1){e.toks.pop();e.msg[1]=null;render('[data-act="back"]');}
+  else if(a==='clear'&&e.step===1){e.toks=[];e.msg[1]=null;render('[data-act="clear"]');}
+  else if(a==='check0'&&e.step===0){check0();render(e.step===1?'.tile':'[data-act="check0"]');}
+  else if(a==='check1'&&e.step===1){check1();render(e.step===2?'[data-act="nextcard"]':'[data-act="check1"]');}
+  else if(/^show[01]$/.test(a)){showSolution(+a[4]);render(e.step===2?'[data-act="nextcard"]':'.tile');}
+  else if(a==='nextcard'){if(mastered()===topicCards().length){cur=null;summaryRequested=true;render();$('summary').scrollIntoView({behavior:'smooth',block:'start'});}else{nextCard();$('exCard').scrollIntoView({behavior:'smooth',block:'start'});}}
+});
+$('showSum').addEventListener('click',()=>{summaryRequested=true;updateSummary();$('summary').scrollIntoView({behavior:'smooth',block:'start'});});
+$('restart').addEventListener('click',()=>{if(!confirm('Diese Formeln ('+TOPICS[topic]+') nochmal von vorne üben? Der Lernstand dafür wird zurückgesetzt.'))return;
+  topicCards().forEach(c=>{ST[c.id]={streak:0,tries:0,err:0};});summaryRequested=false;queue=[];nextCard();saveProgress();window.scrollTo({top:0,behavior:'smooth'});});
+
+/* ================= Fortschritt: speichern (gleiches Gerät) & Code (anderes Gerät) ================= */
+const STORE='formeltrainer2:',ALPH='23456789ABCDEFGHJKMNPQRSTUVWXYZ',AL=BigInt(ALPH.length),Bg=x=>BigInt(x);
+const normName=s=>s.trim().replace(/\s+/g,' ').toLowerCase();
+function nameHash(n){let h=2166136261;for(const ch of normName(n)){h^=ch.codePointAt(0);h=Math.imul(h,16777619);}return (h>>>0)%1024;}
+function checkChar(s){let c=0;for(let k=0;k<s.length;k++)c=(c+(k+1)*ALPH.indexOf(s[k]))%ALPH.length;return ALPH[c];}
+function makeCode(){
+  const F=[],f=(v,r)=>F.push([v,r]);
+  CARDS.forEach(c=>{const s=ST[c.id];f(Math.min(s.streak,MASTER),MASTER+1);f(Math.min(s.err,3),4);});
+  f(nameHash(PUPIL),1024);
+  let N=0n;for(let k=F.length-1;k>=0;k--)N=N*Bg(F[k][1])+Bg(F[k][0]);
+  let s='';do{s=ALPH[Number(N%AL)]+s;N/=AL;}while(N>0n);
+  s+=checkChar(s);return s.match(/.{1,4}/g).join('-');
+}
+function readCode(str){
+  const bad={err:'Dieser Code ist ungültig. Kontrolliere, ob du ihn richtig abgeschrieben hast.'};
+  const s=str.toUpperCase().replace(/[\s\-–—_.]/g,'');
+  if(s.length<3||[...s].some(ch=>!ALPH.includes(ch)))return bad;
+  const body=s.slice(0,-1);
+  if(checkChar(body)!==s.slice(-1))return {err:'Im Code ist ein Tippfehler. Kontrolliere ihn Zeichen für Zeichen.'};
+  let N=0n;for(const ch of body)N=N*AL+Bg(ALPH.indexOf(ch));
+  const g=r=>{const v=Number(N%Bg(r));N/=Bg(r);return v;};
+  const st={};CARDS.forEach(c=>{st[c.id]={streak:g(MASTER+1),err:g(4),tries:0};});
+  const nh=g(1024);if(N!==0n)return bad;
+  return {st,nh};
+}
+function applyCode(p,extra){CARDS.forEach(c=>{const s=p.st[c.id],x=extra&&extra[c.id];
+  ST[c.id]={streak:s.streak,err:x?x.err:s.err,tries:x?x.tries:(s.streak+(s.err?1:0))};});}
+function saveProgress(){if(!PUPIL||restoring)return;const code=makeCode(),extra={};CARDS.forEach(c=>{extra[c.id]={tries:ST[c.id].tries,err:ST[c.id].err};});
+  try{localStorage.setItem(STORE+normName(PUPIL),JSON.stringify({code,extra,topic}));}catch(x){}$('codeShow').textContent=code;}
+function loadSaved(name){try{return JSON.parse(localStorage.getItem(STORE+normName(name))||'null');}catch(x){return null;}}
+
+/* ================= Name zu Beginn (danach nicht mehr änderbar) ================= */
+function setLocked(on){document.body.classList.toggle('locked',on);if(on)$('main').setAttribute('inert','');else $('main').removeAttribute('inert');}
+function startErr(msg,el){const err=$('pnameErr');err.textContent=msg;err.hidden=false;el.focus();}
+function startWithName(){
+  const inpEl=$('pname'),v=inpEl.value.trim().replace(/\s+/g,' '),codeInp=$('pcode');
+  if(v.length<2){startErr('Bitte gib deinen Namen ein.',inpEl);return;}
+  let p=null;
+  if(codeInp.value.trim()){p=readCode(codeInp.value);
+    if(p.err){$('codeAsk').open=true;startErr(p.err,codeInp);return;}
+    if(p.nh!==nameHash(v)){startErr('Dieser Code gehört zu einem anderen Namen. Schreib deinen Namen genau so wie auf dem anderen Gerät.',inpEl);return;}}
+  $('pnameErr').hidden=true;PUPIL=v;
+  const saved=loadSaved(v);let msg='',t=topic;
+  restoring=true;
+  try{
+    if(p){applyCode(p);msg='Dein Lernstand vom anderen Gerät wurde übernommen.';}
+    else if(saved&&saved.code){const q=readCode(saved.code);if(!q.err&&q.nh===nameHash(v)){applyCode(q,saved.extra);if(saved.topic)t=saved.topic;msg='Willkommen zurück! Du machst mit deinem Lernstand weiter.';}}
+  }finally{restoring=false;}
+  $('pnameShow').textContent=v;$('startMsg').textContent=msg;
+  $('startAsk').hidden=true;$('startDone').hidden=false;
+  setLocked(false);setTopic(t);saveProgress();
+}
+$('startBtn').addEventListener('click',startWithName);
+['pname','pcode'].forEach(k=>$(k).addEventListener('keydown',ev=>{if(ev.key==='Enter'){ev.preventDefault();startWithName();}}));
+$('codeBtn').addEventListener('click',ev=>{const box=$('codeBox'),open=box.hidden;saveProgress();box.hidden=!open;ev.currentTarget.setAttribute('aria-expanded',open?'true':'false');});
+$('codeCopy').addEventListener('click',ev=>{const b=ev.currentTarget,txt=$('codeShow').textContent;
+  try{navigator.clipboard.writeText(txt).then(()=>{b.textContent='Kopiert ✓';setTimeout(()=>{b.textContent='Kopieren';},1500);},()=>{});}catch(x){}});
+
+/* ================= Start ================= */
+if(location.hash==='#vierecke')topic='quad';else if(location.hash==='#alle')topic='all';
+document.querySelectorAll('[data-topic]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.topic===topic?'true':'false'));
+cur=newCard(topicCards()[0].id);render();setLocked(true);$('pname').focus();
+</script>
+</body>
+</html>
