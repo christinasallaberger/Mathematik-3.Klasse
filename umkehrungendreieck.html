@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dreiecke – rückwärts rechnen</title>
+<!-- Angaben für die Lehrer-Übersicht (linkzusammenfassung.html) -->
+<meta name="uebersicht-kapitel" content="Dreiecke">
+<meta name="uebersicht-thema" content="Umfang und Flächeninhalt">
+<meta name="uebersicht-info" content="Umkehraufgaben: aus Umfang oder Flächeninhalt eine Seite oder Höhe berechnen, bei allen Dreiecksarten. Formel wählen, bekannte Zahlen einsetzen, Gleichung Schritt für Schritt lösen; 5 Beispiele pro Runde.">
+<meta name="uebersicht-gruppe" content="alle">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #FBFCFE; --grid: #DCE7F2; --ink: #1D3A8A; --text: #1E2433; --muted: #5B6270;
+  --margin: #E0484E; --line: #C9D6E6; --card: #FFFFFF;
+  --ok: #1C7A44; --ok-bg: #DFF3E6; --warn: #8A4B0E; --warn-bg: #FCEBD9; --bad: #B3262C; --bad-bg: #FBE1E2;
+  --merke-bg: #FFF7D6; --merke-line: #E8C64A;
+  --fill: #E6EEFB; --given: #1D3A8A; --wanted: #D2343A;
+  color-scheme: light;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #141821; --grid: #1F2634; --ink: #9DB6FF; --text: #E6E9F0; --muted: #9AA2B2;
+    --margin: #F0686D; --line: #2C3546; --card: #1A1F2A;
+    --ok: #8FE0AE; --ok-bg: #1D3F2A; --warn: #FFD2B0; --warn-bg: #4A2D1A; --bad: #FFB3B6; --bad-bg: #4A1E22;
+    --merke-bg: #3A3216; --merke-line: #B8962A;
+    --fill: #233056; --given: #B9CBFF; --wanted: #FF8A8F;
+    color-scheme: dark;
+  }
+}
+*, *::before, *::after { box-sizing: inherit; }
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+body {
+  margin: 0;
+  background-color: var(--paper);
+  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 22px 22px;
+  color: var(--text);
+  font-family: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 1.0625rem; line-height: 1.5;
+}
+main { max-width: 760px; margin: 0 auto; padding: 2rem 1.1rem 4rem; }
+h1 {
+  font-family: "Bricolage Grotesque", "Atkinson Hyperlegible", system-ui, sans-serif;
+  font-weight: 800; font-size: clamp(1.9rem, 6vw, 2.8rem); line-height: 1.05; color: var(--ink); margin: 0 0 .4rem;
+}
+h2 { font-family: "Bricolage Grotesque", "Atkinson Hyperlegible", system-ui, sans-serif; font-weight: 700; font-size: 1.4rem; margin: 0 0 .6rem; }
+.lead { color: var(--muted); margin: 0 0 1.5rem; }
+.card { background: var(--card); border: 2px solid var(--line); border-radius: 14px; padding: 1.25rem; margin-bottom: 1.25rem; }
+button {
+  font: inherit; font-weight: 700; cursor: pointer; border-radius: 10px; padding: .55rem 1.1rem;
+  border: 2px solid var(--ink); background: var(--card); color: var(--ink);
+}
+button.primary { background: var(--ink); color: var(--paper); }
+button:disabled { opacity: .45; cursor: default; }
+button:focus-visible, input:focus-visible { outline: 3px solid var(--margin); outline-offset: 2px; }
+input[type="text"] {
+  font: inherit; font-size: 1.25rem; padding: .5rem .8rem; border: 2px solid var(--line); border-radius: 10px;
+  background: var(--paper); color: var(--text); width: 100%;
+}
+input[type="text"]:focus { border-color: var(--ink); outline: none; }
+.eingabe { display: flex; gap: .5rem; align-items: center; }
+.namebar { display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: center; justify-content: space-between; margin-bottom: 1rem; font-weight: 700; }
+.namebar .who { color: var(--ink); }
+.progress { color: var(--muted); font-weight: 400; }
+.nav { display: flex; flex-wrap: wrap; gap: .35rem; margin-bottom: 1rem; }
+.nav button { width: 2.6rem; height: 2.6rem; padding: 0; border-radius: 8px; border-color: var(--line); }
+.nav button.cur { border-color: var(--ink); box-shadow: 0 0 0 2px var(--ink) inset; }
+.nav button.s-richtig { background: var(--ok-bg); color: var(--ok); border-color: var(--ok); }
+.nav button.s-fehler { background: var(--warn-bg); color: var(--warn); border-color: var(--warn); }
+.nav button.s-loesung { background: var(--bad-bg); color: var(--bad); border-color: var(--bad); }
+.kopf { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap; }
+.kopf .art { color: var(--muted); font-size: .95rem; }
+.angabe { font-size: 1.15rem; margin: .4rem 0 .8rem; }
+.skizze { display: flex; justify-content: center; margin: .25rem 0 1rem; }
+.skizze svg { width: 100%; max-width: 340px; height: auto; }
+.skizze .tri { fill: var(--fill); stroke: var(--text); stroke-width: 2.5; stroke-linejoin: round; }
+.skizze .hoehe { stroke: var(--text); stroke-width: 2; stroke-dasharray: 6 5; }
+.skizze .rw { fill: none; stroke: var(--text); stroke-width: 1.6; }
+.skizze text { font-family: "Atkinson Hyperlegible", system-ui, sans-serif; font-size: 17px; fill: var(--muted); }
+.skizze text.geg { fill: var(--given); font-weight: 700; }
+.skizze text.ges { fill: var(--wanted); font-weight: 700; }
+.skizze text.ecke { font-size: 15px; }
+.skizze .box { fill: var(--card); stroke: var(--line); stroke-width: 2; }
+.schritt { border-top: 2px solid var(--line); padding-top: .8rem; margin-top: .8rem; }
+.schritt.aus { opacity: .45; }
+.schritt h3 { margin: 0 0 .5rem; font-size: 1.05rem; color: var(--ink); }
+.wahl { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: .45rem; }
+.wahl button { font-weight: 400; font-size: 1.1rem; border-color: var(--line); text-align: center; padding: .6rem .5rem; }
+.wahl button.ok { background: var(--ok-bg); color: var(--ok); border-color: var(--ok); font-weight: 700; }
+.wahl button.falsch { background: var(--bad-bg); color: var(--bad); border-color: var(--bad); text-decoration: line-through; }
+.formel { font-size: 1.2rem; font-weight: 700; }
+.einsetzen { font-size: 1.2rem; margin-bottom: .5rem; }
+.einheit { font-size: 1.15rem; font-weight: 700; min-width: 2.5rem; }
+.vorschau { min-height: 1.4rem; margin: .4rem 0 0; color: var(--muted); }
+.aktionen { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1rem; }
+.meldung { margin-top: .6rem; padding: .65rem .9rem; border-radius: 10px; display: none; }
+.meldung.ok { display: block; background: var(--ok-bg); color: var(--ok); }
+.meldung.warn { display: block; background: var(--warn-bg); color: var(--warn); }
+.meldung.bad { display: block; background: var(--bad-bg); color: var(--bad); }
+.weg { margin-top: .5rem; color: var(--text); }
+.weg div { margin: .1rem 0; }
+.weiter-zur-merke { margin-top: 1rem; padding: .75rem 1rem; border-radius: 10px; background: var(--merke-bg); border-left: 5px solid var(--merke-line); font-weight: 700; }
+.weiter-zur-merke a { color: inherit; }
+.merke { background: var(--merke-bg); border: 2px solid var(--merke-line); }
+.merke .heft { font-weight: 700; padding: .5rem .8rem; border-radius: 8px; border: 2px dashed var(--merke-line); margin-bottom: 1rem; }
+.merke h3 { margin: 1rem 0 .3rem; font-size: 1.1rem; }
+.merke .tab-wrap { margin: .3rem 0 .8rem; }
+.merke table td, .merke table th { border-bottom-color: var(--merke-line); }
+.merke .bsp div { margin: .15rem 0; }
+.merke .bsp { margin: .3rem 0 .8rem; padding-left: .8rem; border-left: 3px solid var(--merke-line); }
+table { width: 100%; border-collapse: collapse; font-size: .95rem; }
+th, td { text-align: left; padding: .45rem .4rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+.tab-wrap { overflow-x: auto; }
+.badge { font-weight: 700; padding: .1rem .55rem; border-radius: 999px; white-space: nowrap; font-size: .85rem; }
+.badge.richtig { background: var(--ok-bg); color: var(--ok); }
+.badge.fehler { background: var(--warn-bg); color: var(--warn); }
+.badge.loesung { background: var(--bad-bg); color: var(--bad); }
+.badge.offen { background: var(--grid); color: var(--muted); }
+.zahlen { display: flex; flex-wrap: wrap; gap: .75rem; margin: .75rem 0 1rem; }
+.zahlen div { padding: .5rem .9rem; border-radius: 10px; background: var(--paper); border: 2px solid var(--line); }
+.zahlen b { font-size: 1.3rem; display: block; }
+
+/* Bildschirm-Tastatur */
+#pad {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
+  background: var(--card); border-top: 3px solid var(--ink);
+  padding: .5rem .6rem calc(.5rem + env(safe-area-inset-bottom, 0px));
+  box-shadow: 0 -4px 16px rgba(27, 47, 107, .15);
+}
+#pad .padtop { display: flex; align-items: center; gap: .5rem; max-width: 30rem; margin: 0 auto .4rem; color: var(--muted); font-size: .9rem; }
+#pad .padtop span { margin-right: auto; font-weight: 700; color: var(--ink); }
+#pad .mini { padding: .25rem .6rem; font-size: .85rem; border-color: var(--line); }
+#pad .keys { display: grid; grid-template-columns: repeat(5, 1fr); gap: .3rem; max-width: 30rem; margin: 0 auto; }
+#pad .keys button {
+  padding: .6rem 0; font-size: 1.2rem; font-weight: 700; touch-action: manipulation;
+  background: var(--paper); color: var(--text); border: 2px solid var(--line); border-radius: .45rem;
+}
+#pad .keys button.op { background: var(--grid); }
+#pad .keys button.go { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+body.padon main { padding-bottom: 18rem; }
+/* Speicher-Code */
+.codefrage { margin-top: 1rem; }
+.codefrage summary { cursor: pointer; color: var(--ink); font-weight: 700; }
+.codefrage input { margin-top: .4rem; letter-spacing: .08em; text-transform: uppercase; }
+.codebox code { font-size: 1.4rem; font-weight: 700; letter-spacing: .1em; color: var(--ink); padding: .3rem .6rem; border: 2px dashed var(--line); border-radius: 8px; }
+
+/* Gleichungen */
+.gl { display: grid; grid-template-columns: minmax(0, 1fr) 6.5rem; gap: .5rem; align-items: center; font-size: 1.2rem; padding: .25rem 0; }
+.gl > span:last-child { border-left: 2px solid var(--text); padding-left: .6rem; color: var(--ink); font-weight: 700; min-height: 1.6rem; }
+.gl > span:last-child:empty { border-left-color: transparent; }
+.merke .gl { font-size: 1.1rem; padding: .05rem 0; }
+.bx {
+  display: inline-block; width: 4.2rem; font: inherit; font-size: 1.15rem; text-align: center;
+  padding: .2rem .3rem; margin: 0 .15rem; border: 2px solid var(--ink); border-radius: 8px;
+  background: var(--paper); color: var(--text);
+}
+.bx.ok { border-color: var(--ok); background: var(--ok-bg); }
+.bx.bad { border-color: var(--bad); background: var(--bad-bg); }
+.bx:disabled { opacity: 1; }
+.var { font-style: italic; }
+.ops { display: flex; flex-wrap: wrap; gap: .4rem; margin: .3rem 0 .4rem; }
+.ops button { font-size: 1.1rem; padding: .4rem .9rem; border-color: var(--line); }
+.ops button.falsch { background: var(--bad-bg); color: var(--bad); border-color: var(--bad); text-decoration: line-through; }
+.frage { color: var(--muted); font-size: .95rem; margin: .4rem 0 .1rem; }
+.mini2 { padding: .35rem .9rem; font-size: .95rem; margin-top: .4rem; }
+
+[hidden] { display: none !important; }
+@media print {
+  body { background: #fff; color: #000; }
+  .no-print, #aufgaben, #pad { display: none !important; }
+}
+</style>
+</head>
+<body>
+<main>
+  <h1>Dreiecke – rückwärts rechnen</h1>
+  <p class="lead">Umfang oder Flächeninhalt ist gegeben, gesucht ist eine Seite oder eine Höhe. Du wählst die Formel, setzt die bekannten Zahlen ein und löst die Gleichung Schritt für Schritt. 5 Beispiele pro Runde, danach geht es mit neuen Zahlen weiter.</p>
+
+  <section class="card" id="start">
+    <h2>Wie heißt du?</h2>
+    <p>Gib zuerst deinen Vor- und Nachnamen ein. Er steht am Ende in deiner Auswertung und kann danach <b>nicht mehr geändert</b> werden. Hast du auf diesem Gerät schon geübt, machst du automatisch dort weiter, wo du aufgehört hast. Auf ein anderes Gerät nimmst du deinen Fortschritt mit dem Speicher-Code mit.</p>
+    <div class="eingabe">
+      <input type="text" id="name-in" autocomplete="name" placeholder="Vor- und Nachname" aria-label="Vor- und Nachname">
+      <button class="primary" id="start-btn" type="button">Los geht’s</button>
+    </div>
+    <details class="codefrage" id="code-frage">
+      <summary>Bereits einen Speicher-Code von einem anderen Gerät?</summary>
+      <p class="hint">Gib deinen Namen oben genau so ein wie auf dem anderen Gerät und dann hier den Code.</p>
+      <input type="text" id="code-in" autocomplete="off" spellcheck="false" placeholder="z. B. 4K7P-XM2Q-9" aria-label="Speicher-Code">
+    </details>
+    <p class="vorschau" id="name-hinweis"></p>
+  </section>
+
+  <section id="aufgaben" hidden>
+    <div class="namebar">
+      <span class="who" id="who"></span>
+      <span class="progress" id="progress"></span>
+      <button type="button" class="mini2 no-print" id="code-btn" aria-expanded="false">💾 Fortschritt mitnehmen</button>
+    </div>
+    <div class="card codebox no-print" id="code-box" hidden>
+      <p>Schreib dir diesen <b>Speicher-Code</b> auf oder kopiere ihn. Auf einem anderen Gerät gibst du beim Start deinen Namen und diesen Code ein und machst dort weiter.</p>
+      <div class="eingabe"><code id="code-show"></code><button type="button" class="mini2" id="code-copy">Kopieren</button></div>
+      <p class="hint">Fertige Beispiele und deine Fehlversuche werden übernommen. Ein Beispiel, das du gerade erst angefangen hast, beginnt auf dem anderen Gerät wieder bei Schritt 1.</p>
+    </div>
+    <nav class="nav no-print" id="nav" aria-label="Beispiele"></nav>
+
+    <div class="card" id="karte">
+      <div class="kopf">
+        <h2 id="titel">Beispiel 1</h2>
+        <span class="art" id="art"></span>
+      </div>
+      <p class="angabe" id="angabe"></p>
+      <div class="skizze" id="skizze"></div>
+
+      <div class="schritt" id="s1">
+        <h3>Schritt 1: Welche Formel brauchst du?</h3>
+        <div class="wahl" id="w1"></div>
+      </div>
+      <div class="schritt" id="s2">
+        <h3>Schritt 2: Setze die bekannten Zahlen ein</h3>
+        <div id="einsetzen"></div>
+      </div>
+      <div class="schritt" id="s3">
+        <h3>Schritt 3: Löse die Gleichung Schritt für Schritt</h3>
+        <div id="loesen"></div>
+      </div>
+      <div class="meldung" id="meldung" role="status" aria-live="polite"></div>
+      <div class="aktionen no-print">
+        <button type="button" id="loesung" hidden>Lösung zeigen</button>
+      </div>
+      <div class="weiter-zur-merke" id="merke-hinweis" hidden>
+        ✏️ Bevor du weiterrechnest: Schreib jetzt die <a href="#merke">Zusammenfassung unten</a> mit den Beispielen in dein Heft ab!
+      </div>
+      <div class="aktionen no-print">
+        <button type="button" id="zurueck">◀ Zurück</button>
+        <button type="button" id="vor">Weiter ▶</button>
+      </div>
+    </div>
+
+    <div class="aktionen no-print" style="margin-bottom:1.25rem">
+      <button type="button" id="zur-auswertung">Auswertung anzeigen</button>
+      <button type="button" class="neue-runde">Neue Runde mit neuen Beispielen</button>
+    </div>
+
+    <section class="card merke" id="merke">
+      <h2>📒 Zusammenfassung</h2>
+      <div class="heft">✏️ Schreib diese Zusammenfassung mit den Beispielen in dein Heft ab!</div>
+      <p><b>So rechnest du rückwärts:</b> 1. Formel aufschreiben. 2. Die bekannten Zahlen einsetzen. 3. Die Gleichung Schritt für Schritt lösen: Auf beiden Seiten wird immer dasselbe gerechnet, mit der <b>Umkehrrechnung</b>. Plus wird mit Minus weggerechnet, Mal mit Durch – und umgekehrt. Zum Schluss die Einheit nicht vergessen!</p>
+      <h3>Formeln</h3>
+      <div class="tab-wrap">
+        <table>
+          <thead><tr><th>Dreieck</th><th>Umfang</th><th>Flächeninhalt</th></tr></thead>
+          <tbody>
+            <tr><td>allgemein</td><td>u = a + b + c</td><td>A = c · h<sub>c</sub> : 2</td></tr>
+            <tr><td>gleichschenkelig (Basis c, Schenkel a)</td><td>u = c + 2 · a</td><td>A = c · h<sub>c</sub> : 2</td></tr>
+            <tr><td>gleichseitig</td><td>u = 3 · a</td><td>A = a · h : 2</td></tr>
+            <tr><td>rechtwinkelig (Katheten a, b)</td><td>u = a + b + c</td><td>A = a · b : 2</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>Beispiel 1: Umfang rückwärts</h3>
+      <div class="bsp">
+        <div>Gleichschenkeliges Dreieck: u = 32 cm, c = 10 cm, gesucht: Schenkel a</div>
+        <div class="gl"><span>u = c + 2 · a</span><span></span></div>
+        <div class="gl"><span>32 = 10 + 2 · a</span><span>| − 10</span></div>
+        <div class="gl"><span>22 = 2 · a</span><span>| : 2</span></div>
+        <div class="gl"><span><b>a = 11 cm</b></span><span></span></div>
+      </div>
+      <h3>Beispiel 2: Flächeninhalt rückwärts</h3>
+      <div class="bsp">
+        <div>Dreieck: A = 30 cm², c = 12 cm, gesucht: Höhe h<sub>c</sub></div>
+        <div class="gl"><span>A = c · h<sub>c</sub> : 2</span><span></span></div>
+        <div class="gl"><span>30 = 12 · h<sub>c</sub> : 2</span><span>| · 2</span></div>
+        <div class="gl"><span>60 = 12 · h<sub>c</sub></span><span>| : 12</span></div>
+        <div class="gl"><span><b>h<sub>c</sub> = 5 cm</b></span><span></span></div>
+      </div>
+    </section>
+  </section>
+
+  <section class="card" id="auswertung" hidden>
+    <h2>Auswertung</h2>
+    <p id="aw-kopf"></p>
+    <div class="zahlen" id="aw-zahlen"></div>
+    <div class="tab-wrap">
+      <table>
+        <thead><tr><th>Nr.</th><th>Aufgabe</th><th>Lösung</th><th>Fehlversuche</th><th>Ergebnis</th></tr></thead>
+        <tbody id="aw-tab"></tbody>
+      </table>
+    </div>
+    <div class="aktionen no-print">
+      <button type="button" id="aw-zurueck">Zurück zu den Beispielen</button>
+      <button type="button" class="neue-runde">Neue Runde mit neuen Beispielen</button>
+      <button type="button" class="primary" id="aw-druck">Drucken</button>
+    </div>
+  </section>
+</main>
+
+<div id="pad" class="no-print" hidden role="group" aria-label="Eingabehilfe">
+  <div class="padtop"><span>Eingabehilfe</span>
+    <button type="button" class="mini" id="padSys">Handy-Tastatur einblenden</button>
+    <button type="button" class="mini" id="padHide" aria-label="Eingabehilfe schließen">✕</button>
+  </div>
+  <div class="keys">
+    <button type="button" data-ins="7">7</button><button type="button" data-ins="8">8</button><button type="button" data-ins="9">9</button><button type="button" class="op" data-act="del" aria-label="Löschen">⌫</button><button type="button" class="op" data-act="clr" aria-label="Feld leeren">C</button>
+    <button type="button" data-ins="4">4</button><button type="button" data-ins="5">5</button><button type="button" data-ins="6">6</button><button type="button" class="op" data-act="left" aria-label="Cursor nach links">◀</button><button type="button" class="op" data-act="right" aria-label="Cursor nach rechts">▶</button>
+    <button type="button" data-ins="1">1</button><button type="button" data-ins="2">2</button><button type="button" data-ins="3">3</button><button type="button" class="op" data-ins="," aria-label="Komma">,</button><button type="button" data-ins="0">0</button>
+    <button type="button" class="go" data-act="ok" style="grid-column:span 5">✓ fertig</button>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   Aufgabenarten
+   fTok: Formel als Bausteine – bekannte Größen werden beim Einsetzen zu Kästchen
+   schritte: die Gleichung Schritt für Schritt („op“ = Umkehrrechnung wählen, „rechnen“ = zusammenfassen)
+   □ = hier trägt das Kind die Zahl ein
+   ========================================================= */
+const HC = "h<sub>c</sub>";
+const NAME = { u: "u", A: "A", a: "a", b: "b", c: "c", h: HC };
+const z = n => String(Math.round(n * 100) / 100).replace(".", ",");
+const F_UMF_SEITIG = ["u = 3 · a", "u = 2 · a", "u = a + 3", "u = a · a · a"];
+const F_UMF_SCHENKEL = ["u = c + 2 · a", "u = 2 · c + a", "u = c · 2 · a", "u = a + c"];
+const F_UMF_ALLG = ["u = a + b + c", "u = a · b · c", "u = a + b − c", "u = 2 · (a + b)"];
+const F_A_HC = [`A = c · ${HC} : 2`, `A = c · ${HC}`, `A = (c + ${HC}) : 2`, `A = 2 · c · ${HC}`];
+const F_A_RW = ["A = a · b : 2", "A = a · b", "A = a · c : 2", "A = (a + b) : 2"];
+const OP_TIPP_PLUS = "Was dazugezählt wird, rechnest du mit Minus weg.";
+const OP_TIPP_MAL = "Womit multipliziert wird, dadurch dividierst du.";
+const OP_TIPP_DURCH = "„: 2“ rechnest du mit „· 2“ weg.";
+const OP_TIPP_REIHE_PLUS = "Achtung: Dann müsstest du die ganze Seite durch 2 dividieren. Einfacher: Rechne zuerst das Plus mit Minus weg.";
+const OP_TIPP_REIHE_MAL = "Das ginge auch, wird aber umständlich. Rechne zuerst das „: 2“ mit „· 2“ weg, danach dividierst du.";
+
+const ARTEN = {
+  seitig_a: {
+    typ: "gleichseitig", groesse: "Umfang", ges: "a", einheit: "cm",
+    text: g => `Ein gleichseitiges Dreieck hat den Umfang u = ${z(g.u)} cm. Wie lang ist eine Seite a?`,
+    formel: F_UMF_SEITIG, fTok: ["u", " = 3 · ", "a"],
+    start: g => [z(g.u), "3 · a"],
+    schritte: g => [
+      { typ: "op", op: ": 3", opts: [": 3", "· 3", "− 3", "+ 3"], tipp: OP_TIPP_MAL, l: "a", r: "□", w: g.u / 3, hilfe: `${z(g.u)} : 3` }
+    ],
+    satz: x => `Eine Seite ist ${x} cm lang.`
+  },
+  schenkel_a: {
+    typ: "gleichschenkelig", groesse: "Umfang", ges: "a", einheit: "cm",
+    text: g => `Ein gleichschenkeliges Dreieck hat den Umfang u = ${z(g.u)} cm, die Basis ist c = ${z(g.c)} cm. Wie lang ist ein Schenkel a?`,
+    formel: F_UMF_SCHENKEL, fTok: ["u", " = ", "c", " + 2 · ", "a"],
+    start: g => [z(g.u), `${z(g.c)} + 2 · a`],
+    schritte: g => [
+      { typ: "op", op: `− ${z(g.c)}`, opts: [`− ${z(g.c)}`, `+ ${z(g.c)}`, ": 2", "− 2"], tipp: OP_TIPP_PLUS, reihe: ": 2", reiheTipp: OP_TIPP_REIHE_PLUS, l: "□", r: "2 · a", w: g.u - g.c, hilfe: `${z(g.u)} − ${z(g.c)}` },
+      { typ: "op", op: ": 2", opts: [": 2", "· 2", "− 2", "+ 2"], tipp: OP_TIPP_MAL, l: "a", r: "□", w: (g.u - g.c) / 2, hilfe: `${z(g.u - g.c)} : 2` }
+    ],
+    satz: x => `Ein Schenkel ist ${x} cm lang.`
+  },
+  basis_c: {
+    typ: "gleichschenkelig", groesse: "Umfang", ges: "c", einheit: "cm",
+    text: g => `Ein gleichschenkeliges Dreieck hat den Umfang u = ${z(g.u)} cm, ein Schenkel ist a = ${z(g.a)} cm lang. Wie lang ist die Basis c?`,
+    formel: F_UMF_SCHENKEL, fTok: ["u", " = ", "c", " + 2 · ", "a"],
+    start: g => [z(g.u), `c + 2 · ${z(g.a)}`],
+    schritte: g => [
+      { typ: "rechnen", frage: "Rechne zuerst 2 · a aus:", l: z(g.u), r: "c + □", w: 2 * g.a, hilfe: `2 · ${z(g.a)}` },
+      { typ: "op", op: `− ${z(2 * g.a)}`, opts: [`− ${z(2 * g.a)}`, `+ ${z(2 * g.a)}`, ": 2", `− ${z(g.a)}`], tipp: OP_TIPP_PLUS, l: "c", r: "□", w: g.u - 2 * g.a, hilfe: `${z(g.u)} − ${z(2 * g.a)}` }
+    ],
+    satz: x => `Die Basis ist ${x} cm lang.`
+  },
+  allg_c: {
+    typ: "allgemein", groesse: "Umfang", ges: "c", einheit: "cm",
+    text: g => `Ein Dreieck hat den Umfang u = ${z(g.u)} cm, die Seiten a = ${z(g.a)} cm und b = ${z(g.b)} cm. Wie lang ist die Seite c?`,
+    formel: F_UMF_ALLG, fTok: ["u", " = ", "a", " + ", "b", " + ", "c"],
+    start: g => [z(g.u), `${z(g.a)} + ${z(g.b)} + c`],
+    schritte: g => [
+      { typ: "rechnen", frage: "Fasse zuerst die bekannten Zahlen zusammen:", l: z(g.u), r: "□ + c", w: g.a + g.b, hilfe: `${z(g.a)} + ${z(g.b)}` },
+      { typ: "op", op: `− ${z(g.a + g.b)}`, opts: [`− ${z(g.a + g.b)}`, `+ ${z(g.a + g.b)}`, `− ${z(g.a)}`, `: ${z(g.a + g.b)}`], tipp: OP_TIPP_PLUS, l: "c", r: "□", w: g.u - g.a - g.b, hilfe: `${z(g.u)} − ${z(g.a + g.b)}` }
+    ],
+    satz: x => `Die Seite c ist ${x} cm lang.`
+  },
+  hoehe_hc: {
+    typ: "allgemein", groesse: "Flächeninhalt", ges: HC, einheit: "cm",
+    text: g => `Ein ${g.typText || ""}Dreieck hat den Flächeninhalt A = ${z(g.A)} cm², die ${g.typText ? "Basis" : "Seite"} c ist ${z(g.c)} cm lang. Berechne die Höhe ${HC}.`,
+    formel: F_A_HC, fTok: ["A", " = ", "c", " · ", "h", " : 2"],
+    start: g => [z(g.A), `${z(g.c)} · ${HC} : 2`],
+    schritte: g => [
+      { typ: "op", op: "· 2", opts: ["· 2", ": 2", "− 2", `: ${z(g.c)}`], tipp: OP_TIPP_DURCH, reiheTipp: OP_TIPP_REIHE_MAL, reihe: `: ${z(g.c)}`, l: "□", r: `${z(g.c)} · ${HC}`, w: 2 * g.A, hilfe: `${z(g.A)} · 2` },
+      { typ: "op", op: `: ${z(g.c)}`, opts: [`: ${z(g.c)}`, `· ${z(g.c)}`, `− ${z(g.c)}`, ": 2"], tipp: OP_TIPP_MAL, l: HC, r: "□", w: 2 * g.A / g.c, hilfe: `${z(2 * g.A)} : ${z(g.c)}` }
+    ],
+    satz: x => `Die Höhe ${HC} ist ${x} cm lang.`
+  },
+  seite_c_aus_A: {
+    typ: "allgemein", groesse: "Flächeninhalt", ges: "c", einheit: "cm",
+    text: g => `Ein ${g.typText || ""}Dreieck hat den Flächeninhalt A = ${z(g.A)} cm², die Höhe ist ${HC} = ${z(g.h)} cm. Wie lang ist ${g.typText ? "die Basis" : "die Seite"} c?`,
+    formel: F_A_HC, fTok: ["A", " = ", "c", " · ", "h", " : 2"],
+    start: g => [z(g.A), `c · ${z(g.h)} : 2`],
+    schritte: g => [
+      { typ: "op", op: "· 2", opts: ["· 2", ": 2", "− 2", `: ${z(g.h)}`], tipp: OP_TIPP_DURCH, reiheTipp: OP_TIPP_REIHE_MAL, reihe: `: ${z(g.h)}`, l: "□", r: `c · ${z(g.h)}`, w: 2 * g.A, hilfe: `${z(g.A)} · 2` },
+      { typ: "op", op: `: ${z(g.h)}`, opts: [`: ${z(g.h)}`, `· ${z(g.h)}`, `− ${z(g.h)}`, ": 2"], tipp: OP_TIPP_MAL, l: "c", r: "□", w: 2 * g.A / g.h, hilfe: `${z(2 * g.A)} : ${z(g.h)}` }
+    ],
+    satz: x => `Die Seite c ist ${x} cm lang.`
+  },
+  rw_b: {
+    typ: "rechtwinkelig", groesse: "Flächeninhalt", ges: "b", einheit: "cm",
+    text: g => `Ein rechtwinkeliges Dreieck hat den Flächeninhalt A = ${z(g.A)} cm², die Kathete a ist ${z(g.a)} cm lang. Wie lang ist die Kathete b?`,
+    formel: F_A_RW, fTok: ["A", " = ", "a", " · ", "b", " : 2"],
+    start: g => [z(g.A), `${z(g.a)} · b : 2`],
+    schritte: g => [
+      { typ: "op", op: "· 2", opts: ["· 2", ": 2", "− 2", `: ${z(g.a)}`], tipp: OP_TIPP_DURCH, reiheTipp: OP_TIPP_REIHE_MAL, reihe: `: ${z(g.a)}`, l: "□", r: `${z(g.a)} · b`, w: 2 * g.A, hilfe: `${z(g.A)} · 2` },
+      { typ: "op", op: `: ${z(g.a)}`, opts: [`: ${z(g.a)}`, `· ${z(g.a)}`, `− ${z(g.a)}`, ": 2"], tipp: OP_TIPP_MAL, l: "b", r: "□", w: 2 * g.A / g.a, hilfe: `${z(2 * g.A)} : ${z(g.a)}` }
+    ],
+    satz: x => `Die Kathete b ist ${x} cm lang.`
+  }
+};
+const gesKey = b => (ARTEN[b.art].ges === HC ? "h" : ARTEN[b.art].ges);
+const ergebnis = b => { const s = ARTEN[b.art].schritte(b.g); return s[s.length - 1].w; };
+
+/* ---------- Runden ---------- */
+function zufall(seed) {
+  let t = seed >>> 0;
+  return () => { t += 0x6D2B79F5; let r = Math.imul(t ^ (t >>> 15), 1 | t); r ^= r + Math.imul(r ^ (r >>> 7), 61 | r); return ((r ^ (r >>> 14)) >>> 0) / 4294967296; };
+}
+function mischen(l, R) { const a = [...l]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(R() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+const RUNDE1 = [
+  { art: "seitig_a", g: { u: 27 } },
+  { art: "schenkel_a", g: { u: 32, c: 10 } },
+  { art: "hoehe_hc", g: { A: 30, c: 12 } },
+  { art: "rw_b", g: { A: 54, a: 9 } },
+  { art: "allg_c", g: { u: 30, a: 8, b: 12 } }
+];
+function erzeugeRunde(seed, runde) {
+  const R = zufall(seed * 1000 + runde);
+  const zz = (a, b) => a + Math.floor(R() * (b - a + 1));
+  let liste;
+  if (runde === 1) liste = RUNDE1.map(x => ({ ...x, g: { ...x.g } }));
+  else {
+    liste = [];
+    if (R() < .5) liste.push({ art: "seitig_a", g: { u: 3 * zz(4, 19) } });
+    else {
+      let a, b, c;
+      do { a = zz(5, 16); b = zz(5, 16); c = zz(5, 16); } while (a + b <= c || a + c <= b || b + c <= a || a === b || b === c || a === c);
+      liste.push({ art: "allg_c", g: { u: a + b + c, a, b } });
+    }
+    { let a, c; do { a = zz(5, 16); c = zz(4, 18); } while (2 * a <= c || a === c || (c % 2 && R() < .7));
+      liste.push(R() < .5 ? { art: "schenkel_a", g: { u: c + 2 * a, c } } : { art: "basis_c", g: { u: c + 2 * a, a } }); }
+    { const c = 2 * zz(2, 9), h = zz(3, 12); liste.push({ art: "hoehe_hc", g: { A: c * h / 2, c, typText: R() < .5 ? "gleichschenkeliges " : "" } }); }
+    { let a, b; do { a = zz(3, 12); b = zz(3, 14); } while ((a * b) % 2 || a === b); liste.push({ art: "rw_b", g: { A: a * b / 2, a } }); }
+    { let c, h; do { c = zz(4, 16); h = zz(3, 12); } while ((c * h) % 2 || c === h); liste.push({ art: "seite_c_aus_A", g: { A: c * h / 2, h, typText: R() < .5 ? "gleichschenkeliges " : "" } }); }
+  }
+  return liste.map(x => {
+    const A = ARTEN[x.art];
+    return { ...x, f: mischen(A.formel, R), so: A.schritte(x.g).map(s => s.opts ? mischen(s.opts, R) : null) };
+  });
+}
+/* ---------- Skizzen ---------- */
+function skizze(b) {
+  const A = ARTEN[b.art], g = b.g;
+  const L = (x, y, t, kl = "", anchor = "middle") => `<text x="${x}" y="${y}" text-anchor="${anchor}" class="${kl}">${t}</text>`;
+  const wert = (name, w) => w === undefined ? null : `${name} = ${z(w)} cm`;
+  const ges = A.ges.replace(/<sub>(.*?)<\/sub>/, "_$1");
+  const lab = (name, w) => {
+    const n = name.replace(/<sub>(.*?)<\/sub>/, '<tspan baseline-shift="sub" font-size="12">$1</tspan>');
+    if (ges === name.replace(/<sub>(.*?)<\/sub>/, "_$1")) return { t: `${n} = ?`, kl: "ges" };
+    return w === undefined ? { t: n, kl: "" } : { t: `${n} = ${z(w)} cm`, kl: "geg" };
+  };
+  let svg = "", info = "";
+  const flaeche = A.groesse === "Flächeninhalt";
+  info = flaeche ? `A = ${z(g.A)} cm²` : `u = ${z(g.u)} cm`;
+  if (A.typ === "gleichseitig") {
+    svg += `<polygon class="tri" points="70,200 270,200 170,27"/>`;
+    const l = lab("a", undefined);
+    svg += L(170, 225, l.t, l.kl) + L(98, 108, l.t, l.kl, "end") + L(242, 108, l.t, l.kl, "start");
+  } else if (A.typ === "rechtwinkelig") {
+    svg += `<polygon class="tri" points="80,200 290,200 80,50"/><polyline class="rw" points="80,182 98,182 98,200"/>`;
+    const la = lab("a", g.a), lb = lab("b", undefined), lc = lab("c", undefined);
+    svg += L(185, 225, la.t, la.kl) + L(70, 130, lb.t, lb.kl, "end") + L(200, 115, lc.t, lc.kl, "start");
+    svg += L(72, 215, "C", "ecke") + L(298, 215, "B", "ecke") + L(72, 44, "A", "ecke");
+  } else if (b.art === "schenkel_a" || b.art === "basis_c" || (flaeche && g.typText)) {
+    svg += `<polygon class="tri" points="40,200 300,200 170,40"/>`;
+    if (flaeche) svg += `<line class="hoehe" x1="170" y1="40" x2="170" y2="200"/>`;
+    const lc = lab("c", g.c), la = lab("a", b.art === "basis_c" ? g.a : undefined);
+    svg += L(170, 225, lc.t, lc.kl) + L(96, 112, la.t, la.kl, "end") + L(244, 112, la.t, la.kl, "start");
+    if (flaeche) { const lh = lab(HC, g.h); svg += L(177, 182, lh.t, lh.kl, "start"); }
+  } else {
+    svg += `<polygon class="tri" points="50,200 290,200 120,45"/>`;
+    if (flaeche) svg += `<line class="hoehe" x1="120" y1="45" x2="120" y2="200"/><polyline class="rw" points="120,186 134,186 134,200"/>`;
+    const lc = lab("c", g.c), la = lab("a", g.a), lb = lab("b", g.b);
+    svg += L(170, 225, lc.t, lc.kl);
+    if (!flaeche) svg += L(78, 118, lb.t, lb.kl, "end") + L(212, 112, la.t, la.kl, "start");
+    else { const lh = lab(HC, g.h); svg += L(128, 150, lh.t, lh.kl, "start"); }
+    svg += L(42, 215, "A", "ecke") + L(298, 215, "B", "ecke") + L(120, 36, "C", "ecke");
+  }
+  const bw = info.length * 9 + 20;
+  svg += `<rect class="box" x="${332 - bw}" y="6" rx="8" width="${bw}" height="30"/>` + L(322, 27, info, "geg", "end");
+  return `<svg viewBox="0 0 340 240" role="img" aria-label="Skizze: ${A.typ}es Dreieck">${svg}</svg>`;
+}
+
+
+/* ---------- Zustand ---------- */
+const SPEICHER = "dreieck-rueckwaerts-v2";
+let AUFGABEN = RUNDE1;
+const neu1 = () => ({ schritt: 1, f1: 0, f2: 0, f3: 0, f4: 0, falsch1: [], ein: {}, k: 0, phase: "", opFalsch: [], w: "", status: "offen" });
+const leer = () => AUFGABEN.map(neu1);
+let st = { name: "", seed: Math.floor(Math.random() * 65536), runde: 1, idx: 0, a: [] };
+AUFGABEN = erzeugeRunde(st.seed, 1); st.a = leer();
+function speichern() {
+  try { localStorage.setItem(SPEICHER, JSON.stringify(st)); } catch (e) {}
+  const cs = document.getElementById("code-show"); if (cs && st.name && !document.getElementById("code-box").hidden) cs.textContent = macheCode();
+}
+function laden() {
+  try {
+    const d = JSON.parse(localStorage.getItem(SPEICHER) || "null");
+    if (d && d.name && Array.isArray(d.a) && d.a.length === 5) { st = d; AUFGABEN = erzeugeRunde(st.seed, st.runde); }
+  } catch (e) {}
+}
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+
+/* ---------- Speicher-Code (Fortschritt auf ein anderes Gerät mitnehmen) ---------- */
+const ALPH = "23456789ABCDEFGHJKMNPQRSTUVWXYZ", AL = BigInt(ALPH.length), Bg = x => BigInt(x);
+const normName = n => n.trim().replace(/\s+/g, " ").toLowerCase();
+function nameHash(n) { let h = 2166136261; for (const ch of normName(n)) { h ^= ch.codePointAt(0); h = Math.imul(h, 16777619); } return (h >>> 0) % 1024; }
+function pruefZeichen(t) { let c = 0; for (let k = 0; k < t.length; k++) c = (c + (k + 1) * ALPH.indexOf(t[k])) % ALPH.length; return ALPH[c]; }
+const ZST = ["offen", "richtig", "fehler", "loesung"];
+function macheCode() {
+  const F = [], f = (v, r) => F.push([v, r]);
+  f(st.seed % 65536, 65536); f((st.runde - 1) % 100, 100); f(st.idx, 5);
+  st.a.forEach(x => {
+    const fe = [x.f1, x.f2, x.f3, x.f4].map(v => Math.min(v, 3));
+    f(ZST.indexOf(x.status) * 256 + fe[0] * 64 + fe[1] * 16 + fe[2] * 4 + fe[3], 1024);
+  });
+  f(nameHash(st.name), 1024);
+  let N = 0n; for (let k = F.length - 1; k >= 0; k--) N = N * Bg(F[k][1]) + Bg(F[k][0]);
+  let t = ""; do { t = ALPH[Number(N % AL)] + t; N /= AL; } while (N > 0n);
+  t += pruefZeichen(t);
+  return t.match(/.{1,4}/g).join("-");
+}
+function leseCode(str) {
+  const bad = { err: "Dieser Code ist ungültig. Kontrolliere, ob du ihn richtig abgeschrieben hast." };
+  const t = str.toUpperCase().replace(/[\s\-–—_.]/g, "");
+  if (t.length < 3 || [...t].some(ch => !ALPH.includes(ch))) return bad;
+  const body = t.slice(0, -1);
+  if (pruefZeichen(body) !== t.slice(-1)) return { err: "Im Code ist ein Tippfehler. Kontrolliere ihn Zeichen für Zeichen." };
+  let N = 0n; for (const ch of body) N = N * AL + Bg(ALPH.indexOf(ch));
+  const g = r => { const v = Number(N % Bg(r)); N /= Bg(r); return v; };
+  const seed = g(65536), runde = g(100) + 1, idx = g(5), bsp = [];
+  for (let k = 0; k < 5; k++) { const v = g(1024); bsp.push({ s: v >> 8, f: [(v >> 6) & 3, (v >> 4) & 3, (v >> 2) & 3, v & 3] }); }
+  const nh = g(1024);
+  if (N !== 0n || bsp.some(x => x.s > 3)) return bad;
+  return { seed, runde, idx, bsp, nh };
+}
+function codeAnwenden(c) {
+  st.seed = c.seed; st.runde = c.runde; st.idx = c.idx;
+  AUFGABEN = erzeugeRunde(st.seed, st.runde);
+  st.a = c.bsp.map(x => {
+    const z0 = neu1();
+    [z0.f1, z0.f2, z0.f3, z0.f4] = x.f;
+    z0.status = ZST[x.s];
+    if (z0.status !== "offen") z0.schritt = 4;
+    return z0;
+  });
+}
+$("code-btn").addEventListener("click", () => {
+  const box = $("code-box"), auf = box.hidden;
+  $("code-show").textContent = macheCode();
+  box.hidden = !auf; $("code-btn").setAttribute("aria-expanded", auf ? "true" : "false");
+});
+$("code-copy").addEventListener("click", () => {
+  const b = $("code-copy");
+  try { navigator.clipboard.writeText($("code-show").textContent).then(() => { b.textContent = "Kopiert ✓"; setTimeout(() => { b.textContent = "Kopieren"; }, 1500); }, () => {}); } catch (e) {}
+});
+
+/* ---------- Start ---------- */
+function starten() { $("start").hidden = true; $("aufgaben").hidden = false; $("who").textContent = "Name: " + st.name; zeige(); }
+$("start-btn").addEventListener("click", () => {
+  const n = $("name-in").value.trim().replace(/\s+/g, " ");
+  if (n.length < 3 || !n.includes(" ")) { $("name-hinweis").textContent = "Bitte gib deinen Vor- und Nachnamen ein."; $("name-in").focus(); return; }
+  const codeText = $("code-in").value.trim();
+  if (codeText) {
+    const c = leseCode(codeText);
+    if (c.err) { $("code-frage").open = true; $("name-hinweis").textContent = c.err; $("code-in").focus(); return; }
+    if (c.nh !== nameHash(n)) { $("name-hinweis").textContent = "Dieser Code gehört zu einem anderen Namen. Schreib deinen Namen genau so wie auf dem anderen Gerät."; $("name-in").focus(); return; }
+    codeAnwenden(c);
+  }
+  st.name = n; speichern(); starten();
+  if (codeText) melde("ok", "Dein Fortschritt vom anderen Gerät wurde übernommen.");
+});
+$("code-in").addEventListener("keydown", e => { if (e.key === "Enter") $("start-btn").click(); });
+$("name-in").addEventListener("keydown", e => { if (e.key === "Enter") $("start-btn").click(); });
+
+/* ---------- Bausteine ---------- */
+const box = (id, wert, zustand, gesperrt) =>
+  `<input type="text" class="bx pin${zustand ? " " + zustand : ""}" data-bx="${id}" value="${esc(wert || "")}" autocomplete="off" spellcheck="false"${gesperrt ? " disabled" : ""} aria-label="Zahl eintragen">`;
+const zeile = (l, r, op) => `<div class="gl"><span>${l} = ${r}</span><span>${op || ""}</span></div>`;
+function zahl(t) {
+  const s = String(t).replace(/\s|cm²|cm2|cm/gi, "").replace(",", ".");
+  return /^\d+(\.\d+)?$/.test(s) ? parseFloat(s) : null;
+}
+const gleichZahl = (t, w) => { const n = zahl(t); return n !== null && Math.abs(n - w) < 0.005; };
+
+/* ---------- Anzeige ---------- */
+function navZeichnen() {
+  $("nav").innerHTML = AUFGABEN.map((_, i) => {
+    const s = st.a[i].status;
+    return `<button type="button" class="${i === st.idx ? "cur " : ""}${s !== "offen" ? "s-" + s : ""}" data-i="${i}" aria-label="Beispiel ${i + 1}">${i + 1}</button>`;
+  }).join("");
+  $("progress").textContent = `Runde ${st.runde} · ${st.a.filter(x => x.status !== "offen").length} von ${AUFGABEN.length} fertig`;
+}
+function formelHTML(b, z0, aktiv) {
+  const A = ARTEN[b.art], ges = gesKey(b);
+  return A.fTok.map(t => {
+    if (!(t in NAME)) return t;
+    if (t === ges) return `<span class="var">${NAME[t]}</span>`;
+    const ok = z0.schritt > 2;
+    return aktiv || ok ? box("e-" + t, ok ? z(b.g[t]) : z0.ein[t], ok ? "ok" : z0.einBad && z0.einBad.includes(t) ? "bad" : "", ok) : NAME[t];
+  }).join("");
+}
+/* alle fertigen Zeilen der Gleichung */
+function fertigeZeilen(b, z0, bis) {
+  const A = ARTEN[b.art], S = A.schritte(b.g), [l0, r0] = A.start(b.g);
+  const opBei = j => (S[j] && S[j].typ === "op" && (j < bis || (j === bis && z0.phase === "zahl"))) ? "| " + S[j].op : "";
+  let h = zeile(l0, r0, opBei(0));
+  for (let j = 0; j < bis; j++) {
+    const s = S[j], fill = x => x.replace("□", z(s.w));
+    const letzte = j === S.length - 1;
+    h += letzte ? zeile(`<b>${s.l}`, `${z(s.w)} ${A.einheit}</b>`, "") : zeile(fill(s.l), fill(s.r), opBei(j + 1));
+  }
+  return h;
+}
+function loesenHTML(b, z0) {
+  const A = ARTEN[b.art], S = A.schritte(b.g);
+  if (z0.schritt < 3) return `<p class="vorschau">Zuerst Schritt 2 lösen.</p>`;
+  if (z0.schritt > 3) return fertigeZeilen(b, z0, S.length);
+  const k = z0.k, s = S[k];
+  let h = fertigeZeilen(b, z0, k);
+  if (z0.phase === "op") {
+    const opts = AUFGABEN[st.idx].so[k];
+    h += `<p class="frage">Welche Umkehrrechnung machst du auf beiden Seiten?</p><div class="ops">` +
+      opts.map(o => `<button type="button" data-op="${esc(o)}" class="${(z0.opFalsch[k] || []).includes(o) ? "falsch" : ""}"${(z0.opFalsch[k] || []).includes(o) ? " disabled" : ""}>| ${o}</button>`).join("") + `</div>`;
+  } else {
+    if (s.typ === "rechnen") h += `<p class="frage">${s.frage}</p>`;
+    else h += `<p class="frage">Rechne auf beiden Seiten ${s.op} und trag das Ergebnis ein:</p>`;
+    const letzte = k === S.length - 1;
+    h += zeile(s.l.replace("□", box("w", z0.w, z0.wBad ? "bad" : "")), s.r.replace("□", box("w", z0.w, z0.wBad ? "bad" : "")) + (letzte ? " " + A.einheit : ""), "");
+    h += `<button type="button" class="primary mini2" data-act="zahl">Überprüfen</button>`;
+  }
+  return h;
+}
+function rechenweg(b) {
+  const A = ARTEN[b.art], x = z(ergebnis(b));
+  const z0 = { phase: "" };
+  return `<div class="gl"><span>${A.formel[0]}</span><span></span></div>${fertigeZeilen(b, z0, A.schritte(b.g).length)}<div>${A.satz(x)}</div>`;
+}
+function zeige() {
+  const i = st.idx, b = AUFGABEN[i], A = ARTEN[b.art], z0 = st.a[i];
+  const fertig = z0.status !== "offen";
+  $("titel").textContent = `Beispiel ${i + 1}`;
+  $("art").textContent = `${A.groesse} rückwärts · ${A.typ}`;
+  $("angabe").innerHTML = A.text(b.g);
+  $("skizze").innerHTML = skizze(b);
+  $("w1").innerHTML = b.f.map(o => {
+    const kl = z0.schritt > 1 && o === A.formel[0] ? "ok" : z0.falsch1.includes(o) ? "falsch" : "";
+    return `<button type="button" class="${kl}" data-o="${esc(o)}"${z0.schritt > 1 || z0.falsch1.includes(o) ? " disabled" : ""}>${o}</button>`;
+  }).join("");
+  $("s2").classList.toggle("aus", z0.schritt < 2);
+  $("einsetzen").innerHTML = z0.schritt < 2 ? `<p class="vorschau">Zuerst Schritt 1 lösen.</p>`
+    : `<div class="gl"><span>${A.formel[0]}</span><span></span></div><div class="gl"><span>${formelHTML(b, z0, z0.schritt === 2)}</span><span></span></div>` +
+      (z0.schritt === 2 ? `<p class="frage">Trag die Zahlen aus der Angabe in die Kästchen ein (ohne Einheit).</p><button type="button" class="primary mini2" data-act="ein">Überprüfen</button>` : "");
+  $("s3").classList.toggle("aus", z0.schritt < 3);
+  $("loesen").innerHTML = loesenHTML(b, z0);
+  $("loesung").hidden = fertig || (z0.f2 + z0.f4) < 2;
+  $("zurueck").disabled = i === 0;
+  $("vor").disabled = i === AUFGABEN.length - 1;
+  const m = $("meldung");
+  if (fertig) {
+    m.className = "meldung " + (z0.status === "loesung" ? "bad" : "ok");
+    m.innerHTML = (z0.status === "loesung" ? "Lösung angesehen:" : "✔ Richtig!") + `<div class="weg">${rechenweg(b)}</div>`;
+  }
+  $("merke-hinweis").hidden = !(i === 0 && fertig);
+  navZeichnen();
+  const erstes = document.querySelector("#karte input.bx:not(:disabled)");
+  if (erstes && !fertig) { const leerFeld = [...document.querySelectorAll("#karte input.bx:not(:disabled)")].find(x => !x.value) || erstes; leerFeld.focus({ preventScroll: true }); }
+}
+function melde(art, text) { const m = $("meldung"); m.className = "meldung " + art; m.innerHTML = text; }
+function leereMeldung() { const m = $("meldung"); m.className = "meldung"; m.innerHTML = ""; }
+
+/* ---------- Schritt 1: Formel ---------- */
+$("w1").addEventListener("click", e => {
+  const btn = e.target.closest("button"); if (!btn) return;
+  const b = AUFGABEN[st.idx], A = ARTEN[b.art], z0 = st.a[st.idx];
+  if (btn.dataset.o === A.formel[0]) { z0.schritt = 2; speichern(); zeige(); melde("ok", "✔ Richtige Formel! Jetzt setz die bekannten Zahlen ein."); return; }
+  z0.f1++; z0.falsch1.push(btn.dataset.o); speichern(); zeige();
+  melde("warn", A.groesse === "Umfang" ? "Das passt nicht. Der Umfang ist die Summe aller Seiten – welche Seiten sind bei diesem Dreieck gleich lang?" : "Das passt nicht. Denk daran: Ein Dreieck ist ein halbes Rechteck.");
+});
+
+/* ---------- Schritt 2: Einsetzen ---------- */
+function einsetzenPruefen() {
+  const b = AUFGABEN[st.idx], A = ARTEN[b.art], z0 = st.a[st.idx], ges = gesKey(b);
+  const bekannt = A.fTok.filter(t => t in NAME && t !== ges);
+  const leer = bekannt.filter(t => !String(z0.ein[t] || "").trim());
+  if (leer.length) { melde("warn", "Trag in jedes Kästchen eine Zahl ein."); return; }
+  const falsch = bekannt.filter(t => !gleichZahl(z0.ein[t], b.g[t]));
+  if (!falsch.length) {
+    z0.schritt = 3; z0.k = 0; z0.phase = A.schritte(b.g)[0].typ === "op" ? "op" : "zahl"; z0.einBad = [];
+    speichern(); zeige(); melde("ok", "✔ Richtig eingesetzt! Jetzt löse die Gleichung."); return;
+  }
+  z0.f2++; z0.einBad = falsch; speichern(); zeige();
+  melde("warn", `Schau noch einmal in der Angabe nach: ${falsch.map(t => `Wie groß ist ${NAME[t]}?`).join(" ")}` + ((z0.f2 + z0.f4) >= 2 ? " Du kannst es nochmal versuchen oder dir die Lösung zeigen lassen." : ""));
+}
+
+/* ---------- Schritt 3: Gleichung lösen ---------- */
+function opWaehlen(o) {
+  const b = AUFGABEN[st.idx], z0 = st.a[st.idx], s = ARTEN[b.art].schritte(b.g)[z0.k];
+  if (o === s.op) { z0.phase = "zahl"; z0.w = ""; z0.wBad = false; speichern(); zeige(); leereMeldung(); return; }
+  z0.f3++; (z0.opFalsch[z0.k] = z0.opFalsch[z0.k] || []).push(o); speichern(); zeige();
+  melde("warn", (s.reihe && o === s.reihe ? "" : "Das ist nicht die richtige Umkehrrechnung. ") + (s.reihe && o === s.reihe ? s.reiheTipp : s.tipp));
+}
+function zahlPruefen() {
+  const b = AUFGABEN[st.idx], A = ARTEN[b.art], z0 = st.a[st.idx], S = A.schritte(b.g), s = S[z0.k];
+  if (zahl(z0.w) === null) { melde("warn", "Schreib nur die Zahl in das Kästchen, z. B. 22 oder 7,5."); return; }
+  if (gleichZahl(z0.w, s.w)) {
+    z0.k++; z0.w = ""; z0.wBad = false;
+    if (z0.k >= S.length) {
+      z0.schritt = 4; z0.status = (z0.f1 + z0.f2 + z0.f3 + z0.f4) === 0 ? "richtig" : "fehler";
+      speichern(); zeige();
+      if (st.a.every(x => x.status !== "offen")) $("meldung").innerHTML += `<div style="margin-top:.6rem"><b>Alle 5 Beispiele geschafft!</b> Klick auf „Auswertung anzeigen“ oder starte eine neue Runde.</div>`;
+      return;
+    }
+    z0.phase = S[z0.k].typ === "op" ? "op" : "zahl";
+    speichern(); zeige(); melde("ok", "✔ Richtig! Weiter mit dem nächsten Schritt."); return;
+  }
+  z0.f4++; z0.wBad = true; speichern(); zeige();
+  melde("warn", `Noch nicht richtig. Rechne nach: ${s.hilfe} = ?` + ((z0.f2 + z0.f4) >= 2 ? " Du kannst es nochmal versuchen oder dir die Lösung zeigen lassen." : ""));
+}
+
+/* Klicks und Eingaben in der Karte */
+$("karte").addEventListener("click", e => {
+  const btn = e.target.closest("button"); if (!btn) return;
+  if (btn.dataset.op !== undefined) opWaehlen(btn.dataset.op);
+  else if (btn.dataset.act === "ein") einsetzenPruefen();
+  else if (btn.dataset.act === "zahl") zahlPruefen();
+});
+$("karte").addEventListener("input", e => {
+  const t = e.target; if (!t.dataset || !t.dataset.bx) return;
+  const z0 = st.a[st.idx];
+  if (t.dataset.bx === "w") { z0.w = t.value; document.querySelectorAll('#karte [data-bx="w"]').forEach(x => { if (x !== t) x.value = t.value; }); }
+  else z0.ein[t.dataset.bx.slice(2)] = t.value;
+  t.classList.remove("bad");
+  speichern();
+});
+$("karte").addEventListener("keydown", e => {
+  if (e.key !== "Enter" || !e.target.dataset || !e.target.dataset.bx) return;
+  e.preventDefault();
+  if (e.target.dataset.bx === "w") zahlPruefen();
+  else {
+    const alle = [...document.querySelectorAll('#karte input[data-bx^="e-"]:not(:disabled)')];
+    const n = alle[alle.indexOf(e.target) + 1];
+    if (n && !n.value) n.focus(); else einsetzenPruefen();
+  }
+});
+$("loesung").addEventListener("click", () => { const z0 = st.a[st.idx]; z0.status = "loesung"; z0.schritt = 4; speichern(); zeige(); });
+
+/* ---------- Navigation ---------- */
+function geheZu(i) { st.idx = Math.max(0, Math.min(AUFGABEN.length - 1, i)); speichern(); leereMeldung(); zeige(); $("karte").scrollIntoView({ block: "start", behavior: "smooth" }); }
+$("zurueck").addEventListener("click", () => geheZu(st.idx - 1));
+$("vor").addEventListener("click", () => geheZu(st.idx + 1));
+$("nav").addEventListener("click", e => { const b = e.target.closest("button"); if (b) geheZu(+b.dataset.i); });
+
+/* ---------- Auswertung ---------- */
+const STATUS = { richtig: "fehlerfrei", fehler: "mit Fehlversuchen gelöst", loesung: "Lösung angesehen", offen: "offen" };
+function auswerten() {
+  const n = s => st.a.filter(x => x.status === s).length, jetzt = new Date();
+  $("aw-kopf").innerHTML = `<b>${esc(st.name)}</b> · Runde ${st.runde} · ${jetzt.toLocaleDateString("de-AT")} um ${jetzt.toLocaleTimeString("de-AT", { hour: "2-digit", minute: "2-digit" })}`;
+  $("aw-zahlen").innerHTML = `<div><b>${n("richtig")}</b>fehlerfrei</div><div><b>${n("fehler")}</b>mit Fehlversuchen</div><div><b>${n("loesung")}</b>Lösung angesehen</div><div><b>${n("offen")}</b>noch offen</div>`;
+  $("aw-tab").innerHTML = AUFGABEN.map((b, i) => {
+    const A = ARTEN[b.art], s = st.a[i];
+    return `<tr><td>${i + 1}</td><td>${A.text(b.g)}</td><td>${A.ges} = ${z(ergebnis(b))} ${A.einheit}</td>
+      <td>Formel: ${s.f1} · Einsetzen: ${s.f2} · Umkehrrechnung: ${s.f3} · Rechnen: ${s.f4}</td>
+      <td><span class="badge ${s.status}">${STATUS[s.status]}</span></td></tr>`;
+  }).join("");
+  $("aufgaben").hidden = true; $("auswertung").hidden = false; window.scrollTo(0, 0);
+}
+$("zur-auswertung").addEventListener("click", auswerten);
+$("aw-zurueck").addEventListener("click", () => { $("auswertung").hidden = true; $("aufgaben").hidden = false; zeige(); });
+$("aw-druck").addEventListener("click", () => window.print());
+function neueRunde() {
+  if (st.a.some(x => x.status === "offen") && !confirm("Neue Runde starten? Alle Beispiele werden durch neue ersetzt, offene Beispiele gehen verloren.")) return;
+  st.runde++; AUFGABEN = erzeugeRunde(st.seed, st.runde); st.a = leer(); st.idx = 0; speichern();
+  $("auswertung").hidden = true; $("aufgaben").hidden = false; leereMeldung(); zeige(); window.scrollTo(0, 0);
+}
+document.querySelectorAll(".neue-runde").forEach(b => b.addEventListener("click", neueRunde));
+
+/* ---------- Bildschirm-Tastatur ---------- */
+(function () {
+  const pad = $("pad"), sysBtn = $("padSys");
+  const touch = window.matchMedia && matchMedia("(pointer: coarse)").matches;
+  let padOnly = touch, closed = false, cur = null;
+  try { const v = localStorage.getItem("padOnly"); if (v !== null) padOnly = v === "1"; } catch (e) {}
+  function modus() {
+    document.querySelectorAll("input.pin").forEach(i => padOnly ? i.setAttribute("inputmode", "none") : i.setAttribute("inputmode", "decimal"));
+    sysBtn.textContent = padOnly ? "Handy-Tastatur einblenden" : "Handy-Tastatur ausblenden";
+  }
+  modus();
+  function zeigen(inp) {
+    cur = inp; if (closed) return;
+    pad.hidden = false; document.body.classList.add("padon");
+    const r = inp.getBoundingClientRect();
+    if (r.bottom > window.innerHeight - pad.offsetHeight - 10) inp.scrollIntoView({ block: "center", behavior: "smooth" });
+  }
+  function weg() { pad.hidden = true; document.body.classList.remove("padon"); }
+  document.addEventListener("focusin", e => { const t = e.target; if (t.matches && t.matches("input.pin") && !t.disabled) { t.setAttribute("inputmode", padOnly ? "none" : "decimal"); zeigen(t); } });
+  document.addEventListener("focusout", () => setTimeout(() => { const a = document.activeElement; if (!(a && a.matches && a.matches("input.pin"))) weg(); }, 150));
+  function einfuegen(txt) {
+    if (!cur || cur.disabled) return;
+    const s1 = cur.selectionStart ?? cur.value.length, s2 = cur.selectionEnd ?? cur.value.length;
+    cur.setRangeText(txt, s1, s2, "end");
+    cur.dispatchEvent(new Event("input", { bubbles: true }));
+  }
+  /* nur pointerdown/mousedown abfangen – nie touchstart, sonst gehen die Tasten am Handy nicht */
+  pad.addEventListener("pointerdown", e => { if (e.target.closest("button")) e.preventDefault(); });
+  pad.addEventListener("mousedown", e => { if (e.target.closest("button")) e.preventDefault(); });
+  pad.addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return;
+    if (b.id === "padHide") { closed = true; weg(); return; }
+    if (b.id === "padSys") {
+      padOnly = !padOnly;
+      try { localStorage.setItem("padOnly", padOnly ? "1" : "0"); } catch (x) {}
+      modus(); if (cur) { cur.blur(); setTimeout(() => cur.focus(), 60); } return;
+    }
+    if (!cur || cur.disabled) return;
+    if (b.dataset.ins !== undefined) einfuegen(b.dataset.ins);
+    else if (b.dataset.act === "clr") { cur.value = ""; cur.dispatchEvent(new Event("input", { bubbles: true })); }
+    else if (b.dataset.act === "left") { const p = Math.max(0, (cur.selectionStart ?? cur.value.length) - 1); cur.setSelectionRange(p, p); }
+    else if (b.dataset.act === "right") { const p = Math.min(cur.value.length, (cur.selectionEnd ?? cur.value.length) + 1); cur.setSelectionRange(p, p); }
+    else if (b.dataset.act === "del") {
+      const s1 = cur.selectionStart ?? cur.value.length, s2 = cur.selectionEnd ?? s1;
+      if (s1 !== s2) cur.setRangeText("", s1, s2, "end"); else if (s1 > 0) cur.setRangeText("", s1 - 1, s1, "end");
+      cur.dispatchEvent(new Event("input", { bubbles: true }));
+    } else if (b.dataset.act === "ok") { cur.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true })); }
+    if (cur && !cur.disabled) cur.focus({ preventScroll: true });
+  });
+})();
+
+/* ---------- Los ---------- */
+laden();
+if (st.name) starten();
+</script>
+</body>
+</html>
