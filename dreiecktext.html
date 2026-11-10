@@ -56,13 +56,16 @@ header p{margin:0 0 16px;color:var(--muted);max-width:65ch}
 svg{width:100%;height:auto;display:block}
 .side{stroke:var(--ink);stroke-width:3;stroke-linecap:round}
 .side.height-line{stroke:var(--red);stroke-width:2.5;stroke-dasharray:6 4}
-.side.selected{stroke:var(--pen);stroke-width:5}
+.side.selected{stroke:var(--pen);stroke-width:6;stroke-dasharray:none}
 .tri{fill:var(--tri)}
-.ra{fill:none;stroke:var(--ink);stroke-width:2}
+.ra{fill:none;stroke:var(--ink);stroke-width:1.6}
 .dot{fill:var(--ink)}
-.lbl{font-family:"Patrick Hand",cursive;font-size:19px;fill:var(--ink)}
+.lbl{font-family:"Patrick Hand",cursive;font-size:20px;fill:var(--ink);paint-order:stroke;stroke:var(--card);stroke-width:4px;stroke-linejoin:round}
+.lbl.hl{fill:var(--red)}
+.lbl.sel{fill:var(--pen);font-weight:700}
 .hit{stroke:transparent;stroke-width:36;stroke-linecap:round;cursor:pointer;pointer-events:stroke}
-.tapnote{text-anchor:middle;font-weight:700;fill:var(--pen);font-size:16px}
+.tapnote{margin:6px 0 0;text-align:center;font-weight:700;color:var(--pen);font-size:15px}
+.scalenote{margin:2px 0 0;text-align:center;color:var(--muted);font-size:13px}
 
 .way-title{margin:18px 0 4px;font-size:15px;color:var(--muted)}
 .way{font-family:"Patrick Hand",cursive;font-size:22px;line-height:1.5;color:var(--pen);min-height:44px;border-left:3px solid var(--pen);padding-left:14px}
@@ -112,6 +115,7 @@ th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
 .codebox{background:var(--paper);border:2px solid var(--ink);border-radius:8px;padding:8px 12px;font-family:monospace;font-size:18px;font-weight:bold;color:var(--pen);display:inline-block;margin:6px 0}
 
 .keypad{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:3px solid var(--pen);padding:10px 14px;box-shadow:0 -4px 20px rgba(0,0,0,0.15);display:flex;flex-direction:column;align-items:center;gap:8px;z-index:999}
+.keypad[hidden]{display:none}
 .keypad-header{display:flex;justify-content:space-between;width:100%;max-width:380px;font-size:14px;font-weight:bold;color:var(--muted)}
 .keypad-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;max-width:380px}
 .keybtn{font-family:"Patrick Hand",cursive;font-size:24px;padding:8px;border:2px solid var(--ink);border-radius:8px;background:var(--paper);color:var(--ink);cursor:pointer;text-align:center}
@@ -200,24 +204,27 @@ th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
 
 <script>
 const TOTAL_TASKS = 10;
+/* Alle Maße sind jetzt geometrisch stimmig: Die Zahlen aus dem Aufgabentext bleiben gleich,
+   die übrigen Seiten bzw. Höhen sind passend dazu berechnet (gerundet).
+   Allgemeine Dreiecke: a = BC, b = AC, c = AB (Grundseite), h = Höhe h_c auf c. */
 const PRESETS = [
   // --- SCHULÜBUNG (6 Aufgaben) ---
   { 
-    section: 'Schulübung', num: 1, type: 'general', a: 900, b: 1400, c: 1600, h: 800, unit: 'm',
+    section: 'Schulübung', num: 1, type: 'general', a: 1281, b: 1000, c: 1600, h: 800, unit: 'm',
     title: 'Waldstück aufforsten', 
-    text: 'Ein dreieckiges Waldstück soll mit Fichten neu aufgeforstet werden. Wie groß ist die Fläche A in m² und wie teuer ist das Holz, wenn 1 m² Fichtenpflanzen 2,50 € kosten?',
+    text: 'Ein dreieckiges Waldstück soll mit Fichten neu aufgeforstet werden. Wie groß ist die Fläche A in m² und wie teuer sind die Pflanzen, wenn 1 m² Fichtenpflanzen 2,50 € kosten?',
     costPerUnit: 2.50, costName: 'Gesamtkosten', costUnit: '€', costType: 'A',
     answerText: 'Das Aufforsten des Waldstücks kostet insgesamt'
   },
   { 
-    section: 'Schulübung', num: 2, type: 'general', a: 800, b: 800, c: 1480, h: 680, unit: 'cm',
+    section: 'Schulübung', num: 2, type: 'general', a: 1005, b: 1005, c: 1480, h: 680, unit: 'cm',
     title: 'Hausgiebel verschalen', 
     text: 'Der Giebel eines Hauses soll mit Holz verschalt werden (Grundseite c = 14,8 m = 1480 cm, Höhe h_c = 6,8 m = 680 cm). Berechne den Flächeninhalt A in m² (1 m² = 10 000 cm²) und die Holzkosten bei 38 € pro m².',
     costPerUnit: 38, costName: 'Holzkosten', costUnit: '€', costType: 'A', convertToM2: true,
-    answerText: 'Die Holzverschaltung für den Giebel kostet insgesamt'
+    answerText: 'Die Holzverschalung für den Giebel kostet insgesamt'
   },
   { 
-    section: 'Schulübung', num: 3, type: 'general', a: 720, b: 720, c: 450, h: 700, unit: 'cm',
+    section: 'Schulübung', num: 3, type: 'general', a: 735, b: 735, c: 450, h: 700, unit: 'cm',
     title: 'Kirchturmdach neu decken', 
     text: 'Ein Kirchturmdach besteht aus 4 gleichen dreieckigen Flächen (c = 4,5 m = 450 cm, h_c = 7 m = 700 cm). Berechne die Gesamtfläche aller 4 Flächen in m² und die Gesamtkosten bei 280 € pro m²!',
     costPerUnit: 280, costName: 'Gesamtkosten (4 Flächen)', costUnit: '€', costType: 'A_multi', multiplier: 4, convertToM2: true,
@@ -226,19 +233,19 @@ const PRESETS = [
   { 
     section: 'Schulübung', num: 4, type: 'right', a: 6, b: 8, c: 10, unit: 'm',
     title: 'Rechtwinkliges Blumenbeet', 
-    text: 'Ein rechtwinkliges Blumenbeet mit den Katheten a = 6 m und b = 8 m soll mit Randsteinen eingefasst werden. Berechne den Umfang u in m und den Preis für den Zaun bei 15 € pro Meter.',
+    text: 'Ein rechtwinkliges Blumenbeet mit den Katheten a = 6 m und b = 8 m (Hypotenuse c = 10 m) soll mit Randsteinen eingefasst werden. Berechne den Umfang u in m und den Preis für die Randsteine bei 15 € pro Meter.',
     costPerUnit: 15, costName: 'Einfassungskosten', costUnit: '€', costType: 'u',
     answerText: 'Die Einfassung des Blumenbeets kostet insgesamt'
   },
   { 
     section: 'Schulübung', num: 5, type: 'right', a: 3, b: 4, c: 5, unit: 'm',
     title: 'Sonnensegel für den Garten', 
-    text: 'Ein rechtwinkliges Sonnensegel besitzt die Katheten 3 m und 4 m. Wie viel m² Stoff A werden benötigt und what kostet das Segel bei 22 € pro m²?',
+    text: 'Ein rechtwinkliges Sonnensegel besitzt die Katheten 3 m und 4 m. Wie viel m² Stoff A werden benötigt und was kostet das Segel bei 22 € pro m²?',
     costPerUnit: 22, costName: 'Segelkosten', costUnit: '€', costType: 'A',
-    answerText: 'Das Sonnensegel kostet im Gesamtpreis'
+    answerText: 'Das Sonnensegel kostet insgesamt'
   },
   { 
-    section: 'Schulübung', num: 6, type: 'general', a: 35, b: 42, c: 50, h: 28, unit: 'm',
+    section: 'Schulübung', num: 6, type: 'general', a: 35, b: 42, c: 50, h: 29, unit: 'm',
     title: 'Dreieckiger Parkteich', 
     text: 'Ein Ententeich im Park ist dreieckig abgegrenzt (a = 35 m, b = 42 m, c = 50 m). Wie lang ist der Sicherheitszaun um den gesamten Teich (Umfang u) und was kostet der Zaun bei 18 € / m?',
     costPerUnit: 18, costName: 'Zaunkosten', costUnit: '€', costType: 'u',
@@ -247,9 +254,9 @@ const PRESETS = [
 
   // --- HAUSÜBUNG (4 Aufgaben) ---
   { 
-    section: 'Hausübung', num: 1, type: 'general', a: 24, b: 30, c: 36, h: 20, unit: 'm',
+    section: 'Hausübung', num: 1, type: 'general', a: 24, b: 30, c: 36, h: 19.8, unit: 'm',
     title: 'Gartengrundstück einzäunen', 
-    text: 'HÜ 1: Ein dreieckiger Garten (a = 24 m, b = 30 m, c = 36 m, h_c = 20 m) erhält einen neuen Maschendrahtzaun. Berechne den Umfang u und die Zaunkosten bei 12 € pro Meter.',
+    text: 'HÜ 1: Ein dreieckiger Garten (a = 24 m, b = 30 m, c = 36 m) erhält einen neuen Maschendrahtzaun. Berechne den Umfang u und die Zaunkosten bei 12 € pro Meter.',
     costPerUnit: 12, costName: 'Zaunkosten', costUnit: '€', costType: 'u',
     answerText: 'Für die Einzäunung des Gartens betragen die Gesamtkosten'
   },
@@ -261,7 +268,7 @@ const PRESETS = [
     answerText: 'Die Eindeckung der Dachfläche kostet insgesamt'
   },
   { 
-    section: 'Hausübung', num: 3, type: 'general', a: 18, b: 22, c: 25, h: 16, unit: 'm',
+    section: 'Hausübung', num: 3, type: 'general', a: 20.6, b: 20, c: 25, h: 16, unit: 'm',
     title: 'Bauplatz Raseneinsaat', 
     text: 'HÜ 3: Auf einem dreieckigen Bauplatz (c = 25 m, h_c = 16 m) soll Rasen gesät werden. Berechne die Fläche A in m² und die Saatgutkosten bei 1,50 € pro m².',
     costPerUnit: 1.5, costName: 'Saatgutkosten', costUnit: '€', costType: 'A',
@@ -269,7 +276,7 @@ const PRESETS = [
   },
   { 
     section: 'Hausübung', num: 4, type: 'right', a: 60, b: 80, c: 100, unit: 'cm',
-    title: 'Verkehrsschild streichen', 
+    title: 'Verkehrsschild bekleben', 
     text: 'HÜ 4: Ein rechtwinkliges Warnschild mit Katheten 60 cm und 80 cm erhält eine Reflexionsfolie. Berechne A in cm² und die Kosten bei 0,05 € pro cm².',
     costPerUnit: 0.05, costName: 'Folienkosten', costUnit: '€', costType: 'A',
     answerText: 'Die Kosten für die Reflexionsfolie betragen insgesamt'
@@ -408,58 +415,64 @@ function newTask() {
   stepWhatToCalculate();
 }
 
+/* ---------- Skizze: maßstabsgetreu aus den echten Maßen ---------- */
 function draw() {
-  const W = 520, H = 300;
-  let lines = '', hits = '', labels = '';
-
+  const W = 520, H = 330, padX = 115, padTop = 40, padBot = 50;
+  /* Ecken in echten Einheiten: A links unten, B rechts unten, C oben */
+  let A, B, C, F = null, rightAt = null;
   if (task.type === 'right') {
-    const pA = [90, 205], pB = [430, 205], pC = [90, 50];
-    const segs = {
-      'a': [pC, pA, `a = ${fmt(task.a)}${task.unit}`, [42, 127]],
-      'b': [pA, pB, `b = ${fmt(task.b)}${task.unit}`, [260, 230]],
-      'c': [pB, pC, `c = ${fmt(task.c)}${task.unit}`, [278, 115]]
-    };
-
-    lines += `<polygon class="tri" points="${pA.join(',')} ${pB.join(',')} ${pC.join(',')}"/>`;
-    lines += `<path class="ra" d="M90,185 L110,185 L110,205"/><circle class="dot" cx="100" cy="195" r="2"/>`;
-
-    for (const [key, [p1, p2, txt, pos]] of Object.entries(segs)) {
-      const isSel = task.selected.has(key);
-      lines += `<line x1="${p1[0]}" y1="${p1[1]}" x2="${p2[0]}" y2="${p2[1]}" class="side${isSel ? ' selected' : ''}"/>`;
-      if (task.selecting) {
-        hits += `<line x1="${p1[0]}" y1="${p1[1]}" x2="${p2[0]}" y2="${p2[1]}" class="hit" data-seg="${key}"/>`;
-      }
-      labels += `<text x="${pos[0]}" y="${pos[1]}" class="lbl" text-anchor="middle">${txt}</text>`;
-    }
+    /* rechter Winkel unten links, Kathete b waagrecht, Kathete a senkrecht */
+    C = [0, 0]; A = [task.b, 0]; B = [0, task.a]; rightAt = C;
   } else {
-    const scale = 0.15;
-    const cPx = Math.min(task.c * scale, 290);
-    const xC = 90 + (cPx * 0.52);
-    const yC = 205 - Math.min(task.h * scale, 135);
+    /* C liegt über der Grundseite c; Lage aus den Seiten a und b, Höhe aus h */
+    const d = (task.b * task.b + task.c * task.c - task.a * task.a) / (2 * task.c);
+    A = [0, 0]; B = [task.c, 0]; C = [d, task.h]; F = [d, 0];
+  }
+  const xs = [A[0], B[0], C[0]], ys = [A[1], B[1], C[1]];
+  const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+  const sc = Math.min((W - 2 * padX) / (x1 - x0), (H - padTop - padBot) / (y1 - y0));
+  const ox = (W - (x1 - x0) * sc) / 2, oy = padTop + ((H - padTop - padBot) - (y1 - y0) * sc) / 2;
+  const P = p => [ox + (p[0] - x0) * sc, oy + (y1 - p[1]) * sc];
+  const pA = P(A), pB = P(B), pC = P(C), pF = F ? P(F) : null;
+  const G = [(pA[0] + pB[0] + pC[0]) / 3, (pA[1] + pB[1] + pC[1]) / 3];
 
-    const pA = [90, 205], pB = [90 + cPx, 205], pC = [xC, yC], pH = [xC, 205];
-    const segs = {
-      'b': [pA, pC, `b = ${fmt(task.b)}${task.unit}`, [(pA[0]+pC[0])/2 - 24, (pA[1]+pC[1])/2 - 6]],
-      'a': [pC, pB, `a = ${fmt(task.a)}${task.unit}`, [(pC[0]+pB[0])/2 + 24, (pC[1]+pB[1])/2 - 6]],
-      'c': [pA, pB, `c = ${fmt(task.c)}${task.unit}`, [90 + cPx/2, 230]],
-      'h': [pC, pH, `h_c = ${fmt(task.h)}${task.unit}`, [xC + 32, (pC[1]+pH[1])/2]]
-    };
+  const segs = task.type === 'right'
+    ? { a: [pB, pC], b: [pC, pA], c: [pA, pB] }
+    : { a: [pB, pC], b: [pA, pC], c: [pA, pB], h: [pC, pF] };
 
-    lines += `<polygon class="tri" points="${pA.join(',')} ${pB.join(',')} ${pC.join(',')}"/>`;
+  let lines = `<polygon class="tri" points="${[pA, pB, pC].map(p => p.join(',')).join(' ')}"/>`, hits = '', labels = '';
 
-    for (const [key, [p1, p2, txt, pos]] of Object.entries(segs)) {
-      const isSel = task.selected.has(key);
-      const isH = key === 'h';
-      lines += `<line x1="${p1[0]}" y1="${p1[1]}" x2="${p2[0]}" y2="${p2[1]}" class="side${isH ? ' height-line' : ''}${isSel ? ' selected' : ''}"/>`;
-      if (task.selecting) {
-        hits += `<line x1="${p1[0]}" y1="${p1[1]}" x2="${p2[0]}" y2="${p2[1]}" class="hit" data-seg="${key}"/>`;
-      }
-      labels += `<text x="${pos[0]}" y="${pos[1]}" class="lbl" text-anchor="middle">${txt}</text>`;
+  /* rechter Winkel: beim rechtwinkligen Dreieck in der Ecke, sonst am Fußpunkt der Höhe */
+  const raMark = (V, P1, P2) => {
+    const u = (p, q) => { const d = Math.hypot(q[0] - p[0], q[1] - p[1]) || 1; return [(q[0] - p[0]) / d * 15, (q[1] - p[1]) / d * 15]; };
+    const v1 = u(V, P1), v2 = u(V, P2);
+    return `<path class="ra" d="M${V[0] + v1[0]},${V[1] + v1[1]} L${V[0] + v1[0] + v2[0]},${V[1] + v1[1] + v2[1]} L${V[0] + v2[0]},${V[1] + v2[1]}"/>` +
+           `<circle class="dot" cx="${V[0] + (v1[0] + v2[0]) / 2}" cy="${V[1] + (v1[1] + v2[1]) / 2}" r="2"/>`;
+  };
+  if (rightAt) lines += raMark(P(rightAt), pA, pB);
+  if (pF) lines += raMark(pF, pC, pB);
+
+  for (const [key, [p1, p2]] of Object.entries(segs)) {
+    const isSel = task.selected.has(key), isH = key === 'h';
+    lines += `<line x1="${p1[0]}" y1="${p1[1]}" x2="${p2[0]}" y2="${p2[1]}" class="side${isH ? ' height-line' : ''}${isSel ? ' selected' : ''}"/>`;
+    if (task.selecting) hits += `<line x1="${p1[0]}" y1="${p1[1]}" x2="${p2[0]}" y2="${p2[1]}" class="hit" data-seg="${key}"/>`;
+    /* Beschriftung: Seiten nach außen, Höhe neben die Linie */
+    const M = [(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2];
+    let L, anchor = 'middle', rot = '';
+    if (isH) {
+      /* Höhe: zweizeilig rechts neben der Linie, im unteren Teil (dort ist das Dreieck breiter) */
+      L = [pF[0] + 8, pF[1] - (pF[1] - pC[1]) * 0.42]; anchor = 'start';
+    } else {
+      const d = Math.hypot(M[0] - G[0], M[1] - G[1]) || 1, nx = (M[0] - G[0]) / d, ny = (M[1] - G[1]) / d;
+      L = [M[0] + nx * 22, M[1] + ny * 22 + 6];
+      anchor = nx > 0.35 ? 'start' : nx < -0.35 ? 'end' : 'middle';
     }
+    const txt = isH ? `h<tspan dy="4" font-size="14">c</tspan><tspan x="${L[0]}" dy="18">= ${fmt(task.h)} ${task.unit}</tspan>` : `${key} = ${fmt(task[key])} ${task.unit}`;
+    labels += `<text x="${L[0]}" y="${L[1]}" class="lbl${isH ? ' hl' : ''}${isSel ? ' sel' : ''}" text-anchor="${anchor}"${rot}>${txt}</text>`;
   }
 
-  const note = task.selecting ? `<text x="260" y="280" class="tapnote">👆 Klicke auf die Seiten, die du zur Berechnung benötigst!</text>` : '';
-  $('#fig').innerHTML = `<svg viewBox="0 0 ${W} ${H}">${lines}${labels}${hits}${note}</svg>`;
+  const note = task.selecting ? `<p class="tapnote">👆 Klicke auf die Strecken, die du zur Berechnung benötigst!</p>` : '';
+  $('#fig').innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Skizze des Dreiecks">${lines}${labels}${hits}</svg>${note}<p class="scalenote">Skizze maßstabsgetreu verkleinert</p>`;
 
   if (task.selecting) {
     document.querySelectorAll('#fig .hit').forEach(el => {
@@ -480,6 +493,7 @@ function addStep(num, title, body) {
   $('#steps').appendChild(d);
   return d;
 }
+const nextNum = () => $('#steps').children.length + 1;
 
 function wrong(d, msg) {
   task.errors++;
@@ -534,8 +548,8 @@ function stepSelectSides() {
   draw();
   const isU = task.costType === 'u';
 
-  const d = addStep(2, 'Welche Seiten brauchst du?', 
-    `<p>Klicke auf die Seiten, die du zur Berechnung benötigst.</p>
+  const d = addStep(2, 'Welche Strecken brauchst du?', 
+    `<p>Klicke in der Skizze auf die Strecken, die du zur Berechnung benötigst.</p>
      <button class="check">Auswahl überprüfen</button>`);
 
   d.querySelector('.check').onclick = () => {
@@ -555,7 +569,11 @@ function stepSelectSides() {
       right(d, 'Richtig! Die Auswahl passt perfekt.');
       stepFormulaChoice();
     } else {
-      wrong(d, isU ? 'Wähle alle 3 Außenkanten a, b und c aus.' : (task.type === 'right' ? 'Wähle die beiden Katheten a und b aus.' : 'Wähle die Grundseite c und die zugehörige Höhe h_c aus.'));
+      let msg;
+      if (isU) msg = sel.includes('h') ? 'Die Höhe liegt innen – sie gehört nicht zum Umfang. Wähle alle 3 Außenkanten a, b und c aus.' : 'Wähle alle 3 Außenkanten a, b und c aus.';
+      else if (task.type === 'right') msg = 'Wähle die beiden Katheten a und b aus – die Seiten, die den rechten Winkel bilden.';
+      else msg = 'Wähle die Grundseite c und die zugehörige Höhe h_c aus (rot gestrichelt).';
+      wrong(d, msg);
     }
   };
 }
@@ -563,16 +581,13 @@ function stepSelectSides() {
 function stepFormulaChoice() {
   const isU = task.costType === 'u';
   let correctOpt = isU ? 'u = a + b + c' : (task.type === 'right' ? 'A = (a · b) / 2' : 'A = (c · h_c) / 2');
-  let opt2 = isU ? 'u = a · b · c' : 'A = (a · b) / 2';
-  let opt3 = isU ? 'u = (a · b) / 2' : 'A = (c · h_c) / 2';
+  let opt2 = isU ? 'u = a · b · c' : (task.type === 'right' ? 'A = a · b' : 'A = (a · b) / 2');
+  let opt3 = isU ? 'u = (a · b) / 2' : (task.type === 'right' ? 'A = a + b' : 'A = c · h_c');
 
-  const d = addStep(3, 'Formel aufstellen', 
+  const opts = [correctOpt, opt2, opt3].sort(() => Math.random() - 0.5);
+  const d = addStep(nextNum(), 'Formel aufstellen', 
     `<p>Wähle die passende Formel aus:</p>
-     <div class="opts">
-       <button class="opt" data-f="${correctOpt}">${correctOpt}</button>
-       <button class="opt" data-f="${opt2}">${opt2}</button>
-       <button class="opt" data-f="${opt3}">${opt3}</button>
-     </div>`);
+     <div class="opts">${opts.map(o => `<button class="opt" data-f="${o}">${o}</button>`).join('')}</div>`);
 
   d.querySelectorAll('.opt').forEach(btn => {
     btn.onclick = () => {
@@ -597,7 +612,7 @@ function stepInsertValues(isU) {
     bodyHTML = `<div class="eq"><span>A =</span><div class="frac"><div class="frac-top"><input class="n" id="v1"><span>·</span><input class="n" id="v2"></div><div class="frac-bot"><input class="n" value="2" id="vBot" style="width:45px"></div></div><button class="check" id="insBtn">Prüfen</button></div>`;
   }
 
-  const d = addStep(4, 'Zahlen in die Formel einsetzen', `<p>Trage die Werte aus der Skizze ein:</p>` + bodyHTML);
+  const d = addStep(nextNum(), 'Zahlen in die Formel einsetzen', `<p>Trage die Werte aus der Skizze ein:</p>` + bodyHTML);
 
   $('#insBtn').onclick = () => {
     if (isU) {
@@ -611,7 +626,7 @@ function stepInsertValues(isU) {
         addWay(`u = ${fmt(task.a)} + ${fmt(task.b)} + ${fmt(task.c)}`);
         stepCalculateMain(true);
       } else {
-        wrong(d, 'Vergleiche die Eingaben mit den Kantenlängen.');
+        wrong(d, 'Vergleiche die Eingaben mit den Kantenlängen in der Skizze.');
       }
     } else {
       const t1 = parseNum($('#v1').value);
@@ -632,11 +647,10 @@ function stepInsertValues(isU) {
 }
 
 function stepCalculateMain(isU) {
-  const stepNum = $('#steps').children.length + 1;
   const targetVal = isU ? task.u : task.A;
   const unitStr = isU ? task.unit : task.unit + '²';
 
-  const d = addStep(stepNum, isU ? 'Umfang u berechnen' : 'Flächeninhalt A berechnen', 
+  const d = addStep(nextNum(), isU ? 'Umfang u berechnen' : 'Flächeninhalt A berechnen', 
     `<p>Rechne das Zwischenergebnis aus:</p>
      <div class="eq"><span>${isU ? 'u' : 'A'} =</span><input class="n wide" id="resInp"><span>${unitStr}</span><button class="check" id="resBtn">Prüfen</button></div>`);
 
@@ -661,7 +675,7 @@ function stepCalculateMain(isU) {
 
 function stepConvertM2() {
   const aM2 = task.A / 10000;
-  const d = addStep(5, 'Umrechnung in m²', 
+  const d = addStep(nextNum(), 'Umrechnung in m²', 
     `<p>Rechne A = ${fmt(task.A)} cm² in m² um (durch 10 000 teilen):</p>
      <div class="eq"><span>A =</span><input class="n wide" id="m2Inp"><span>m²</span><button class="check" id="m2Btn">Prüfen</button></div>`);
 
@@ -681,15 +695,15 @@ function stepConvertM2() {
 function stepMultiplier() {
   const singleM2 = task.convertToM2 ? task.A / 10000 : task.A;
   const totalM2 = singleM2 * task.multiplier;
-  const d = addStep(6, 'Gesamtfläche berechnen', 
+  const d = addStep(nextNum(), 'Gesamtfläche berechnen', 
     `<p>Multipliziere mit der Anzahl der Flächen (${task.multiplier}):</p>
      <div class="eq"><span>A_gesamt =</span><input class="n wide" id="multiInp"><span>m²</span><button class="check" id="multiBtn">Prüfen</button></div>`);
 
-  $('#multiInp').onclick = () => {
+  $('#multiBtn').onclick = () => {
     const val = parseNum($('#multiInp').value);
     if (Math.abs(val - totalM2) < 0.05) {
       right(d, `Gesamte Fläche = ${fmt(totalM2)} m²`);
-      addWay(`A_gesamt = ${fmt(totalM2)} m²`);
+      addWay(`A_gesamt = ${fmt(singleM2)} · ${task.multiplier} = ${fmt(totalM2)} m²`);
       stepCalcCost();
     } else {
       wrong(d, `Multipliziere ${fmt(singleM2)} mit ${task.multiplier}.`);
@@ -698,29 +712,26 @@ function stepMultiplier() {
 }
 
 function stepCalcCost() {
-  const stepNum = $('#steps').children.length + 1;
-  const d = addStep(stepNum, 'Kostenberechnung & Antwort', 
+  const d = addStep(nextNum(), 'Kostenberechnung & Antwort', 
     `<p>Berechne die Endkosten (${fmt(task.costPerUnit)} ${task.costUnit} pro Einheit):</p>
      <div class="eq"><span>Kosten =</span><input class="n wide" id="cInp"><span>€</span><button class="check" id="cBtn">Prüfen</button></div>`);
 
+  const base = task.costType === 'u' ? task.u : task.costType === 'A_multi' ? (task.convertToM2 ? task.A / 10000 : task.A) * task.multiplier : (task.convertToM2 ? task.A / 10000 : task.A);
   $('#cBtn').onclick = () => {
     const val = parseNum($('#cInp').value);
     if (Math.abs(val - task.totalCost) < 0.1) {
       right(d, `Perfekt! ${task.costName} = ${fmt(task.totalCost)} €`);
-      
-      const calcLine = `Rechnung: ${task.costType === 'u' ? fmt(task.u) : (task.convertToM2 ? fmt(task.A/10000) : fmt(task.A))} · ${fmt(task.costPerUnit)} = ${fmt(task.totalCost)} €`;
-      addWay(calcLine);
+      addWay(`Rechnung: ${fmt(base)} · ${fmt(task.costPerUnit)} = ${fmt(task.totalCost)} €`);
       addWay(`Antwort: ${task.answerText} ${fmt(task.totalCost)} €.`);
-      
       addWay(`Ergebnis: ${fmt(task.totalCost)} €`, 'final');
-      finish();
+      finish(base);
     } else {
-      wrong(d, `Multipliziere den Wert mit dem Preis von ${fmt(task.costPerUnit)} €.`);
+      wrong(d, `Multipliziere ${fmt(base)} mit dem Preis von ${fmt(task.costPerUnit)} €.`);
     }
   };
 }
 
-function finish() {
+function finish(base) {
   state.solved++;
   if (task.errors === 0) state.perfect++;
   state.idx++;
@@ -729,7 +740,7 @@ function finish() {
     title: task.title,
     section: task.section,
     res: fmt(task.totalCost) + ' €',
-    calc: task.costType === 'u' ? `${fmt(task.u)} · ${fmt(task.costPerUnit)} = ${fmt(task.totalCost)} €` : `${fmt(task.A)} · ${fmt(task.costPerUnit)} = ${fmt(task.totalCost)} €`,
+    calc: `${fmt(base)} · ${fmt(task.costPerUnit)} = ${fmt(task.totalCost)} €`,
     answer: `${task.answerText} ${fmt(task.totalCost)} €.`,
     errors: task.errors,
     time: Math.round((Date.now() - task.t0) / 1000) + 's'
