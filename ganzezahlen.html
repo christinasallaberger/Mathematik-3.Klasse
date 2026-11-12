@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ganze Zahlen gemischt – Klammern auflösen, Punkt vor Strich</title>
+<meta name="uebersicht-kapitel" content="Ganze Zahlen">
+<meta name="uebersicht-thema" content="Gemischte Rechnungen mit ganzen Zahlen (+, −, ·, :)">
+<meta name="uebersicht-info" content="Klammern auflösen (Vorzeichenregeln), · und : gleich ausrechnen, Ergebnis – Standard: je eine Rechnung, AHS: 2–3 Rechnungen; Zahlen steigen von Runde zu Runde (bis in die 40er)">
+<meta name="uebersicht-gruppe" content="3. Klasse">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fraunces:opsz,wght@9..144,600;9..144,800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F7F9FC; --grid:#DCE6F2; --ink:#1B2F6B; --text:#1E2533; --muted:#5B6578;
+  --card:#FFFFFF; --line:#C9D5E6; --ok:#217A4B; --okbg:#E3F4EA; --bad:#B3261E; --badbg:#FBE7E5;
+  --mark:#FFE873; --field:#FFFFFF; --info:#EAF1FB; --accent:#147D92;
+  --c1:#D99A00; --c2:#1E73D6; --c3:#2E8B3A; --c4:#D81B60; --c5:#8E24AA; --c6:#E8590C;
+  color-scheme: light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#111827; --grid:#1C2638; --ink:#A9C1FF; --text:#E6EAF2; --muted:#9AA4B8;
+    --card:#172033; --line:#2C3A55; --ok:#5FD08E; --okbg:#173326; --bad:#FF8A80; --badbg:#3A1C1C;
+    --mark:#6B5A12; --field:#0F1726; --info:#1A2740; --accent:#5CC8DC;
+    --c1:#FFD54F; --c2:#64B5F6; --c3:#81C784; --c4:#F48FB1; --c5:#CE93D8; --c6:#FFAB76; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#111827; --grid:#1C2638; --ink:#A9C1FF; --text:#E6EAF2; --muted:#9AA4B8;
+  --card:#172033; --line:#2C3A55; --ok:#5FD08E; --okbg:#173326; --bad:#FF8A80; --badbg:#3A1C1C;
+  --mark:#6B5A12; --field:#0F1726; --info:#1A2740; --accent:#5CC8DC;
+  --c1:#FFD54F; --c2:#64B5F6; --c3:#81C784; --c4:#F48FB1; --c5:#CE93D8; --c6:#FFAB76; color-scheme: dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+[hidden]{display:none!important}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0; color:var(--text); font-family:"Atkinson Hyperlegible",system-ui,"Segoe UI",Arial,sans-serif;
+  font-size:1.0625rem; line-height:1.5;
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+}
+.wrap{max-width:60rem;margin:0 auto;padding:1.5rem 1rem 4rem}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:1rem;margin:1rem 0 2rem}
+h1{font-family:Fraunces,Georgia,serif;font-weight:800;color:var(--ink);font-size:clamp(2.1rem,6vw,3.5rem);line-height:1.02;margin:0;letter-spacing:-.01em}
+h1 .acc{color:var(--accent)}
+.sub{color:var(--muted);margin:.5rem 0 0;max-width:42rem}
+.top{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
+.score{font-weight:700;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:999px;padding:.35rem .9rem}
+button{font:inherit;cursor:pointer;border-radius:.5rem;border:2px solid var(--ink);background:var(--ink);color:var(--paper);padding:.45rem .9rem;font-weight:700}
+button.ghost{background:transparent;color:var(--ink)}
+button:disabled{cursor:default;opacity:.45}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--mark);outline-offset:2px}
+button.mini{font-size:.85rem;padding:.1rem .55rem;background:transparent;color:var(--ink);border-width:1.5px}
+section{background:var(--card);border:2px solid var(--line);border-radius:.75rem;padding:1.25rem 1.25rem 1rem;margin:0 0 1.5rem}
+.head{display:flex;gap:.8rem;align-items:baseline;flex-wrap:wrap}
+.num{font-family:Fraunces,Georgia,serif;font-weight:800;font-size:1.6rem;color:var(--ink);min-width:1.4em}
+h2{font-size:1.15rem;margin:0}
+h3{font-size:1.05rem;margin:0 0 .4rem;color:var(--ink)}
+sup{font-size:.68em;margin-left:.04em}
+.lvl{font-size:.9rem;font-weight:700;color:var(--accent)}
+input{font:inherit;font-size:1.15rem;color:var(--text);background:var(--field);border:2px solid var(--line);border-radius:.4rem;padding:.25rem .5rem}
+input.ok{border-color:var(--ok);background:var(--okbg)}
+input.bad{border-color:var(--bad);background:var(--badbg)}
+.actions{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;margin-top:.6rem}
+.hint{color:var(--muted);font-size:.95rem;margin:.4rem 0 0}
+.msg{margin:.6rem 0 0;font-size:.97rem;display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+.msg.ok{color:var(--ok);font-weight:700}.msg.bad{color:var(--bad)}.msg.shown{color:var(--muted)}
+.prev{color:var(--muted);font-size:1.1rem}
+.prev b{color:var(--text);font-weight:400}
+
+details.info{background:var(--info);border:0;border-left:6px solid var(--ink);border-radius:.5rem;padding:.7rem 1rem;margin:0 0 1.5rem}
+details.info summary{cursor:pointer;font-weight:700;color:var(--ink)}
+details.info p{margin:.5rem 0}
+.copy{background:var(--mark);color:var(--text);border-radius:.4rem;padding:.4rem .7rem;margin:.6rem 0!important}
+.rule{font-size:1.15rem}
+
+.nav{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem}
+.dots{display:flex;gap:.3rem;flex-wrap:wrap}
+.dot{width:2.2rem;height:2.2rem;border-radius:50%;padding:0;font-weight:700;font-size:.9rem;background:var(--field);color:var(--ink);border:2px solid var(--line)}
+.dot.started{background:var(--info)}
+.dot.done{background:var(--okbg);border-color:var(--ok);color:var(--ok)}
+.dot.shown{border-style:dashed}
+.dot.cur{border-color:var(--ink);box-shadow:0 0 0 3px var(--mark)}
+.round{margin-left:auto;color:var(--muted);font-size:.9rem;border:1.5px solid var(--line);border-radius:999px;padding:.1rem .6rem}
+
+.taskline{font-size:1.6rem;margin:.9rem 0 .3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.2rem}
+.tchip{font:inherit;font-size:1.6rem;font-weight:400;background:transparent;color:var(--text);border:0;border-bottom:5px solid transparent;border-radius:0;padding:0 .2rem .05rem;line-height:1.35;cursor:pointer}
+.tchip:hover{background:var(--info)}
+.tchip.k1{border-bottom-color:var(--c1)}.tchip.k2{border-bottom-color:var(--c2)}.tchip.k3{border-bottom-color:var(--c3)}.tchip.k4{border-bottom-color:var(--c4)}.tchip.k5{border-bottom-color:var(--c5)}.tchip.k6{border-bottom-color:var(--c6)}
+.gt{text-decoration:underline;text-decoration-thickness:4px;text-underline-offset:.3em}
+.g1{text-decoration-color:var(--c1)}.g2{text-decoration-color:var(--c2)}.g3{text-decoration-color:var(--c3)}.g4{text-decoration-color:var(--c4)}.g5{text-decoration-color:var(--c5)}.g6{text-decoration-color:var(--c6)}
+.palette{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin:.3rem 0}
+.pal{width:2.6rem;height:2.2rem;padding:0;background:var(--field);border:2px solid var(--line);border-radius:.4rem;position:relative}
+.pal::after{content:"";position:absolute;left:.45rem;right:.45rem;bottom:.55rem;height:5px;border-radius:3px;background:currentColor}
+.pal.u1{color:var(--c1)}.pal.u2{color:var(--c2)}.pal.u3{color:var(--c3)}.pal.u4{color:var(--c4)}.pal.u5{color:var(--c5)}.pal.u6{color:var(--c6)}
+.pal.sel{border-color:var(--ink);box-shadow:0 0 0 3px var(--mark)}
+.markmsg{font-size:.95rem;margin:.3rem 0 0}
+.markmsg.ok{color:var(--ok);font-weight:700}.markmsg.bad{color:var(--bad)}
+.stepcard{border:2px solid var(--ink);border-radius:.6rem;padding:.8rem 1rem;margin-top:1rem}
+.stepcard.done{border-color:var(--ok)}
+.donetxt{color:var(--ok);font-weight:700}
+.row{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin:.5rem 0;font-size:1.3rem}
+.row input{width:18rem;max-width:100%}
+.donebox{margin-top:1rem;padding:.8rem 1rem;border-radius:.6rem;background:var(--okbg);border:2px solid var(--ok);display:flex;gap:.8rem;flex-wrap:wrap;align-items:center}
+.donebox b{color:var(--ok)}
+
+.heft{overflow-x:auto;margin:1.2rem 0 .5rem;border:2px dashed var(--line);border-radius:.6rem;background:var(--paper);padding:.8rem 1rem}
+.heft .hefttitle{margin:0 0 .3rem;font-weight:700;color:var(--muted);font-size:.95rem}
+.heft .hl{font-size:1.35rem;color:var(--ink);margin:.3rem 0}
+.heft .fin{font-weight:700}
+.heft .small{font-size:1rem;color:var(--muted)}
+.heft .copy{font-size:1rem}
+
+.startcard{border-color:var(--ink);border-width:3px}
+.startcard h2{font-family:Fraunces,Georgia,serif;font-size:1.5rem;color:var(--ink)}
+#pname{width:16rem;max-width:100%;font-size:1.15rem}
+#startDone{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap}
+.who{font-weight:700;color:var(--ink);display:inline-flex;align-items:center;gap:.4rem;font-size:1.1rem}
+#codeAsk{margin-top:1rem}
+#codeAsk summary{cursor:pointer;color:var(--ink);font-weight:700}
+#pcode{width:17rem;max-width:100%;font-family:ui-monospace,Consolas,"Courier New",monospace;text-transform:uppercase;letter-spacing:.05em}
+#pnameErr{color:var(--bad);margin:.6rem 0 0}
+#startMsg{flex-basis:100%;margin:0;color:var(--ok);font-weight:700}
+#startMsg:empty{display:none}
+#codeBox{flex-basis:100%;background:var(--info);border-left:6px solid var(--ink);border-radius:.5rem;padding:.7rem 1rem}
+#codeBox p{margin:.3rem 0}
+.code{font-family:ui-monospace,Consolas,"Courier New",monospace;font-size:1.35rem;font-weight:700;letter-spacing:.06em;color:var(--ink);word-break:break-all}
+.finish{display:flex;justify-content:center;margin:0 0 1.5rem}
+#summary{border-color:var(--ink);border-width:3px}
+#summary .who{margin:.4rem 0 0;color:var(--muted)}
+#summary .who b{color:var(--text)}
+.summsg{font-size:1.2rem;font-weight:700;color:var(--ink);margin:.6rem 0 1rem}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:30rem}
+th,td{text-align:left;padding:.4rem .6rem;border-bottom:1px solid var(--line)}
+td.c,th.c{text-align:center}
+tfoot td{font-weight:700;border-bottom:0;border-top:2px solid var(--ink)}
+body.locked #main{opacity:.35;filter:grayscale(.4);pointer-events:none;user-select:none}
+
+#pad{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--card);border-top:3px solid var(--ink);
+  padding:.5rem .6rem calc(.5rem + env(safe-area-inset-bottom,0px));box-shadow:0 -4px 16px rgba(27,47,107,.15)}
+#pad .padtop{display:flex;align-items:center;gap:.5rem;max-width:34rem;margin:0 auto .4rem;color:var(--muted);font-size:.9rem}
+#pad .padtop span{margin-right:auto;font-weight:700;color:var(--ink)}
+#pad .keys{display:grid;grid-template-columns:repeat(7,1fr);gap:.3rem;max-width:34rem;margin:0 auto}
+#pad .keys button{padding:.55rem 0;font-size:1.15rem;font-weight:700;background:var(--field);color:var(--text);border:2px solid var(--line);border-radius:.45rem;touch-action:manipulation}
+#pad .keys button.var{font-style:italic;font-family:Georgia,serif}
+#pad .keys button.op{background:var(--info)}
+#pad .keys button.go{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+body.padon .wrap{padding-bottom:20rem}
+
+.levels{display:inline-flex;border:2px solid var(--ink);border-radius:999px;overflow:hidden;margin-top:1rem}
+.levels button{border:0;border-radius:0;background:transparent;color:var(--ink);padding:.45rem 1.1rem}
+.levels button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.stepcard.active{border-color:var(--ink)}
+.stepcard:not(.active):not(.done){border-color:var(--line)}
+.stepcard p{margin:.3rem 0}
+.task-expr{font-size:1.6rem;margin:.8rem 0 .3rem;font-family:Georgia,"Times New Roman",serif;overflow-x:auto;white-space:nowrap}
+.trow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:.45rem 0;font-size:1.3rem}
+.trow .given{min-width:9.5rem;font-family:Georgia,serif;white-space:nowrap}
+.trow .arrow{color:var(--muted)}
+.trow input{width:8rem}
+.trow .rowmsg{flex-basis:100%;font-size:.92rem;color:var(--bad)}
+.trow .rowmsg:empty{display:none}
+.line{font-size:1.35rem;font-family:Georgia,serif;margin:.4rem 0;white-space:nowrap;overflow-x:auto}
+.neg{color:var(--bad)}
+.sumafter{margin-top:.8rem;padding:.6rem .9rem;border-radius:.5rem;background:var(--mark);color:var(--text)}
+.calc{margin:.8rem 0 0;padding:.8rem 1rem;border:2px solid var(--ink);border-radius:.6rem;background:var(--card)}
+.cl{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;font-family:Georgia,"Times New Roman",serif;font-size:1.5rem;margin:.35rem 0;white-space:nowrap}
+.cl.task{font-size:1.6rem;overflow-x:auto}
+.cl.ok{color:var(--ok)}
+.cl .tick{font-family:"Atkinson Hyperlegible",sans-serif;font-size:1.1rem}
+.cl .eqs{min-width:1rem}
+.cl input.linein{font-family:Georgia,serif;font-size:1.35rem;width:min(26rem,100%);flex:0 1 26rem}
+.cl .lbl{font-family:"Atkinson Hyperlegible",sans-serif;font-size:.85rem;color:var(--muted)}
+.calc .msg{margin:.2rem 0 .4rem 1.5rem}
+.rtab{border-collapse:collapse;width:auto;min-width:0;margin:.3rem 0}
+.rtab td{padding:.2rem .8rem;border-bottom:1px solid var(--line);font-size:1.1rem;font-family:Georgia,serif}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Ganze Zahlen <span class="acc">gemischt</span></h1>
+      <p class="sub">Plus, minus, mal und durch mit positiven und negativen Zahlen. Jede Runde werden die Zahlen etwas größer. Zuerst löst du die Klammern auf – mal und durch rechnest du dabei gleich aus. Mit ◀ ▶ oder den Nummern springst du zwischen den Beispielen.</p>
+      <div class="levels" role="group" aria-label="Niveau">
+        <button type="button" data-level="std" aria-pressed="true">Standard</button>
+        <button type="button" data-level="ahs" aria-pressed="false">Standard AHS</button>
+      </div>
+    </div>
+    <div class="top"><span class="score" id="score">0 von 8 fertig</span></div>
+  </header>
+
+  <section id="start" class="startcard">
+    <div id="startAsk">
+      <h2>Wie heißt du?</h2>
+      <p class="hint">Gib zuerst deinen Namen ein. Er steht am Ende in deiner Auswertung und kann danach nicht mehr geändert werden. Hast du auf diesem Gerät schon geübt, machst du automatisch dort weiter, wo du aufgehört hast.</p>
+      <div class="actions"><input id="pname" placeholder="Vor- und Nachname" autocomplete="name" aria-label="Dein Name"><button id="startBtn" type="button">Los geht’s</button></div>
+      <details id="codeAsk">
+        <summary>Auf einem anderen Gerät angefangen? Code eingeben</summary>
+        <p class="hint">Schreib oben deinen Namen genau wie auf dem anderen Gerät und tippe hier den Code ein.</p>
+        <div class="actions"><input id="pcode" placeholder="z. B. K7MP-2XQ9" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Code vom anderen Gerät"></div>
+      </details>
+      <p id="pnameErr" hidden></p>
+    </div>
+    <div id="startDone" hidden>
+      <span class="who">👤 <b id="pnameShow"></b></span>
+      <button type="button" class="mini" id="codeBtn" aria-expanded="false">Auf anderem Gerät weitermachen</button>
+      <p id="startMsg" aria-live="polite"></p>
+      <div id="codeBox" hidden>
+        <p>Dein Code: <span class="code" id="codeShow"></span> <button type="button" class="mini" id="codeCopy">Kopieren</button></p>
+        <p class="hint">Öffne die Übung auf dem anderen Gerät, gib <b>genau denselben Namen</b> ein und tippe diesen Code ein. Der Code ändert sich, während du weiterarbeitest – schreib ihn dir erst auf, wenn du hier aufhörst.</p>
+      </div>
+    </div>
+  </section>
+
+  <div id="main">
+    <section id="exCard"></section>
+
+    <details class="info" id="howto" open>
+      <summary>Zusammenfassung – schreib sie in dein Heft!</summary>
+      <p class="copy">✏️ <b>Schreib diese Zusammenfassung mit dem Beispiel ordentlich in dein Heft ab.</b></p>
+      <p><b>1. Klammern auflösen</b> – Rechenzeichen und Vorzeichen werden zu <b>einem</b> Zeichen:</p>
+      <table class="rtab">
+        <tr><td>+ (+5)</td><td>= + 5</td><td>gleiche Zeichen → <b>+</b></td></tr>
+        <tr><td>− (−5)</td><td>= + 5</td><td>gleiche Zeichen → <b>+</b></td></tr>
+        <tr><td>+ (−5)</td><td>= − 5</td><td>verschiedene Zeichen → <b>−</b></td></tr>
+        <tr><td>− (+5)</td><td>= − 5</td><td>verschiedene Zeichen → <b>−</b></td></tr>
+      </table>
+      <p>Bei <b>mal</b> und <b>durch</b> bestimmst du das Vorzeichen und rechnest <b>gleich aus</b>: Zähle alle Minuszeichen (Rechenzeichen davor und Vorzeichen in den Klammern) – <b>gerade</b> Anzahl → <b>+</b>, <b>ungerade</b> Anzahl → <b>−</b>.<br>
+        − (−4) · (+5) → 2 Minuszeichen → + 20 &nbsp;&nbsp;·&nbsp;&nbsp; + (−24) : (+6) → 1 Minuszeichen → − 4</p>
+      <p><b>2. Ergebnis:</b> Von links nach rechts rechnen. Tipp: Alle Plus-Zahlen zusammenzählen, alle Minus-Zahlen zusammenzählen, dann die Differenz bilden.</p>
+      <p><b>Beispiel:</b></p>
+      <p class="line">(−8) + (+15) − (−4) · (+5) − (+24) : (−6)</p>
+      <p class="line">= − 8 + 15 + 20 + 4</p>
+      <p class="line">= 31</p>
+      <p class="hint">Eingabe: z. B. -8 + 15 + 20 + 4</p>
+    </details>
+
+    <div class="finish"><button class="ghost" id="showSum" type="button">Auswertung anzeigen</button></div>
+
+    <section id="summary" hidden>
+      <div class="head"><h2 id="sumTitle">Auswertung</h2></div>
+      <p id="sumWho" class="who"></p>
+      <p id="sumMsg" class="summsg"></p>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Beispiel</th><th>Ergebnis</th><th>Bewertung</th><th class="c">Fehlversuche</th></tr></thead>
+        <tbody id="sumBody"></tbody>
+        <tfoot id="sumFoot"></tfoot>
+      </table></div>
+      <div class="actions" style="margin-top:1rem"><button type="button" id="newRound2">Neue Runde mit neuen Beispielen</button></div>
+    </section>
+  </div>
+</div>
+
+<div id="pad" hidden role="group" aria-label="Eingabehilfe">
+  <div class="padtop"><span>Eingabehilfe</span>
+    <button type="button" class="mini" id="padSys">Handy-Tastatur einblenden</button>
+    <button type="button" class="mini" id="padHide" aria-label="Eingabehilfe schließen">✕</button>
+  </div>
+  <div class="keys">
+    <button type="button" data-ins="7">7</button><button type="button" data-ins="8">8</button><button type="button" data-ins="9">9</button><button type="button" class="op" data-ins="+">+</button><button type="button" class="op" data-ins="-" aria-label="minus">−</button><button type="button" class="op" data-act="del" aria-label="Löschen">⌫</button><button type="button" class="op" data-act="clr" aria-label="Feld leeren">C</button>
+    <button type="button" data-ins="4">4</button><button type="button" data-ins="5">5</button><button type="button" data-ins="6">6</button><button type="button" class="op" data-ins="·" aria-label="mal">·</button><button type="button" class="op" data-ins=":" aria-label="geteilt">:</button><button type="button" class="op" data-act="left" aria-label="Cursor nach links">◀</button><button type="button" class="op" data-act="right" aria-label="Cursor nach rechts">▶</button>
+    <button type="button" data-ins="1">1</button><button type="button" data-ins="2">2</button><button type="button" data-ins="3">3</button><button type="button" data-ins="0">0</button><button type="button" class="go" data-act="ok" style="grid-column:span 3">✓ fertig</button>
+  </div>
+</div>
+
+<script>
+/* ================= Hilfsfunktionen ================= */
+let RNG=Math.random;
+const rnd=(a,b)=>a+Math.floor(RNG()*(b-a+1));
+const pick=a=>a[rnd(0,a.length-1)];
+const sg=()=>RNG()<.5?1:-1;
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=rnd(0,i);[a[i],a[j]]=[a[j],a[i]];}return a;}
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296;};}
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const MINUS='−';
+const sgnH=s=>s<0?MINUS:'+';
+const numH=n=>n<0?MINUS+(-n):String(n);
+
+/* ================= Aufgaben ================= */
+/* Glied: {op: +1/-1 (Rechenzeichen davor, beim ersten Glied +1), nums: [{s:±1, a:Betrag}], kind: 'n' | '·' | ':'} */
+const N_EX=8,DONE=3;  /* Schritte: 0 Klammern auflösen · 1 Punkt vor Strich · 2 Ergebnis · 3 fertig */
+function termSign(t){return t.op*t.nums.reduce((p,n)=>p*n.s,1);}
+function termAbs(t){if(t.kind==='n')return t.nums[0].a;let v=t.nums[0].a;t.ops.forEach((o,k)=>{v=o==='·'?v*t.nums[k+1].a:v/t.nums[k+1].a;});return v;}
+/* erster Rechenschritt einer Punkt-Kette als Hinweis, z. B. „3 · 4“ */
+const firstStep=t=>t.nums[0].a+' '+t.ops[0]+' '+t.nums[1].a;
+const termVal=t=>termSign(t)*termAbs(t);
+const minusCount=t=>(t.op<0?1:0)+t.nums.filter(n=>n.s<0).length;
+/* Zahlenbereich: jede Runde etwas größer (10 → 20 → 30 → 40er, dann bleibt es dabei),
+   innerhalb einer Runde vom 1. bis zum 8. Beispiel langsam steigend. Beim Dividieren darf die geteilte Zahl größer sein. */
+const ROUNDCAP=[10,20,30,49];
+function capFor(round,i){const c=ROUNDCAP[Math.min(round,ROUNDCAP.length)-1];return Math.max(5,Math.round(c*(0.5+0.5*i/(N_EX-1))));}
+function mkN(cap){return {kind:'n',nums:[{s:sg(),a:rnd(1,cap)}]};}
+/* Punkt-Kette mit n Rechenzeichen (· und :), von links nach rechts ganzzahlig, alle Zwischenergebnisse bis 100 */
+function mkChain(cap,nOps){
+  const m=Math.min(10,cap);
+  for(let g=0;g<800;g++){
+    const ops=Array.from({length:nOps},()=>RNG()<.5?'·':':');
+    let first=ops[0]===':'?rnd(2,Math.min(12,cap))*rnd(2,m):rnd(2,m);
+    if(first>100)continue;
+    let acc=first,ok=true;const nums=[first];
+    for(const o of ops){
+      if(o==='·'){const b=rnd(2,m);if(acc*b>100){ok=false;break;}acc*=b;nums.push(b);}
+      else{const ds=[];for(let b=2;b<=m;b++)if(acc%b===0&&acc/b>=2)ds.push(b);if(!ds.length){ok=false;break;}const b=pick(ds);acc/=b;nums.push(b);}
+    }
+    if(!ok||acc<1)continue;
+    return {kind:'p',ops,nums:nums.map(a=>({s:sg(),a}))};
+  }
+}
+/* Standard: immer nur EINE Rechnung (zwei Zahlen). Standard AHS: 2–3 Rechnungen.
+   Strich- und Punktrechnung werden NICHT gemischt; gleich viele von beiden, abwechselnd. */
+const PLAN={
+  std:[['S',2],['P',1],['S',2],['P',1],['S',2],['P',1],['S',2],['P',1]],
+  ahs:[['S',3],['P',2],['S',3],['P',2],['S',4],['P',3],['S',4],['P',3]]
+};
+function genTask(spec,lvl,cap){
+  const [type,n]=spec;
+  for(let g=0;g<600;g++){
+    let terms;
+    if(type==='P'){const c=mkChain(cap,n);if(!c)continue;c.op=1;terms=[c];}
+    else terms=Array.from({length:n},(x,i)=>{const t=mkN(cap);t.op=i?sg():1;return t;});
+    const v=terms.reduce((s,t)=>s+termVal(t),0);
+    if(Math.abs(v)>100)continue;
+    let run=0,okRun=true;terms.forEach(t=>{run+=termVal(t);if(Math.abs(run)>100)okRun=false;});if(!okRun)continue;
+    if(!terms.some(t=>minusCount(t)>=1))continue;
+    if(type==='S'&&n>2&&!terms.some(t=>t.op<0))continue;
+    return {terms,res:v,hasPunkt:type==='P'};
+  }
+}
+function mixSeed(seed,lvl,round){return (Math.imul(seed^0x9E3779B9,0x85EBCA6B)^Math.imul(lvl==='ahs'?2:1,0xC2B2AE35)^Math.imul(round,0x27D4EB2F))>>>0;}
+function genRound(lvl,seed,round){
+  const old=RNG;RNG=mulberry32(mixSeed(seed,lvl,round));
+  try{return PLAN[lvl].map((k,i)=>genTask(k,lvl,capFor(round,i)));}finally{RNG=old;}
+}
+function newEx(t){return {t,step:0,err:0,shown:false,msg:{},tries:[0,0,0],lv:['','',''],lm:[null,null,null]};}
+/* Zeile 1: Klammern auflösen – · und : werden dabei gleich mit dem richtigen Vorzeichen ausgerechnet.
+   Zeile 2: Ergebnis (entfällt, wenn nur eine Mal- oder Durch-Rechnung dasteht). */
+const applies=(e,s)=>s===1?false:s===2?e.t.terms.length>1:true;
+const nextStep=(e,s)=>{let n=s+1;while(n<DONE&&!applies(e,n))n++;return n;};
+
+/* Anzeige */
+function termGivenH(t,i){
+  const br=n=>'('+sgnH(n.s)+n.a+')';
+  const body=t.kind==='n'?br(t.nums[0]):t.nums.map((n,k)=>(k?' '+t.ops[k-1]+' ':'')+br(n)).join('');
+  return (i?(t.op<0?' − ':' + '):'')+body;
+}
+const taskH=t=>t.terms.map(termGivenH).join('');
+/* Glied ohne Klammern, z. B. − 4 · 5 */
+function termOpenH(t,i){const s=termSign(t),body=t.kind==='n'?String(t.nums[0].a):t.nums.map((n,k)=>(k?' '+t.ops[k-1]+' ':'')+n.a).join('');
+  return i?(s<0?' − ':' + ')+body:(s<0?MINUS+' ':'')+body;}
+const openLineH=t=>t.terms.map(termOpenH).join('');
+const valLineH=t=>t.terms.map((x,i)=>{const s=termSign(x),a=termAbs(x);return i?(s<0?' − ':' + ')+a:(s<0?MINUS+' ':'')+a;}).join('');
+
+/* ================= Zustand ================= */
+const LEVELS={std:'Standard',ahs:'Standard AHS'};
+const G={std:{seed:Math.floor(Math.random()*65536),round:1,cur:0,ex:[]},ahs:{seed:Math.floor(Math.random()*65536),round:1,cur:0,ex:[]}};
+let level=location.hash==='#ahs'?'ahs':'std',PUPIL='',restoring=false,summaryRequested=false;
+function makeRound(lvl){const g=G[lvl];g.ex=genRound(lvl,g.seed,g.round).map(newEx);g.cur=0;}
+const curG=()=>G[level],curEx=()=>curG().ex[curG().cur];
+
+/* ================= Prüfen ================= */
+function fail(e,s,text){e.err++;e.tries[s]++;e.msg[s]={kind:'bad',text:text+(e.tries[s]===1?' Versuch es nochmal!':''),offer:e.tries[s]>=2};}
+function hint(e,s,text){e.msg[s]={kind:'bad',text,offer:e.tries[s]>=2};}
+function advance(e,s,text){e.step=nextStep(e,s);e.msg[s]={kind:'ok',text};}
+function rowCheck(e,s,rs,marks,hints,okText,failText){
+  rs.forEach((r,k)=>{if(r.skip)return;marks[k]=r.ok?'ok':r.empty?null:'bad';hints[k]=r.ok?'':r.text;});
+  const act=rs.filter(r=>!r.skip);
+  if(act.every(r=>r.ok)){advance(e,s,okText);return;}
+  if(act.some(r=>r.empty)){hint(e,s,'Fülle zuerst alle Felder aus.');return;}
+  if(act.every(r=>r.ok||r.fmt)){hint(e,s,'Kontrolliere die Schreibweise in den markierten Zeilen.');return;}
+  fail(e,s,failText);
+}
+/* Eine ganze Zeile lesen, z. B. -8 + 15 + 4·5 + 24:6 */
+function readLine(str){
+  const s=String(str).replace(/[−–—]/g,'-').replace(/[*×xX]/g,'·').replace(/\s+/g,'');
+  if(!s)return {empty:true};
+  if(/[()]/.test(s))return {err:'Lass die Klammern weg.'};
+  if(/[^0-9+\-·:]/.test(s))return {err:'Das Zeichen „'+s.match(/[^0-9+\-·:]/)[0]+'“ kann ich nicht lesen.'};
+  if(/[+\-·:]{2,}/.test(s))return {err:'Zwischen zwei Zahlen steht genau ein Rechenzeichen.'};
+  if(!/^[+-]?\d+([·:]\d+)*([+-]\d+([·:]\d+)*)*$/.test(s))return {err:'Da fehlt eine Zahl oder ein Rechenzeichen.'};
+  const terms=[];s.replace(/([+-]?)(\d+(?:[·:]\d+)*)/g,(m,sg,body)=>{const nums=body.split(/[·:]/).map(Number),op=(body.match(/[·:]/)||['n'])[0];
+    terms.push({sign:sg==='-'?-1:1,explicit:!!sg,nums,kind:nums.length>2?'x':op});return m;});
+  return {terms};
+}
+function signHint(t,i){
+  if(t.kind==='n'){
+    if(i===0)return 'Das erste Glied behält einfach sein Vorzeichen aus der Klammer.';
+    const same=t.op===t.nums[0].s;
+    return (t.op<0?'−':'+')+' und '+(t.nums[0].s<0?'−':'+')+' sind '+(same?'gleiche Zeichen → +':'verschiedene Zeichen → −')+'.';
+  }
+  const c=minusCount(t);return 'Zähle alle Minuszeichen in diesem Glied: '+c+' Stück – '+(c%2?'ungerade → −':'gerade → +')+'.';
+}
+const ord=i=>['1.','2.','3.','4.','5.'][i]||(i+1)+'.';
+function lineFail(e,s,text){e.lm[s]='bad';fail(e,s,text);}
+function lineHint(e,s,text){e.lm[s]='bad';hint(e,s,text);}
+/* Zeile 1: Klammern auflösen, · und : gleich ausrechnen */
+function check0(e){
+  const t=e.t,r=readLine(e.lv[0]),single=t.terms.length===1;
+  if(r.empty)return hint(e,0,single?'Schreib das Ergebnis in die Zeile.':'Schreib die Rechnung ohne Klammern in die Zeile.');
+  if(r.err)return lineHint(e,0,r.err);
+  if(r.terms.some(u=>u.kind!=='n'))return lineHint(e,0,'Bei · und : bestimmst du das Vorzeichen und rechnest gleich aus – schreib nur das Ergebnis, z. B. −24.');
+  if(r.terms.length!==t.terms.length){
+    if(r.terms.length===1&&!single&&r.terms[0].nums[0]===Math.abs(t.res))return lineHint(e,0,'Schreib zuerst die Zeile ohne Klammern an – zusammengerechnet wird in der nächsten Zeile.');
+    return lineFail(e,0,'Jedes Glied aus der Angabe kommt genau einmal vor – hier sind es '+t.terms.length+'.');
+  }
+  for(let i=0;i<t.terms.length;i++){
+    const x=t.terms[i],u=r.terms[i],pre=single?'':'Beim '+ord(i)+' Glied: ';
+    if(u.nums[0]!==termAbs(x))return lineFail(e,0,x.kind==='n'?pre+'Die Zahl bleibt gleich – nur die Klammern verschwinden.':pre+(x.ops.length>1?'Rechne nochmal von links nach rechts – zuerst '+firstStep(x)+'.':'Rechne nochmal: '+firstStep(x)+' = ?'));
+    if(u.sign!==termSign(x))return lineFail(e,0,pre+'Das Vorzeichen stimmt nicht. '+signHint(x,i));
+  }
+  e.lm[0]='ok';advance(e,0,'');
+}
+/* Zeile 2: Punkt vor Strich */
+function check1(e){
+  const t=e.t,r=readLine(e.lv[1]);
+  if(r.empty)return hint(e,1,'Rechne · und : aus und schreib die Zeile an.');
+  if(r.err)return lineHint(e,1,r.err);
+  if(r.terms.some(u=>u.kind!=='n'))return lineHint(e,1,'Rechne alle · und : aus – in dieser Zeile stehen nur noch Zahlen.');
+  if(r.terms.length!==t.terms.length)return lineFail(e,1,'Es bleiben gleich viele Zahlen wie Glieder: '+t.terms.length+'. Zusammengerechnet wird erst in der nächsten Zeile.');
+  for(let i=0;i<t.terms.length;i++){
+    const x=t.terms[i],u=r.terms[i];
+    if(u.nums[0]!==termAbs(x))return lineFail(e,1,x.kind==='n'?'Beim '+ord(i)+' Glied: Die Zahl bleibt gleich, nur · und : werden ausgerechnet.':'Rechne nochmal: '+firstStep(x)+' = ?');
+    if(u.sign!==termSign(x))return lineFail(e,1,'Beim '+ord(i)+' Glied: Das Vorzeichen aus der Zeile darüber bleibt stehen.');
+  }
+  e.lm[1]='ok';advance(e,1,'');
+}
+function readInt(s){const t=String(s).replace(/[−–—]/g,'-').replace(/\s+/g,'');return /^[+-]?\d+$/.test(t)?parseInt(t,10):null;}
+/* Zeile 3: Ergebnis */
+function check2(e){
+  const t=e.t,v=e.lv[2];
+  if(!v.trim())return hint(e,2,'Schreib das Ergebnis in die Zeile.');
+  const n=readInt(v);if(n===null)return lineHint(e,2,'Schreib nur eine Zahl, z. B. −17.');
+  if(n===t.res){e.lm[2]='ok';advance(e,2,'');return;}
+  e.lm[2]='bad';
+  const vals=t.terms.map(termVal),pos=vals.filter(x=>x>0).reduce((a,b)=>a+b,0),neg=-vals.filter(x=>x<0).reduce((a,b)=>a+b,0);
+  if(n===-t.res)return fail(e,2,'Fast! Kontrolliere das Vorzeichen: Sind die Plus-Zahlen oder die Minus-Zahlen mehr?');
+  if(t.terms.length>1&&n===pos+neg)return fail(e,2,'Achtung: Die Minus-Zahlen werden abgezogen, nicht dazugezählt.');
+  if(t.terms.length===1)return fail(e,2,'Rechne nochmal nach.');
+  fail(e,2,'Tipp: Alle Plus-Zahlen zusammen ergeben '+pos+', alle Minus-Zahlen zusammen '+neg+'. Rechne '+pos+' − '+neg+'.');
+}
+const linePlain=html=>html.replace(/−/g,'-').replace(/\s+/g,' ').trim();
+function showSolution(e,s){
+  const t=e.t;
+  e.lv[s]=s===0?linePlain(valLineH(t)):String(t.res);
+  e.lm[s]='ok';e.shown=true;e.msg[s]={kind:'shown',text:'Die Lösung ist jetzt eingetragen – schau sie dir genau an.'};
+  e.step=nextStep(e,s);
+}
+
+/* ================= Anzeige ================= */
+function msgHTML(e,s){const m=e.msg[s];if(!m)return '';
+  return '<p class="msg '+m.kind+'">'+m.text+(m.offer&&e.step===s?' <button type="button" class="mini" data-act="show'+s+'">Lösung zeigen</button>':'')+'</p>';}
+function inp(attr,val,cls,label,ph){return '<input class="pin'+(cls?' '+cls:'')+'" '+attr+' value="'+esc(val)+'" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="'+label+'"'+(ph?' placeholder="'+ph+'"':'')+'>';}
+function exStatus(e){return e.step===DONE?(e.shown?'done shown':'done'):(e.step>0||e.lv[0].trim()?'started':'');}
+function stepNo(e,s){let n=0;for(let k=0;k<=s;k++)if(applies(e,k))n++;return n;}
+function card(e,s,title,body,doneTxt){
+  if(!applies(e,s)||e.step<s)return '';
+  return '<div class="stepcard '+(e.step===s?'active':'done')+'"><h3>'+stepNo(e,s)+'. '+title+'</h3>'+(e.step===s?body:'<div class="donetxt">✓ '+doneTxt+'</div>')+msgHTML(e,s)+'</div>';
+}
+function renderEx(focus){
+  const g=curG(),e=curEx(),t=e.t,cur=g.cur,allDone=g.ex.every(x=>x.step===DONE);
+  let h='<div class="nav"><button type="button" class="ghost" data-act="prev" aria-label="Vorheriges Beispiel"'+(cur===0?' disabled':'')+'>◀</button>'+
+    '<div class="dots" role="group" aria-label="Beispiele">'+g.ex.map((x,k)=>'<button type="button" class="dot '+exStatus(x)+(k===cur?' cur':'')+'" data-go="'+k+'" aria-label="Beispiel '+(k+1)+'"'+(k===cur?' aria-current="true"':'')+'>'+(k+1)+'</button>').join('')+'</div>'+
+    '<button type="button" class="ghost" data-act="next" aria-label="Nächstes Beispiel"'+(cur===N_EX-1?' disabled':'')+'>▶</button>'+
+    '<span class="round">Runde '+g.round+'</span><button type="button" class="mini" data-act="newround">Neue Runde</button></div>';
+  h+='<div class="head"><span class="num">'+(cur+1)+'</span><h2>Berechne!</h2></div>';
+  const single=t.terms.length===1;
+  const LINE=[{label:single?'Vorzeichen bestimmen und ausrechnen':t.hasPunkt?'Klammern auflösen, · und : gleich ausrechnen':'Klammern auflösen',ph:single?'z. B. −30':t.hasPunkt?'z. B. −8 + 15 + 20':'z. B. −8 + 15',done:valLineH(t)},{},{label:'Ergebnis',ph:'z. B. −17',done:numH(t.res)}];
+  h+='<div class="calc"><div class="cl task">'+taskH(t)+'</div>';
+  [0,1,2].forEach(s=>{
+    if(!applies(e,s)||e.step<s)return;
+    if(e.step>s){h+='<div class="cl ok">= '+LINE[s].done+' <span class="tick">✓</span></div>';return;}
+    h+='<div class="cl"><span class="eqs">=</span>'+inp('data-line="'+s+'"',e.lv[s],'linein'+(e.lm[s]?' '+e.lm[s]:''),LINE[s].label,LINE[s].ph)+
+      '<button type="button" data-act="check'+s+'">Prüfen</button><span class="lbl">'+LINE[s].label+'</span></div>'+msgHTML(e,s);
+  });
+  h+='</div>';
+
+  if(e.step===DONE){
+    const nextOpen=g.ex.findIndex((x,k)=>k>cur&&x.step<DONE),anyOpen=g.ex.findIndex(x=>x.step<DONE);
+    h+='<div class="donebox"><b>Beispiel '+(cur+1)+' geschafft!</b>'+
+      (nextOpen>=0?'<button type="button" data-act="go" data-to="'+nextOpen+'">Weiter zu Beispiel '+(nextOpen+1)+' ▶</button>'
+      :anyOpen>=0?'<button type="button" data-act="go" data-to="'+anyOpen+'">Noch offen: Beispiel '+(anyOpen+1)+' ▶</button>'
+      :'<button type="button" data-act="sum">Zur Auswertung</button>')+'</div>';
+    h+='<p class="copy">✏️ <b>Schreib die Rechnung Zeile für Zeile in dein Heft ab.</b></p>';
+    if(cur===0)h+='<p class="sumafter">✏️ <b>Schreib jetzt die Zusammenfassung unten auf der Seite in dein Heft ab</b> – dann geht es mit Beispiel 2 weiter.</p>';
+  }
+  $('exCard').innerHTML=h;
+  $('score').textContent=g.ex.filter(x=>x.step===DONE).length+' von '+N_EX+' fertig';
+  if(window.padApply)window.padApply();
+  if(focus){let f=null;
+    if(focus==='step'){const firstBad=sel=>[...document.querySelectorAll('#exCard '+sel)].find(i=>i.classList.contains('bad'))||[...document.querySelectorAll('#exCard '+sel)].find(i=>!i.value.trim())||document.querySelector('#exCard '+sel);
+      f=document.querySelector('#exCard [data-line="'+e.step+'"]');}
+    else f=document.querySelector(focus);
+    if(f)f.focus({preventScroll:true});}
+  if(allDone&&!summaryRequested&&!restoring)summaryRequested=true;
+  updateSummary();saveProgress();
+}
+
+/* ================= Auswertung ================= */
+function updateSummary(){
+  const g=curG(),sum=$('summary'),allDone=g.ex.every(e=>e.step===DONE);
+  if(!summaryRequested){sum.hidden=true;return;}
+  let T={done:0,first:0,shown:0,open:0,err:0},rows='';
+  g.ex.forEach((e,k)=>{let st;
+    if(e.step<DONE){st='offen';T.open++;}
+    else{T.done++;if(e.shown){st='Lösung angesehen';T.shown++;}else if(!e.err){st='✓ beim 1. Versuch';T.first++;}else st='✓ richtig';}
+    T.err+=e.err;
+    rows+='<tr><td>'+(k+1)+') '+taskH(e.t)+'</td><td>'+(e.step===DONE?numH(e.t.res):'–')+'</td><td>'+st+'</td><td class="c">'+e.err+'</td></tr>';});
+  $('sumBody').innerHTML=rows;
+  $('sumFoot').innerHTML='<tr><td>Gesamt: '+T.done+' von '+N_EX+' fertig</td><td></td><td>'+T.first+' beim 1. Versuch, '+T.shown+' mit Lösung</td><td class="c">'+T.err+'</td></tr>';
+  const ok=T.done-T.shown;let msg;
+  if(T.first===N_EX)msg='Perfekt! Alle Beispiele beim ersten Versuch richtig.';
+  else if(ok===N_EX)msg='Super, alle Beispiele selbst gelöst!';
+  else if(ok/N_EX>=.75)msg='Sehr gut gemacht!';
+  else if(ok/N_EX>=.5)msg='Gut! Mit ein bisschen Übung klappt der Rest auch.';
+  else msg='Übe noch ein bisschen weiter – starte eine neue Runde und probier es nochmal.';
+  if(!allDone)msg='Noch nicht alles erledigt: '+T.open+' Beispiel'+(T.open===1?' ist':'e sind')+' noch offen. '+msg;
+  $('sumTitle').textContent=(allDone?'Geschafft'+(PUPIL?', '+PUPIL:'')+'! Deine Auswertung':'Zwischenstand'+(PUPIL?' von '+PUPIL:''))+' ('+LEVELS[level]+', Runde '+g.round+')';
+  const now=new Date(),who=$('sumWho');
+  who.innerHTML='👤 <b></b> · '+now.toLocaleDateString('de-AT')+', '+now.toLocaleTimeString('de-AT',{hour:'2-digit',minute:'2-digit'})+' Uhr · '+LEVELS[level];
+  who.querySelector('b').textContent=PUPIL||'(kein Name)';
+  $('sumMsg').textContent=msg;
+  const wasHidden=sum.hidden;sum.hidden=false;
+  if(wasHidden&&!restoring&&allDone)setTimeout(()=>sum.scrollIntoView({behavior:'smooth',block:'start'}),300);
+}
+
+/* ================= Bedienung ================= */
+function goTo(k){const g=curG();g.cur=Math.max(0,Math.min(N_EX-1,k));renderEx();$('exCard').scrollIntoView({behavior:'smooth',block:'start'});}
+function newRound(){
+  const g=curG();
+  if(g.ex.some(e=>e.step<DONE)&&!confirm('Neue Runde starten? Die offenen Beispiele werden durch neue ersetzt.'))return;
+  g.round=g.round>=100?1:g.round+1;makeRound(level);summaryRequested=false;renderEx();
+  $('exCard').scrollIntoView({behavior:'smooth',block:'start'});
+}
+const CHECKS=[check0,check1,check2];
+function runCheck(s){const e=curEx();if(e.step!==s)return;CHECKS[s](e);renderEx(e.step===DONE?null:'step');}
+$('exCard').addEventListener('click',ev=>{
+  const b=ev.target.closest('button');if(!b)return;const e=curEx();
+  if(b.dataset.go!==undefined){goTo(+b.dataset.go);return;}
+  const a=b.dataset.act;
+  if(a==='prev')goTo(curG().cur-1);
+  else if(a==='next')goTo(curG().cur+1);
+  else if(a==='go')goTo(+b.dataset.to);
+  else if(a==='newround')newRound();
+  else if(a==='sum'){summaryRequested=true;updateSummary();$('summary').scrollIntoView({behavior:'smooth',block:'start'});}
+  else if(/^check\d$/.test(a))runCheck(+a.slice(5));
+  else if(/^show\d$/.test(a)){showSolution(e,+a.slice(4));renderEx(e.step===DONE?null:'step');}
+});
+$('exCard').addEventListener('input',ev=>{
+  const t=ev.target,e=curEx();
+  const clr=()=>{t.classList.remove('ok','bad');const rm=t.parentNode.querySelector('.rowmsg');if(rm)rm.textContent='';};
+  if(t.dataset.line!==undefined){const k=+t.dataset.line;e.lv[k]=t.value;e.lm[k]=null;t.classList.remove('ok','bad');}
+});
+$('exCard').addEventListener('keydown',ev=>{
+  if(ev.key!=='Enter'||ev.target.tagName!=='INPUT')return;
+  ev.preventDefault();const t=ev.target;
+  runCheck(curEx().step);
+});
+$('showSum').addEventListener('click',()=>{summaryRequested=true;updateSummary();$('summary').scrollIntoView({behavior:'smooth',block:'start'});});
+$('newRound2').addEventListener('click',newRound);
+function setLevel(l){
+  level=l;summaryRequested=curG().ex.every(e=>e.step===DONE);
+  document.querySelectorAll('.levels button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.level===l?'true':'false'));
+  try{history.replaceState(null,'',l==='ahs'?'#ahs':'#standard');}catch(x){}
+  renderEx();
+}
+document.querySelectorAll('.levels button').forEach(b=>b.addEventListener('click',()=>setLevel(b.dataset.level)));
+
+/* ================= Fortschritt: speichern (gleiches Gerät) & Code (anderes Gerät) ================= */
+const STORE='ganzezahlen2:',ALPH='23456789ABCDEFGHJKMNPQRSTUVWXYZ',AL=BigInt(ALPH.length),B=x=>BigInt(x);
+const normName=s=>s.trim().replace(/\s+/g,' ').toLowerCase();
+function nameHash(n){let h=2166136261;for(const ch of normName(n)){h^=ch.codePointAt(0);h=Math.imul(h,16777619);}return (h>>>0)%1024;}
+function checkChar(s){let c=0;for(let k=0;k<s.length;k++)c=(c+(k+1)*ALPH.indexOf(s[k]))%ALPH.length;return ALPH[c];}
+function makeCode(lvl){
+  const g=G[lvl],F=[],f=(v,r)=>F.push([v,r]);
+  f(lvl==='ahs'?1:0,2);f(g.seed,65536);f(g.round-1,100);f(g.cur,N_EX);
+  g.ex.forEach(e=>f(e.step*8+Math.min(e.err,3)*2+(e.shown?1:0),32));
+  f(nameHash(PUPIL),1024);
+  let N=0n;for(let k=F.length-1;k>=0;k--)N=N*B(F[k][1])+B(F[k][0]);
+  let s='';do{s=ALPH[Number(N%AL)]+s;N/=AL;}while(N>0n);
+  s+=checkChar(s);return s.match(/.{1,4}/g).join('-');
+}
+function readCode(str){
+  const bad={err:'Dieser Code ist ungültig. Kontrolliere, ob du ihn richtig abgeschrieben hast.'};
+  const s=str.toUpperCase().replace(/[\s\-–—_.]/g,'');
+  if(s.length<3||[...s].some(ch=>!ALPH.includes(ch)))return bad;
+  const body=s.slice(0,-1);
+  if(checkChar(body)!==s.slice(-1))return {err:'Im Code ist ein Tippfehler. Kontrolliere ihn Zeichen für Zeichen.'};
+  let N=0n;for(const ch of body)N=N*AL+B(ALPH.indexOf(ch));
+  const g=r=>{const v=Number(N%B(r));N/=B(r);return v;};
+  const lvl=g(2)?'ahs':'std',seed=g(65536),round=g(100)+1,cur=g(N_EX),ex=[];
+  for(let k=0;k<N_EX;k++){const v=g(32);ex.push({step:v>>3,err:(v>>1)&3,shown:!!(v&1)});}
+  const nh=g(1024);
+  if(N!==0n||ex.some(x=>x.step>DONE))return bad;
+  return {lvl,seed,round,cur,ex,nh};
+}
+function applyCode(p){
+  const g=G[p.lvl];g.seed=p.seed;g.round=p.round;makeRound(p.lvl);g.cur=p.cur;
+  p.ex.forEach((s,k)=>{const e=g.ex[k];
+    for(let st=0;st<s.step&&st<DONE;st++){if(applies(e,st))showSolution(e,st);}
+    e.msg={};e.err=s.err;e.shown=s.shown;e.step=s.step;if(e.step<DONE&&!applies(e,e.step))e.step=nextStep(e,e.step);});
+}
+function saveProgress(lvl){
+  lvl=lvl||level;if(!PUPIL||restoring)return;
+  const code=makeCode(lvl);
+  try{const k=STORE+normName(PUPIL),o=JSON.parse(localStorage.getItem(k)||'{}');o.last=level;o[lvl]=code;localStorage.setItem(k,JSON.stringify(o));}catch(x){}
+  if(lvl===level)$('codeShow').textContent=code;
+}
+function loadSaved(name){try{return JSON.parse(localStorage.getItem(STORE+normName(name))||'null');}catch(x){return null;}}
+
+/* ================= Name zu Beginn (danach nicht mehr änderbar) ================= */
+function setLocked(on){document.body.classList.toggle('locked',on);if(on)$('main').setAttribute('inert','');else $('main').removeAttribute('inert');}
+function startErr(msg,el){const err=$('pnameErr');err.textContent=msg;err.hidden=false;el.focus();}
+function startWithName(){
+  const inpEl=$('pname'),v=inpEl.value.trim().replace(/\s+/g,' '),codeInp=$('pcode');
+  if(v.length<2){startErr('Bitte gib deinen Namen ein.',inpEl);return;}
+  let p=null;
+  if(codeInp.value.trim()){p=readCode(codeInp.value);
+    if(p.err){$('codeAsk').open=true;startErr(p.err,codeInp);return;}
+    if(p.nh!==nameHash(v)){startErr('Dieser Code gehört zu einem anderen Namen. Schreib deinen Namen genau so wie auf dem anderen Gerät.',inpEl);return;}}
+  $('pnameErr').hidden=true;PUPIL=v;
+  const saved=loadSaved(v);let msg='';
+  restoring=true;
+  try{
+    if(saved){['std','ahs'].forEach(l=>{if(saved[l]&&!(p&&p.lvl===l)){const q=readCode(saved[l]);if(!q.err&&q.nh===nameHash(v))applyCode(q);}});
+      msg='Willkommen zurück! Du machst dort weiter, wo du auf diesem Gerät aufgehört hast.';}
+    if(p){applyCode(p);msg='Dein Fortschritt vom anderen Gerät wurde übernommen.';}
+  }finally{restoring=false;}
+  saveProgress('std');saveProgress('ahs');
+  $('pnameShow').textContent=v;$('startMsg').textContent=msg;
+  $('startAsk').hidden=true;$('startDone').hidden=false;
+  setLocked(false);setLevel(p?p.lvl:(saved&&saved.last)||level);
+}
+$('startBtn').addEventListener('click',startWithName);
+['pname','pcode'].forEach(k=>$(k).addEventListener('keydown',ev=>{if(ev.key==='Enter'){ev.preventDefault();startWithName();}}));
+$('codeBtn').addEventListener('click',ev=>{const box=$('codeBox'),open=box.hidden;saveProgress();box.hidden=!open;ev.currentTarget.setAttribute('aria-expanded',open?'true':'false');});
+$('codeCopy').addEventListener('click',ev=>{const b=ev.currentTarget,txt=$('codeShow').textContent;
+  try{navigator.clipboard.writeText(txt).then(()=>{b.textContent='Kopiert ✓';setTimeout(()=>{b.textContent='Kopieren';},1500);},()=>{});}catch(x){}});
+
+/* ================= Start ================= */
+makeRound('std');makeRound('ahs');
+setLevel(level);
+setLocked(true);
+$('pname').focus();
+
+/* ================= Eingabehilfe (Bildschirm-Tastatur) ================= */
+(function(){
+  const pad=$('pad'),sysBtn=$('padSys');
+  const touch=window.matchMedia&&matchMedia('(pointer: coarse)').matches;
+  let padOnly=touch,closed=false,cur=null;
+  try{const s=localStorage.getItem('padOnly');if(s!==null)padOnly=s==='1';}catch(x){}
+  function applyMode(){document.querySelectorAll('#exCard input.pin').forEach(i=>{if(padOnly)i.setAttribute('inputmode','none');else i.setAttribute('inputmode','text');});
+    sysBtn.textContent=padOnly?'Handy-Tastatur einblenden':'Handy-Tastatur ausblenden';}
+  window.padApply=applyMode;applyMode();
+  function show(input){cur=input;if(closed)return;pad.hidden=false;document.body.classList.add('padon');
+    const r=input.getBoundingClientRect();if(r.bottom>window.innerHeight-pad.offsetHeight-10)input.scrollIntoView({block:'center',behavior:'smooth'});}
+  function hide(){pad.hidden=true;document.body.classList.remove('padon');}
+  document.addEventListener('focusin',ev=>{const t=ev.target;if(t.tagName==='INPUT'&&t.classList.contains('pin')&&!t.readOnly)show(t);});
+  document.addEventListener('focusout',()=>setTimeout(()=>{const a=document.activeElement;if(!(a&&a.tagName==='INPUT'&&a.classList.contains('pin')))hide();},150));
+  function insert(txt){if(!cur||!cur.isConnected)return;const s=cur.selectionStart??cur.value.length,e=cur.selectionEnd??cur.value.length;cur.setRangeText(txt,s,e,'end');cur.dispatchEvent(new Event('input',{bubbles:true}));}
+  /* nur pointerdown/mousedown abfangen – nie touchstart, sonst gehen die Tasten am Handy nicht */
+  pad.addEventListener('pointerdown',ev=>{if(ev.target.closest('button'))ev.preventDefault();});
+  pad.addEventListener('mousedown',ev=>{if(ev.target.closest('button'))ev.preventDefault();});
+  pad.addEventListener('click',ev=>{
+    const b=ev.target.closest('button');if(!b)return;
+    if(b.id==='padHide'){closed=true;hide();return;}
+    if(b.id==='padSys'){padOnly=!padOnly;try{localStorage.setItem('padOnly',padOnly?'1':'0');}catch(x){}applyMode();if(cur&&cur.isConnected){cur.blur();setTimeout(()=>cur.focus(),60);}return;}
+    if(!cur||!cur.isConnected)return;
+    if(b.dataset.ins!==undefined)insert(b.dataset.ins);
+    else if(b.dataset.act==='clr'){cur.value='';cur.dispatchEvent(new Event('input',{bubbles:true}));}
+    else if(b.dataset.act==='left'){const s=Math.max(0,(cur.selectionStart??cur.value.length)-1);cur.setSelectionRange(s,s);}
+    else if(b.dataset.act==='right'){const s=Math.min(cur.value.length,(cur.selectionEnd??cur.value.length)+1);cur.setSelectionRange(s,s);}
+    else if(b.dataset.act==='del'){const s=cur.selectionStart??cur.value.length,e2=cur.selectionEnd??s;if(s!==e2)cur.setRangeText('',s,e2,'end');else if(s>0)cur.setRangeText('',s-1,s,'end');cur.dispatchEvent(new Event('input',{bubbles:true}));}
+    else if(b.dataset.act==='ok'){cur.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter',bubbles:true,cancelable:true}));}
+    if(cur&&cur.isConnected)cur.focus({preventScroll:true});
+  });
+  document.addEventListener('click',ev=>{if(ev.target.closest('[data-go],[data-act="next"],[data-act="prev"],[data-act="newround"],#newRound2'))closed=false;});
+})();
+</script>
+</body>
+</html>
