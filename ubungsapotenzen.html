@@ -6,7 +6,7 @@
 <title>Potenzen – anschreiben, Zehnerpotenzen, Gleitkomma, mal und durch</title>
 <meta name="uebersicht-kapitel" content="Potenzen">
 <meta name="uebersicht-thema" content="Potenzen: Potenz und Wert, Zehnerpotenzen, Gleitkommadarstellung, multiplizieren und dividieren">
-<meta name="uebersicht-info" content="Produkte als Potenzen und Wert, Zehnerpotenzen, Gleitkommadarstellung, Potenzen mal/durch, Textaufgaben – Standard und Standard AHS, danach Arbeitsblatt Potenzen">
+<meta name="uebersicht-info" content="Teile einer Potenz, Produkte als Potenzen, Zehnerpotenzen, Gleitkommadarstellung mit Sachaufgaben (Mond, Sonne, Bakterien …), Potenzen mal/durch mit Variablen – Standard und Standard AHS, danach Arbeitsblatt Potenzen">
 <meta name="uebersicht-gruppe" content="3. Klasse">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -224,7 +224,7 @@ button.ready{background:var(--ink);color:var(--paper)}
   <header>
     <div>
       <h1>Potenzen <span class="acc">a<sup>n</sup></span></h1>
-      <p class="sub">Potenzen anschreiben und berechnen, Zehnerpotenzen, Gleitkommadarstellung, Potenzen multiplizieren und dividieren – mit Textaufgaben. Jede Aufgabe wird sofort kontrolliert. Jede Übung hat ihre eigene „Neue Runde“.</p>
+      <p class="sub">Teile einer Potenz, Potenzen anschreiben, Zehnerpotenzen, Gleitkommadarstellung mit Sachaufgaben und Potenzen multiplizieren und dividieren. Jede Aufgabe wird sofort kontrolliert. Jede Übung hat ihre eigene „Neue Runde“.</p>
       <div class="levels" role="group" aria-label="Niveau">
         <button type="button" data-level="std" aria-pressed="true">Standard</button>
         <button type="button" data-level="ahs" aria-pressed="false">Standard AHS</button>
@@ -263,8 +263,8 @@ button.ready{background:var(--ink);color:var(--paper)}
       <p class="copy">✏️ <b>Schreib diese Zusammenfassung mit den Beispielen ordentlich in dein Heft ab.</b></p>
       <p><b>Teile einer Potenz:</b> 5 · 5 · 5 = 5<sup>3</sup> = 125 &nbsp;→ 5 ist die <b>Basis</b>, 3 die <b>Hochzahl</b> (Exponent), 5<sup>3</sup> die <b>Potenz</b>, 125 der <b>Wert der Potenz</b>.</p>
       <p><b>Vorzeichen:</b> (−2)<sup>4</sup> = 16 (gerade Hochzahl → +) &nbsp;·&nbsp; (−2)<sup>3</sup> = −8 (ungerade → −) &nbsp;·&nbsp; aber −2<sup>4</sup> = −16</p>
-      <p><b>Zehnerpotenzen:</b> 10<sup>6</sup> = 1 000 000 (6 Nullen) &nbsp;·&nbsp; 10<sup>−3</sup> = 0,001 &nbsp;·&nbsp; 7 · 10<sup>4</sup> = 70 000</p>
-      <p><b>Gleitkommadarstellung:</b> genau eine Ziffer (1 bis 9) vor dem Komma: 384 000 = 3,84 · 10<sup>5</sup> &nbsp;·&nbsp; 0,0052 = 5,2 · 10<sup>−3</sup></p>
+      <p><b>Zehnerpotenzen:</b> 10<sup>6</sup> = 1 000 000 (6 Nullen) &nbsp;·&nbsp; 7 · 10<sup>4</sup> = 70 000</p>
+      <p><b>Gleitkommadarstellung:</b> genau eine Ziffer (1 bis 9) vor dem Komma: 384 000 = 3,84 · 10<sup>5</sup> </p>
       <p><b>Rechenregeln:</b> <i>a</i><sup>3</sup> · <i>a</i><sup>4</sup> = <i>a</i><sup>7</sup> (addieren) &nbsp;·&nbsp; <i>a</i><sup>7</sup> : <i>a</i><sup>2</sup> = <i>a</i><sup>5</sup> (subtrahieren) &nbsp;·&nbsp; (<i>a</i><sup>3</sup>)<sup>2</sup> = <i>a</i><sup>6</sup> (multiplizieren)</p>
                   <p class="hint">Eingabe: Hochzahl im kleinen Feld oben, Terme z. B. 3x^2 - 2x + 5, Zahlen mit Komma (0,25) oder als Bruch (8/27).</p>
     </details>
@@ -296,7 +296,7 @@ button.ready{background:var(--ink);color:var(--paper)}
 </div>
 <script>
 /* ================= Potenzen und Terme – abwechselnd ================= */
-const STORE='potenzen4:',CODE_COMPACT=true;
+const STORE='potenzen7:',CODE_COMPACT=true;
 const gcdN=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a;};
 const inpF=(f,val,label,ph,w)=>'<input class="pin" data-f="'+f+'" value="'+esc(val||'')+'" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="'+label+'"'+(ph?' placeholder="'+ph+'"':'')+(w?' style="width:'+w+'"':'')+'>';
 /* Potenz-Eingabe: Basis mit hochgestellter Hochzahl */
@@ -467,7 +467,7 @@ const TEN={
   complete:(t,s)=>(s.v[t.f]||'').trim()!=='',
   gen(i,lvl){
     const K=['p2n','n2p','m2n','n2m','p2n','n2p','m2n','n2m'];
-    const k=K[i%8],neg=lvl==='ahs'&&k!=='n2m'&&i%8<4;
+    const k=K[i%8],neg=false;
     const e=neg?-rnd(1,5):rnd(2,8);
     if(k==='p2n')return {k,f:'v',e,html:ten(e),val:rpow(R(10),e)};
     if(k==='n2p')return {k,f:'e',e,html:numH(rpow(R(10),e))};
@@ -525,7 +525,7 @@ const TADD=hoch=>({
 const FLOAT={
   complete:(t,s)=>t.k==='to'?((s.v.m||'').trim()&&(s.v.e||'').trim()):(s.v.v||'').trim()!=='',
   gen(i,lvl){
-    const small=lvl==='ahs'&&i%3===2;
+    const small=false;
     const dig=rnd(2,lvl==='std'?3:4);let mant;do{mant=rnd(10**(dig-1),10**dig-1);}while(mant%10===0);
     const e=small?-rnd(2,6):rnd(3,lvl==='std'?8:11);
     const m=rat(mant,10**(dig-1));const val=rmul(m,rpow(R(10),e));
@@ -548,29 +548,65 @@ const FLOAT={
 const H_ADD='Beim Multiplizieren werden die Hochzahlen addiert, nicht multipliziert.',H_SUB='Beim Dividieren werden die Hochzahlen subtrahiert.',H_MUL='Beim Potenzieren werden die Hochzahlen multipliziert, nicht addiert.';
 const POWMUL={
   complete:(t,s)=>t.coef?(s.v.r||'').trim()!=='':((s.v.b||'').trim()&&(s.v.e||'').trim()),
-  gen(i,lvl){const k=['mul','div','pot','mul3','div','pot'][i%6];
-    if(lvl==='std'){const b=i%4===0?baseInt(rnd(2,9)):baseVar(pick(['a','x','y','b','m','n','z']));
+  gen(i,lvl){const k=['mul','div','pot','mul3','div','mul'][i%6];const VV=['a','x','y','b','m','n','z','c'];
+    if(lvl==='std'){const b=baseVar(pick(VV));
       if(k==='mul'){const m=rnd(2,9),n=rnd(2,9);return {html:pwH(b.html,m)+' · '+pwH(b.html,n),b,e:m+n,alt:{[m*n]:H_ADD}};}
       if(k==='mul3'){const m=rnd(2,6),n=rnd(2,6),p=rnd(2,6);return {html:pwH(b.html,m)+' · '+pwH(b.html,n)+' · '+pwH(b.html,p),b,e:m+n+p};}
       if(k==='div'){const m=rnd(5,12),n=rnd(2,m-2);return {html:pwH(b.html,m)+' : '+pwH(b.html,n),b,e:m-n,alt:{[m+n]:H_SUB}};}
       const m=rnd(2,5),n=rnd(2,4);return {html:'<span class="pw">('+pwH(b.html,m)+')<sup>'+n+'</sup></span>',b,e:m*n,alt:{[m+n]:H_MUL}};}
-    const x=pick(['a','x','y','b']);
-    if(k==='mul'||k==='mul3'){const c1=rnd(2,6),c2=sg()*rnd(2,5),m=rnd(2,6),n=rnd(2,6);return {coef:true,html:c1+V(x)+sup(m)+' · ('+(c2<0?MINUS:'')+Math.abs(c2)+V(x)+sup(n)+')',res:[{c:c1*c2,v:{[x]:m+n}}],alt:{[m*n]:H_ADD},hintC:'Multipliziere die Zahlen und addiere die Hochzahlen.'};}
-    if(k==='div'){const q=rnd(2,6),d=rnd(2,5),m=rnd(6,11),n=rnd(2,m-2);return {coef:true,html:(q*d)+V(x)+sup(m)+' : '+d+V(x)+sup(n),res:[{c:q,v:{[x]:m-n}}],alt:{[m+n]:H_SUB},hintC:'Dividiere die Zahlen und subtrahiere die Hochzahlen.'};}
-    const c=rnd(2,3),m=rnd(2,4),n=rnd(2,3);return {coef:true,html:'('+c+V(x)+sup(m)+')<sup>'+n+'</sup>',res:[{c:c**n,v:{[x]:m*n}}],alt:{[m+n]:H_MUL},hintC:'Potenziere die Zahl und multipliziere die Hochzahlen: ('+c+')<sup>'+n+'</sup> = '+(c**n)+'.'};},
-  render(t,s){if(t.coef)return '<div class="trow big">'+t.html+' = '+inpF('r',s.v.r,'Ergebnis','z. B. 6a^7','8rem')+'</div>';
+    /* AHS: nur EIN Buchstabe pro Aufgabe, dafür mehrere Schritte */
+    const x=pick(VV),X=V(x),P_=(e)=>X+sup(e),mono_=e=>[{c:1,v:{[x]:e}}];
+    if(k==='mul'){const m=rnd(2,7),n=rnd(2,7),p=rnd(2,7);return {coef:true,html:P_(m)+' · '+P_(n)+' · '+P_(p),res:mono_(m+n+p),hintC:'Multiplizieren: alle Hochzahlen addieren – '+m+' + '+n+' + '+p+'.'};}
+    if(k==='mul3'){const m=rnd(2,4),n=rnd(2,3),p=rnd(2,6);return {coef:true,html:'('+P_(m)+')<sup>'+n+'</sup> · '+P_(p),res:mono_(m*n+p),hintC:'Zuerst die Klammer: ('+X+'<sup>'+m+'</sup>)<sup>'+n+'</sup> = '+X+'<sup>'+(m*n)+'</sup>. Dann Hochzahlen addieren.'};}
+    if(k==='div'){if(i%2){const m=rnd(3,7),n=rnd(3,7),p=rnd(2,m+n-1);return {coef:true,html:P_(m)+' · '+P_(n)+' : '+P_(p),res:mono_(m+n-p),hintC:'Von links nach rechts: zuerst Hochzahlen addieren ('+m+' + '+n+'), dann subtrahieren (− '+p+').'};}
+      const m=rnd(9,15),n=rnd(2,5),p=rnd(1,m-n-1);return {coef:true,html:P_(m)+' : '+P_(n)+' : '+P_(p),res:mono_(m-n-p),hintC:'Dividieren: beide Hochzahlen der Reihe nach subtrahieren – '+m+' − '+n+' − '+p+'.'};}
+    const m=rnd(2,4),n=rnd(2,3),q=rnd(2,3);return {coef:true,html:'(('+P_(m)+')<sup>'+n+'</sup>)<sup>'+q+'</sup>',res:mono_(m*n*q),hintC:'Potenzieren: alle Hochzahlen multiplizieren – '+m+' · '+n+' · '+q+'.'};},
+  render(t,s){if(t.coef)return '<div class="trow big">'+t.html+' = '+inpF('r',s.v.r,'Ergebnis','z. B. a^12','8rem')+'</div>';
     return '<div class="trow big">'+t.html+' = '+pwIn(s,'b','e')+'</div>';},
   check(t,s){
-    if(t.coef){const r=parseTerm(s.v.r);if(r.err)return {soft:r.err};const n=normalize(r.ms);if(n.length===1&&n[0].c===t.res[0].c&&key(n[0].v)===key(t.res[0].v))return true;
-      if(n.length!==1)return 'Das Ergebnis ist ein einziges Glied, z. B. 6a<sup>7</sup>.';
-      const ex=Object.values(n[0].v)[0],want=Object.values(t.res[0].v)[0];
-      if(ex!==want)return (t.alt&&t.alt[ex])||'Kontrolliere die Hochzahl.';
-      if(n[0].c===-t.res[0].c)return 'Kontrolliere das Vorzeichen.';return t.hintC;}
+    if(t.coef){const r=parseTerm(s.v.r);if(r.err)return {soft:r.err};const n=normalize(r.ms);
+      if(n.length===1&&n[0].c===t.res[0].c&&key(n[0].v)===key(t.res[0].v))return true;
+      if(n.length!==1)return 'Das Ergebnis ist ein einziges Glied, z. B. '+V('a')+'<sup>12</sup>.';
+      if(n[0].c!==1)return 'Hier gibt es keine Zahl davor – nur Variablen mit Hochzahlen.';
+      return t.hintC;}
     if(normBase(s.v.b)!==normBase(t.b.plain))return 'Die Basis bleibt gleich – schreib sie unverändert ab.';
     const e=readExp(s.v.e);if(e===t.e)return true;return (t.alt&&t.alt[e])||'Kontrolliere die Hochzahl.';},
   solve(t,s){if(t.coef)s.v.r=polyPlain(t.res);else{s.v.b=t.b.plain;s.v.e=String(t.e);}},
   solH(t){return t.coef?polyH(t.res):pwH(t.b.html,t.e);}
 };
+/* Sachaufgaben zur Gleitkommadarstellung */
+const FTXT={std:[
+  ['🌕','Der Mond ist etwa 384 000 km von der Erde entfernt.','km',[384000,1],'to'],
+  ['☀️','Die Sonne ist etwa 150 000 000 km von der Erde entfernt.','km',[150000000,1],'to'],
+  ['🌍','Auf der Erde leben etwa 8 000 000 000 Menschen.','Menschen',[8000000000,1],'to'],
+  ['🇦🇹','In Österreich leben etwa 9 100 000 Menschen.','Menschen',[9100000,1],'to'],
+  ['🏔️','Der Mount Everest ist 8 848 m hoch.','m',[8848,1],'to'],
+  ['❤️','Ein Herz schlägt in einem Jahr etwa 40 000 000-mal.','-mal',[40000000,1],'to'],
+  ['☀️','Der Durchmesser der Sonne beträgt etwa 1,4 · 10<sup>6</sup> km.','km',[1400000,1],'from'],
+  ['💡','Licht legt in einer Sekunde etwa 3 · 10<sup>5</sup> km zurück.','km',[300000,1],'from'],
+  ['⏱️','Ein Jahr hat etwa 3,15 · 10<sup>7</sup> Sekunden.','s',[31500000,1],'from'],
+  ['🌕','Der Mond hat einen Durchmesser von etwa 3,5 · 10<sup>3</sup> km.','km',[3500,1],'from']],
+ ahs:[
+  ['🌕','Der Mond ist etwa 384 400 km von der Erde entfernt.','km',[384400,1],'to'],
+  ['🪐','Der Saturn ist etwa 1 400 000 000 km von der Sonne entfernt.','km',[1400000000,1],'to'],
+  ['🌍','Die Erde ist etwa 4 500 000 000 Jahre alt.','Jahre',[4500000000,1],'to'],
+  ['🪐','Der Jupiter ist etwa 778 000 000 km von der Sonne entfernt.','km',[778000000,1],'to'],
+  ['🏙️','In Wien leben etwa 2 010 000 Menschen.','Menschen',[2010000,1],'to'],
+  ['💇','Ein Mensch hat etwa 100 000 Haare auf dem Kopf.','Haare',[100000,1],'to'],
+  ['💡','Ein Lichtjahr sind etwa 9,46 · 10<sup>12</sup> km.','km',[9460000000000,1],'from'],
+  ['❤️','Ein Herz schlägt in einem Menschenleben etwa 2,5 · 10<sup>9</sup>-mal.','-mal',[2500000000,1],'from'],
+  ['☀️','Die Sonne hat einen Durchmesser von etwa 1,39 · 10<sup>6</sup> km.','km',[1390000,1],'from'],
+  ['🌊','Der Pazifik hat eine Fläche von etwa 1,66 · 10<sup>8</sup> km².','km²',[166000000,1],'from']]};
+const FLOATTXT=Object.assign({},FLOAT,{
+  gen(i,lvl){const pool=FTXT[lvl],to=pool.filter(x=>x[4]==='to'),fr=pool.filter(x=>x[4]==='from');
+    const it=i%2===0?to[(i/2+rnd(0,to.length-1))%to.length]:fr[((i-1)/2+rnd(0,fr.length-1))%fr.length];
+    const val=R(it[3][0],it[3][1]);let e=0,m=rabs(val);while(rnum(m)>=10){m=rdiv(m,R(10));e++;}while(rnum(m)<1){m=rmul(m,R(10));e--;}
+    return {k:it[4],m,e,val,icon:it[0],story:it[1],unit:it[2]};},
+  render(t,s){const q=t.k==='to'?'Schreib die Zahl in <b>Gleitkommadarstellung</b>.':'Schreib die Zahl <b>ohne Zehnerpotenz</b> aus.';
+    let h=FLOAT.render(t,s);if(t.k==='from')h=h.replace(numH(t.m)+' · '+ten(t.e)+' =',numH(t.m)+' · '+ten(t.e)+' =');
+    return '<div class="story"><span class="ic">'+t.icon+'</span> '+t.story+' '+q+'</div>'+h.replace(/<\/div>$/,' '+t.unit.replace('-mal','')+'</div>');}
+});
+
 
 /* ================= 8 Textaufgaben – abwechselnd Potenz und Term ================= */
 function fieldH(F,s){
@@ -625,16 +661,16 @@ const SECS={
     {title:'Schreib als Potenz an!',name:'Produkt als Potenz',info:'<p>3 · 3 · 3 · 3 = 3<sup>4</sup> &nbsp;·&nbsp; (−2) · (−2) · (−2) = (−2)<sup>3</sup> – negative Basis in Klammer. Bei den letzten Aufgaben berechnest du auch den Wert.</p>',n:8,type:POWPROD},
     {title:'Rechne mit Zehnerpotenzen!',name:'Zehnerpotenzen',info:'<p>10<sup>4</sup> = 10 000 (eine 1 mit 4 Nullen) &nbsp;·&nbsp; 3 · 10<sup>5</sup> = 300 000 &nbsp;·&nbsp; 1 000 000 = 10<sup>6</sup></p>',n:8,type:TEN},
     {title:'Gleitkommadarstellung',name:'Gleitkommadarstellung',info:'<p>Eine Ziffer (1 bis 9) vor dem Komma, dann · Zehnerpotenz: 45 000 = 4,5 · 10<sup>4</sup> &nbsp;·&nbsp; 2,1 · 10<sup>6</sup> = 2 100 000</p>',n:8,type:FLOAT},
+    {title:'Sachaufgaben: Gleitkommadarstellung',name:'Sachaufgaben',info:'<p>Große und kleine Zahlen aus dem Alltag: In Gleitkommadarstellung umschreiben – oder umgekehrt die Zahl ausschreiben.</p>',n:6,wide:true,type:FLOATTXT},
     {title:'Multiplizieren und dividieren',name:'Potenzen mal und durch',info:'<p>Multiplizieren: Hochzahlen addieren &nbsp;·&nbsp; Dividieren: Hochzahlen subtrahieren &nbsp;·&nbsp; Potenzieren: Hochzahlen multiplizieren</p>',n:8,type:POWMUL},
-    {title:'Textaufgaben – Potenzen',name:'Textaufgaben',n:4,wide:true,type:TEXTP}
   ],
   ahs:[
     {title:'Benenne die Teile einer Potenz!',name:'Teile einer Potenz',info:'<p>In 2<sup>5</sup> = 32 ist <b>2 die Basis</b>, <b>5 die Hochzahl</b> (der Exponent), <b>2<sup>5</sup> die Potenz</b> und <b>32 der Wert der Potenz</b>.</p><p>Achtung: In −2<sup>4</sup> ist die Basis nur 2, in (−2)<sup>4</sup> ist die Basis −2.</p>',n:8,type:PARTS},
     {title:'Schreib als Potenz an!',name:'Produkt als Potenz',info:'<p>(2/3) · (2/3) · (2/3) = (2/3)<sup>3</sup> &nbsp;·&nbsp; (−0,5) · (−0,5) = (−0,5)<sup>2</sup>. Bei den letzten Aufgaben berechnest du auch den Wert: (−2)<sup>4</sup> = 16, aber −2<sup>4</sup> = −16.</p>',n:8,type:POWPROD},
-    {title:'Rechne mit Zehnerpotenzen!',name:'Zehnerpotenzen',info:'<p>10<sup>−3</sup> = 1 : 10<sup>3</sup> = 0,001 &nbsp;·&nbsp; 0,01 = 10<sup>−2</sup> &nbsp;·&nbsp; 4 · 10<sup>−2</sup> = 0,04</p>',n:8,type:TEN},
-    {title:'Gleitkommadarstellung',name:'Gleitkommadarstellung',info:'<p>0,00072 = 7,2 · 10<sup>−4</sup> &nbsp;·&nbsp; 3,05 · 10<sup>7</sup> = 30 500 000</p>',n:8,type:FLOAT},
-    {title:'Multiplizieren und dividieren',name:'Potenzen mal und durch',info:'<p>3<i>a</i><sup>4</sup> · 2<i>a</i><sup>3</sup> = 6<i>a</i><sup>7</sup> &nbsp;·&nbsp; 12<i>x</i><sup>8</sup> : 4<i>x</i><sup>2</sup> = 3<i>x</i><sup>6</sup> &nbsp;·&nbsp; (2<i>a</i><sup>3</sup>)<sup>2</sup> = 4<i>a</i><sup>6</sup></p>',n:8,type:POWMUL},
-    {title:'Textaufgaben – Potenzen',name:'Textaufgaben',n:4,wide:true,type:TEXTP}
+    {title:'Rechne mit Zehnerpotenzen!',name:'Zehnerpotenzen',info:'<p>10<sup>7</sup> = 10 000 000 (eine 1 mit 7 Nullen) &nbsp;·&nbsp; 2,5 · 10<sup>4</sup> = 25 000 &nbsp;·&nbsp; 1 000 000 000 = 10<sup>9</sup></p>',n:8,type:TEN},
+    {title:'Gleitkommadarstellung',name:'Gleitkommadarstellung',info:'<p>4 500 000 000 = 4,5 · 10<sup>9</sup> &nbsp;·&nbsp; 3,05 · 10<sup>7</sup> = 30 500 000</p>',n:8,type:FLOAT},
+    {title:'Sachaufgaben: Gleitkommadarstellung',name:'Sachaufgaben',info:'<p>Große und kleine Zahlen aus dem Alltag: In Gleitkommadarstellung umschreiben – oder umgekehrt die Zahl ausschreiben.</p>',n:6,wide:true,type:FLOATTXT},
+    {title:'Multiplizieren und dividieren',name:'Potenzen mal und durch',info:'<p>Mehrere Schritte, von links nach rechts: <i>a</i><sup>3</sup> · <i>a</i><sup>4</sup> · <i>a</i><sup>2</sup> = <i>a</i><sup>9</sup> &nbsp;·&nbsp; <i>x</i><sup>5</sup> · <i>x</i><sup>4</sup> : <i>x</i><sup>3</sup> = <i>x</i><sup>6</sup> &nbsp;·&nbsp; (<i>m</i><sup>2</sup>)<sup>3</sup> · <i>m</i><sup>4</sup> = <i>m</i><sup>10</sup></p>',n:8,type:POWMUL},
   ]
 };
 /* ================= Zufall (reproduzierbar) ================= */
