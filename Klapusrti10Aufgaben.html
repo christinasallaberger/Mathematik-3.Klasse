@@ -3,13 +3,32 @@
 #finalform .finrow{display:inline-flex;gap:.5rem;align-items:center;margin:.3rem .5rem .3rem 0;font-size:1.2rem}
 #finalform input.mid{width:220px}
 .eq.past.fin{font-weight:700}
+
+#pad{position:fixed;left:0;right:0;bottom:0;z-index:50;background:#fff;border-top:3px solid #19324e;padding:.5rem .6rem calc(.5rem + env(safe-area-inset-bottom,0px));box-shadow:0 -4px 16px rgba(25,50,78,.18)}
+#pad .padtop{display:flex;align-items:center;gap:.5rem;max-width:34rem;margin:0 auto .4rem;font-size:.9rem;color:#5b6578}
+#pad .padtop span{margin-right:auto;font-weight:700;color:#19324e}
+#pad .pmini{font:inherit;font-size:.85rem;padding:.15rem .6rem;border:1.5px solid #19324e;border-radius:.4rem;background:#fff;color:#19324e;cursor:pointer}
+#pad .keys{display:grid;grid-template-columns:repeat(7,1fr);gap:.3rem;max-width:34rem;margin:0 auto}
+#pad .keys button{font:700 1.15rem system-ui;padding:.55rem 0;border:2px solid #c9d5e6;border-radius:.45rem;background:#f7f9fc;color:#19324e;touch-action:manipulation;cursor:pointer}
+#pad .keys button.op{background:#eaf1fb}
+#pad .keys button.go{background:#19324e;color:#fff;border-color:#19324e}
+body.padon main{padding-bottom:18rem}
 </style></head><body><main><div id="learning"><h1>KaPuStri: Schritt für Schritt</h1><label for="name">Name:</label><input id="name" autocomplete="name" placeholder="Vor- und Nachname"><p>Rechenteile anklicken (unterstreichen) → „Auswahl fertig“ → gleich die nächste Zeile mit den Ergebnissen anschreiben → weiter, bis nur noch eine Rechnung übrig ist → Vorzeichen auflösen und Endergebnis.</p><p class="small">Unabhängige gleichrangige Teile dürfen gemeinsam grün unterstrichen werden. Teile mit einer gemeinsamen Zahl werden von links nach rechts berechnet. Bei nur einer verbleibenden Operation entfällt das Unterstreichen. Klammern vor Punkt vor Strich.</p><p id="overall" class="small"></p><div class="tools"><span id="roundinfo" class="small"></span><button id="newround">Neue Runde mit neuen Aufgaben</button></div><nav id="nav" aria-label="Aufgabenauswahl"></nav><section><h2 id="title"></h2><p id="instruction"></p><div id="history"></div><div id="equation" class="eq"></div><button id="choose" class="primary" hidden>Auswahl fertig</button>
 <form id="finalform" class="stage" hidden><label for="fsign" id="flabel">Vorzeichen auflösen und ausrechnen:</label><span class="finrow"><input id="fsign" class="mid" autocomplete="off" spellcheck="false" placeholder="z. B. −24 − 2"><span id="feq">=</span><input id="fnum" autocomplete="off" style="width:130px" placeholder="z. B. −26"></span><button class="primary">Prüfen</button></form>
 <form id="signform" class="stage" hidden><label for="sign">Vorzeichen des aktuellen Rechenteils auflösen – noch nicht ausrechnen:</label><input id="sign" class="wide" autocomplete="off" spellcheck="false" placeholder="z. B. −5 + 2"><button class="primary">Vorzeichen prüfen</button></form>
 <form id="numberform" class="stage" hidden><p id="term"></p><label for="number">Ergebnis dieses Rechenteils:</label><input id="number" autocomplete="off" style="width:150px" placeholder="z. B. −24"><button class="primary">Ergebnis prüfen</button></form>
 <form id="rowform" class="stage" hidden><p id="results"></p><label for="row">Nächste Zeile anschreiben – die unterstrichenen Teile gleich ausgerechnet einsetzen:</label><input id="row" class="wide" autocomplete="off" spellcheck="false" placeholder="z. B. (−24) + (−2)"><button class="primary">Zeile prüfen</button><p class="small">Alle ausgewählten Teile ersetzen. Eckige Klammern um nur eine Zahl dürfen entfernt werden. Multiplikation: . , · , × oder *.</p></form>
 <div id="msg" role="status" aria-live="polite"></div><div class="tools"><button id="hint">Tipp</button><button id="reset">Aufgabe neu starten</button><button id="next" class="primary" hidden>Nächste offene Aufgabe</button></div></section><p class="small">Die Lehrkraft-Zusammenfassung erscheint automatisch, sobald alle zehn Aufgaben richtig abgeschlossen sind. Mit „Neue Runde“ gibt es zehn neue Aufgaben im gleichen Aufbau. Offline nutzbar. Neuladen setzt alle Daten zurück.</p></div>
-<section id="report" hidden tabindex="-1"><h1 id="reporthead">Alle zehn Aufgaben geschafft!</h1><h2>Zusammenfassung für die Lehrkraft</h2><div id="reporttext"></div><div class="tablewrap"><table><thead><tr><th>Aufgabe</th><th>Status</th><th>Endergebnis</th><th>Auswahlfehler</th><th>Vorzeichenfehler</th><th>Rechenfehler</th><th>Zeilenfehler</th><th>Tipps</th></tr></thead><tbody id="reportbody"></tbody></table></div><p class="small">Fehlversuche sind keine Note. Jeder falsche Eingabeversuch zählt einzeln. Fehler und Tipps bleiben bei Aufgaben-Neustart erhalten. Sitzungsdauer enthält mögliche Pausen. Keine automatische Übermittlung: bitte zeigen, drucken oder als PDF weitergeben.</p><div class="tools noprint"><button id="print">Drucken / als PDF speichern</button><button id="newround2" class="primary">Neue Runde mit neuen Aufgaben</button><button id="review">Rechenwege ansehen</button></div></section><button id="returnreport" class="noprint" hidden>Zur Abschlusszusammenfassung</button><p class="small noprint">Erlaubt: . , · , × oder * für Multiplikation; : , ÷ oder / für Division. Leerzeichen und Minusvarianten werden vereinheitlicht. Bei diesen Ganzzahlaufgaben bedeutet ein Punkt immer Multiplikation.</p></main><script>
+<section id="report" hidden tabindex="-1"><h1 id="reporthead">Alle zehn Aufgaben geschafft!</h1><h2>Zusammenfassung für die Lehrkraft</h2><div id="reporttext"></div><div class="tablewrap"><table><thead><tr><th>Aufgabe</th><th>Status</th><th>Endergebnis</th><th>Auswahlfehler</th><th>Vorzeichenfehler</th><th>Rechenfehler</th><th>Zeilenfehler</th><th>Tipps</th></tr></thead><tbody id="reportbody"></tbody></table></div><p class="small">Fehlversuche sind keine Note. Jeder falsche Eingabeversuch zählt einzeln. Fehler und Tipps bleiben bei Aufgaben-Neustart erhalten. Sitzungsdauer enthält mögliche Pausen. Keine automatische Übermittlung: bitte zeigen, drucken oder als PDF weitergeben.</p><div class="tools noprint"><button id="print">Drucken / als PDF speichern</button><button id="newround2" class="primary">Neue Runde mit neuen Aufgaben</button><button id="review">Rechenwege ansehen</button></div></section><button id="returnreport" class="noprint" hidden>Zur Abschlusszusammenfassung</button><p class="small noprint">Erlaubt: . , · , × oder * für Multiplikation; : , ÷ oder / für Division. Leerzeichen und Minusvarianten werden vereinheitlicht. Bei diesen Ganzzahlaufgaben bedeutet ein Punkt immer Multiplikation.</p></main><div id="pad" hidden role="group" aria-label="Eingabehilfe">
+  <div class="padtop"><span>Eingabehilfe</span><button type="button" class="pmini" id="padSys">Handy-Tastatur einblenden</button><button type="button" class="pmini" id="padHide" aria-label="Eingabehilfe schließen">✕</button></div>
+  <div class="keys">
+    <button type="button" data-ins="7">7</button><button type="button" data-ins="8">8</button><button type="button" data-ins="9">9</button><button type="button" class="op" data-ins="+">+</button><button type="button" class="op" data-ins="−" aria-label="minus">−</button><button type="button" class="op" data-act="del" aria-label="Löschen">⌫</button><button type="button" class="op" data-act="clr" aria-label="Feld leeren">C</button>
+    <button type="button" data-ins="4">4</button><button type="button" data-ins="5">5</button><button type="button" data-ins="6">6</button><button type="button" class="op" data-ins="·" aria-label="mal">·</button><button type="button" class="op" data-ins=":" aria-label="geteilt">:</button><button type="button" class="op" data-ins="(">(</button><button type="button" class="op" data-ins=")">)</button>
+    <button type="button" data-ins="1">1</button><button type="button" data-ins="2">2</button><button type="button" data-ins="3">3</button><button type="button" class="op" data-ins="[">[</button><button type="button" class="op" data-ins="]">]</button><button type="button" class="op" data-act="left" aria-label="Cursor nach links">◀</button><button type="button" class="op" data-act="right" aria-label="Cursor nach rechts">▶</button>
+    <button type="button" data-ins="0" style="grid-column:span 2">0</button><button type="button" class="op" data-ins=" " aria-label="Leerzeichen" style="grid-column:span 2">␣</button><button type="button" class="go" data-act="ok" style="grid-column:span 3">✓ fertig</button>
+  </div>
+</div>
+<script>
 'use strict';
 const E0=["(+8) · (−3) + (−2)", "(+7) − (+18) : (−3)", "(+6) · (−2) + (+9) − (−4)", "(+24) : (−6) − (+3) · (−2)", "[(−12) + (+4)] : (−2) + (+3)", "(+5) + (−4) · (+3) − (+18) : (−2)", "[(+3) + (−2) · (+5)] · (−2) − (+4)", "[(+18) : (−3) + (+2)] − [(−4) · (−2) + (+1)]", "[(+5) − [(−2) + (+6)]] · (−3) + (+8) : (−2)", "[(−6) + (+12) : (−3)] · [(+7) − [(−2) · (−4)]] − (−5)"];let E=E0.slice(),ROUND=1;const $=id=>document.getElementById(id),esc=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');
 function clean(s){return String(s).normalize('NFKC').replace(/[\u200B-\u200D\u2060\uFEFF]/g,'').replace(/[\s\u00A0\u202F]/g,'').replace(/[\u2010-\u2015\u2212\uFE63\uFF0D]/g,'-').replace(/[×·⋅∙.]/g,'*').replace(/[÷:∶]/g,'/')}
@@ -73,4 +92,38 @@ function startRound(){const open=S.some(s=>s.phase!=='done');if(open&&S.some(s=>
   ROUND++;E=newRound();S=E.map((_,j)=>fresh(j));i=0;finishedAt=null;$('report').hidden=true;$('learning').hidden=false;$('returnreport').hidden=true;render();window.scrollTo({top:0,behavior:'smooth'});}
 $('newround').onclick=startRound;$('newround2').onclick=startRound;
 $('print').onclick=()=>window.print();$('review').onclick=()=>{$('report').hidden=true;$('learning').hidden=false;render();$('learning').scrollIntoView({behavior:'smooth'})};$('returnreport').onclick=showReport;render();
+
+/* ================= Eingabehilfe (Bildschirm-Tastatur) ================= */
+(function(){
+  const pad=document.getElementById('pad'),sysBtn=document.getElementById('padSys'),IDS=['row','fsign','fnum'];
+  const touch=window.matchMedia&&matchMedia('(pointer: coarse)').matches;
+  let padOnly=touch,closed=false,cur=null;
+  try{const v=localStorage.getItem('padOnly');if(v!==null)padOnly=v==='1';}catch(x){}
+  function applyMode(){IDS.forEach(id=>{const i=document.getElementById(id);if(!i)return;if(padOnly)i.setAttribute('inputmode','none');else i.setAttribute('inputmode','text');});
+    sysBtn.textContent=padOnly?'Handy-Tastatur einblenden':'Handy-Tastatur ausblenden';}
+  applyMode();
+  function show(inp){cur=inp;if(closed)return;pad.hidden=false;document.body.classList.add('padon');
+    const r=inp.getBoundingClientRect();if(r.bottom>window.innerHeight-pad.offsetHeight-10)inp.scrollIntoView({block:'center',behavior:'smooth'});}
+  function hide(){pad.hidden=true;document.body.classList.remove('padon');}
+  document.addEventListener('focusin',ev=>{if(IDS.includes(ev.target.id))show(ev.target);});
+  document.addEventListener('focusout',()=>setTimeout(()=>{const a=document.activeElement;if(!(a&&IDS.includes(a.id)))hide();},150));
+  function insert(txt){if(!cur)return;const a=cur.selectionStart??cur.value.length,b=cur.selectionEnd??cur.value.length;cur.setRangeText(txt,a,b,'end');cur.dispatchEvent(new Event('input',{bubbles:true}));}
+  /* nur pointerdown/mousedown abfangen – nie touchstart, sonst gehen die Tasten am iPad nicht */
+  pad.addEventListener('pointerdown',ev=>{if(ev.target.closest('button'))ev.preventDefault();});
+  pad.addEventListener('mousedown',ev=>{if(ev.target.closest('button'))ev.preventDefault();});
+  pad.addEventListener('click',ev=>{
+    const b=ev.target.closest('button');if(!b)return;
+    if(b.id==='padHide'){closed=true;hide();return;}
+    if(b.id==='padSys'){padOnly=!padOnly;try{localStorage.setItem('padOnly',padOnly?'1':'0');}catch(x){}applyMode();if(cur){cur.blur();setTimeout(()=>cur.focus(),60);}return;}
+    if(!cur)return;
+    if(b.dataset.ins!==undefined)insert(b.dataset.ins);
+    else if(b.dataset.act==='clr'){cur.value='';cur.dispatchEvent(new Event('input',{bubbles:true}));}
+    else if(b.dataset.act==='left'){const p=Math.max(0,(cur.selectionStart??cur.value.length)-1);cur.setSelectionRange(p,p);}
+    else if(b.dataset.act==='right'){const p=Math.min(cur.value.length,(cur.selectionEnd??cur.value.length)+1);cur.setSelectionRange(p,p);}
+    else if(b.dataset.act==='del'){const a=cur.selectionStart??cur.value.length,e=cur.selectionEnd??a;if(a!==e)cur.setRangeText('',a,e,'end');else if(a>0)cur.setRangeText('',a-1,a,'end');}
+    else if(b.dataset.act==='ok'){const f=cur.form;if(cur.id==='fsign'){document.getElementById('fnum').focus();return;}if(f)f.requestSubmit();}
+    if(cur&&document.body.contains(cur))cur.focus({preventScroll:true});
+  });
+  document.addEventListener('click',ev=>{if(ev.target.closest('#nav button,#next,#reset,#newround,#newround2'))closed=false;});
+})();
 </script></body></html>
