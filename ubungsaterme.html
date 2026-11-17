@@ -199,8 +199,8 @@ body.padon .wrap{padding-bottom:20rem}
 .secactions{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}
 .secactions .res{color:var(--muted);font-weight:700}
 .secactions .round{margin-left:auto}
-:root{--c1:#D99A00;--c2:#1E73D6;--c3:#2E8B3A}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--c1:#FFD54F;--c2:#64B5F6;--c3:#81C784}}
+:root{--c1:#D99A00;--c2:#1E73D6;--c3:#2E8B3A;--c4:#D81B60;--c5:#8E24AA}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--c1:#FFD54F;--c2:#64B5F6;--c3:#81C784;--c4:#F48FB1;--c5:#CE93D8}}
 .pw sup{font-size:.68em;margin-left:.05em}
 .pwin{display:inline-flex;align-items:flex-start;gap:.1rem}
 .pwin input.b{width:4rem;text-align:center}
@@ -210,7 +210,7 @@ body.padon .wrap{padding-bottom:20rem}
 .tchip{font:inherit;font-family:Georgia,serif;font-size:1.35rem;font-weight:400;background:transparent;color:var(--text);border:0;border-bottom:5px solid transparent;border-radius:0;padding:0 .2rem .05rem;line-height:1.35}
 .tchip:hover{background:var(--info)}
 .tchip:disabled{opacity:1;cursor:default}
-.tchip.k1{border-bottom-color:var(--c1)}.tchip.k2{border-bottom-color:var(--c2)}.tchip.k3{border-bottom-color:var(--c3)}
+.tchip.k1{border-bottom-color:var(--c1)}.tchip.k2{border-bottom-color:var(--c2)}.tchip.k3{border-bottom-color:var(--c3)}.tchip.k4{border-bottom-color:var(--c4)}.tchip.k5{border-bottom-color:var(--c5)}
 .trow.small{font-size:.92rem;color:var(--muted)}
 .story{font-size:1.05rem;line-height:1.5;background:var(--info);border-left:5px solid var(--accent);border-radius:.5rem;padding:.5rem .8rem}
 .story .ic{font-size:1.4rem}
@@ -232,6 +232,7 @@ span.sgnc.flipped{color:var(--bad)}
 .smile.ask .face{font-size:1.4rem}
 button.facebtn{font-size:1.8rem;padding:.1rem .6rem;margin-left:.4rem;background:var(--field);border:2px solid var(--line)}
 .clsrow{margin-top:.3rem}
+.resline{margin-top:.4rem}
 </style></head>
 <body>
 <div class="wrap">
@@ -309,7 +310,7 @@ button.facebtn{font-size:1.8rem;padding:.1rem .6rem;margin-left:.4rem;background
 </div>
 <script>
 /* ================= Potenzen und Terme – abwechselnd ================= */
-const STORE='terme6:',CODE_COMPACT=true;
+const STORE='terme7:',CODE_COMPACT=true;
 const gcdN=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a;};
 const inpF=(f,val,label,ph,w)=>'<input class="pin" data-f="'+f+'" value="'+esc(val||'')+'" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="'+label+'"'+(ph?' placeholder="'+ph+'"':'')+(w?' style="width:'+w+'"':'')+'>';
 /* Potenz-Eingabe: Basis mit hochgestellter Hochzahl */
@@ -486,7 +487,7 @@ const TADD=hoch=>({
       (done?'':'<div class="trow small">Tippe gleichartige Glieder an – jedes Antippen wechselt die Farbe. <button type="button" class="mini" data-act="mchk">Markierung prüfen</button></div>')+
       '<div class="trow">= '+inpF('r',s.v.r,'Zusammengefasster Term','z. B. 2x^2 - 3x','14rem')+'</div>';},
   onAct(t,s,a){
-    if(a[0]==='c'){const k=+a.slice(1);s.v.cols=s.v.cols||t.terms.map(()=>0);s.v.cols[k]=(s.v.cols[k]+1)%4;s.msg=null;return null;}
+    if(a[0]==='c'){const k=+a.slice(1);s.v.cols=s.v.cols||t.terms.map(()=>0);s.v.cols[k]=(s.v.cols[k]+1)%6;s.msg=null;return null;}
     if(a==='mchk'){const ks=t.terms.map(m=>key(m.v)),cols=s.v.cols||t.terms.map(()=>0);let m=null;
       if(!cols.some(Boolean))m={kind:'bad',text:'Tippe gleichartige Glieder an, bis sie dieselbe Farbe haben.'};
       for(const c of [1,2,3]){if(m)break;const idx=cols.map((x,i)=>x===c?i:-1).filter(i=>i>=0);if(new Set(idx.map(i=>ks[i])).size>1)m={kind:'bad',text:'In einer Farbe sind Glieder, die nicht gleichartig sind. Gleichartig heißt: dieselben Variablen mit denselben Hochzahlen.'};}
@@ -496,7 +497,7 @@ const TADD=hoch=>({
       s.msg=m||{kind:'ok',text:'✓ Super markiert! Jetzt fasse zusammen.'};return null;}
     return null;},
   check(t,s){return judgePoly(s.v.r,t.res);},
-  solve(t,s){s.v.r=polyPlain(t.res);const keys=[...new Set(t.terms.map(m=>key(m.v)))];s.v.cols=t.terms.map(m=>1+keys.indexOf(key(m.v))%3);},
+  solve(t,s){s.v.r=polyPlain(t.res);const keys=[...new Set(t.terms.map(m=>key(m.v)))];s.v.cols=t.terms.map(m=>1+keys.indexOf(key(m.v))%5);},
   solH(t){return polyH(t.res);}
 });
 
@@ -661,12 +662,30 @@ const clsOf=n=>n===1?'mo':n===2?'bi':'po';
 const clsHint='Zähle die Glieder – sie sind durch + oder − getrennt: 1 Glied → <b>Monom</b>, 2 Glieder → <b>Binom</b>, mehr als 2 → <b>Polynom</b>.';
 const clsBtns=(s,key)=>'<span class="choice" role="group" aria-label="Monom, Binom oder Polynom">'+Object.keys(CLSN).map(k=>'<button type="button" data-set="'+key+'" data-v="'+k+'" aria-pressed="'+(s.v[key]===k)+'">'+CLSN[k]+'</button>').join('')+'</span>';
 /* nach dem Zusammenfassen: Ist das Ergebnis ein Monom, Binom oder Polynom? */
+/* Markierung in der Angabe: jedes Glied gefärbt, gleichartige gleich, verschiedene verschieden */
+function markOk(t,s){const ks=t.terms.map(m=>key(m.v)),cols=s.v.cols||ks.map(()=>0);
+  if(cols.some(c=>!c))return 'Unterstreiche zuerst <b>jedes</b> Glied in der Angabe – gleichartige in derselben Farbe, die anderen in eigenen Farben.';
+  const byKey={};for(let i=0;i<ks.length;i++){if(byKey[ks[i]]===undefined)byKey[ks[i]]=cols[i];else if(byKey[ks[i]]!==cols[i])return 'In der Angabe haben gleichartige Glieder verschiedene Farben – schau dir '+keyH(ks[i])+' an.';}
+  const used=Object.values(byKey);if(new Set(used).size<used.length)return 'In der Angabe haben verschiedene Arten von Gliedern dieselbe Farbe.';
+  return null;}
 function withCls(T){return Object.assign({},T,{autoCheck:true,
-  render(t,s){let h=T.render(t,s);if(s.v.rok||s.res===true||s.res==='shown')h+='<div class="trow clsrow">Das Ergebnis ist ein '+clsBtns(s,'cls')+'</div>';return h;},
+  render(t,s){let h=T.render(t,s);
+    if(s.v.rok||s.res===true||s.res==='shown'){const rc=s.v.rc||t.res.map(()=>0),done=s.res===true||s.res==='shown';
+      h+='<div class="trow resline"><span class="small">Unterstreiche im Ergebnis jedes Glied in <b>derselben Farbe</b> wie in der Angabe:</span></div><div class="trow taskline">= '+
+        t.res.map((m,k)=>'<button type="button" class="tchip'+(rc[k]?' k'+rc[k]:'')+'" data-act="rc'+k+'"'+(done?' disabled':'')+' aria-label="Glied '+(k+1)+' im Ergebnis markieren">'+termH(m,k===0)+'</button>').join('')+'</div>';
+      h+='<div class="trow clsrow">Das Ergebnis ist ein '+clsBtns(s,'cls')+'</div>';}
+    return h;},
+  onAct(t,s,a){if(a.startsWith('rc')){const k=+a.slice(2);s.v.rc=s.v.rc||t.res.map(()=>0);s.v.rc[k]=(s.v.rc[k]+1)%6;s.msg=null;return null;}return T.onAct?T.onAct(t,s,a):null;},
   check(t,s){const r=T.check(t,s);if(r!==true){s.v.rok=0;return r;}
-    s.v.rok=1;if(!s.v.cls)return {soft:'Richtig zusammengefasst! Ist das Ergebnis ein Monom, Binom oder Polynom? Tippe an.',good:true};
+    if(!s.v.rok){s.v.rok=1;return {soft:'Richtig zusammengefasst! Unterstreiche jetzt jedes Glied im Ergebnis in derselben Farbe wie in der Angabe.',good:true};}
+    const mk=markOk(t,s);if(mk)return {soft:mk};
+    const rc=s.v.rc||[];if(t.res.some((_,k)=>!rc[k]))return {soft:'Unterstreiche jedes Glied im Ergebnis – in derselben Farbe wie die gleichartigen Glieder in der Angabe.'};
+    const ks=t.terms.map(m=>key(m.v)),cols=s.v.cols;
+    const bad=t.res.findIndex((m,k)=>cols[ks.indexOf(key(m.v))]!==rc[k]);
+    if(bad>=0)return 'Schau bei '+keyH(key(t.res[bad].v))+' in der Angabe: '+termH(t.res[bad],true)+' im Ergebnis braucht dieselbe Farbe.';
+    if(!s.v.cls)return {soft:'Super, alle Farben passen! Ist das Ergebnis ein Monom, Binom oder Polynom? Tippe an.',good:true};
     return s.v.cls===clsOf(t.res.length)?true:clsHint;},
-  solve(t,s){T.solve(t,s);s.v.rok=1;s.v.cls=clsOf(t.res.length);},
+  solve(t,s){T.solve(t,s);s.v.rok=1;const ks=t.terms.map(m=>key(m.v));s.v.rc=t.res.map(m=>s.v.cols[ks.indexOf(key(m.v))]);s.v.cls=clsOf(t.res.length);},
   solH(t){return T.solH(t)+' – ein '+CLSN[clsOf(t.res.length)];}});}
 /* eigene Übung: Welche Art von Term? */
 const CLS={
