@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Binom mal Binom – mit Pfeilen</title>
+<title>Klammern auflösen mit Pfeilen – Monom mal / durch Polynom</title>
 <meta name="uebersicht-kapitel" content="Terme">
-<meta name="uebersicht-thema" content="Binom mal Binom mit Pfeilen">
-<meta name="uebersicht-info" content="(a + b) · (c + d): vier Pfeile zeichnen, jeden Pfeil ausrechnen, Ergebnis anschreiben, zusammenfassen – Standard und Standard AHS, 8 Beispiele pro Runde">
+<meta name="uebersicht-thema" content="Klammern auflösen mit Pfeilen (Monom mal Polynom)">
+<meta name="uebersicht-info" content="Pfeile zeichnen, jeden Pfeil ausrechnen, zusammenfassen – Standard und Standard AHS (mit Hochzahlen), 8 Beispiele pro Runde">
 <meta name="uebersicht-gruppe" content="3. Klasse">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -254,8 +254,8 @@ input.cbx{width:3.6rem!important;text-align:center}.cvar{font-family:Georgia,ser
 <div class="wrap">
   <header>
     <div>
-      <h1>Binom mal Binom <span class="acc">mit Pfeilen</span></h1>
-      <p class="sub">Jedes Glied der ersten Klammer wird mit jedem Glied der zweiten Klammer multipliziert. Zuerst zeichnest du die vier Pfeile, dann rechnest du jeden Pfeil aus, schreibst das Ergebnis an und fasst zusammen. Mit ◀ ▶ oder den Nummern springst du zwischen den Beispielen.</p>
+      <h1>Klammern auflösen <span class="acc">mit Pfeilen</span></h1>
+      <p class="sub">Zuerst zeichnest du die Pfeile – vom Faktor zu jedem Glied in der Klammer. Dann rechnest du jeden Pfeil aus, schreibst das Ergebnis an und fasst zusammen. Mit ◀ ▶ oder den Nummern springst du zwischen den Beispielen.</p>
       <div class="levels" role="group" aria-label="Niveau">
         <button type="button" data-level="std" aria-pressed="true">Standard</button>
         <button type="button" data-level="ahs" aria-pressed="false">Standard AHS</button>
@@ -292,18 +292,18 @@ input.cbx{width:3.6rem!important;text-align:center}.cvar{font-family:Georgia,ser
 
     <details class="info" id="howto" open>
       <summary>Zusammenfassung – schreib sie in dein Heft!</summary>
-      <p class="copy">✏️ <b>Schreib diese Zusammenfassung mit dem Beispiel ordentlich in dein Heft ab – mit allen 4 Pfeilen!</b></p>
-      <p><b>1. Pfeile zeichnen:</b> Vom <b>ersten</b> Glied der ersten Klammer gehen Pfeile zu <b>beiden</b> Gliedern der zweiten Klammer (oben), vom <b>zweiten</b> Glied ebenso (unten). Das sind <b>4 Pfeile</b>. Das Vorzeichen gehört zum Glied dahinter.</p>
-      <p><b>2. Rechnung anschreiben:</b> Für jeden Pfeil eine Multiplikation, mit + dazwischen, negative Zahlen in Klammern: <i>y</i> · <i>y</i> + <i>y</i> · (−4) + 2 · <i>y</i> + 2 · (−4). Wer sicher ist, darf gleich das Ergebnis hinschreiben – ist es falsch, muss die Multiplikation angeschrieben werden.</p>
-      <p><b>3. Jede Multiplikation ausrechnen:</b> <span class="bxn">Zahl</span> mal <span class="bxn">Zahl</span>, <span class="bxv">Variable</span> mal <span class="bxv">Variable</span> (<i>x</i> · <i>x</i> = <i>x</i><sup>2</sup>).</p>
-      <p><b>Vorzeichen bei jedem Pfeil zuerst bestimmen:</b> plus mal plus = plus · minus mal minus = plus · plus mal minus = minus. Steht vorne kein Zeichen, ist es ein <b>unsichtbares Plus</b>: (4<i>y</i> + 1) heißt (+4<i>y</i> + 1).<br><b>Mal 1 bleibt gleich:</b> 4<i>y</i> · 1 = 4<i>y</i>, und das Vorzeichen ist + · + = +.</p>
-      
-      <p><b>4. Unterstreichen und zusammenfassen:</b> <b>Jedes</b> Glied unterstreichen – gleichartige in derselben Farbe, die anderen in eigenen Farben. Dann gleichartige zusammenfassen. Passt nichts zusammen, bleibt das Ergebnis so.</p><p><b>Multiplikation anschreiben:</b> Negative Zahlen in Klammern: <i>x</i> · (−2), (−3) · <i>y</i>.</p>
+      <p class="copy">✏️ <b>Schreib diese Zusammenfassung mit dem Beispiel ordentlich in dein Heft ab – mit den Pfeilen!</b></p>
+      <p><b>1. Pfeile zeichnen:</b> Vom Faktor außerhalb der Klammer geht zu <b>jedem</b> Glied in der Klammer ein Pfeil. Das Vorzeichen gehört zum Glied bzw. zum Faktor dahinter.</p>
+      <p><b>2. Rechnung anschreiben:</b> Für jeden Pfeil eine Multiplikation, mit + dazwischen. Negative Glieder in Klammern: 3<i>x</i> · (−7).</p>
+      <p><b>3. Ausrechnen:</b> <span class="bxn">Zahl</span> mal <span class="bxn">Zahl</span>, <span class="bxv">Variable</span> mal <span class="bxv">Variable</span>. Gleiche Variablen: Hochzahlen <b>addieren</b> (<i>x</i><sup>2</sup> · <i>x</i> = <i>x</i><sup>3</sup>).</p>
+      <p><b>Vorzeichen:</b> plus mal plus = plus · minus mal minus = plus · plus mal minus = minus</p>
+      <p><b>4. Unterstreichen:</b> Jedes Glied unterstreichen – gleichartige Glieder in derselben Farbe.</p>
+      <p><b>5. Zusammenfassen:</b> Gleichartige Glieder zusammenfassen.</p>
       <p><b>Beispiel:</b></p>
       <div class="exprscroll"><div class="exprwrap" id="sumExpr"></div></div>
-      <p class="rule">= <i>x</i> · <i>x</i> + <i>x</i> · (−2) + 3 · <i>x</i> + 3 · (−2)<br>
-        = <i>x</i><sup>2</sup> − 2<i>x</i> + 3<i>x</i> − 6<br>
-        = <i>x</i><sup>2</sup> + <i>x</i> − 6</p>
+      <p class="rule">= 3<i>x</i> · <i>y</i> + 3<i>x</i> · (−7) − 5 · 6<i>x</i> − 5 · (−3)<br>
+        = 3<i>xy</i> − 21<i>x</i> − 30<i>x</i> + 15<br>
+        = 3<i>xy</i> − 51<i>x</i> + 15</p>
       <p class="hint">Eingabe: Hochzahlen mit ^ oder ², z. B. 6x^3 oder 6x³. Minus nicht vergessen, z. B. -8xy.</p>
     </details>
 
@@ -399,28 +399,29 @@ function parseTerm(str){
 /* Gruppe: {f: Faktor, t: [Glieder in der Klammer], side: 'L' (Faktor vor der Klammer) | 'R' (Faktor nach der Klammer), op: '·' | ':'} */
 const N_EX=8,DONE=4;  /* Schritte: 0 Pfeile · 1 jeden Pfeil ausrechnen · 2 Ergebnis selbst anschreiben · 3 zusammenfassen · 4 fertig */
 const L2=[['x','y'],['a','b'],['e','f'],['m','n'],['g','h'],['p','q']];
-const VA=['x','a','y','b','m','z'];
-const bb=(A,B,C,D)=>[{f:A,t:[C,D],side:'L',op:'·'},{f:B,t:[C,D],side:'L',op:'·'}];
 const GEN={
   std:[
-    ()=>{const x=pick(VA);return bb(M(1,{[x]:1}),M(rnd(1,9)),M(1,{[x]:1}),M(rnd(1,9)));},
-    ()=>{const x=pick(VA);return bb(M(1,{[x]:1}),M(rnd(1,9)),M(1,{[x]:1}),M(-rnd(1,9)));},
-    ()=>{const x=pick(VA);return bb(M(1,{[x]:1}),M(-rnd(1,9)),M(1,{[x]:1}),M(-rnd(1,9)));},
-    ()=>{const x=pick(VA);return bb(M(rnd(2,5),{[x]:1}),M(1),M(1,{[x]:1}),M(-rnd(2,9)));},
-    ()=>{const x=pick(VA);return bb(M(1,{[x]:1}),M(-rnd(1,9)),M(rnd(2,5),{[x]:1}),M(rnd(1,9)));},
-    ()=>{const [x,y]=pick(L2);return bb(M(1,{[x]:1}),M(rnd(1,9)),M(1,{[y]:1}),M(rnd(1,9)));},
-    ()=>{const x=pick(VA);return bb(M(rnd(2,5),{[x]:1}),M(-rnd(1,9)),M(rnd(2,4),{[x]:1}),M(-rnd(1,9)));},
-    ()=>{const x=pick(VA);return bb(M(rnd(2,9)),M(-1,{[x]:1}),M(1,{[x]:1}),M(rnd(1,9)));}
+    ()=>{const [v,w]=pick(L2);return [{f:M(rnd(2,6),{[w]:1}),t:[M(1,{[v]:1}),M(rnd(1,9))],side:'L',op:'·'}];},
+    ()=>{const [v,w]=pick(L2);return [{f:M(rnd(2,6),{[w]:1}),t:[M(rnd(2,12)),M(-rnd(2,6),{[v]:1})],side:'L',op:'·'}];},
+    ()=>{const [v,w]=pick(L2);return [{f:M(rnd(2,6),{[w]:1}),t:[M(rnd(2,6),{[v]:1}),M(-rnd(2,9))],side:'L',op:'·'}];},
+    ()=>{const [a,b]=pick(L2);return [{f:M(rnd(2,9)),t:[M(rnd(2,9),{[a]:1}),M(-rnd(2,9),{[b]:1})],side:'L',op:'·'}];},
+    ()=>{const [a,b]=pick(L2);return [{f:M(-rnd(2,6)),t:[M(rnd(2,7),{[a]:1}),M(sg()*rnd(2,7),{[b]:1})],side:'L',op:'·'}];},
+    ()=>{const [e,f]=pick(L2);let m,n,r;do{m=rnd(2,5);n=rnd(2,6);r=rnd(1,4);}while(m===n*r);
+      return [{f:M(m,{[f]:1}),t:[M(rnd(2,9)),M(1,{[e]:1})],side:'L',op:'·'},{f:M(n,{[e]:1}),t:[M(rnd(2,9)),M(-r,{[f]:1})],side:'L',op:'·'}];},
+    ()=>{const [x,y]=pick(L2);return [{f:M(rnd(2,5),{[x]:1}),t:[M(1,{[y]:1}),M(-rnd(2,9))],side:'L',op:'·'},{f:M(-rnd(2,6)),t:[M(rnd(2,7),{[x]:1}),M(-rnd(1,9))],side:'L',op:'·'}];},
+    ()=>{const x=pick(['x','a','y','b']);return [{f:M(1,{[x]:1}),t:[M(1,{[x]:1}),M(rnd(2,9))],side:'L',op:'·'},{f:M(rnd(2,6)),t:[M(1,{[x]:1}),M(-rnd(1,9))],side:'L',op:'·'}];}
   ],
   ahs:[
-    ()=>{const x=pick(VA);return bb(M(rnd(2,5),{[x]:1}),M(-rnd(1,9)),M(rnd(2,5),{[x]:1}),M(rnd(1,9)));},
-    ()=>{const [x,y]=pick(L2);return bb(M(rnd(2,4),{[x]:1}),M(-rnd(2,5),{[y]:1}),M(1,{[x]:1}),M(rnd(2,5),{[y]:1}));},
-    ()=>{const x=pick(VA);return bb(M(1,{[x]:2}),M(rnd(2,6)),M(1,{[x]:1}),M(-rnd(2,6)));},
-    ()=>{const [x,y]=pick(L2),a=rnd(2,5),b=rnd(2,5);return bb(M(a,{[x]:1}),M(-b,{[y]:1}),M(a,{[x]:1}),M(b,{[y]:1}));},
-    ()=>{const x=pick(VA);return bb(M(rnd(2,5),{[x]:1}),M(-1),M(rnd(2,5),{[x]:1}),M(1));},
-    ()=>{const [x,y]=pick(L2);return bb(M(rnd(2,4),{[x]:1,[y]:1}),M(-rnd(1,5)),M(1,{[x]:1}),M(rnd(2,5),{[y]:1}));},
-    ()=>{const x=pick(VA);return bb(M(1,{[x]:2}),M(-rnd(2,5),{[x]:1}),M(rnd(2,4),{[x]:1}),M(rnd(1,5)));},
-    ()=>{const [x,y]=pick(L2),a=rnd(2,5);return bb(M(a,{[x]:1}),M(rnd(2,5),{[y]:1}),M(a,{[x]:1}),M(rnd(2,5),{[y]:1}));}
+    ()=>{const x=pick(['x','a','y']);return [{f:M(rnd(2,5),{[x]:2}),t:[M(rnd(2,6),{[x]:1}),M(-rnd(2,9))],side:'L',op:'·'}];},
+    ()=>{const [a,b]=pick(L2);return [{f:M(-rnd(2,5),{[a]:1}),t:[M(rnd(2,6),{[a]:2}),M(-rnd(2,6),{[a]:1,[b]:1})],side:'L',op:'·'}];},
+    ()=>{const x=pick(['x','a','y']);return [{f:M(-rnd(2,5),{[x]:2}),t:[M(rnd(2,6),{[x]:2}),M(-rnd(2,6),{[x]:1}),M(rnd(1,9))],side:'L',op:'·'}];},
+    ()=>{const [a,b]=pick(L2);return [{f:M(rnd(2,5),{[a]:1,[b]:1}),t:[M(rnd(2,5),{[a]:2}),M(-rnd(2,5),{[b]:2})],side:'L',op:'·'}];},
+    ()=>{const x=pick(['x','a','y']);return [{f:M(rnd(2,5),{[x]:1}),t:[M(1,{[x]:2}),M(-rnd(2,6),{[x]:1}),M(rnd(2,9))],side:'L',op:'·'}];},
+    ()=>{const [a,b]=pick(L2);let m,p,n,q;do{m=rnd(2,5);p=rnd(2,4);n=rnd(2,5);q=rnd(2,4);}while(m*p===n*q);
+      return [{f:M(m,{[a]:1}),t:[M(1,{[a]:1}),M(-p,{[b]:1})],side:'L',op:'·'},{f:M(n,{[b]:1}),t:[M(q,{[a]:1}),M(-1,{[b]:1})],side:'L',op:'·'}];},
+    ()=>{const x=pick(['x','a','y']),k=rnd(2,4);return [{f:M(1,{[x]:2}),t:[M(1,{[x]:1}),M(-rnd(2,6))],side:'L',op:'·'},{f:M(-k,{[x]:1}),t:[M(1,{[x]:2}),M(-rnd(2,6))],side:'L',op:'·'}];},
+    ()=>{const [x,y]=pick(L2),k=rnd(2,5);let p,q,m;do{p=rnd(2,6);q=rnd(2,6);m=rnd(2,6);}while(m===p||m===q);
+      return [{f:M(k,{[x]:1}),t:[M(p,{[x]:1}),M(-q,{[y]:1})],side:'L',op:'·'},{f:M(-m,{[y]:1}),t:[M(1,{[x]:1}),M(-1,{[y]:1})],side:'L',op:'·'}];}
   ]
 };
 function build(groups){
@@ -445,17 +446,22 @@ function factorTxt(g,gi){
   return {sign:g.f.c<0?' − ':' + ',body:absH(g.f)};
 }
 function exprHTML(t,interactive){
-  const [g0,g1]=t.groups;
-  const f0='<span class="tk fac" data-g="0">'+(g0.f.c<0?'':'<span class="ip">+</span>')+monoH(g0.f)+'</span>',f1='<span class="tk fac" data-g="1">'+(g1.f.c<0?MINUS:'+')+'&#8202;'+absH(g1.f)+'</span>';
-  const br2=g0.t.map((m,ti)=>'<span class="tk trm" data-g="*" data-t="'+ti+'">'+(ti?(m.c<0?MINUS:'+')+'&#8202;'+absH(m):(m.c<0?'':'<span class="ip">+</span>')+monoH(m))+'</span>').join('');
-  return '<span class="tk op">(</span>'+f0+f1+'<span class="tk op">)</span><span class="tk op mul">·</span><span class="tk op">(</span>'+br2+'<span class="tk op">)</span><span class="tk op">=</span>';
+  let h='';
+  t.groups.forEach((g,gi)=>{
+    const ft=factorTxt(g,gi),fac='<span class="tk fac" data-g="'+gi+'">'+ft.body+'</span>';
+    const br='<span class="tk op">(</span>'+g.t.map((m,ti)=>'<span class="tk trm" data-g="'+gi+'" data-t="'+ti+'">'+(ti?(m.c<0?MINUS:'+')+'&#8202;'+absH(m):monoH(m))+'</span>').join('')+'<span class="tk op">)</span>';
+    const op='<span class="tk op">'+(g.op===':'?':':'·')+'</span>';
+    if(ft.sign)h+='<span class="tk op">'+ft.sign.trim()+'</span>';
+    h+=g.side==='L'?fac+op+br:br+op+fac;
+  });
+  return h+'<span class="tk op">=</span>';
 }
 const exprPlain=t=>{const d=document.createElement('div');d.innerHTML=exprHTML(t);return d.textContent.replace(/\u200A/g,'');};
 /* Produkt eines Pfeils, z. B. 4y · (−2x) bzw. 8a : 2 */
 function opndH(m,first,box){return (!first&&m.c<0)?'('+monoH(m,box)+')':monoH(m,box);}
 function prodH(t,k,box){const [gi,ti]=t.arrows[k],g=t.groups[gi],term=g.t[ti];
   return g.op===':'?opndH(term,true,box)+' : '+opndH(g.f,false,box):opndH(g.f,true,box)+' · '+opndH(term,false,box);}
-function prodLineH(t){const F=m=>m.c<0?'('+monoH(m)+')':monoH(m);return t.arrows.map(([gi,ti],k)=>{const g=t.groups[gi];return (k?' + ':'')+F(g.f)+' · '+F(g.t[ti]);}).join('');}
+function prodLineH(t){return t.arrows.map((a,k)=>{const s=prodH(t,k);return k?(s.startsWith(MINUS)?' − '+s.slice(1):' + '+s):s;}).join('');}
 
 /* Pfeile zeichnen (Bogen vom Faktor zum Glied) */
 function arrowExprH(t,id,arr){return '<div class="exprscroll"><div class="exprwrap mini" id="'+id+'" data-arr="'+esc(JSON.stringify(arr||t.arrows))+'">'+exprHTML(t)+'</div></div>';}
@@ -471,14 +477,12 @@ function drawArrows(wrap,arr){
   const box=wrap.getBoundingClientRect();
   const byF={};arr.forEach(([gi,ti])=>{(byF[gi]=byF[gi]||[]).push(ti);});
   arr.forEach(([gi,ti])=>{
-    const f=wrap.querySelector('.tk.fac[data-g="'+gi+'"]'),tm=wrap.querySelector('.tk.trm[data-t="'+ti+'"]');if(!f||!tm)return;
-    const fr=f.getBoundingClientRect(),tr=tm.getBoundingClientRect(),down=gi===1;
-    const x1=fr.left+fr.width/2-box.left+(down?4:0),x2=tr.left+tr.width/2-box.left+(down?4:-4),y=down?Math.max(fr.bottom,tr.bottom)-box.top+2:Math.min(fr.top,tr.top)-box.top-2;
-    const fs=parseFloat(getComputedStyle(wrap).fontSize)||27,lift=(fs*0.8+Math.min(fs*1.25,Math.abs(x2-x1)*0.22))*(down?-1:1);
-    const p=document.createElementNS(ns,'path');p.setAttribute('d','M'+x1+','+y+' C'+x1+','+(y-lift)+' '+x2+','+(y-lift)+' '+x2+','+y);if(down)p.setAttribute('class','dn');
+    const f=wrap.querySelector('.tk.fac[data-g="'+gi+'"]'),tm=wrap.querySelector('.tk.trm[data-g="'+gi+'"][data-t="'+ti+'"]');if(!f||!tm)return;
+    const fr=f.getBoundingClientRect(),tr=tm.getBoundingClientRect();
+    const x1=fr.left+fr.width/2-box.left,x2=tr.left+tr.width/2-box.left,y=Math.min(fr.top,tr.top)-box.top-2;
+    const fs=parseFloat(getComputedStyle(wrap).fontSize)||27,lift=fs*0.8+Math.min(fs*1.25,Math.abs(x2-x1)*0.22);
+    const p=document.createElementNS(ns,'path');p.setAttribute('d','M'+x1+','+y+' C'+x1+','+(y-lift)+' '+x2+','+(y-lift)+' '+x2+','+y);
     p.setAttribute('marker-end','url(#ah'+wrap.id+')');svg.appendChild(p);
-    const k=arr.findIndex(a=>a[0]===gi&&a[1]===ti),lab=document.createElementNS(ns,'text');const ord=gi*2+ti;
-    lab.setAttribute('x',x2-(x2>x1?16:-16));lab.setAttribute('y',y-lift*0.62+(down?6:2));lab.setAttribute('text-anchor','middle');lab.setAttribute('class','anum'+(down?' dn':''));lab.textContent=String(ord+1);svg.appendChild(lab);
   });
   wrap.prepend(svg);
 }
@@ -497,11 +501,11 @@ function advance(e,s,text){e.step=nextStep(e,s);e.msg[s]={kind:'ok',text};}
 /* Schritt 1: Pfeile */
 function check0(e){
   const t=e.t,has=(gi,ti)=>e.arr.some(a=>a[0]===gi&&a[1]===ti);
-  if(!e.arr.length){hint(e,0,'Tippe zuerst auf ein Glied der ersten Klammer und dann auf jedes Glied der zweiten Klammer.');return;}
+  if(!e.arr.length){hint(e,0,'Tippe zuerst auf den Faktor außerhalb der Klammer und dann auf jedes Glied in der Klammer.');return;}
   const missing=t.arrows.filter(([gi,ti])=>!has(gi,ti));
   if(!missing.length){advance(e,0,'Richtig! Alle Pfeile sind da – jetzt wird gerechnet.');return;}
   const g=t.groups[missing[0][0]];
-  fail(e,0,(missing.length===1?'Es fehlt noch ein Pfeil':'Es fehlen noch '+missing.length+' Pfeile')+': Von '+monoH(g.f)+' muss zu <b>jedem</b> Glied der zweiten Klammer ein Pfeil gehen. Insgesamt sind es 4 Pfeile.');
+  fail(e,0,(missing.length===1?'Es fehlt noch ein Pfeil':'Es fehlen noch '+missing.length+' Pfeile')+': Vom Faktor '+monoH(g.f)+' muss zu <b>jedem</b> Glied in der Klammer ein Pfeil gehen'+(t.groups.length>1?' – bei beiden Klammern':'')+'.');
 }
 /* Schritt 2: jeden Pfeil ausrechnen */
 function judgeProd(t,k,s){
@@ -565,7 +569,7 @@ function check1(e){
   const t=e.t,raw=String(e.ml||'').replace(/[*×•.]/g,'·').replace(/[–—]/g,'−').replace(/-/g,'−');
   if(!raw.trim()){hint(e,1,'Schreib die Rechnung an: für jeden Pfeil eine Multiplikation, mit + dazwischen, z. B. y · y + y · (−4) + … – oder gleich das Ergebnis.');return;}
   /* gleich das Ergebnis? – nur, solange nicht schon einmal ein falsches Ergebnis da war */
-  if(!raw.includes('·')){
+  if(!/[·:]/.test(raw)){
     if(e.forceMul){e.mlm='bad';return hint(e,1,'Schreib jetzt zuerst die <b>Multiplikationen</b> an, z. B. y · y + y · (−4) + 2 · y + 2 · (−4).');}
     const r=parseTerm(raw.replace(/−/g,'-'));
     if(!r.err){const want=t.prods.slice(),got=r.ms.slice();
@@ -580,14 +584,14 @@ function check1(e){
   const parts=splitTop(raw.replace(/^\+/,''));
   if(parts.some(p=>!p))return e.mlm='bad',hint(e,1,'Zwischen zwei Multiplikationen steht genau ein +.');
   if(parts.length!==t.arrows.length){e.mlm='bad';return fail(e,1,'Jeder Pfeil gibt eine Multiplikation – das sind hier '+t.arrows.length+' Stück, mit + dazwischen.');}
-  const want=t.arrows.map(([gi,ti])=>[t.groups[gi].f,t.groups[gi].t[ti]]),used=want.map(()=>false);
+  const want=t.arrows.map(([gi,ti])=>[t.groups[gi].f,t.groups[gi].t[ti],t.groups[gi].op===':'?':':'·']),used=want.map(()=>false);
   for(let k=0;k<parts.length;k++){
-    const fs=parts[k].split('·').map(z=>z.trim());
+    const op=parts[k].includes(':')?':':'·',fs=parts[k].split(/[·:]/).map(z=>z.trim());
     if(fs.length!==2||fs.some(z=>!z)){e.mlm='bad';return hint(e,1,'Jede Multiplikation hat zwei Faktoren mit Malpunkt dazwischen, z. B. y · (−4).');}
     const P=fs.map(z=>parseTerm(z.replace(/^\((.*)\)$/,'$1').replace(/N/g,'-')));
     if(P.some(p=>p.err||p.ms.length!==1)){e.mlm='bad';return hint(e,1,'Jeder Faktor ist genau ein Glied, z. B. 2y · (−4).');}
     const [a,b]=[P[0].ms[0],P[1].ms[0]];
-    const j=want.findIndex((w,i)=>!used[i]&&((sameM(a,w[0])&&sameM(b,w[1]))||(sameM(a,w[1])&&sameM(b,w[0]))));
+    const j=want.findIndex((w,i)=>!used[i]&&(w[2]===':'?(op===':'&&sameM(a,w[1])&&sameM(b,w[0])):(op==='·'&&((sameM(a,w[0])&&sameM(b,w[1]))||(sameM(a,w[1])&&sameM(b,w[0]))))));
     if(j<0){e.mlm='bad';
       const absEq=(p,q)=>Math.abs(p.c)===Math.abs(q.c)&&key(p.v)===key(q.v);
       if(want.some(w=>(absEq(a,w[0])&&absEq(b,w[1]))||(absEq(a,w[1])&&absEq(b,w[0]))))return fail(e,1,'Bei der '+(k+1)+'. Multiplikation fehlt ein Minus: Negative Glieder schreibst du mit Minus in Klammern, z. B. (−4).');
@@ -602,7 +606,8 @@ function check2(e){
   const t=e.t,rs=t.prods.map((p,k)=>/[·*×]/.test(e.pv[k]||'')?{fmt:true,text:'Hier schreibst du das <b>Ergebnis</b> der Multiplikation, z. B. 4y.'}:judgeSigned(t,k,e.pv[k],e.ps[k]));
   rs.forEach((r,k)=>{e.pm[k]=r.ok?'ok':r.empty?null:'bad';e.ph[k]=r.ok?'':(r.text||'');});
   if(rs.every(r=>r.ok)){e.lv=polyPlain(t.prods);e.lm='ok';e.mmsg=null;
-    e.cols=null;advance(e,2,'Richtig ausgerechnet! Jetzt unterstreiche jedes Glied – gleichartige Glieder in derselben Farbe.');return;}
+    if(!t.combine){e.msg[2]={kind:'ok',text:'Richtig ausgerechnet! Hier gibt es nichts zusammenzufassen – fertig.'};e.step=DONE;return;}
+    e.cols=null;advance(e,2,'Richtig ausgerechnet! Jetzt unterstreiche gleichartige Glieder in derselben Farbe.');return;}
   if(rs.some(r=>r.empty)){hint(e,2,'Wähle bei jedem Glied das Vorzeichen und rechne alle Multiplikationen aus.');return;}
   if(rs.every(r=>r.ok||r.fmt)){hint(e,2,'Kontrolliere die Schreibweise in den markierten Kästchen.');return;}
   if(!e.forceZv){e.forceZv=1;fail(e,2,'Nicht alles ist richtig ausgerechnet – schau dir die rot markierten an. <b>Unterstreiche jetzt in der grünen Zeile Zahlen und Buchstaben in Farben</b> – das hilft dir beim Rechnen.');return;}
@@ -632,7 +637,7 @@ function markCheck(e){
   for(const k of new Set(ks)){const n=ks.filter(x=>x===k).length,cs=new Set(ks.map((x,i)=>x===k?cols[i]:null).filter(x=>x!==null));
     if(n>1&&(cs.size>1||cs.has(0))){e.err++;e.mmsg={kind:'bad',text:'Gleichartige Glieder sollen dieselbe Farbe haben – schau dir '+keyH(k)+' an.'};return;}}
   const used=[...new Set(ks)].map(k=>cols[ks.indexOf(k)]);
-  if(new Set(used).size<used.length){e.err++;e.mmsg={kind:'bad',text:'Verschiedene Arten von Gliedern brauchen verschiedene Farben.'};return;}
+  if(new Set(used).size<used.length){e.err++;e.mmsg={kind:'bad',text:'Eine Farbe kommt doppelt vor. Jedes Glied bekommt seine <b>eigene</b> Farbe – nur gleichartige Glieder teilen sich eine Farbe.'};return;}
   e.mok=1;if(!t.combine){e.mmsg={kind:'ok',text:'✓ Richtig markiert! Alle Glieder haben verschiedene Farben – hier gibt es nichts zusammenzufassen. Das Ergebnis bleibt so.'};e.step=DONE;return;}
   e.mmsg={kind:'ok',text:'✓ Richtig markiert! Jetzt fasse zusammen.'};
 }
@@ -665,9 +670,9 @@ function renderEx(focus){
   h+='<div class="head"><span class="num">'+(cur+1)+'</span><h2>Löse die Klammer'+(t.groups.length>1?'n':'')+' auf'+(t.combine?' und fasse zusammen':'')+'!</h2></div>';
   /* alles wie im Heft: Zeile für Zeile direkt unter der Angabe */
   h+='<div class="heftcalc"><div class="exprscroll"><div class="exprwrap'+(e.step===0?' picking':'')+'" id="task">'+exprHTML(t)+'</div></div>';
-  if(e.step===0)h+='<div class="tline tools"><button type="button" data-act="check0">Pfeile prüfen</button><button type="button" class="mini" data-act="clrarr">Alle Pfeile löschen</button><span class="hint" style="margin:0">Glied der 1. Klammer antippen, dann die Glieder der 2. Klammer – 4 Pfeile.</span></div>'+msgHTML(e,0);
+  if(e.step===0)h+='<div class="tline tools"><button type="button" data-act="check0">Pfeile prüfen</button><button type="button" class="mini" data-act="clrarr">Alle Pfeile löschen</button><span class="hint" style="margin:0">Faktor vor der Klammer antippen, dann jedes Glied in der Klammer.</span></div>'+msgHTML(e,0);
   if(e.step>=1){
-    if(e.step===1){if(!e.mpal){let n=0;const T=[];t.arrows.forEach(([gi,ti],k)=>{const g=t.groups[gi],x=g.t[ti];T.push({id:n++,h:FH(g.f),p:FP(g.f)},{id:n++,h:'·',p:'·'},{id:n++,h:FH(x),p:FP(x)});if(k)T.push({id:n++,h:'+',p:'+'});});e.mpal=shufT(T);}
+    if(e.step===1){if(!e.mpal){let n=0;const T=[];t.arrows.forEach(([gi,ti],k)=>{const g=t.groups[gi],x=g.t[ti];if(g.op===':')T.push({id:n++,h:FH(x),p:FP(x)},{id:n++,h:':',p:':'},{id:n++,h:FH(g.f),p:FP(g.f)});else T.push({id:n++,h:FH(g.f),p:FP(g.f)},{id:n++,h:'·',p:'·'},{id:n++,h:FH(x),p:FP(x)});if(k)T.push({id:n++,h:'+',p:'+'});});e.mpal=shufT(T);}
       h+='<div class="tline"><span class="eqs">=</span>'+tileUI(e,'m')+'</div><div class="tline"><button type="button" data-act="check1">Prüfen</button></div>'+
         '<p class="srule">Bau die Rechnung nach den Pfeilen: für jeden Pfeil eine Multiplikation, mit <b>+</b> dazwischen. Negative Glieder stehen schon in Klammern.</p>'+msgHTML(e,1);}
     else if(!e.direct){const live=e.step===2;
@@ -688,7 +693,7 @@ function renderEx(focus){
       const cols=e.cols||t.prods.map(()=>0);
       h+='<div class="tline marks"><span class="eqs">=</span>'+t.prods.map((m,k)=>'<button type="button" class="tchip'+(cols[k]?' k'+cols[k]:'')+'" data-mk="'+k+'"'+(e.mok?' disabled':'')+'>'+termH(m,k===0)+'</button>').join('')+
         (e.mok?'':'<button type="button" class="mini" data-act="mchk">Markierung prüfen</button>')+'</div>';
-      if(!e.mok)h+='<p class="hint" style="margin:.1rem 0 .4rem .6rem">Unterstreiche <b>jedes</b> Glied: gleichartige Glieder in derselben Farbe, alle anderen in verschiedenen Farben. Jedes Antippen wechselt die Farbe.</p>';
+      if(!e.mok)h+='<p class="hint" style="margin:.1rem 0 .4rem .6rem">Unterstreiche <b>jedes</b> Glied in einer Farbe – jede Farbe nur einmal, außer bei gleichartigen Gliedern: die bekommen dieselbe Farbe. Jedes Antippen wechselt die Farbe.</p>';
       if(e.mmsg)h+='<p class="msg '+e.mmsg.kind+'" style="margin-left:.6rem">'+e.mmsg.text+'</p>';
       if(e.mok&&t.combine)h+='<div class="tline"><span class="eqs">=</span>'+coefUI(e,t.prods,e.rm||'')+'<button type="button" data-act="check3">Prüfen</button></div><p class="srule">Schreib vor jede Variable die zusammengefasste Zahl mit Vorzeichen, z. B. −3. Hebt sich alles auf, schreib 0.</p>'+msgHTML(e,3);
     }
@@ -818,7 +823,7 @@ $('exCard').addEventListener('click',ev=>{
     let gi=+tk.dataset.g;
     if(tk.classList.contains('fac')){e.selF=e.selF===gi?null:gi;e.msg[0]=null;renderEx();return;}
     const ti=+tk.dataset.t;
-    if(e.selF===null){e.msg[0]={kind:'bad',text:'Tippe zuerst auf ein Glied der <b>ersten Klammer</b> – dort beginnt der Pfeil.'};renderEx();return;}
+    if(e.selF===null){e.msg[0]={kind:'bad',text:'Tippe zuerst auf den <b>Faktor außerhalb der Klammer</b> – dort beginnt der Pfeil.'};renderEx();return;}
     if(tk.dataset.g==='*')gi=e.selF;
     if(e.selF!==gi){e.msg[0]={kind:'bad',text:'Ein Pfeil geht nur zu den Gliedern in der <b>eigenen</b> Klammer. Wähle den Faktor, der zu dieser Klammer gehört.'};renderEx();return;}
     const i=e.arr.findIndex(a=>a[0]===gi&&a[1]===ti);
@@ -870,7 +875,7 @@ function setLevel(l){
 document.querySelectorAll('.levels button').forEach(b=>b.addEventListener('click',()=>setLevel(b.dataset.level)));
 
 /* ================= Fortschritt: speichern (gleiches Gerät) & Code (anderes Gerät) ================= */
-const STORE='binom6t:',ALPH='23456789ABCDEFGHJKMNPQRSTUVWXYZ',AL=BigInt(ALPH.length),B=x=>BigInt(x);
+const STORE='pfeile4:',ALPH='23456789ABCDEFGHJKMNPQRSTUVWXYZ',AL=BigInt(ALPH.length),B=x=>BigInt(x);
 const normName=s=>s.trim().replace(/\s+/g,' ').toLowerCase();
 function nameHash(n){let h=2166136261;for(const ch of normName(n)){h^=ch.codePointAt(0);h=Math.imul(h,16777619);}return (h>>>0)%1024;}
 function checkChar(s){let c=0;for(let k=0;k<s.length;k++)c=(c+(k+1)*ALPH.indexOf(s[k]))%ALPH.length;return ALPH[c];}
@@ -941,7 +946,7 @@ $('codeCopy').addEventListener('click',ev=>{const b=ev.currentTarget,txt=$('code
   try{navigator.clipboard.writeText(txt).then(()=>{b.textContent='Kopiert ✓';setTimeout(()=>{b.textContent='Kopieren';},1500);},()=>{});}catch(x){}});
 
 /* Beispiel in der Zusammenfassung – mit Pfeilen */
-(function(){const t=build(bb(M(1,{x:1}),M(3),M(1,{x:1}),M(-2)));
+(function(){const t=build([{f:M(3,{x:1}),t:[M(1,{y:1}),M(-7)],side:'L',op:'·'},{f:M(-5),t:[M(6,{x:1}),M(-3)],side:'L',op:'·'}]);
   const w=$('sumExpr');w.innerHTML=exprHTML(t);w.dataset.arr=JSON.stringify(t.arrows);
   $('howto').addEventListener('toggle',()=>requestAnimationFrame(redrawAll));requestAnimationFrame(redrawAll);})();
 
