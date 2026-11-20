@@ -17,7 +17,7 @@
   --card:#FFFFFF; --line:#C9D5E6; --ok:#217A4B; --okbg:#E3F4EA; --bad:#B3261E; --badbg:#FBE7E5;
   --mark:#FFE873; --field:#FFFFFF; --info:#EAF1FB; --accent:#147D92;
   --num:#0E8FB8; --var:#8E24AA; --arrow:#1D4ED8;
-  --c1:#D99A00; --c2:#1E73D6; --c3:#2E8B3A; --c4:#D81B60; --c5:#8E24AA; --c6:#E8590C;
+  --c1:#D99A00; --c2:#1E73D6; --c3:#2E8B3A; --c4:#D81B60; --c5:#8E24AA; --c6:#E8590C; --c7:#00897B; --c8:#6D4C41;
   color-scheme: light;
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
@@ -27,14 +27,14 @@
     --paper:#111827; --grid:#1C2638; --ink:#A9C1FF; --text:#E6EAF2; --muted:#9AA4B8;
     --card:#172033; --line:#2C3A55; --ok:#5FD08E; --okbg:#173326; --bad:#FF8A80; --badbg:#3A1C1C;
     --mark:#6B5A12; --field:#0F1726; --info:#1A2740; --accent:#5CC8DC;
-    --num:#5CC8E8; --var:#CE93D8; --arrow:#8FB1FF; --c1:#FFD54F; --c2:#64B5F6; --c3:#81C784; --c4:#F48FB1; --c5:#CE93D8; --c6:#FFAB76; color-scheme: dark;
+    --num:#5CC8E8; --var:#CE93D8; --arrow:#8FB1FF; --c1:#FFD54F; --c2:#64B5F6; --c3:#81C784; --c4:#F48FB1; --c5:#CE93D8; --c6:#FFAB76; --c7:#4DB6AC; --c8:#BCAAA4; color-scheme: dark;
   }
 }
 :root[data-theme="dark"]{
   --paper:#111827; --grid:#1C2638; --ink:#A9C1FF; --text:#E6EAF2; --muted:#9AA4B8;
   --card:#172033; --line:#2C3A55; --ok:#5FD08E; --okbg:#173326; --bad:#FF8A80; --badbg:#3A1C1C;
   --mark:#6B5A12; --field:#0F1726; --info:#1A2740; --accent:#5CC8DC;
-  --num:#5CC8E8; --var:#CE93D8; --arrow:#8FB1FF; --c1:#FFD54F; --c2:#64B5F6; --c3:#81C784; --c4:#F48FB1; --c5:#CE93D8; --c6:#FFAB76; color-scheme: dark;
+  --num:#5CC8E8; --var:#CE93D8; --arrow:#8FB1FF; --c1:#FFD54F; --c2:#64B5F6; --c3:#81C784; --c4:#F48FB1; --c5:#CE93D8; --c6:#FFAB76; --c7:#4DB6AC; --c8:#BCAAA4; color-scheme: dark;
 }
 *,*::before,*::after{box-sizing:inherit}
 [hidden]{display:none!important}
@@ -157,9 +157,10 @@ body.padon .wrap{padding-bottom:20rem}
 
 /* Aufgabe mit Pfeilen */
 .exprscroll{overflow-x:auto;margin:.6rem 0 .2rem;-webkit-overflow-scrolling:touch}
-.exprwrap{position:relative;display:inline-block;white-space:nowrap;padding:4.2rem .6rem .6rem;font-size:1.7rem;font-family:Georgia,"Times New Roman",serif}
+.exprwrap{position:relative;display:inline-block;white-space:nowrap;padding:4.2rem .6rem 3.2rem;font-size:1.7rem;font-family:Georgia,"Times New Roman",serif}
 .exprwrap svg.arrows{position:absolute;left:0;top:0;pointer-events:none;overflow:visible}
 .exprwrap svg.arrows path{fill:none;stroke:var(--arrow);stroke-width:2.6;stroke-linecap:round}
+.exprwrap svg.arrows path.dn{stroke:var(--accent);stroke-dasharray:0}
 .tk{display:inline-block;padding:0 .12rem;border-radius:.35rem}
 .tk.fac,.tk.trm{border:2px dashed transparent}
 .picking .tk.fac,.picking .tk.trm{cursor:pointer}
@@ -184,10 +185,69 @@ body.padon .wrap{padding-bottom:20rem}
 .stepcard p{margin:.3rem 0}
 .sumafter{margin-top:.8rem;padding:.6rem .9rem;border-radius:.5rem;background:var(--mark);color:var(--text)}
 .heft .hl .prod{font-family:inherit}
-.exprwrap.mini{font-size:1.25rem;padding:3rem .3rem .3rem}
+.exprwrap.mini{font-size:1.25rem;padding:3rem .3rem 3rem}
 .heft .exprwrap.mini{font-size:1.35rem;color:var(--ink)}
 #summary td .exprscroll{margin:0}
-#summary td .exprwrap.mini{font-size:1.1rem;padding-top:2.6rem}
+#summary td .exprwrap.mini{font-size:1.1rem;padding-top:2.6rem;padding-bottom:2.6rem}
+.exprwrap .tk.fac,.exprwrap .tk.trm{margin:0 .3em;padding:0 .12em}
+.exprwrap .tk.mul{margin:0 .45em}
+.exprwrap svg.arrows text.anum{font:700 15px "Atkinson Hyperlegible",sans-serif;fill:var(--arrow);paint-order:stroke;stroke:var(--card);stroke-width:4px}
+.exprwrap svg.arrows text.anum.dn{fill:var(--accent)}
+.prodrow .pnum{display:inline-flex;align-items:center;justify-content:center;width:1.8rem;height:1.8rem;border-radius:50%;background:var(--info);color:var(--ink);font-weight:700;margin-right:.5rem;border:2px solid var(--arrow)}
+.prodrow input.wide{width:12rem}
+.heftcalc{border:2px solid var(--ink);border-radius:.6rem;background:var(--card);padding:.4rem .8rem .8rem;margin-top:.6rem}
+.tline{display:flex;align-items:flex-end;flex-wrap:wrap;gap:.35rem;font-family:Georgia,"Times New Roman",serif;font-size:1.55rem;margin:.2rem 0 .5rem .6rem}
+.tline.tools{font-family:"Atkinson Hyperlegible",sans-serif;font-size:1rem;align-items:center}
+.tline.ok{color:var(--ok)}
+.tline.fin{font-weight:700}
+.tline .tick{font-family:"Atkinson Hyperlegible",sans-serif;font-size:1.1rem}
+.tline .eqs{min-width:1.1rem;align-self:center}
+.tline button{font-family:"Atkinson Hyperlegible",sans-serif;font-size:1rem;align-self:center}
+.pbox{display:inline-flex;flex-direction:column;align-items:center}
+.pbox .pn{font:700 .8rem "Atkinson Hyperlegible",sans-serif;color:var(--arrow);line-height:1}
+input.pin4{width:7.2rem;font-family:Georgia,serif;font-size:1.25rem;text-align:center}
+input.linein{width:min(24rem,100%);font-family:Georgia,serif;font-size:1.3rem}
+.heftcalc .msg{margin:.1rem 0 .4rem .6rem}
+.hlist{color:var(--bad);font-size:.95rem;margin:.1rem 0 .4rem .6rem}
+.hlist div{margin:.15rem 0}
+:root{--c1:#D99A00;--c2:#1E73D6;--c3:#2E8B3A;--c4:#D81B60}
+.tchip{font:inherit;font-family:Georgia,serif;font-size:1.5rem;font-weight:400;background:transparent;color:var(--text);border:0;border-bottom:5px solid transparent;border-radius:0;padding:0 .2rem .05rem;line-height:1.35;cursor:pointer}
+.tchip:hover{background:var(--info)}
+.tchip:disabled{cursor:default;opacity:1}
+.tchip.k1{border-bottom-color:var(--c1)}.tchip.k2{border-bottom-color:var(--c2)}.tchip.k3{border-bottom-color:var(--c3)}.tchip.k4{border-bottom-color:var(--c4)}
+.tline.marks{align-items:center}
+.tline .ln{white-space:nowrap}
+.tline button.tchip{font-family:Georgia,serif;font-size:1.5rem;font-weight:400;padding:0 .25rem .05rem;margin:0 .05rem;background:transparent;color:var(--text);border:0;border-bottom:5px solid transparent;border-radius:0}
+.tline button.tchip.k1{border-bottom-color:var(--c1)}.tline button.tchip.k2{border-bottom-color:var(--c2)}.tline button.tchip.k3{border-bottom-color:var(--c3)}.tline button.tchip.k4{border-bottom-color:var(--c4)}
+.tline button.tchip:hover{background:var(--info)}
+.pin2{display:inline-flex;align-items:center;gap:.15rem}
+button.sbtn{font:700 1.3rem Georgia,serif;width:2.2rem;height:2.3rem;padding:0;border:2px dashed var(--arrow);border-radius:.45rem;background:var(--field);color:var(--muted)}
+button.sbtn.set{border-style:solid;color:var(--ink);background:var(--info)}
+input.pin4{width:6rem}
+.srule{font:.9rem "Atkinson Hyperlegible",sans-serif;color:var(--muted);margin:.1rem 0 .4rem .6rem}
+.ip{opacity:.45;font-size:.85em;margin-right:.05em}
+.srule .rl{display:inline-block;white-space:nowrap;margin:.15rem .5rem .1rem 0;padding:0 .4rem;border:1px solid var(--line);border-radius:.4rem;background:var(--info);color:var(--ink)}
+input.mline{width:min(34rem,100%)}
+.mic.on{background:#C62828;color:#fff;border-color:#C62828}
+.micmsg{max-width:34rem;margin:0 auto .4rem;font-size:.95rem;padding:.35rem .6rem;border-radius:.4rem;background:var(--info);color:var(--ink)}
+.micmsg.ok{background:var(--okbg);color:var(--ok)}.micmsg.bad{background:var(--badbg);color:var(--bad)}
+.built{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem;min-height:2.6rem;padding:.25rem .4rem;border-bottom:2px solid var(--ink);flex:1}
+.built .bt{white-space:nowrap}.bempty{color:var(--muted);font-size:.95rem}
+.bctl{display:flex;gap:.5rem;margin:.35rem 0}
+.palette{display:flex;flex-wrap:wrap;gap:.45rem;margin:.4rem 0 .6rem;padding:.5rem;border:2px dashed var(--line);border-radius:.6rem;background:var(--field)}
+.palette .tile{font:1.15rem Georgia,serif;padding:.3rem .6rem;border:2px solid var(--ink);border-radius:.45rem;background:var(--paper);color:var(--ink);min-width:2.3rem}
+.palette .tile:disabled{opacity:.25}
+.coefrow{display:inline-flex;flex-wrap:wrap;align-items:center;gap:.35rem}.cbox{display:inline-flex;align-items:center;gap:.1rem}
+input.cbx{width:3.6rem!important;text-align:center}.cvar{font-family:Georgia,serif;font-size:1.2em}
+.ubar{display:block;width:100%;height:.5rem;margin-top:.15rem;border-bottom:6px solid transparent}
+.pline .tchip{font-size:1.35rem}
+.ubar.k1{border-bottom-color:var(--c1)}.ubar.k2{border-bottom-color:var(--c2)}.ubar.k3{border-bottom-color:var(--c3)}.ubar.k4{border-bottom-color:var(--c4)}.ubar.k5{border-bottom-color:var(--c5,#8e24aa)}
+.pbox{display:inline-flex;flex-direction:column;align-items:stretch}
+.tchip.k5{border-bottom-color:var(--c5)}.tchip.k6{border-bottom-color:var(--c6)}.tchip.k7{border-bottom-color:var(--c7)}.tchip.k8{border-bottom-color:var(--c8)}
+.pline .zvb{font-size:1.35rem;padding:0 .08rem;min-width:1.1rem}
+.pline .zvb{border-bottom-width:6px}
+.tline .tchip.k1{border-bottom-color:var(--c1)}.tline .tchip.k2{border-bottom-color:var(--c2)}.tline .tchip.k3{border-bottom-color:var(--c3)}.tline .tchip.k4{border-bottom-color:var(--c4)}.tline .tchip.k5{border-bottom-color:var(--c5)}.tline .tchip.k6{border-bottom-color:var(--c6)}.tline .tchip.k7{border-bottom-color:var(--c7)}.tline .tchip.k8{border-bottom-color:var(--c8)}
+.srule.must{color:var(--bad);}
 </style>
 </head>
 <body>
@@ -234,11 +294,12 @@ body.padon .wrap{padding-bottom:20rem}
       <summary>Zusammenfassung – schreib sie in dein Heft!</summary>
       <p class="copy">✏️ <b>Schreib diese Zusammenfassung mit dem Beispiel ordentlich in dein Heft ab – mit den Pfeilen!</b></p>
       <p><b>1. Pfeile zeichnen:</b> Vom Faktor außerhalb der Klammer geht zu <b>jedem</b> Glied in der Klammer ein Pfeil. Das Vorzeichen gehört zum Glied bzw. zum Faktor dahinter.</p>
-      <p><b>2. Jeden Pfeil ausrechnen:</b> <span class="bxn">Zahl</span> mal <span class="bxn">Zahl</span>, <span class="bxv">Variable</span> mal <span class="bxv">Variable</span>. Gleiche Variablen: Hochzahlen <b>addieren</b> (<i>x</i><sup>2</sup> · <i>x</i> = <i>x</i><sup>3</sup>).<br>
+      <p><b>2. Rechnung anschreiben:</b> Für jeden Pfeil eine Multiplikation (bei : eine Division), mit + dazwischen. Negative Glieder in Klammern: 3<i>x</i> · (−7).</p>
+      <p><b>3. Ausrechnen:</b> <span class="bxn">Zahl</span> mal <span class="bxn">Zahl</span>, <span class="bxv">Variable</span> mal <span class="bxv">Variable</span>. Gleiche Variablen: Hochzahlen <b>addieren</b> (<i>x</i><sup>2</sup> · <i>x</i> = <i>x</i><sup>3</sup>).<br>
         Bei <b>:</b> wird jedes Glied durch den Divisor geteilt – Hochzahlen <b>subtrahieren</b> (<i>x</i><sup>3</sup> : <i>x</i> = <i>x</i><sup>2</sup>).</p>
       <p><b>Vorzeichen:</b> plus mal plus = plus · minus mal minus = plus · plus mal minus = minus</p>
-      <p><b>3. Ergebnis anschreiben:</b> Alle ausgerechneten Glieder mit ihrem Vorzeichen hintereinander anschreiben.</p>
-      <p><b>4. Zusammenfassen:</b> Gleichartige Glieder zusammenfassen.</p>
+      <p><b>4. Unterstreichen:</b> Jedes Glied unterstreichen – gleichartige Glieder in derselben Farbe.</p>
+      <p><b>5. Zusammenfassen:</b> Gleichartige Glieder zusammenfassen.</p>
       <p><b>Beispiel:</b></p>
       <div class="exprscroll"><div class="exprwrap" id="sumExpr"></div></div>
       <p class="rule">= 3<i>x</i> · <i>y</i> + 3<i>x</i> · (−7) − 5 · 6<i>x</i> − 5 · (−3)<br>
@@ -265,14 +326,16 @@ body.padon .wrap{padding-bottom:20rem}
 
 <div id="pad" hidden role="group" aria-label="Eingabehilfe">
   <div class="padtop"><span>Eingabehilfe</span>
+    <button type="button" class="mini mic" id="padMic" hidden aria-label="Sprechen">🎤 Sprechen</button>
     <button type="button" class="mini" id="padSys">Handy-Tastatur einblenden</button>
     <button type="button" class="mini" id="padHide" aria-label="Eingabehilfe schließen">✕</button>
   </div>
+  <div id="micMsg" class="micmsg" hidden aria-live="polite"></div>
   <div class="keys">
     <button type="button" data-ins="7">7</button><button type="button" data-ins="8">8</button><button type="button" data-ins="9">9</button><button type="button" class="var" data-var="0">x</button><button type="button" class="var" data-var="1">y</button><button type="button" class="op" data-ins="²" aria-label="hoch 2">□²</button><button type="button" class="op" data-act="del" aria-label="Löschen">⌫</button>
     <button type="button" data-ins="4">4</button><button type="button" data-ins="5">5</button><button type="button" data-ins="6">6</button><button type="button" class="var" data-var="2">a</button><button type="button" class="var" data-var="3">b</button><button type="button" class="op" data-ins="³" aria-label="hoch 3">□³</button><button type="button" class="op" data-act="clr" aria-label="Feld leeren">C</button>
     <button type="button" data-ins="1">1</button><button type="button" data-ins="2">2</button><button type="button" data-ins="3">3</button><button type="button" class="op" data-ins="+">+</button><button type="button" class="op" data-ins="-" aria-label="minus">−</button><button type="button" class="op" data-ins="^" aria-label="hoch beliebige Zahl">□ⁿ</button><button type="button" class="op" data-act="left" aria-label="Cursor nach links">◀</button>
-    <button type="button" data-ins="0" style="grid-column:span 2">0</button><button type="button" class="go" data-act="ok" style="grid-column:span 4">✓ fertig</button><button type="button" class="op" data-act="right" aria-label="Cursor nach rechts">▶</button>
+    <button type="button" data-ins="0">0</button><button type="button" class="op" data-ins="·" aria-label="mal">·</button><button type="button" class="op" data-ins="(" aria-label="Klammer auf">(</button><button type="button" class="op" data-ins=")" aria-label="Klammer zu">)</button><button type="button" class="go" data-act="ok" style="grid-column:span 2">✓ fertig</button><button type="button" class="op" data-act="right" aria-label="Cursor nach rechts">▶</button>
   </div>
 </div>
 
@@ -339,19 +402,19 @@ const N_EX=8,DONE=4;  /* Schritte: 0 Pfeile · 1 jeden Pfeil ausrechnen · 2 Erg
 const L2=[['x','y'],['a','b'],['e','f'],['m','n'],['g','h'],['p','q']];
 const GEN={
   std:[
-    ()=>{const [v,w]=pick(L2);return [{f:M(rnd(2,6),{[w]:1}),t:[M(1,{[v]:1}),M(rnd(1,9))],side:'R',op:'·'}];},
+    ()=>{const [v,w]=pick(L2);return [{f:M(rnd(2,6),{[w]:1}),t:[M(1,{[v]:1}),M(rnd(1,9))],side:'L',op:'·'}];},
     ()=>{const [v,w]=pick(L2);return [{f:M(rnd(2,6),{[w]:1}),t:[M(rnd(2,12)),M(-rnd(2,6),{[v]:1})],side:'L',op:'·'}];},
-    ()=>{const [v,w]=pick(L2);return [{f:M(rnd(2,6),{[w]:1}),t:[M(rnd(2,6),{[v]:1}),M(-rnd(2,9))],side:'R',op:'·'}];},
+    ()=>{const [v,w]=pick(L2);return [{f:M(rnd(2,6),{[w]:1}),t:[M(rnd(2,6),{[v]:1}),M(-rnd(2,9))],side:'L',op:'·'}];},
     ()=>{const [a,b]=pick(L2),n=rnd(2,5);return [{f:M(n),t:[M(n*rnd(2,6),{[a]:1}),M(-n*rnd(2,6),{[b]:1})],side:'R',op:':'}];},
     ()=>{const [a,b]=pick(L2),n=rnd(2,6);return [{f:M(n),t:[M(n*rnd(2,7),{[a]:1}),M(sg()*n*rnd(2,7),{[b]:1})],side:'R',op:':'}];},
     ()=>{const [e,f]=pick(L2);let m,n,r;do{m=rnd(2,5);n=rnd(2,6);r=rnd(1,4);}while(m===n*r);
-      return [{f:M(m,{[f]:1}),t:[M(rnd(2,9)),M(1,{[e]:1})],side:'R',op:'·'},{f:M(n,{[e]:1}),t:[M(rnd(2,9)),M(-r,{[f]:1})],side:'L',op:'·'}];},
+      return [{f:M(m,{[f]:1}),t:[M(rnd(2,9)),M(1,{[e]:1})],side:'L',op:'·'},{f:M(n,{[e]:1}),t:[M(rnd(2,9)),M(-r,{[f]:1})],side:'L',op:'·'}];},
     ()=>{const [x,y]=pick(L2);return [{f:M(rnd(2,5),{[x]:1}),t:[M(1,{[y]:1}),M(-rnd(2,9))],side:'L',op:'·'},{f:M(-rnd(2,6)),t:[M(rnd(2,7),{[x]:1}),M(-rnd(1,9))],side:'L',op:'·'}];},
     ()=>{const x=pick(['x','a','y','b']);return [{f:M(1,{[x]:1}),t:[M(1,{[x]:1}),M(rnd(2,9))],side:'L',op:'·'},{f:M(rnd(2,6)),t:[M(1,{[x]:1}),M(-rnd(1,9))],side:'L',op:'·'}];}
   ],
   ahs:[
     ()=>{const x=pick(['x','a','y']);return [{f:M(rnd(2,5),{[x]:2}),t:[M(rnd(2,6),{[x]:1}),M(-rnd(2,9))],side:'L',op:'·'}];},
-    ()=>{const [a,b]=pick(L2);return [{f:M(-rnd(2,5),{[a]:1}),t:[M(rnd(2,6),{[a]:2}),M(-rnd(2,6),{[a]:1,[b]:1})],side:'R',op:'·'}];},
+    ()=>{const [a,b]=pick(L2);return [{f:M(-rnd(2,5),{[a]:1}),t:[M(rnd(2,6),{[a]:2}),M(-rnd(2,6),{[a]:1,[b]:1})],side:'L',op:'·'}];},
     ()=>{const x=pick(['x','a','y']),k=rnd(2,5);return [{f:M(k,{[x]:1}),t:[M(k*rnd(2,6),{[x]:3}),M(-k*rnd(2,6),{[x]:2})],side:'R',op:':'}];},
     ()=>{const [a,b]=pick(L2),k=rnd(2,5);return [{f:M(-k,{[a]:1,[b]:1}),t:[M(-k*rnd(2,5),{[a]:2,[b]:1}),M(k*rnd(2,5),{[a]:1,[b]:2})],side:'R',op:':'}];},
     ()=>{const x=pick(['x','a','y']);return [{f:M(rnd(2,5),{[x]:1}),t:[M(1,{[x]:2}),M(-rnd(2,6),{[x]:1}),M(rnd(2,9))],side:'L',op:'·'}];},
@@ -373,8 +436,8 @@ function genRound(lvl,seed,round){
   const old=RNG;RNG=mulberry32(mixSeed(seed,lvl,round));
   try{return GEN[lvl].map(g=>{for(let k=0;k<100;k++){const t=build(g());if(t.res.length&&t.res.every(m=>Math.abs(m.c)<=200))return t;}return build(g());});}finally{RNG=old;}
 }
-function newEx(t){return {t,step:0,err:0,shown:false,msg:{},arr:[],selF:null,pv:t.prods.map(()=>''),pm:t.prods.map(()=>null),ph:t.prods.map(()=>''),lv:'',lm:null,rv:'',rm:null,tries:[0,0,0,0]};}
-const applies=(e,s)=>s!==3||e.t.combine;
+function newEx(t){return {t,step:0,err:0,shown:false,msg:{},arr:[],selF:null,ps:t.prods.map(()=>''),pv:t.prods.map(()=>''),pm:t.prods.map(()=>null),ph:t.prods.map(()=>''),lv:'',lm:null,rv:'',rm:null,tries:[0,0,0,0]};}
+const applies=(e,s)=>true; /* Unterstreichen immer – auch wenn nichts zusammenpasst */
 const nextStep=(e,s)=>{let n=s+1;while(n<DONE&&!applies(e,n))n++;return n;};
 
 /* Aufgabe als Text (mit klickbaren Teilen) */
@@ -448,6 +511,19 @@ function check0(e){
 /* Schritt 2: jeden Pfeil ausrechnen */
 function judgeProd(t,k,s){
   if(!s.trim())return {empty:true};
+  const raw=String(s).replace(/[*×•]/g,'·');
+  if(raw.includes('·')){
+    const parts=raw.split('·').map(x=>x.trim().replace(/^\((.*)\)$/,'$1'));
+    if(parts.length!==2||parts.some(x=>!x))return {fmt:true,text:'Schreib die Multiplikation mit zwei Faktoren, z. B. x · (−3) – oder gleich das Ergebnis.'};
+    const A=parseTerm(parts[0]),Bp=parseTerm(parts[1]);
+    if(A.err||Bp.err||A.ms.length!==1||Bp.ms.length!==1)return {fmt:true,text:'Jeder Faktor ist genau ein Glied, z. B. 2x · (−5).'};
+    const [gi,ti]=t.arrows[k],f=t.groups[gi].f,term=t.groups[gi].t[ti],a=A.ms[0],b=Bp.ms[0];
+    if((sameM(a,f)&&sameM(b,term))||(sameM(a,term)&&sameM(b,f)))return {ok:true};
+    const hit=x=>sameM(x,f)||sameM(x,term),absEq=(x,y)=>Math.abs(x.c)===Math.abs(y.c)&&key(x.v)===key(y.v);
+    if((absEq(a,f)&&absEq(b,term))||(absEq(a,term)&&absEq(b,f)))return {text:'Die Vorzeichen gehören zu den Gliedern: Schreib das Glied mit seinem Vorzeichen, z. B. (−3).'};
+    if(hit(a)||hit(b))return {text:'Ein Faktor stimmt – schau, wohin Pfeil '+(k+1)+' zeigt.'};
+    return {text:'Pfeil '+(k+1)+' geht von '+monoH(f)+' weg. Wohin zeigt er?'};
+  }
   const r=parseTerm(s);if(r.err)return {fmt:true,text:r.err};
   if(r.ms.length!==1)return {fmt:true,text:'Hier kommt genau ein Glied heraus.'};
   const u=r.ms[0],x=t.prods[k],[gi,ti]=t.arrows[k],g=t.groups[gi],div=g.op===':';
@@ -462,34 +538,86 @@ function judgeProd(t,k,s){
   if(div&&[...names].some(n=>(uv[n]||0)!==(xv[n]||0)))return {text:'Beim Dividieren werden die Hochzahlen subtrahiert, z. B. x³ : x = x². Kürzt sich eine Variable ganz weg, fällt sie weg.'};
   return {text:'Rechne nochmal: Zahl mit Zahl, Variable mit Variable.'};
 }
-function check1(e){
-  const t=e.t,rs=t.prods.map((p,k)=>judgeProd(t,k,e.pv[k]));
-  rs.forEach((r,k)=>{e.pm[k]=r.ok?'ok':r.empty?null:'bad';e.ph[k]=r.ok?'':(r.text||'');});
-  if(rs.every(r=>r.ok)){advance(e,1,'Richtig! Jetzt schreib das Ergebnis an.');return;}
-  if(rs.some(r=>r.empty)){hint(e,1,'Rechne zuerst alle Pfeile aus.');return;}
-  if(rs.every(r=>r.ok||r.fmt)){hint(e,1,'Kontrolliere die Schreibweise in den markierten Zeilen.');return;}
-  fail(e,1,'Nicht alle Pfeile sind richtig ausgerechnet – schau dir die rot markierten an.');
+function judgeSigned(t,k,s,sgn){
+  const x=t.prods[k],[gi,ti]=t.arrows[k],f=t.groups[gi].f,term=t.groups[gi].t[ti];
+  if(!s.trim()&&!sgn)return {empty:true};
+  if(!sgn)return {fmt:true,text:'Wähle zuerst das Vorzeichen: Tippe auf ± vor dem Kästchen.'};
+  if(!s.trim())return {empty:true};
+  const absEq=(p,q)=>Math.abs(p.c)===Math.abs(q.c)&&key(p.v)===key(q.v);
+  const one=m=>Math.abs(m.c)===1&&key(m.v)==='';
+  const signTxt=()=>'Bestimme das Vorzeichen: Pfeil '+(k+1)+' verbindet '+(f.c<0?'<b>minus</b>':'<b>plus</b>')+' '+absH(f)+' mit '+(term.c<0?'<b>minus</b>':'<b>plus</b>')+' '+absH(term)+'. Gleiche Zeichen → +, verschiedene Zeichen → −.';
+  let mag=false;const raw=String(s).replace(/[*×•]/g,'·').replace(/[–—]/g,'−');
+  if(raw.includes('·')){const parts=raw.split('·').map(z=>z.trim());
+    if(parts.length!==2||parts.some(z=>!z))return {fmt:true,text:'Schreib die Multiplikation mit zwei Faktoren, z. B. x · (−2) – oder gleich das Ergebnis.'};
+    if(parts.some(z=>/^[-−]/.test(z)))return {fmt:true,text:'Negative Zahlen kommen in der Multiplikation in <b>Klammern</b>: z. B. x · (−2).'};
+    const P=parts.map(z=>parseTerm(z.replace(/^\((.*)\)$/,'$1')));
+    if(P.some(p=>p.err||p.ms.length!==1))return {fmt:true,text:'Jeder Faktor ist genau ein Glied, z. B. 2x · (−5).'};
+    const a=P[0].ms[0],b=P[1].ms[0];
+    const exact=(sameM(a,f)&&sameM(b,term))||(sameM(a,term)&&sameM(b,f));
+    if(exact)return (sgn==='+')===(x.c>0)?{ok:true}:{text:signTxt()};
+    if((absEq(a,f)&&absEq(b,term))||(absEq(a,term)&&absEq(b,f))){const neg=f.c<0?f:term;
+      return {text:'Schreib die Faktoren mit ihrem Vorzeichen: Das negative Glied kommt mit Minus in <b>Klammern</b>, z. B. ('+MINUS+absH(neg)+').'};}
+  }
+  if(!raw.includes('·')){const r=parseTerm(s);if(!r.err&&r.ms.length===1)mag=absEq(r.ms[0],x);}
+  if(mag)return (sgn==='+')===(x.c>0)?{ok:true}:{text:signTxt()};
+  if(one(term)||one(f)){const o=one(term)?f:term;return {text:'Mal 1 bleibt alles gleich: '+absH(o)+' · 1 = '+absH(o)+'. Das Vorzeichen wählst du extra.'};}
+  const old=judgeProd(t,k,s);return old.ok?{text:signTxt()}:old;
 }
-/* Schritt 3: Ergebnis selbst anschreiben (alle Glieder mit Vorzeichen) */
+/* Schritt 2: die Rechnung nach den Pfeilen anschreiben, z. B. y·y + y·(−4) + 2·y + 2·(−4) */
+function splitTop(str){const out=[];let d=0,cur='';for(const ch of str){if(ch==='('||ch==='[')d++;if(ch===')'||ch===']')d--;if(ch==='+'&&d===0){out.push(cur);cur='';}else cur+=ch;}out.push(cur);return out.map(x=>x.trim());}
+function check1(e){
+  if(e.mpal&&(e.mb||[]).length<e.mpal.length){hint(e,1,(e.mb||[]).length?'Es fehlen noch Bausteine – jeder Baustein kommt genau einmal in die Zeile.':'Tippe die Bausteine in der richtigen Reihenfolge an.');return;}
+  const t=e.t,raw=String(e.ml||'').replace(/[*×•.]/g,'·').replace(/[–—]/g,'−').replace(/-/g,'−');
+  if(!raw.trim()){hint(e,1,'Schreib die Rechnung an: für jeden Pfeil eine Multiplikation, mit + dazwischen, z. B. y · y + y · (−4) + … – oder gleich das Ergebnis.');return;}
+  /* gleich das Ergebnis? – nur, solange nicht schon einmal ein falsches Ergebnis da war */
+  if(!/[·:]/.test(raw)){
+    if(e.forceMul){e.mlm='bad';return hint(e,1,'Schreib jetzt zuerst die <b>Multiplikationen</b> an, z. B. y · y + y · (−4) + 2 · y + 2 · (−4).');}
+    const r=parseTerm(raw.replace(/−/g,'-'));
+    if(!r.err){const want=t.prods.slice(),got=r.ms.slice();
+      const same=got.length===want.length&&want.every(w=>{const i=got.findIndex(g=>sameM(g,w));if(i<0)return false;got.splice(i,1);return true;});
+      if(same){e.direct=1;e.mlm='ok';e.ps=t.prods.map(p=>p.c<0?'−':'+');e.pv=t.prods.map(p=>plainT(p));e.lv=polyPlain(t.prods);e.lm='ok';
+        e.msg[1]={kind:'ok',text:''};e.mmsg={kind:'ok',text:'Super – gleich richtig ausmultipliziert! Jetzt unterstreiche jedes Glied in einer Farbe.'};e.step=3;return;}
+      const n=normalize(r.ms);if(t.combine&&n.length===t.res.length&&n.every((m,i)=>sameM(m,t.res[i]))){e.mlm='bad';return hint(e,1,'Du hast schon zusammengefasst – schreib zuerst <b>alle vier</b> Glieder an. Zusammenfassen kommt später.');}}
+    e.forceMul=1;e.mlm='bad';
+    return fail(e,1,'Das Ergebnis stimmt noch nicht. Schreib jetzt zuerst die <b>Multiplikationen</b> an, z. B. y · y + y · (−4) + 2 · y + 2 · (−4) – dann rechnest du sie aus.');
+  }
+  if(/[^(]−/.test(' '+raw.replace(/\(\s*−/g,'(N')))return e.mlm='bad',hint(e,1,'Zwischen den Multiplikationen steht immer <b>+</b>. Negative Zahlen kommen in <b>Klammern</b>: y · (−4).');
+  const parts=splitTop(raw.replace(/^\+/,''));
+  if(parts.some(p=>!p))return e.mlm='bad',hint(e,1,'Zwischen zwei Multiplikationen steht genau ein +.');
+  if(parts.length!==t.arrows.length){e.mlm='bad';return fail(e,1,'Jeder Pfeil gibt eine Multiplikation – das sind hier '+t.arrows.length+' Stück, mit + dazwischen.');}
+  const want=t.arrows.map(([gi,ti])=>[t.groups[gi].f,t.groups[gi].t[ti],t.groups[gi].op===':'?':':'·']),used=want.map(()=>false);
+  for(let k=0;k<parts.length;k++){
+    const op=parts[k].includes(':')?':':'·',fs=parts[k].split(/[·:]/).map(z=>z.trim());
+    if(fs.length!==2||fs.some(z=>!z)){e.mlm='bad';return hint(e,1,'Jede Multiplikation hat zwei Faktoren mit Malpunkt dazwischen, z. B. y · (−4).');}
+    const P=fs.map(z=>parseTerm(z.replace(/^\((.*)\)$/,'$1').replace(/N/g,'-')));
+    if(P.some(p=>p.err||p.ms.length!==1)){e.mlm='bad';return hint(e,1,'Jeder Faktor ist genau ein Glied, z. B. 2y · (−4).');}
+    const [a,b]=[P[0].ms[0],P[1].ms[0]];
+    const j=want.findIndex((w,i)=>!used[i]&&(w[2]===':'?(op===':'&&sameM(a,w[1])&&sameM(b,w[0])):(op==='·'&&((sameM(a,w[0])&&sameM(b,w[1]))||(sameM(a,w[1])&&sameM(b,w[0]))))));
+    if(j<0){e.mlm='bad';
+      const absEq=(p,q)=>Math.abs(p.c)===Math.abs(q.c)&&key(p.v)===key(q.v);
+      if(want.some(w=>(absEq(a,w[0])&&absEq(b,w[1]))||(absEq(a,w[1])&&absEq(b,w[0]))))return fail(e,1,'Bei der '+(k+1)+'. Multiplikation fehlt ein Minus: Negative Glieder schreibst du mit Minus in Klammern, z. B. (−4).');
+      return fail(e,1,'Die '+(k+1)+'. Multiplikation passt zu keinem Pfeil. Schau, von wo nach wo die Pfeile gehen.');}
+    used[j]=true;
+  }
+  e.mlm='ok';advance(e,1,'Richtig angeschrieben! Jetzt rechne jede Multiplikation aus.');
+}
+/* Schritt 3: jede Multiplikation ausrechnen – Vorzeichen extra wählen */
 function check2(e){
-  const t=e.t,raw=e.lv;
-  if(!raw.trim()){hint(e,2,'Schreib das Ergebnis in das Feld.');return;}
-  const r=parseTerm(raw);if(r.err){hint(e,2,r.err);return;}
-  const want=t.prods.slice(),got=r.ms.slice();
-  const sameSet=got.length===want.length&&want.every(w=>{const i=got.findIndex(g=>sameM(g,w));if(i<0)return false;got.splice(i,1);return true;});
-  if(sameSet){e.lm='ok';advance(e,2,t.combine?'Richtig angeschrieben! Jetzt fasse gleichartige Glieder zusammen.':'Richtig! Damit bist du fertig.');return;}
-  if(t.combine){const n=normalize(r.ms);if(n.length===t.res.length&&n.every((m,i)=>sameM(m,t.res[i]))){
-    hint(e,2,'Du hast schon zusammengefasst – schreib zuerst <b>alle</b> Glieder so an, wie du sie ausgerechnet hast. Zusammenfassen kommt im nächsten Schritt.');return;}}
-  e.lm='bad';
-  const left=t.prods.slice();r.ms.forEach(m=>{const i=left.findIndex(w=>sameM(w,m));if(i>=0)left.splice(i,1);});
-  const flipped=left.filter(w=>r.ms.some(m=>key(m.v)===key(w.v)&&m.c===-w.c));
-  if(flipped.length)return fail(e,2,'Kontrolliere die Vorzeichen: Jedes Glied bekommt das Vorzeichen, das beim Ausrechnen herausgekommen ist.');
-  if(r.ms.length<t.prods.length)return fail(e,2,'Da fehlt ein Glied: Jeder Pfeil gibt ein Glied – das sind hier '+t.prods.length+' Glieder.');
-  fail(e,2,'Schreib genau die Glieder an, die du oben ausgerechnet hast – mit + oder − dazwischen.');
+  if(e.forceZv){const zm=zvCheck(e);if(zm){if(!/jede/.test(zm))e.tries[2]++;hint(e,2,zm);return;}}
+  const t=e.t,rs=t.prods.map((p,k)=>/[·*×]/.test(e.pv[k]||'')?{fmt:true,text:'Hier schreibst du das <b>Ergebnis</b> der Multiplikation, z. B. 4y.'}:judgeSigned(t,k,e.pv[k],e.ps[k]));
+  rs.forEach((r,k)=>{e.pm[k]=r.ok?'ok':r.empty?null:'bad';e.ph[k]=r.ok?'':(r.text||'');});
+  if(rs.every(r=>r.ok)){e.lv=polyPlain(t.prods);e.lm='ok';e.mmsg=null;
+    if(!t.combine){e.msg[2]={kind:'ok',text:'Richtig ausgerechnet! Hier gibt es nichts zusammenzufassen – fertig.'};e.step=DONE;return;}
+    e.cols=null;advance(e,2,'Richtig ausgerechnet! Jetzt unterstreiche gleichartige Glieder in derselben Farbe.');return;}
+  if(rs.some(r=>r.empty)){hint(e,2,'Wähle bei jedem Glied das Vorzeichen und rechne alle Multiplikationen aus.');return;}
+  if(rs.every(r=>r.ok||r.fmt)){hint(e,2,'Kontrolliere die Schreibweise in den markierten Kästchen.');return;}
+  if(!e.forceZv){e.forceZv=1;fail(e,2,'Nicht alles ist richtig ausgerechnet – schau dir die rot markierten an. <b>Unterstreiche jetzt in der grünen Zeile Zahlen und Buchstaben in Farben</b> – das hilft dir beim Rechnen.');return;}
+  fail(e,2,'Nicht alles ist richtig ausgerechnet – schau dir die rot markierten an.');
 }
 /* Schritt 4: zusammenfassen */
 function check3(e){
   const t=e.t,raw=e.rv;
+  if(!e.mok){hint(e,3,'Unterstreiche zuerst gleichartige Glieder mit derselben Farbe und tippe auf „Markierung prüfen“.');return;}
   if(!raw.trim()){hint(e,3,'Schreib das Ergebnis in das Feld.');return;}
   const r=parseTerm(raw);if(r.err){hint(e,3,r.err);return;}
   const n=normalize(r.ms),exp=t.res,same=n.length===exp.length&&n.every((m,i)=>sameM(m,exp[i]));
@@ -502,12 +630,24 @@ function check3(e){
   if(wrong.every(k=>nk.get(k)===-ek.get(k)))return fail(e,3,'Kontrolliere die Vorzeichen bei '+wrong.map(keyH).join(' und ')+'.');
   fail(e,3,'Schau nochmal bei '+wrong.map(keyH).join(' und ')+'.');
 }
+function markCheck(e){
+  const t=e.t,ks=t.prods.map(m=>key(m.v)),cols=e.cols||ks.map(()=>0);
+  if(!cols.some(Boolean)){e.mmsg={kind:'bad',text:'Tippe jedes Glied an, bis es unterstrichen ist – gleichartige in derselben Farbe.'};return;}
+  if(cols.some(c=>!c)){e.mmsg={kind:'bad',text:'Unterstreiche <b>jedes</b> Glied – auch die, die allein sind. Sie bekommen eine eigene Farbe.'};return;}
+  for(const c of [1,2,3,4]){const idx=cols.map((x,i)=>x===c?i:-1).filter(i=>i>=0);if(new Set(idx.map(i=>ks[i])).size>1){e.err++;e.mmsg={kind:'bad',text:'In einer Farbe sind Glieder, die nicht gleichartig sind. Gleichartig: dieselben Variablen mit denselben Hochzahlen.'};return;}}
+  for(const k of new Set(ks)){const n=ks.filter(x=>x===k).length,cs=new Set(ks.map((x,i)=>x===k?cols[i]:null).filter(x=>x!==null));
+    if(n>1&&(cs.size>1||cs.has(0))){e.err++;e.mmsg={kind:'bad',text:'Gleichartige Glieder sollen dieselbe Farbe haben – schau dir '+keyH(k)+' an.'};return;}}
+  const used=[...new Set(ks)].map(k=>cols[ks.indexOf(k)]);
+  if(new Set(used).size<used.length){e.err++;e.mmsg={kind:'bad',text:'Eine Farbe kommt doppelt vor. Jedes Glied bekommt seine <b>eigene</b> Farbe – nur gleichartige Glieder teilen sich eine Farbe.'};return;}
+  e.mok=1;if(!t.combine){e.mmsg={kind:'ok',text:'✓ Richtig markiert! Alle Glieder haben verschiedene Farben – hier gibt es nichts zusammenzufassen. Das Ergebnis bleibt so.'};e.step=DONE;return;}
+  e.mmsg={kind:'ok',text:'✓ Richtig markiert! Jetzt fasse zusammen.'};
+}
 function showSolution(e,s){
   const t=e.t;
   if(s===0){e.arr=t.arrows.map(a=>a.slice());e.selF=null;}
-  if(s===1){e.pv=t.prods.map(p=>plainT(p).replace(/^/,p.c<0?'-':''));e.pm=t.prods.map(()=>'ok');e.ph=t.prods.map(()=>'');}
-  if(s===2){e.lv=polyPlain(t.prods);e.lm='ok';}
-  if(s===3){e.rv=polyPlain(t.res);e.rm='ok';}
+  if(s===1){const F=m=>m.c<0?'('+polyPlain([m])+')':polyPlain([m]);e.ml=t.arrows.map(([gi,ti])=>F(t.groups[gi].f)+'·'+F(t.groups[gi].t[ti])).join(' + ');e.mlm='ok';}
+  if(s===2){e.ps=t.prods.map(p=>p.c<0?'−':'+');e.pv=t.prods.map(p=>plainT(p));e.pm=t.prods.map(()=>'ok');e.ph=t.prods.map(()=>'');e.lv=polyPlain(t.prods);e.lm='ok';}
+  if(s===3){if(!t.combine){const ks=[...new Set(t.prods.map(m=>key(m.v)))];e.cols=t.prods.map(m=>1+ks.indexOf(key(m.v))%4);e.mok=1;}e.rv=polyPlain(t.res);e.rm='ok';const ks=[...new Set(t.prods.map(m=>key(m.v)))];e.cols=t.prods.map(m=>1+ks.indexOf(key(m.v))%4);e.mok=1;}
   e.shown=true;e.msg[s]={kind:'shown',text:'Die Lösung ist jetzt eingetragen – schau sie dir genau an.'};
   e.step=nextStep(e,s);
 }
@@ -529,27 +669,38 @@ function renderEx(focus){
     '<button type="button" class="ghost" data-act="next" aria-label="Nächstes Beispiel"'+(cur===N_EX-1?' disabled':'')+'>▶</button>'+
     '<span class="round">Runde '+g.round+'</span><button type="button" class="mini" data-act="newround">Neue Runde</button></div>';
   h+='<div class="head"><span class="num">'+(cur+1)+'</span><h2>Löse die Klammer'+(t.groups.length>1?'n':'')+' auf'+(t.combine?' und fasse zusammen':'')+'!</h2></div>';
-  h+='<div class="exprscroll"><div class="exprwrap'+(e.step===0?' picking':'')+'" id="task">'+exprHTML(t)+'</div></div>';
-
-  /* 1: Pfeile */
-  h+=card(e,0,'Zeichne die Pfeile',
-    '<p>Tippe zuerst auf den <b>Faktor außerhalb der Klammer</b> (er wird gelb) und dann auf <b>jedes Glied in der Klammer</b> – so entsteht ein Pfeil. Nochmal auf ein Glied tippen löscht den Pfeil.'+(t.groups.length>1?' Es gibt hier <b>zwei</b> Klammern – jede bekommt ihre eigenen Pfeile.':'')+'</p>'+
-    '<div class="actions"><button type="button" data-act="check0">Pfeile prüfen</button><button type="button" class="mini" data-act="clrarr">Alle Pfeile löschen</button></div>',
-    'Alle Pfeile sind gezeichnet ('+t.arrows.length+' Stück).');
-  /* 2: jeden Pfeil ausrechnen */
-  let b1='<p>Rechne jeden Pfeil aus – mit Vorzeichen!</p><p class="legend"><span class="bxn">Zahl</span> mit <span class="bxn">Zahl</span>, <span class="bxv">Variable</span> mit <span class="bxv">Variable</span></p>';
-  t.prods.forEach((p,k)=>{b1+='<div class="prodrow"><span class="prod">'+prodH(t,k,true)+'</span> = '+inp('data-pi="'+k+'"',e.pv[k],e.pm[k]||'','Ergebnis von Pfeil '+(k+1),'z. B. -8xy')+'<span class="rowmsg">'+e.ph[k]+'</span></div>';});
-  b1+='<div class="actions"><button type="button" data-act="check1">Prüfen</button></div>';
-  h+=card(e,1,'Rechne jeden Pfeil aus',b1,'<span style="font-weight:400">'+t.prods.map((p,k)=>prodH(t,k)+' = '+monoH(p)).join(' &nbsp;|&nbsp; ')+'</span>');
-  /* 3: Ergebnis selbst anschreiben */
-  h+=card(e,2,'Schreib das Ergebnis an',
-    '<p>Schreib alle Glieder an, die du ausgerechnet hast – mit dem richtigen Vorzeichen dazwischen'+(t.combine?' (noch <b>nicht</b> zusammenfassen)':'')+'.</p>'+
-    '<div class="row">= '+inp('data-lv',e.lv,e.lm||'','Ergebnis','z. B. 40y - 8xy')+'</div><div class="actions"><button type="button" data-act="check2">Prüfen</button></div>',
-    '= '+polyH(t.prods));
-  /* 4: zusammenfassen */
-  h+=card(e,3,'Fasse zusammen',
-    '<div class="row">= '+polyH(t.prods)+'</div><div class="row">= '+inp('data-rv',e.rv,e.rm||'','Zusammengefasstes Ergebnis','z. B. 3xy - 51x + 15')+'</div><div class="actions"><button type="button" data-act="check3">Prüfen</button></div>',
-    '= '+polyH(t.res));
+  /* alles wie im Heft: Zeile für Zeile direkt unter der Angabe */
+  h+='<div class="heftcalc"><div class="exprscroll"><div class="exprwrap'+(e.step===0?' picking':'')+'" id="task">'+exprHTML(t)+'</div></div>';
+  if(e.step===0)h+='<div class="tline tools"><button type="button" data-act="check0">Pfeile prüfen</button><button type="button" class="mini" data-act="clrarr">Alle Pfeile löschen</button><span class="hint" style="margin:0">Faktor vor der Klammer antippen, dann jedes Glied in der Klammer.</span></div>'+msgHTML(e,0);
+  if(e.step>=1){
+    if(e.step===1){if(!e.mpal){let n=0;const T=[];t.arrows.forEach(([gi,ti],k)=>{const g=t.groups[gi],x=g.t[ti];if(g.op===':')T.push({id:n++,h:FH(x),p:FP(x)},{id:n++,h:':',p:':'},{id:n++,h:FH(g.f),p:FP(g.f)});else T.push({id:n++,h:FH(g.f),p:FP(g.f)},{id:n++,h:'·',p:'·'},{id:n++,h:FH(x),p:FP(x)});if(k)T.push({id:n++,h:'+',p:'+'});});e.mpal=shufT(T);}
+      h+='<div class="tline"><span class="eqs">=</span>'+tileUI(e,'m')+'</div><div class="tline"><button type="button" data-act="check1">Prüfen</button></div>'+
+        '<p class="srule">Bau die Rechnung nach den Pfeilen: für jeden Pfeil eine Rechnung (mal bzw. durch), mit <b>+</b> dazwischen. Negative Glieder stehen schon in Klammern.</p>'+msgHTML(e,1);}
+    else if(!e.direct){const live=e.step===2;
+      h+='<div class="tline ok'+(live?' pline':'')+'"><span class="eqs">=</span><span class="ln">'+zvLine(e,live)+'</span> <span class="tick">✓</span></div>';
+      if(live)h+='<p class="srule'+(e.forceZv?' must':'')+'" style="margin-top:0">'+(e.forceZv?'<b>Jetzt Pflicht:</b> ':'<b>Freiwillig – hilft dir beim Rechnen:</b> ')+'Unterstreiche in jedem Teil die <b>Zahlen</b> in einer Farbe und jeden <b>Buchstaben</b> in einer eigenen Farbe (antippen) – gleiche Buchstaben in derselben Farbe. Nach jedem + bzw. − kommen <b>neue</b> Farben – sonst rechnest du alles zusammen.</p>';}
+  }
+  if(e.step>=2){
+    if(e.step===2){
+      h+='<div class="tline"><span class="eqs">=</span>'+t.prods.map((p,k)=>'<span class="pbox"><span class="pn">'+(k+1)+'</span><span class="pin2"><button type="button" class="sbtn'+(e.ps[k]?' set':'')+'" data-sg="'+k+'" aria-label="Vorzeichen für Glied '+(k+1)+'">'+(e.ps[k]||'±')+'</button>'+inp('data-pi="'+k+'"',e.pv[k],(e.pm[k]||'')+' pin4','Ergebnis von Multiplikation '+(k+1)+' ohne Vorzeichen','')+'</span><span class="ubar"'+zvBar(e,k)+'></span></span>').join('')+
+        '<button type="button" data-act="check2">Prüfen</button></div>'+
+        '<p class="srule">Zuerst das <b>Vorzeichen</b> wählen (± antippen), dann das Ergebnis ohne Vorzeichen ins Kästchen. Die Farben unter dem Kästchen zeigen, zu welchem Teil es gehört.<br>'+['+ · + = +','− · − = +','+ · − = −','− · + = −','mal 1 bleibt gleich'].map(x=>'<span class="rl">'+x+'</span>').join('')+'</p>';
+      const hs=e.ph.map((x,k)=>x?'<b>'+(k+1)+':</b> '+x:'').filter(Boolean);if(hs.length)h+='<div class="hlist">'+hs.map(x=>'<div>'+x+'</div>').join('')+'</div>';
+      h+=msgHTML(e,2);
+    }else h+='<div class="tline ok"><span class="eqs">=</span><span class="ln">'+polyH(t.prods)+'</span> <span class="tick">✓</span></div>';
+  }
+  if(e.step>=3){
+    if(e.step===3){
+      const cols=e.cols||t.prods.map(()=>0);
+      h+='<div class="tline marks"><span class="eqs">=</span>'+t.prods.map((m,k)=>'<button type="button" class="tchip'+(cols[k]?' k'+cols[k]:'')+'" data-mk="'+k+'"'+(e.mok?' disabled':'')+'>'+termH(m,k===0)+'</button>').join('')+
+        (e.mok?'':'<button type="button" class="mini" data-act="mchk">Markierung prüfen</button>')+'</div>';
+      if(!e.mok)h+='<p class="hint" style="margin:.1rem 0 .4rem .6rem">Unterstreiche <b>jedes</b> Glied in einer Farbe – jede Farbe nur einmal, außer bei gleichartigen Gliedern: die bekommen dieselbe Farbe. Jedes Antippen wechselt die Farbe.</p>';
+      if(e.mmsg)h+='<p class="msg '+e.mmsg.kind+'" style="margin-left:.6rem">'+e.mmsg.text+'</p>';
+      if(e.mok&&t.combine)h+='<div class="tline"><span class="eqs">=</span>'+coefUI(e,t.prods,e.rm||'')+'<button type="button" data-act="check3">Prüfen</button></div><p class="srule">Schreib vor jede Variable die zusammengefasste Zahl mit Vorzeichen, z. B. −3. Hebt sich alles auf, schreib 0.</p>'+msgHTML(e,3);
+    }
+    else if(t.combine)h+='<div class="tline ok fin"><span class="eqs">=</span><span class="ln">'+polyH(t.res)+'</span> <span class="tick">✓</span></div>';
+  }
+  h+='</div>';
 
   if(e.step===DONE){
     const nextOpen=g.ex.findIndex((x,k)=>k>cur&&x.step<DONE),anyOpen=g.ex.findIndex(x=>x.step<DONE);
@@ -559,25 +710,17 @@ function renderEx(focus){
       :'<button type="button" data-act="sum">Zur Auswertung</button>')+'</div>';
     if(cur===0)h+='<p class="sumafter">✏️ <b>Schreib jetzt die Zusammenfassung unten auf der Seite in dein Heft ab</b> – dann geht es mit Beispiel 2 weiter.</p>';
   }
-  /* Heft */
-  h+='<div class="heft"><p class="hefttitle">Dein Rechenweg</p>'+(e.step>0?arrowExprH(t,'heftExpr'):'<div class="hl">'+exprPlainH(t)+'</div>');
-  if(e.step>0)h+='<div class="hl">= '+prodLineH(t)+'</div>';
-  if(e.step>2)h+='<div class="hl'+(t.combine?'':' fin')+'">= '+polyH(t.prods)+'</div>';
-  if(e.step>=DONE&&t.combine)h+='<div class="hl fin">= '+polyH(t.res)+'</div>';
-  if(e.step>=DONE)h+='<p class="copy">✏️ <b>Schreib diesen Rechenweg ordentlich in dein Heft ab – zeichne die Pfeile mit ein!</b></p>';
-  else if(e.step===0)h+='<div class="small">Zeichne zuerst die Pfeile – dann entsteht hier dein Rechenweg.</div>';
-  h+='</div>';
-
+  if(e.step>=DONE)h+='<p class="copy">✏️ <b>Schreib die Rechnung Zeile für Zeile in dein Heft ab – zeichne die Pfeile mit ein!</b></p>';
   $('exCard').innerHTML=h;
   $('score').textContent=g.ex.filter(x=>x.step===DONE).length+' von '+N_EX+' fertig';
   const wrap=$('task');
   wrap.querySelectorAll('.tk.fac').forEach(f=>{if(e.step===0&&e.selF===+f.dataset.g)f.classList.add('sel');});
-  wrap.querySelectorAll('.tk.trm').forEach(tm=>{if(e.arr.some(a=>a[0]===+tm.dataset.g&&a[1]===+tm.dataset.t))tm.classList.add('got');});
+  wrap.querySelectorAll('.tk.trm').forEach(tm=>{if(e.selF!==null&&e.arr.some(a=>a[0]===e.selF&&a[1]===+tm.dataset.t))tm.classList.add('got');});
   requestAnimationFrame(redrawAll);
   if(window.padApply)window.padApply();
   if(focus){let f=null;
     if(focus==='step'){const firstBad=sel=>[...document.querySelectorAll('#exCard '+sel)].find(i=>i.classList.contains('bad'))||document.querySelector('#exCard '+sel);
-      f=e.step===1?firstBad('[data-pi]'):e.step===2?document.querySelector('#exCard [data-lv]'):e.step===3?document.querySelector('#exCard [data-rv]'):null;}
+      f=e.step===1?document.querySelector('#exCard [data-ml]'):e.step===2?firstBad('[data-pi]'):e.step===3?document.querySelector('#exCard [data-rv]'):null;}
     else f=document.querySelector(focus);
     if(f)f.focus({preventScroll:true});}
   if(allDone&&!summaryRequested&&!restoring)summaryRequested=true;
@@ -626,21 +769,76 @@ function newRound(){
 }
 const CHECKS=[check0,check1,check2,check3];
 function runCheck(s){const e=curEx();if(e.step!==s)return;CHECKS[s](e);renderEx(e.step===DONE?null:'step');}
+/* ===== Zahlen und Buchstaben getrennt unterstreichen ===== */
+function zvParts(t){/* je Teil k: Liste von Stücken {id,kind:'n'|'v',h} und Anzeige-Bausteine */
+  return t.arrows.map(([gi,ti],k)=>{const g=t.groups[gi],term=g.t[ti],fac=g.op===':'?[term,g.f]:[g.f,term],op=g.op===':'?' : ':' · ';
+    let pieces=[],html='',neg=false,n=0;
+    fac.forEach((m,fi)=>{if(fi)html+=op;const vs=Object.keys(m.v).filter(x=>m.v[x]>0).sort(),hasNum=Math.abs(m.c)!==1||!vs.length;
+      let sign=m.c<0?MINUS:'',open='',close='';
+      if(m.c<0){if(fi===0&&k>0){neg=true;sign='';}else if(fi>0){open='(';close=')';}}
+      html+=open;
+      if(hasNum){const id=k+'_'+(n++);pieces.push({id,kind:'n'});html+='<span class="zv" data-zv="'+id+'">'+sign+Math.abs(m.c)+'</span>';}
+      else if(sign)html+=sign;
+      vs.forEach(x=>{const id=k+'_'+(n++);pieces.push({id,kind:'v',name:x});html+='<span class="zv" data-zv="'+id+'"><i>'+x+'</i>'+(m.v[x]>1?'<sup>'+m.v[x]+'</sup>':'')+'</span>';});
+      html+=close;});
+    return {pieces,html,neg};});}
+function zvLine(e,live){const P=zvParts(e.t),uc=e.ucols||{};
+  return P.map((p,k)=>{let h=p.html.replace(/<span class="zv" data-zv="([^"]+)">/g,(m,id)=>live?'<button type="button" class="tchip zvb'+(uc[id]?' k'+uc[id]:'')+'" data-zv="'+id+'">':'<span class="tchip zvb'+(uc[id]?' k'+uc[id]:'')+'">').replace(/<\/span>/g,live?'</button>':'</span>');
+    if(live)h=h.replace(/<\/button>(?=[^<]*<\/button>)/g,'</button>');
+    return (k?(p.neg?' − ':' + '):'')+h;}).join('');}
+function zvCheck(e){const P=zvParts(e.t),uc=e.ucols||{};let prev=null;
+  for(let k=0;k<P.length;k++){const p=P[k];if(p.pieces.some(x=>!uc[x.id]))return 'Unterstreiche in der grünen Zeile <b>jede</b> Zahl und <b>jeden</b> Buchstaben.';
+    const nc=new Set(p.pieces.filter(x=>x.kind==='n').map(x=>uc[x.id]));
+    if(nc.size>1)return 'Im '+(k+1)+'. Teil haben die Zahlen verschiedene Farben – die Zahlen eines Teils bekommen <b>dieselbe</b> Farbe (Zahl mit Zahl).';
+    const byName={};for(const x of p.pieces.filter(x=>x.kind==='v')){(byName[x.name]=byName[x.name]||new Set()).add(uc[x.id]);}
+    for(const nm in byName)if(byName[nm].size>1)return 'Im '+(k+1)+'. Teil hat <i>'+nm+'</i> verschiedene Farben – gleiche Buchstaben bekommen <b>dieselbe</b> Farbe (<i>'+nm+'</i> mit <i>'+nm+'</i>).';
+    const groups=[...(nc.size?[['die Zahlen',[...nc][0]]]:[]),...Object.keys(byName).map(nm=>['<i>'+nm+'</i>',[...byName[nm]][0]])];
+    for(let i=0;i<groups.length;i++)for(let j=i+1;j<groups.length;j++)if(groups[i][1]===groups[j][1])return 'Im '+(k+1)+'. Teil haben '+groups[i][0]+' und '+groups[j][0]+' dieselbe Farbe – verschiedene Dinge bekommen <b>verschiedene</b> Farben.';
+    const cols=new Set(groups.map(g=>g[1]));
+    if(prev&&[...cols].some(c=>prev.has(c)))return 'Der '+k+'. und der '+(k+1)+'. Teil haben eine gleiche Farbe. Nach dem + bzw. − kommen <b>neue</b> Farben – sonst rechnest du alles zusammen.';
+    prev=cols;}
+  return null;}
+function zvBar(e,k){const P=zvParts(e.t)[k],uc=e.ucols||{},seen=[];P.pieces.forEach(x=>{const c=uc[x.id];if(c&&!seen.includes(c))seen.push(c);});
+  if(!seen.length)return '';const w=100/seen.length;return ' style="border-bottom-color:transparent;background:linear-gradient(90deg,'+seen.map((c,i)=>'var(--c'+c+') '+(i*w)+'% '+((i+1)*w)+'%').join(',')+') bottom/100% 6px no-repeat"';}
+/* ===== Bausteine und Kästchen statt langer Eingaben ===== */
+const shufT=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const FH=m=>m.c<0?'('+monoH(m)+')':monoH(m),FP=m=>m.c<0?'(−'+plainT(m)+')':plainT(m);
+function tileUI(e,K){const tiles=e[K+'pal'],b=e[K+'b']||(e[K+'b']=[]);
+  let h='<div class="built">'+(b.length?b.map((id,n)=>{const t=tiles.find(x=>x.id===id);return '<span class="bt">'+(n===0&&t.h0!==undefined?t.h0:t.h)+'</span>';}).join(''):'<span class="bempty">Tippe unten die Bausteine in der richtigen Reihenfolge an …</span>')+'</div>';
+  h+='<div class="bctl"><button type="button" class="mini" data-tb="'+K+'">⌫ zurück</button><button type="button" class="mini" data-tc="'+K+'">neu anfangen</button></div>';
+  return h+'<div class="palette">'+tiles.map(t=>'<button type="button" class="tile" data-tl="'+K+':'+t.id+'"'+(b.includes(t.id)?' disabled':'')+'>'+t.h+'</button>').join('')+'</div>';}
+function tilePlain(e,K){const tiles=e[K+'pal'];return (e[K+'b']||[]).map((id,n)=>{const t=tiles.find(x=>x.id===id);return n===0&&t.p0!==undefined?t.p0:t.p;}).join(' ');}
+const kindsP=ms=>[...new Set(ms.map(m=>key(m.v)))].map(k=>ms.find(m=>key(m.v)===k).v).sort((a,b)=>cmp({c:1,v:a},{c:1,v:b}));
+const varH=v=>key(v)===''?'':absH({c:1,v});
+function coefUI(e,ms,cls){const K=kindsP(ms),rc=e.rc||{};
+  return '<span class="coefrow">'+K.map((v,i)=>'<span class="cbox">'+inp('data-rc="'+i+'"',rc[i]||'',(cls||'')+' cbx','Zahl vor '+(key(v)||'der Zahl ohne Variable'),'')+'<span class="cvar">'+varH(v)+'</span></span>').join('')+'</span>';}
+function composeRv(e,ms){const K=kindsP(ms),rc=e.rc||{};let out=[];for(let i=0;i<K.length;i++){let x=String(rc[i]||'').replace(/[−–—]/g,'-').replace(/\s+/g,'').replace(',','.');
+    if(x==='')return '';if(x==='-')x='-1';if(x==='+')x='1';if(!/^[+-]?\d+(\.\d+)?$/.test(x))return x+'?';const c=+x;if(c===0)continue;
+    const vp=key(K[i])===''?'':plainT({c:1,v:K[i]});out.push((c<0?'-':'+')+(Math.abs(c)===1&&vp?'':String(Math.abs(c)).replace('.',','))+vp);}
+  return out.length?out.join(' ').replace(/^\+/,''):'0';}
 $('exCard').addEventListener('click',ev=>{
   const e=curEx();
   /* Pfeile: Faktor wählen, dann Glieder antippen */
   const tk=ev.target.closest('.tk');
   if(tk&&e.step===0&&(tk.classList.contains('fac')||tk.classList.contains('trm'))){
-    const gi=+tk.dataset.g;
+    let gi=+tk.dataset.g;
     if(tk.classList.contains('fac')){e.selF=e.selF===gi?null:gi;e.msg[0]=null;renderEx();return;}
     const ti=+tk.dataset.t;
     if(e.selF===null){e.msg[0]={kind:'bad',text:'Tippe zuerst auf den <b>Faktor außerhalb der Klammer</b> – dort beginnt der Pfeil.'};renderEx();return;}
+    if(tk.dataset.g==='*')gi=e.selF;
     if(e.selF!==gi){e.msg[0]={kind:'bad',text:'Ein Pfeil geht nur zu den Gliedern in der <b>eigenen</b> Klammer. Wähle den Faktor, der zu dieser Klammer gehört.'};renderEx();return;}
     const i=e.arr.findIndex(a=>a[0]===gi&&a[1]===ti);
     if(i>=0)e.arr.splice(i,1);else e.arr.push([gi,ti]);
     e.msg[0]=null;renderEx();return;
   }
   const b=ev.target.closest('button');if(!b)return;
+  if(b.dataset.tl){const [K,id]=b.dataset.tl.split(':');const arr=e[K+'b']||(e[K+'b']=[]);if(!arr.includes(+id))arr.push(+id);e.ml=tilePlain(e,'m');e.mlm=null;renderEx();return;}
+  if(b.dataset.tb){(e[b.dataset.tb+'b']||[]).pop();e.ml=tilePlain(e,'m');e.mlm=null;renderEx();return;}
+  if(b.dataset.tc){e[b.dataset.tc+'b']=[];e.ml=tilePlain(e,'m');e.mlm=null;renderEx();return;}
+  if(b.dataset.sg!==undefined&&e.step===2){const k=+b.dataset.sg;e.ps[k]=e.ps[k]==='+'?'−':'+';e.pm[k]=null;e.ph[k]='';renderEx('[data-pi="'+k+'"]');return;}
+  if(b.dataset.zv!==undefined&&e.step===2){const id=b.dataset.zv;e.ucols=e.ucols||{};e.ucols[id]=((e.ucols[id]||0)%8)+1;e.msg[2]=null;renderEx();return;}
+  if(b.dataset.mk!==undefined&&e.step===3&&!e.mok){const k=+b.dataset.mk;e.cols=e.cols||e.t.prods.map(()=>0);e.cols[k]=(e.cols[k]+1)%5;e.mmsg=null;renderEx();return;}
+  if(b.dataset.act==='mchk'&&e.step===3){markCheck(e);renderEx(e.mok?'[data-rc]':null);return;}
   if(b.dataset.go!==undefined){goTo(+b.dataset.go);return;}
   const a=b.dataset.act;
   if(a==='prev')goTo(curG().cur-1);
@@ -656,7 +854,9 @@ $('exCard').addEventListener('input',ev=>{
   const t=ev.target,e=curEx();
   if(t.dataset.pi!==undefined){const k=+t.dataset.pi;e.pv[k]=t.value;e.pm[k]=null;e.ph[k]='';t.classList.remove('ok','bad');const rm=t.parentNode.querySelector('.rowmsg');if(rm)rm.textContent='';}
   else if(t.hasAttribute('data-lv')){e.lv=t.value;e.lm=null;t.classList.remove('ok','bad');}
+  else if(t.hasAttribute('data-ml')){e.ml=t.value;e.mlm=null;t.classList.remove('ok','bad');}
   else if(t.hasAttribute('data-rv')){e.rv=t.value;e.rm=null;t.classList.remove('ok','bad');}
+  else if(t.dataset.rc!==undefined){e.rc=e.rc||{};e.rc[t.dataset.rc]=t.value;e.rv=composeRv(e,e.t.prods);e.rm=null;document.querySelectorAll('#exCard [data-rc]').forEach(x=>x.classList.remove('ok','bad'));}
 });
 $('exCard').addEventListener('keydown',ev=>{
   if(ev.key!=='Enter'||ev.target.tagName!=='INPUT')return;
@@ -676,7 +876,7 @@ function setLevel(l){
 document.querySelectorAll('.levels button').forEach(b=>b.addEventListener('click',()=>setLevel(b.dataset.level)));
 
 /* ================= Fortschritt: speichern (gleiches Gerät) & Code (anderes Gerät) ================= */
-const STORE='pfeile2:',ALPH='23456789ABCDEFGHJKMNPQRSTUVWXYZ',AL=BigInt(ALPH.length),B=x=>BigInt(x);
+const STORE='pfeile3:',ALPH='23456789ABCDEFGHJKMNPQRSTUVWXYZ',AL=BigInt(ALPH.length),B=x=>BigInt(x);
 const normName=s=>s.trim().replace(/\s+/g,' ').toLowerCase();
 function nameHash(n){let h=2166136261;for(const ch of normName(n)){h^=ch.codePointAt(0);h=Math.imul(h,16777619);}return (h>>>0)%1024;}
 function checkChar(s){let c=0;for(let k=0;k<s.length;k++)c=(c+(k+1)*ALPH.indexOf(s[k]))%ALPH.length;return ALPH[c];}
@@ -792,6 +992,85 @@ $('pname').focus();
     if(cur&&cur.isConnected)cur.focus({preventScroll:true});
   });
   document.addEventListener('click',ev=>{if(ev.target.closest('[data-go],[data-act="next"],[data-act="prev"],[data-act="newround"],#newRound2'))closed=false;});
+})();
+/* ================= Spracheingabe: gesprochenen Term in Schreibweise umwandeln ================= */
+const ZAHL={null:0,eins:1,ein:1,eine:1,einen:1,zwei:2,zwo:2,drei:3,vier:4,fünf:5,sechs:6,sieben:7,acht:8,neun:9,zehn:10,elf:11,zwölf:12,
+  dreizehn:13,vierzehn:14,fünfzehn:15,sechzehn:16,siebzehn:17,achtzehn:18,neunzehn:19,zwanzig:20,dreißig:30,vierzig:40,fünfzig:50,sechzig:60,siebzig:70,achtzig:80,neunzig:90,hundert:100};
+function wortZahl(w){
+  if(ZAHL[w]!==undefined)return ZAHL[w];
+  let m=w.match(/^(ein|zwei|drei|vier|fünf|sechs|sieben|acht|neun)und(zwanzig|dreißig|vierzig|fünfzig|sechzig|siebzig|achtzig|neunzig)$/);
+  if(m)return ZAHL[m[1]==='ein'?'eins':m[1]]+ZAHL[m[2]];
+  m=w.match(/^(ein|zwei|drei|vier|fünf|sechs|sieben|acht|neun)?hundert(.*)$/);
+  if(m){const h=m[1]?ZAHL[m[1]==='ein'?'eins':m[1]]:1,r=m[2]?wortZahl(m[2].replace(/^und/,'')):0;if(r!==null)return h*100+r;}
+  return null;
+}
+function speechToTerm(text){
+  let s=' '+String(text).toLowerCase().replace(/[.,!?;]+(?=\s|$)/g,' ').replace(/\s+/g,' ')+' ';
+  const R=(a,b)=>{s=s.replace(a,b);};
+  /* Sonderzeichen, die die Erkennung manchmal schon liefert */
+  R(/×|\*/g,' mal ');R(/÷/g,' durch ');R(/²/g,' hoch 2 ');R(/³/g,' hoch 3 ');R(/−|–/g,' minus ');R(/\+/g,' plus ');R(/(\d)\s*\^\s*(\d)/g,'$1 hoch $2');
+  /* Wörter für Rechenzeichen */
+  R(/ geteilt durch | dividiert durch /g,' durch ');R(/ multipliziert mit /g,' mal ');
+  R(/ zum quadrat | im quadrat | quadrat /g,' hoch 2 ');R(/ hoch zwei /g,' hoch 2 ');R(/ hoch drei /g,' hoch 3 ');
+  R(/ klammer auf | klammer öffnen | offene klammer /g,' ( ');R(/ klammer zu | klammer schließen | geschlossene klammer /g,' ) ');
+  R(/ ist gleich | gleich /g,' = ');R(/ komma /g,' , ');
+  /* Buchstaben, wie sie oft erkannt werden */
+  R(/ ix | iks | x-?mal /g,' x ');R(/ ypsilon | üpsilon | yps | ü /g,' y ');R(/ be | bé | bee /g,' b ');R(/ ce | zeh | tse /g,' c ');R(/ ah | aa /g,' a ');
+  /* Zahlwörter */
+  s=s.replace(/[a-zäöüß]+/g,w=>{const n=wortZahl(w);return n===null?w:String(n);});
+  /* Grundrechenarten */
+  R(/ plus /g,' + ');R(/ minus /g,' - ');R(/ mal /g,' · ');R(/ durch /g,' : ');R(/ hoch (\d+)/g,'^$1');R(/ hoch /g,'^');
+  /* übrig gebliebene Wörter: einzelne Buchstaben behalten, sonst verwerfen */
+  s=s.replace(/[a-zäöüß]{2,}/g,'');
+  /* zusammenschreiben: Zahl + Buchstabe → 3x, Buchstabe + Buchstabe → xy */
+  s=s.replace(/\s+/g,' ').trim();
+  s=s.replace(/(\d)\s+,\s+(\d)/g,'$1,$2').replace(/(\d)\s+(?=[a-z(])/g,'$1').replace(/([a-z])\s+(?=[a-z])/g,'$1').replace(/\s*\^\s*/g,'^').replace(/\(\s+/g,'(').replace(/\s+\)/g,')');
+  s=s.replace(/\s*([+\-·:=])\s*/g,' $1 ').replace(/\s+/g,' ').trim();
+  s=s.replace(/^\+ /,'').replace(/^- /,'-');
+  s=s.replace(/\(\s*-\s*/g,'(-');
+  return s;
+}
+
+
+/* Mikrofon-Knopf + Diktieren mit der iPad-Tastatur */
+const SPOKEN=/\b(plus|minus|mal|durch|geteilt|hoch|quadrat|klammer|komma|gleich|ix|iks|ypsilon|üpsilon|null|eins|zwei|zwo|drei|vier|fünf|sechs|sieben|acht|neun|zehn|elf|zwölf|[a-zäöüß]*zig|[a-zäöüß]*zehn|hundert)\b/i;
+/* Text, den die iPad-Diktierfunktion ins Feld schreibt, in Schreibweise umwandeln (beim Prüfen und beim Verlassen des Feldes) */
+function convField(inp){if(!inp||!SPOKEN.test(inp.value))return false;const c=speechToTerm(inp.value);if(!c)return false;inp.value=c;inp.dispatchEvent(new Event('input',{bubbles:true}));return true;}
+document.addEventListener('keydown',ev=>{if(ev.key==='Enter'&&ev.target.tagName==='INPUT'&&ev.target.classList.contains('pin'))convField(ev.target);},true);
+document.addEventListener('focusout',ev=>{if(ev.target.tagName==='INPUT'&&ev.target.classList.contains('pin'))convField(ev.target);},true);
+document.addEventListener('pointerdown',ev=>{const b=ev.target.closest&&ev.target.closest('button');if(!b)return;document.querySelectorAll('input.pin').forEach(convField);},true);
+(function(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition,btn=$('padMic'),msg=$('micMsg');
+  btn.hidden=false;
+  let last=null,rec=null,busy=false,got=false;
+  document.addEventListener('focusin',ev=>{if(ev.target.tagName==='INPUT'&&ev.target.classList.contains('pin'))last=ev.target;});
+  const show=(t,kind)=>{msg.hidden=false;msg.className='micmsg'+(kind?' '+kind:'');msg.innerHTML=t;};
+  const pretty=t=>esc(t).replace(/\^2/g,'²').replace(/\^3/g,'³').replace(/-/g,'−');
+  const KB='<br><b>So geht es trotzdem:</b> Tippe oben auf „Handy-Tastatur einblenden“ und dann auf der iPad-Tastatur auf das 🎤. Sprich den Term – die Übung wandelt ihn beim Prüfen automatisch um.';
+  function insert(txt){if(!last||!last.isConnected){show('Tippe zuerst in ein Eingabefeld.','bad');return;}
+    const a=last.selectionStart??last.value.length,b=last.selectionEnd??a;last.setRangeText(txt,a,b,'end');
+    last.dispatchEvent(new Event('input',{bubbles:true}));last.focus({preventScroll:true});}
+  function stop(){busy=false;btn.classList.remove('on');btn.textContent='🎤 Sprechen';}
+  btn.addEventListener('pointerdown',ev=>ev.preventDefault());btn.addEventListener('mousedown',ev=>ev.preventDefault());
+  btn.addEventListener('click',()=>{
+    if(!SR){show('Dieser Browser hat keine eingebaute Spracherkennung (z. B. wenn die Übung in einer App statt in Safari geöffnet ist).'+KB,'bad');return;}
+    if(busy){try{rec.stop();}catch(e){}return;}
+    if(!last||!last.isConnected){show('Tippe zuerst in ein Eingabefeld.','bad');return;}
+    try{rec=new SR();}catch(e){show('Die Spracherkennung konnte nicht starten.'+KB,'bad');return;}
+    rec.lang='de-DE';rec.interimResults=false;rec.maxAlternatives=3;rec.continuous=false;got=false;
+    rec.onstart=()=>show('🎤 Ich höre zu … sprich jetzt, z. B. '+'„y mal y plus y mal Klammer auf minus vier Klammer zu“'+'.');
+    rec.onresult=ev=>{const r=ev.results[ev.results.length-1];if(!r)return;got=true;
+      const alts=[...Array(r.length)].map((_,k)=>r[k].transcript),conv=alts.map(speechToTerm);
+      let best=conv.find(c=>c&&typeof parseTerm==='function'&&!parseTerm(c).err)||conv[0]||'';
+      if(!best){show('Das habe ich nicht verstanden („'+esc(alts[0]||'')+'“). Versuch es nochmal – langsam und deutlich.','bad');return;}
+      insert(best);show('Gehört: „'+esc(alts[0])+'“ → <b>'+pretty(best)+'</b><br><span class="small">Kontrolliere den Term und drück dann ✓.</span>','ok');};
+    rec.onerror=ev=>{stop();
+      const t={'not-allowed':'Das Mikrofon ist für Safari nicht erlaubt. Einstellungen → Safari → Mikrofon → „Erlauben“ (oder beim Nachfragen „Erlauben“ tippen).','service-not-allowed':'Die Spracherkennung ist auf diesem iPad gesperrt – meistens, weil <b>Diktieren</b> bzw. <b>Siri & Diktieren</b> ausgeschaltet oder per Geräteverwaltung blockiert ist.','no-speech':'Ich habe nichts gehört. Tippe nochmal auf 🎤 und sprich gleich los.','network':'Für die Spracherkennung braucht das iPad Internet.','audio-capture':'Es wurde kein Mikrofon gefunden.','aborted':'Die Aufnahme wurde abgebrochen.'}[ev.error];
+      show((t||'Die Spracherkennung hat nicht geklappt.')+' <span class="small">(Fehler: '+esc(ev.error||'unbekannt')+')</span>'+KB,'bad');};
+    rec.onend=()=>{if(busy&&!got)show('Ich habe nichts verstanden. Tippe nochmal auf 🎤 und sprich gleich los.'+KB,'bad');stop();};
+    busy=true;btn.classList.add('on');btn.textContent='⏹ Stopp';show('🎤 Mikrofon wird gestartet …');
+    try{rec.start();}catch(e){stop();show('Die Spracherkennung konnte nicht starten ('+esc(e.message||e)+').'+KB,'bad');}
+  });
 })();
 </script>
 </body>
