@@ -257,6 +257,9 @@ input.cbx{width:3.6rem!important;text-align:center}.cvar{font-family:Georgia,ser
 .penbar .penhint{color:var(--muted);font-size:.85rem}
 .tline>.ln{flex:1 1 0;min-width:0;overflow-wrap:anywhere}
 @media (max-width:520px){.tline{font-size:1.3rem}}
+input.tbx{width:5.2rem!important;text-align:center}
+.tline>.ln{line-height:1.7;white-space:normal}
+.tline>.ln .tchip{white-space:nowrap}
 </style>
 </head>
 <body>
@@ -615,23 +618,32 @@ function check2(e){
   const t=e.t,rs=t.prods.map((p,k)=>/[·*×]/.test(e.pv[k]||'')?{fmt:true,text:'Hier schreibst du das <b>Ergebnis</b> der Multiplikation, z. B. 4y.'}:judgeSigned(t,k,e.pv[k],e.ps[k]));
   rs.forEach((r,k)=>{e.pm[k]=r.ok?'ok':r.empty?null:'bad';e.ph[k]=r.ok?'':(r.text||'');});
   if(rs.every(r=>r.ok)){e.lv=polyPlain(t.prods);e.lm='ok';e.mmsg=null;
-    if(!t.combine){e.msg[2]={kind:'ok',text:'Richtig ausgerechnet! Hier gibt es nichts zusammenzufassen – fertig.'};e.step=DONE;return;}
-    e.cols=null;advance(e,2,'Richtig ausgerechnet! Jetzt unterstreiche gleichartige Glieder in derselben Farbe.');return;}
+    e.cols=null;advance(e,2,'Richtig ausgerechnet! Jetzt unterstreiche jedes Glied – gleichartige Glieder in derselben Farbe.');return;}
   if(rs.some(r=>r.empty)){hint(e,2,'Wähle bei jedem Glied das Vorzeichen und rechne alle Multiplikationen aus.');return;}
   if(rs.every(r=>r.ok||r.fmt)){hint(e,2,'Kontrolliere die Schreibweise in den markierten Kästchen.');return;}
   if(!e.forceZv){e.forceZv=1;fail(e,2,'Nicht alles ist richtig ausgerechnet – schau dir die rot markierten an. <b>Unterstreiche jetzt in der grünen Zeile Zahlen und Buchstaben in Farben</b> – das hilft dir beim Rechnen.');return;}
   fail(e,2,'Nicht alles ist richtig ausgerechnet – schau dir die rot markierten an.');
 }
 /* Schritt 4: zusammenfassen */
+function rCheck(e){const t=e.t,ks=t.prods.map(m=>key(m.v)),rc=e.rcol||[];
+  if(t.res.some((_,k)=>!rc[k])){hint(e,3,'Unterstreiche <b>jedes</b> Glied des Ergebnisses.');return;}
+  if(new Set(t.res.map((_,k)=>rc[k])).size<t.res.length){e.err++;e.tries[3]++;hint(e,3,'Im Ergebnis sind alle Glieder verschieden – jedes bekommt seine <b>eigene</b> Farbe.');return;}
+  e.rdone=1;advance(e,3,'✓ Richtig unterstrichen – Beispiel fertig!');}
+function termUI(e){const n=e.t.res.length,rs=e.rs||{},rt=e.rt||{};
+  return '<span class="coefrow">'+Array.from({length:n},(_,i)=>'<span class="cbox"><button type="button" class="sbtn'+(rs[i]?' set':'')+'" data-rs="'+i+'" aria-label="Rechenzeichen">'+(rs[i]||'±')+'</button>'+inp('data-rt="'+i+'"',rt[i]||'',(e.rm||'')+' tbx','Glied '+(i+1),'z. B. 3x')+'</span>').join('')+'</span>';}
+function composeT(e){const n=e.t.res.length,rs=e.rs||{},rt=e.rt||{},out=[];for(let i=0;i<n;i++){const x=String(rt[i]||'').trim();if(!x||!rs[i])return '';out.push((rs[i]==='−'?'- ':'+ ')+x);}return out.join(' ').replace(/^\+ /,'');}
 function check3(e){
-  {const K=kindsP(e.t.prods);for(let i=0;i<K.length;i++){const b=boxVal(e,i,K[i]);if(b.nosign){hint(e,3,'Wähle vor jedem Kästchen das Rechenzeichen: tippe auf ± für + oder −.');return;}if(b.bad){hint(e,3,'In die Kästchen kommt nur die Zahl ohne Vorzeichen – das Rechenzeichen tippst du davor an (±).');return;}if(b.empty){hint(e,3,'Schreib in jedes Kästchen eine Zahl – steht vor einer Variable nur 1, reicht das Rechenzeichen.');return;}}}
+  if(e.rmk){rCheck(e);return;}
+  {const n=e.t.res.length,rs=e.rs||{},rt=e.rt||{};for(let i=0;i<n;i++){const x=String(rt[i]||'').trim();if(!x){hint(e,3,'Schreib in jedes Kästchen ein Glied – mit Zahl und Buchstaben, z. B. 3x oder x².');return;}if(/^[+−-]/.test(x)){hint(e,3,'Das Rechenzeichen tippst du vor dem Kästchen an (±) – ins Kästchen kommt das Glied ohne Vorzeichen.');return;}if(!rs[i]){hint(e,3,'Wähle vor jedem Kästchen das Rechenzeichen: tippe auf ± für + oder −.');return;}}
+    const nums=Object.values(rt).filter(x=>/^\s*\d+([.,]\d+)?\s*$/.test(x)).length,cst=e.t.res.filter(m=>key(m.v)==='').length;if(nums>cst){hint(e,3,'Vergiss die <b>Buchstaben</b> nicht: Schreib das ganze Glied, z. B. 7x oder 3x² – nicht nur die Zahl.');return;}
+    e.rv=composeT(e);}
   const t=e.t,raw=e.rv;
   if(!e.mok){hint(e,3,'Unterstreiche zuerst gleichartige Glieder mit derselben Farbe und tippe auf „Markierung prüfen“.');return;}
   if(!raw.trim()){hint(e,3,'Schreib das Ergebnis in das Feld.');return;}
   const r=parseTerm(raw);if(r.err){hint(e,3,r.err);return;}
   const n=normalize(r.ms),exp=t.res,same=n.length===exp.length&&n.every((m,i)=>sameM(m,exp[i]));
   if(same){if(r.ms.length>n.length){hint(e,3,'Richtig gerechnet – fasse gleichartige Glieder noch ganz zusammen.');return;}
-    e.rm='ok';advance(e,3,'Richtig zusammengefasst!');return;}
+    e.rm='ok';e.rmk=1;e.rcol=[];e.msg[3]={kind:'ok',text:'Richtig zusammengefasst! Jetzt unterstreiche das Ergebnis: jedes Glied in einer eigenen Farbe.'};return;}
   e.rm='bad';
   const ek=new Map(exp.map(m=>[key(m.v),m.c])),nk=new Map(n.map(m=>[key(m.v),m.c]));
   const wrong=[...new Set([...ek.keys(),...nk.keys()])].filter(k=>ek.get(k)!==nk.get(k));
@@ -656,7 +668,8 @@ function showSolution(e,s){
   if(s===0){e.arr=t.arrows.map(a=>a.slice());e.selF=null;}
   if(s===1){const F=m=>m.c<0?'('+polyPlain([m])+')':polyPlain([m]);e.ml=t.arrows.map(([gi,ti])=>F(t.groups[gi].f)+'·'+F(t.groups[gi].t[ti])).join(' + ');e.mlm='ok';}
   if(s===2){e.ps=t.prods.map(p=>p.c<0?'−':'+');e.pv=t.prods.map(p=>plainT(p));e.pm=t.prods.map(()=>'ok');e.ph=t.prods.map(()=>'');e.lv=polyPlain(t.prods);e.lm='ok';}
-  if(s===3){if(!t.combine){const ks=[...new Set(t.prods.map(m=>key(m.v)))];e.cols=t.prods.map(m=>1+ks.indexOf(key(m.v))%4);e.mok=1;}e.rv=polyPlain(t.res);e.rm='ok';const ks=[...new Set(t.prods.map(m=>key(m.v)))];e.cols=t.prods.map(m=>1+ks.indexOf(key(m.v))%4);e.mok=1;}
+  if(s===3){if(!t.combine){const ks=[...new Set(t.prods.map(m=>key(m.v)))];e.cols=t.prods.map(m=>1+ks.indexOf(key(m.v))%4);e.mok=1;}e.rv=polyPlain(t.res);e.rm='ok';const ks=[...new Set(t.prods.map(m=>key(m.v)))];e.cols=t.prods.map(m=>1+ks.indexOf(key(m.v))%4);e.mok=1;
+    e.rs={};e.rt={};t.res.forEach((m,i)=>{e.rs[i]=m.c<0?'−':'+';e.rt[i]=plainT(m).replace(/^-/,'');});e.rcol=t.res.map(m=>e.cols[t.prods.findIndex(p=>key(p.v)===key(m.v))]);e.rmk=1;e.rdone=1;}
   e.shown=true;e.msg[s]={kind:'shown',text:'Die Lösung ist jetzt eingetragen – schau sie dir genau an.'};
   e.step=nextStep(e,s);
 }
@@ -711,9 +724,10 @@ function renderEx(focus){
         (e.mok?'':'<button type="button" class="mini" data-act="mchk">Markierung prüfen</button>')+'</div>';
       if(!e.mok)h+=paletteH(e,5)+'<p class="hint" style="margin:.1rem 0 .4rem .6rem">Unterstreiche <b>jedes</b> Glied in einer Farbe – jede Farbe nur einmal, außer bei gleichartigen Gliedern: die bekommen dieselbe Farbe. Jedes Antippen wechselt die Farbe.</p>';
       if(e.mmsg)h+='<p class="msg '+e.mmsg.kind+'" style="margin-left:.6rem">'+e.mmsg.text+'</p>';
-      if(e.mok&&t.combine)h+='<div class="tline"><span class="eqs">=</span>'+coefUI(e,t.prods,e.rm||'')+'<button type="button" data-act="check3">Prüfen</button></div><p class="srule">Tippe vor jedem Kästchen das Rechenzeichen an (±) und schreib die Zahl hinein – eine 1 vor einer Variable musst du nicht schreiben. Hebt sich alles auf, schreib 0.</p>'+msgHTML(e,3);
+      if(e.mok&&t.combine&&!e.rmk)h+='<div class="tline"><span class="eqs">=</span>'+termUI(e)+'<button type="button" data-act="check3">Prüfen</button></div><p class="srule">Fasse zusammen: Tippe vor jedem Kästchen das Rechenzeichen an (±) und schreib das <b>ganze Glied</b> hinein – Zahl <b>und</b> Buchstaben, z. B. 3x oder x². Eine 1 vor einem Buchstaben musst du nicht schreiben.</p>'+msgHTML(e,3);
+      if(e.rmk){const rc=e.rcol||[];h+='<div class="tline marks"><span class="eqs">=</span>'+t.res.map((m,k)=>'<button type="button" class="tchip'+(rc[k]?' k'+rc[k]:'')+'" data-rk="'+k+'">'+termH(m,k===0)+'</button>').join('')+'<button type="button" class="mini" data-act="check3">Prüfen</button></div>'+paletteH(e,5)+'<p class="hint" style="margin:.1rem 0 .4rem .6rem">Unterstreiche jedes Glied des Ergebnisses – jedes in einer eigenen Farbe. Die Farben müssen nicht dieselben wie oben sein.</p>'+msgHTML(e,3);}
     }
-    else if(t.combine)h+='<div class="tline ok fin"><span class="eqs">=</span><span class="ln">'+polyH(t.res)+'</span> <span class="tick">✓</span></div>';
+    else if(t.combine){const rc=e.rcol||[];h+='<div class="tline ok fin"><span class="eqs">=</span><span class="ln">'+t.res.map((m,k)=>'<span class="tchip'+(rc[k]?' k'+rc[k]:'')+'">'+termH(m,k===0)+'</span>').join('')+'</span> <span class="tick">✓</span></div>';}
   }
   h+='</div>';
 
@@ -859,9 +873,10 @@ $('exCard').addEventListener('click',ev=>{
   if(b.dataset.tc){e[b.dataset.tc+'b']=[];e.ml=mlNorm(tilePlain(e,'m'));e.mlm=null;renderEx();return;}
   if(b.dataset.sg!==undefined&&e.step===2){const k=+b.dataset.sg;e.ps[k]=e.ps[k]==='+'?'−':'+';e.pm[k]=null;e.ph[k]='';renderEx('[data-pi="'+k+'"]');return;}
   if(b.dataset.pen!==undefined){const c=+b.dataset.pen;e.pen=e.pen===c?0:c;renderEx();return;}
-  if(b.dataset.rs!==undefined){e.rs=e.rs||{};const i=b.dataset.rs;e.rs[i]=e.rs[i]==='+'?'−':'+';e.rv=composeRv(e,e.t.prods);e.rm=null;e.msg[3]=null;renderEx();return;}
+  if(b.dataset.rs!==undefined){e.rs=e.rs||{};const i=b.dataset.rs;e.rs[i]=e.rs[i]==='+'?'−':'+';e.rm=null;e.msg[3]=null;renderEx();return;}
   if(b.dataset.zv!==undefined&&e.step===2){const id=b.dataset.zv;e.ucols=e.ucols||{};e.ucols[id]=paint(e,e.ucols[id]||0,((e.ucols[id]||0)%8)+1);e.msg[2]=null;renderEx();return;}
   if(b.dataset.mk!==undefined&&e.step===3&&!e.mok){const k=+b.dataset.mk;e.cols=e.cols||e.t.prods.map(()=>0);e.cols[k]=paint(e,e.cols[k]||0,((e.cols[k]||0)%5)+1);e.mmsg=null;renderEx();return;}
+  if(b.dataset.rk!==undefined&&e.step===3&&e.rmk){const k=+b.dataset.rk;e.rcol=e.rcol||[];e.rcol[k]=paint(e,e.rcol[k]||0,((e.rcol[k]||0)%5)+1);e.msg[3]=null;renderEx();return;}
   if(b.dataset.act==='mchk'&&e.step===3){markCheck(e);renderEx(e.mok?'[data-rc]':null);return;}
   if(b.dataset.go!==undefined){goTo(+b.dataset.go);return;}
   const a=b.dataset.act;
@@ -879,6 +894,7 @@ $('exCard').addEventListener('input',ev=>{
   if(t.dataset.pi!==undefined){const k=+t.dataset.pi;e.pv[k]=t.value;e.pm[k]=null;e.ph[k]='';t.classList.remove('ok','bad');const rm=t.parentNode.querySelector('.rowmsg');if(rm)rm.textContent='';}
   else if(t.hasAttribute('data-lv')){e.lv=t.value;e.lm=null;t.classList.remove('ok','bad');}
   else if(t.hasAttribute('data-ml')){e.ml=t.value;e.mlm=null;t.classList.remove('ok','bad');}
+  else if(t.dataset.rt!==undefined){e.rt=e.rt||{};e.rt[t.dataset.rt]=t.value;e.rm=null;t.classList.remove('ok','bad');}
   else if(t.hasAttribute('data-rv')){e.rv=t.value;e.rm=null;t.classList.remove('ok','bad');}
   else if(t.dataset.rc!==undefined){e.rc=e.rc||{};e.rc[t.dataset.rc]=t.value;e.rv=composeRv(e,e.t.prods);e.rm=null;document.querySelectorAll('#exCard [data-rc]').forEach(x=>x.classList.remove('ok','bad'));}
 });
