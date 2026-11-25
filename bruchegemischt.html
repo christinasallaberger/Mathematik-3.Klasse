@@ -47,6 +47,12 @@ header p{margin:0 0 20px;color:var(--muted);max-width:60ch}
 .seg button{font:inherit;font-size:15px;border:0;background:transparent;color:var(--ink);padding:7px 14px;cursor:pointer}
 .seg button+button{border-left:2px solid var(--ink)}
 .seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper);font-weight:700}
+.seg.lv{display:inline-grid;grid-template-columns:repeat(4,auto);gap:2px;background:var(--ink)}
+.seg.lv button{background:var(--card)}
+.seg.lv button+button{border-left:0}
+.seg.lv button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.seg.lv button:disabled{cursor:default;opacity:.55}
+@media (max-width:640px){.seg.lv{grid-template-columns:1fr 1fr}}
 .ctl-label{display:block;font-size:13px;color:var(--muted);margin-bottom:4px}
 .namein{font:inherit;font-size:16px;padding:7px 12px;border:2px solid var(--ink);border-radius:10px;background:var(--card);color:var(--ink);width:240px;max-width:100%}
 .grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:22px;align-items:start}
@@ -211,9 +217,11 @@ select.sg:disabled{opacity:.85;cursor:default}
   <div class="controls">
     <div>
       <span class="ctl-label">Niveau</span>
-      <div class="seg" id="level">
-        <button data-v="standard" aria-pressed="true">Standard</button>
-        <button data-v="ahs" aria-pressed="false">Standard AHS</button>
+      <div class="seg lv" id="level">
+        <button data-v="standard" data-q="0" aria-pressed="true">Standard</button>
+        <button data-v="ahs" data-q="0" aria-pressed="false">Standard AHS</button>
+        <button data-v="standard" data-q="1" aria-pressed="false">Standard – nur Ergebnis</button>
+        <button data-v="ahs" data-q="1" aria-pressed="false">Standard AHS – nur Ergebnis</button>
       </div>
     </div>
     <div>
@@ -248,8 +256,10 @@ select.sg:disabled{opacity:.85;cursor:default}
 const ROUND=10;
 const OPS=['+','+','+','−','−','−','·','·',':',':'];
 const OPNAME={'+':'Addition','−':'Subtraktion','·':'Multiplikation',':':'Division'};
-const state={level:'standard',nameLocked:false,cur:0,tasks:[],history:[]};
+const state={level:'standard',quick:false,nameLocked:false,cur:0,tasks:[],history:[]};
 let task=null;
+const levelLabel=()=>(state.level==='standard'?'Standard':'Standard AHS')+(state.quick?' – nur Ergebnis':'');
+function setLevelUI(){document.querySelectorAll('#level button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.v===state.level&&(x.dataset.q==='1')===!!state.quick?'true':'false'));}
 const $=s=>document.querySelector(s);
 const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
 const pick=a=>a[Math.floor(Math.random()*a.length)];
@@ -568,6 +578,36 @@ function stepMixed(){
     else wrong(d,`Wie oft passt ${rd} ganz in ${a}? Probiere ${rd} · 1, ${rd} · 2, ${rd} · 3 … Was übrig bleibt, kommt in den Zähler.`,solve);});
 }
 
+/* ---------- Nur Ergebnis eingeben ---------- */
+function startQuick(){addWay(task.exprHTML);stepQuick();}
+function stepQuick(){
+  const t=task,[rn,rd]=t.res,a=Math.abs(rn),S=sgnOf(rn),W=rd===1?a:Math.floor(a/rd),Z=rd===1?0:a%rd;
+  const d=addStep('Ergebnis eingeben',`<p>Rechne im Heft. Wähle dann das Vorzeichen und trag das Ergebnis ein: Ganze ins linke Feld, den Bruch rechts. Gibt es keine Ganzen, bleibt das linke Feld leer. Ist das Ergebnis eine ganze Zahl, bleibt der Bruch leer.</p><div class="eq"><span>=</span><span class="sfw">${sel('qs')}${box('qw','Ganze Zahl','whole')}<span class="fin">${box('qz','Zähler')}<span class="bar"></span>${box('qn','Nenner')}</span></span></div>${CHECK}`);
+  const solve=()=>{sv(d,'qs',S);sv(d,'qw',W||'');sv(d,'qz',Z||'');sv(d,'qn',Z?rd:'');right(d,'Richtig – super!');finish();};
+  const tip=t.kind==='S'?'Rechne im Heft nach: unechte Brüche, über Kreuz zum gemeinsamen Nenner, Zähler zusammenfassen, kürzen.'
+    :t.op==='·'?'Rechne im Heft nach: unechte Brüche, Zähler mal Zähler und Nenner mal Nenner – vorher kürzen.'
+    :'Rechne im Heft nach: unechte Brüche, mal Kehrwert der zweiten Zahl, vorher kürzen.';
+  bindCheck(d,()=>{
+    const s_=gv(d,'qs'),raw=['qw','qz','qn'].map(k=>gv(d,k).trim()),[wR,zR,nR]=raw;
+    if(!s_){note(d,'Bitte zuerst das Vorzeichen wählen.');return;}
+    if(!wR&&!zR&&!nR){note(d,'Bitte das Ergebnis eintragen.');return;}
+    if(!zR!==!nR){note(d,'Bitte Zähler und Nenner beide ausfüllen – oder beide leer lassen.');return;}
+    const [w,z,n]=raw.map(x=>x===''?0:readInt(x));
+    if(w===null||z===null||n===null){note(d,'Bitte nur ganze Zahlen eintragen.');return;}
+    if(nR&&n===0){note(d,'Der Nenner darf nicht 0 sein.');return;}
+    const W_=Math.abs(w),Z_=Math.abs(z),N_=nR?Math.abs(n):1,vn=W_*N_+Z_;
+    const valOk=vn*rd===a*N_;
+    if(valOk&&s_===S){
+      if(nR&&Z_===0){note(d,'Der Zähler ist 0 – lass den Bruch dann ganz leer.');return;}
+      if(nR&&N_===1){wrong(d,'Der Wert stimmt – das Ergebnis ist eine ganze Zahl. Schreib sie ins linke Feld und lass den Bruch leer.',solve);return;}
+      if(nR&&gcd(Z_,N_)>1){wrong(d,'Der Wert stimmt, aber der Bruch ist noch nicht vollständig gekürzt.',solve);return;}
+      if(nR&&Z_>=N_){wrong(d,'Der Wert stimmt – schreib das Ergebnis aber als gemischte Zahl: Ganze ins linke Feld, der Rest bleibt als Bruch.',solve);return;}
+      solve();return;}
+    if(valOk)wrong(d,'Die Zahl stimmt, aber das Vorzeichen nicht. '+(t.kind==='S'?'Welche Zahl ist größer – die positive oder die negative?':'Zähle die Minus-Zeichen: gleiche Vorzeichen ergeben +, verschiedene ergeben −.'),solve);
+    else wrong(d,'Das stimmt leider nicht. '+tip,solve);
+  });
+}
+
 /* ---------- Ablauf ---------- */
 function startTask(){const t=task,want=t.kind==='S'?'add':t.op==='·'?'mul':'div';
   addWay(`${t.exprHTML} <span class="ruletip">(${RULESHORT[want]})</span>`);
@@ -575,10 +615,11 @@ function startTask(){const t=task,want=t.kind==='S'?'add':t.op==='·'?'mul':'div
 function showTask(i){
   state.cur=i;task=state.tasks[i];const t=task;
   state.tasks.forEach(x=>{x.stepsEl.hidden=x!==t;x.wayEl.hidden=x!==t;});
-  $('#taskText').innerHTML=`<p class="tag">Aufgabe ${t.no+1} von ${ROUND} · ${state.level==='standard'?'Standard':'Standard AHS'}${t.status==='skipped'?' · <span class="skiptag">übersprungen</span>':''}</p><p class="task">Berechne Schritt für Schritt. Schreib das Ergebnis vollständig gekürzt und – wenn möglich – als gemischte Zahl.</p>`;
+  $('#taskText').innerHTML=`<p class="tag">Aufgabe ${t.no+1} von ${ROUND} · ${levelLabel()}${t.status==='skipped'?' · <span class="skiptag">übersprungen</span>':''}</p><p class="task">${state.quick?'Rechne im Heft und gib hier nur das Ergebnis ein.':'Berechne Schritt für Schritt.'} Schreib das Ergebnis vollständig gekürzt und – wenn möglich – als gemischte Zahl.</p>`;
+  document.querySelector('.waysheet .way-title').textContent=state.quick?'Angabe und Ergebnis – den Rechenweg schreibst du im Heft':'Rechenweg – zum Übertragen ins Heft';
   $('#fig').innerHTML=`<div class="bigexpr">${t.exprHTML} <span>=</span> <span class="q">?</span></div>`;
   if(!state.nameLocked){t.waiting=true;t.stepsEl.innerHTML='<div class="step"><p>Wähle oben dein Niveau, gib deinen Namen ein und tippe auf „Los geht\'s“. Name und Niveau können danach nicht mehr geändert werden.</p></div>';}
-  else if(!t.started){t.waiting=false;t.started=true;t.stepsEl.innerHTML='';startTask();}
+  else if(!t.started){t.waiting=false;t.started=true;t.stepsEl.innerHTML='';state.quick?startQuick():startTask();}
   $('#skipBtn').hidden=!state.nameLocked||t.status==='solved';
   updateDone();renderNav();updateScore();
 }
@@ -603,7 +644,7 @@ function updateScore(){
 function finish(){
   const t=task;t.status='solved';t.answerText=resPlain(t.res[0],t.res[1]);$('#skipBtn').hidden=true;
   addWay(`Ergebnis: ${resHTML(t.res[0],t.res[1])}`,'final');
-  t.doneHTML=(t.errors===0?'Fehlerfrei gelöst – stark!':`Geschafft! (${t.errors} ${t.errors===1?'Fehlversuch':'Fehlversuche'})`)+'<br><strong>✏️ Übertrage jetzt den ganzen Rechenweg in dein Heft.</strong>';
+  t.doneHTML=(t.errors===0?'Fehlerfrei gelöst – stark!':`Geschafft! (${t.errors} ${t.errors===1?'Fehlversuch':'Fehlversuche'})`)+(state.quick?'<br><strong>✏️ Schreib Angabe, Rechenweg und Ergebnis in dein Heft.</strong>':'<br><strong>✏️ Übertrage jetzt den ganzen Rechenweg in dein Heft.</strong>');
   updateDone();renderNav();updateScore();
   $('#nextBtn').focus({preventScroll:true});if($('#done').scrollIntoView)$('#done').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
@@ -620,7 +661,7 @@ function showSummary(){
   const hist=state.history.length?`<h3 class="histh">Frühere Runden</h3><div class="tablewrap"><table><thead><tr><th>Runde</th><th>gelöst</th><th>ohne Fehler</th><th>Fehlversuche</th><th>Lösungen angezeigt</th><th>Zeit</th></tr></thead><tbody>${state.history.map(h=>`<tr><td>${h.n}</td><td>${h.solved} / ${ROUND}</td><td>${h.perfect}</td><td>${h.errs}</td><td>${h.shown}</td><td>${fmtT(h.ms)}</td></tr>`).join('')}</tbody></table></div>`:'';
   const s=$('#summary');
   s.innerHTML=`<h2>Zusammenfassung für die Lehrkraft${allDone()?'':' <span class="livetag">wird laufend aktualisiert</span>'}</h2>
-    <div class="sumhead"><div><span>Name</span><b>${esc(name)}</b></div><div><span>Datum</span><b>${dt}</b></div><div><span>Niveau</span><b>${state.level==='standard'?'Standard':'Standard AHS'}</b></div><div><span>Übung</span><b>Brüche gemischt – Runde ${state.history.length+1}</b></div></div>
+    <div class="sumhead"><div><span>Name</span><b>${esc(name)}</b></div><div><span>Datum</span><b>${dt}</b></div><div><span>Niveau</span><b>${levelLabel()}</b></div><div><span>Übung</span><b>Brüche gemischt – Runde ${state.history.length+1}</b></div></div>
     <div class="sumstats"><div><b>${perfect} / ${L.length}</b><span>ohne Fehler</span></div><div><b>${errs}</b><span>Fehlversuche gesamt</span></div><div><b>${shown}</b><span>Lösungen angezeigt</span></div><div><b>${skL.length}</b><span>übersprungen</span></div></div>
     <div class="sumstats">${byOp}</div>
     <div class="tablewrap"><table><thead><tr><th>Nr.</th><th>Aufgabe</th><th>Rechenart</th><th>Ergebnis</th><th>Fehlversuche</th><th>Lösung gezeigt</th><th>Fehler bei Schritt</th></tr></thead><tbody>${rows}</tbody></table></div>
@@ -630,7 +671,7 @@ function showSummary(){
   $('#newRound').onclick=startNewRound;
 }
 document.querySelectorAll('#level button').forEach(b=>b.onclick=()=>{if(state.nameLocked)return;
-  document.querySelectorAll('#level button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));state.level=b.dataset.v;newRound();});
+  state.level=b.dataset.v;state.quick=b.dataset.q==='1';setLevelUI();newRound();});
 function lockName(){const n=$('#name');if(state.nameLocked)return;if(!n.value.trim()){n.focus();return;}
   n.value=n.value.trim();state.lockedName=n.value;n.readOnly=true;n.disabled=true;n.classList.add('locked');$('#nameOk').hidden=true;state.nameLocked=true;
   document.querySelectorAll('#level button').forEach(x=>{x.disabled=x.getAttribute('aria-pressed')!=='true';});
@@ -670,21 +711,21 @@ function fsNote(){return FS_EXTRA&&FS_EXTRA.short?'Enthält Aufgaben, die auf ei
 /* ---------- Fortschritt: Anpassung für diese Übung ---------- */
 let FS_SEED=0,FS_ROUND=0;const FS_LVL=true;
 const _nrFS=newRound;newRound=function(){FS_ROUND++;const o=Math.random;Math.random=fsSeeded(FS_SEED+'|'+FS_ROUND);try{_nrFS();}finally{Math.random=o;}};
-const FS_ADAPTER={id:'brueche-gemischt',ver:11,
+const FS_ADAPTER={id:'brueche-gemischt',ver:12,
   started:()=>state.nameLocked,
   nameInput:()=>document.getElementById('name'),startButton:()=>document.getElementById('nameOk'),
   codePlace:b=>document.getElementById('name').closest('.namerow').after(b),
   barPlace:b=>document.querySelector('header').after(b),
-  shortWidths:()=>FS_LVL?[1,20,ROUND]:[20,ROUND],
-  short(){let m=0;state.tasks.forEach((t,k)=>{if(t.status==='solved')m+=2**k;});const f=[[FS_SEED,20],[m,ROUND]];if(FS_LVL)f.unshift([state.level==='ahs'?1:0,1]);return f;},
+  shortWidths:()=>FS_LVL?[2,20,ROUND]:[20,ROUND],
+  short(){let m=0;state.tasks.forEach((t,k)=>{if(t.status==='solved')m+=2**k;});const f=[[FS_SEED,20],[m,ROUND]];if(FS_LVL)f.unshift([(state.level==='ahs'?1:0)+(state.quick?2:0),2]);return f;},
   totals(){return {err:state.tasks.reduce((a,t)=>a+t.errors,0)+(FS_EXTRA.err||0),ms:state.tasks.reduce((a,t)=>a+(t.ms||0),0)+(FS_EXTRA.ms||0)};},
-  dump(){return {seed:FS_SEED,round:FS_ROUND,level:state.level||null,tasks:state.tasks.map(t=>({status:t.status,errors:t.errors,shown:t.shown,es:[...t.errSteps],ms:t.ms||0,ws:!!t.wasSkipped,ans:t.answerText||null})),extra:FS_EXTRA};},
+  dump(){return {seed:FS_SEED,round:FS_ROUND,level:state.level||null,quick:!!state.quick,tasks:state.tasks.map(t=>({status:t.status,errors:t.errors,shown:t.shown,es:[...t.errSteps],ms:t.ms||0,ws:!!t.wasSkipped,ans:t.answerText||null})),extra:FS_EXTRA};},
   pre(src){
     const full=src&&src.type==='full'?src.data:null;
     if(full){FS_SEED=full.seed;FS_ROUND=(full.round||1)-1;}
     else if(src){FS_SEED=FS_LVL?src.vals[1]:src.vals[0];FS_ROUND=0;}
     else{FS_SEED=Math.floor(Math.random()*1048576);FS_ROUND=0;}
-    if(FS_LVL&&src){const lvl=full?full.level:(src.vals[0]?'ahs':'standard');if(lvl){state.level=lvl;document.querySelectorAll('#level button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.v===lvl?'true':'false'));}}
+    if(FS_LVL&&src){const lvl=full?full.level:(src.vals[0]&1?'ahs':'standard');if(lvl){state.level=lvl;state.quick=full?!!full.quick:!!(src.vals[0]&2);setLevelUI();}}
     newRound();
     if(!src)return;
     const mask=full?0:(FS_LVL?src.vals[2]:src.vals[1]);
