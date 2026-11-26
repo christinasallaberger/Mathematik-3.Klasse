@@ -1,9 +1,15 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
+<script>/* Bestätigungsfenster: In manchen Apps (z. B. Vorschau am iPhone) werden sie blockiert und liefern sofort „Nein“ – dann trotzdem weitermachen */(function(){const n=window.confirm.bind(window);window.confirm=function(m){const t=Date.now();let r=false;try{r=n(m);}catch(x){return true;}return r||Date.now()-t<60;};})();</script>
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Herausheben – gemeinsame Faktoren finden</title>
+<title>Terme gemischt – Hausübung</title>
+<meta name="uebersicht-kapitel" content="Terme">
+<meta name="uebersicht-thema" content="Terme gemischt – Hausübung (12 Beispiele: 6 leichter, 6 mit Hochzahlen)">
+<meta name="uebersicht-info" content="Pro Runde 12 Beispiele – 1 bis 6 ohne Hochzahlen, 7 bis 12 mit Hochzahlen: zusammenfassen, Plus/Minus vor der Klammer, Monome mal/durch, Herausheben, Monom mal Polynom und Binom mal Binom mit Pfeilen – Unterstreichen freiwillig, aber kontrolliert">
+<meta name="uebersicht-gruppe" content="4. Klasse">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fraunces:opsz,wght@9..144,600;9..144,800&display=swap" rel="stylesheet">
@@ -12,6 +18,8 @@
   --paper:#F7F9FC; --grid:#DCE6F2; --ink:#1B2F6B; --text:#1E2533; --muted:#5B6578;
   --card:#FFFFFF; --line:#C9D5E6; --ok:#217A4B; --okbg:#E3F4EA; --bad:#B3261E; --badbg:#FBE7E5;
   --mark:#FFE873; --field:#FFFFFF; --info:#EAF1FB; --accent:#147D92;
+  --num:#0E8FB8; --var:#8E24AA; --arrow:#1D4ED8;
+  --c1:#D99A00; --c2:#1E73D6; --c3:#2E8B3A; --c4:#D81B60; --c5:#8E24AA; --c6:#E8590C; --c7:#00897B; --c8:#6D4C41;
   color-scheme: light;
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
@@ -20,13 +28,15 @@
   :root:not([data-theme="light"]){
     --paper:#111827; --grid:#1C2638; --ink:#A9C1FF; --text:#E6EAF2; --muted:#9AA4B8;
     --card:#172033; --line:#2C3A55; --ok:#5FD08E; --okbg:#173326; --bad:#FF8A80; --badbg:#3A1C1C;
-    --mark:#6B5A12; --field:#0F1726; --info:#1A2740; --accent:#5CC8DC; color-scheme: dark;
+    --mark:#6B5A12; --field:#0F1726; --info:#1A2740; --accent:#5CC8DC;
+    --num:#5CC8E8; --var:#CE93D8; --arrow:#8FB1FF; --c1:#FFD54F; --c2:#64B5F6; --c3:#81C784; --c4:#F48FB1; --c5:#CE93D8; --c6:#FFAB76; --c7:#4DB6AC; --c8:#BCAAA4; color-scheme: dark;
   }
 }
 :root[data-theme="dark"]{
   --paper:#111827; --grid:#1C2638; --ink:#A9C1FF; --text:#E6EAF2; --muted:#9AA4B8;
   --card:#172033; --line:#2C3A55; --ok:#5FD08E; --okbg:#173326; --bad:#FF8A80; --badbg:#3A1C1C;
-  --mark:#6B5A12; --field:#0F1726; --info:#1A2740; --accent:#5CC8DC; color-scheme: dark;
+  --mark:#6B5A12; --field:#0F1726; --info:#1A2740; --accent:#5CC8DC;
+  --num:#5CC8E8; --var:#CE93D8; --arrow:#8FB1FF; --c1:#FFD54F; --c2:#64B5F6; --c3:#81C784; --c4:#F48FB1; --c5:#CE93D8; --c6:#FFAB76; --c7:#4DB6AC; --c8:#BCAAA4; color-scheme: dark;
 }
 *,*::before,*::after{box-sizing:inherit}
 [hidden]{display:none!important}
@@ -41,10 +51,8 @@ body{
 .wrap{max-width:60rem;margin:0 auto;padding:1.5rem 1rem 4rem}
 header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:1rem;margin:1rem 0 2rem}
 h1{font-family:Fraunces,Georgia,serif;font-weight:800;color:var(--ink);font-size:clamp(2.1rem,6vw,3.5rem);line-height:1.02;margin:0;letter-spacing:-.01em}
-h1 .lift{display:inline-block;animation:lift 1.4s ease-out .3s 1;color:var(--accent)}
-@keyframes lift{0%{transform:translateY(0)}40%{transform:translateY(-.35em)}70%{transform:translateY(-.25em)}100%{transform:none}}
-@media (prefers-reduced-motion: reduce){h1 .lift{animation:none}}
-.sub{color:var(--muted);margin:.5rem 0 0;max-width:40rem}
+h1 .acc{color:var(--accent)}
+.sub{color:var(--muted);margin:.5rem 0 0;max-width:42rem}
 .top{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
 .score{font-weight:700;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:999px;padding:.35rem .9rem}
 button{font:inherit;cursor:pointer;border-radius:.5rem;border:2px solid var(--ink);background:var(--ink);color:var(--paper);padding:.45rem .9rem;font-weight:700}
@@ -58,14 +66,11 @@ section{background:var(--card);border:2px solid var(--line);border-radius:.75rem
 h2{font-size:1.15rem;margin:0}
 h3{font-size:1.05rem;margin:0 0 .4rem;color:var(--ink)}
 sup{font-size:.68em;margin-left:.04em}
-.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;font-size:.8em;line-height:1.1;margin:0 .1em}
-.fr>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .2em}
-.fr>span:last-child{padding:0 .2em}
-input{font:inherit;font-size:1.1rem;color:var(--text);background:var(--field);border:2px solid var(--line);border-radius:.4rem;padding:.2rem .4rem}
+.lvl{font-size:.9rem;font-weight:700;color:var(--accent)}
+input{font:inherit;font-size:1.15rem;color:var(--text);background:var(--field);border:2px solid var(--line);border-radius:.4rem;padding:.25rem .5rem}
 input.ok{border-color:var(--ok);background:var(--okbg)}
 input.bad{border-color:var(--bad);background:var(--badbg)}
 .actions{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;margin-top:.6rem}
-.res{color:var(--muted);font-weight:700}
 .hint{color:var(--muted);font-size:.95rem;margin:.4rem 0 0}
 .msg{margin:.6rem 0 0;font-size:.97rem;display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
 .msg.ok{color:var(--ok);font-weight:700}.msg.bad{color:var(--bad)}.msg.shown{color:var(--muted)}
@@ -74,55 +79,46 @@ input.bad{border-color:var(--bad);background:var(--badbg)}
 
 details.info{background:var(--info);border:0;border-left:6px solid var(--ink);border-radius:.5rem;padding:.7rem 1rem;margin:0 0 1.5rem}
 details.info summary{cursor:pointer;font-weight:700;color:var(--ink)}
-.heftbox{margin:1rem 0 0}
+details.info p{margin:.5rem 0}
 .copy{background:var(--mark);color:var(--text);border-radius:.4rem;padding:.4rem .7rem;margin:.6rem 0!important}
-details.info p{margin:.4rem 0}
-.rule{font-size:1.1rem}
+.rule{font-size:1.15rem}
 
 .nav{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem}
-.dots{display:flex;gap:.35rem;flex-wrap:wrap}
-.dot{width:2.3rem;height:2.3rem;border-radius:50%;padding:0;font-weight:700;background:var(--field);color:var(--ink);border:2px solid var(--line)}
+.dots{display:flex;gap:.3rem;flex-wrap:wrap}
+.dot{width:2.2rem;height:2.2rem;border-radius:50%;padding:0;font-weight:700;font-size:.9rem;background:var(--field);color:var(--ink);border:2px solid var(--line)}
 .dot.started{background:var(--info)}
 .dot.done{background:var(--okbg);border-color:var(--ok);color:var(--ok)}
 .dot.shown{border-style:dashed}
 .dot.cur{border-color:var(--ink);box-shadow:0 0 0 3px var(--mark)}
 .round{margin-left:auto;color:var(--muted);font-size:.9rem;border:1.5px solid var(--line);border-radius:999px;padding:.1rem .6rem}
 
-/* Heft-Ansicht */
-.heft{overflow-x:auto;margin:1rem 0 .5rem;border:2px dashed var(--line);border-radius:.6rem;background:var(--paper);padding:.8rem 1rem}
-.hefttitle{margin:0 0 .3rem;font-weight:700;color:var(--muted);font-size:.95rem}
-.heft .copy{font-size:1rem;white-space:normal}
-.heft div{font-size:1.5rem;color:var(--ink);white-space:nowrap;margin:.15rem 0}
-.heft .task{color:var(--text)}
-.heft .fin{font-weight:700}
-.heft .probe{font-size:1rem;color:var(--muted);margin-top:.5rem}
-.mk{background:var(--mark);border-radius:.3rem;padding:0 .15rem;color:var(--text)}
-
-/* Schritte */
-.stepcard{border:2px solid var(--line);border-radius:.6rem;padding:.8rem 1rem;margin-top:1rem}
-.stepcard.active{border-color:var(--ink)}
+.taskline{font-size:1.6rem;margin:.9rem 0 .3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.2rem}
+.tchip{font:inherit;font-size:1.6rem;font-weight:400;background:transparent;color:var(--text);border:0;border-bottom:5px solid transparent;border-radius:0;padding:0 .2rem .05rem;line-height:1.35;cursor:pointer}
+.tchip:hover{background:var(--info)}
+.tchip.k1{border-bottom-color:var(--c1)}.tchip.k2{border-bottom-color:var(--c2)}.tchip.k3{border-bottom-color:var(--c3)}.tchip.k4{border-bottom-color:var(--c4)}.tchip.k5{border-bottom-color:var(--c5)}.tchip.k6{border-bottom-color:var(--c6)}
+.gt{text-decoration:underline;text-decoration-thickness:4px;text-underline-offset:.3em}
+.g1{text-decoration-color:var(--c1)}.g2{text-decoration-color:var(--c2)}.g3{text-decoration-color:var(--c3)}.g4{text-decoration-color:var(--c4)}.g5{text-decoration-color:var(--c5)}.g6{text-decoration-color:var(--c6)}
+.palette{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin:.3rem 0}
+.pal{width:2.6rem;height:2.2rem;padding:0;background:var(--field);border:2px solid var(--line);border-radius:.4rem;position:relative}
+.pal::after{content:"";position:absolute;left:.45rem;right:.45rem;bottom:.55rem;height:5px;border-radius:3px;background:currentColor}
+.pal.u1{color:var(--c1)}.pal.u2{color:var(--c2)}.pal.u3{color:var(--c3)}.pal.u4{color:var(--c4)}.pal.u5{color:var(--c5)}.pal.u6{color:var(--c6)}
+.pal.sel{border-color:var(--ink);box-shadow:0 0 0 3px var(--mark)}
+.markmsg{font-size:.95rem;margin:.3rem 0 0}
+.markmsg.ok{color:var(--ok);font-weight:700}.markmsg.bad{color:var(--bad)}
+.stepcard{border:2px solid var(--ink);border-radius:.6rem;padding:.8rem 1rem;margin-top:1rem}
 .stepcard.done{border-color:var(--ok)}
-.stepcard p{margin:.3rem 0}
 .donetxt{color:var(--ok);font-weight:700}
-.row{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin:.45rem 0;font-size:1.2rem}
-.badge{display:inline-flex;width:1.7rem;height:1.7rem;border-radius:.5rem;background:var(--info);color:var(--ink);font-weight:700;align-items:center;justify-content:center;font-size:.9rem;border:1.5px solid var(--accent)}
-.row input{width:8rem}
-.row input.wide{width:14rem;max-width:100%}
-.rowmsg{flex-basis:100%;padding-left:2.2rem;font-size:.92rem;color:var(--bad)}
-.rowmsg:empty{display:none}
-.chip{font:inherit;font-size:1.25rem;font-weight:400;min-width:2.2rem;background:var(--field);color:var(--text);border:2px dashed var(--line);border-radius:.45rem;padding:.05rem .4rem}
-.chip.mk{background:var(--mark);border:2px solid var(--ink);padding:.05rem .4rem}
-.chip:disabled{opacity:1;cursor:default;border-style:solid}
-span.chip{display:inline-block;border-style:solid}
-.sep{color:var(--muted)}
-.markline{gap:.3rem}
-.opsign{font-size:1.35rem;font-weight:700;color:var(--ink);padding:0 .5rem}
-.finline{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;font-size:1.2rem;margin:.4rem 0}
-.finline input{width:20rem;max-width:100%}
-.finline input.pre{width:7rem}
-.finline input.inner{width:14rem}
+.row{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin:.5rem 0;font-size:1.3rem}
+.row input{width:18rem;max-width:100%}
 .donebox{margin-top:1rem;padding:.8rem 1rem;border-radius:.6rem;background:var(--okbg);border:2px solid var(--ok);display:flex;gap:.8rem;flex-wrap:wrap;align-items:center}
 .donebox b{color:var(--ok)}
+
+.heft{overflow-x:auto;margin:1.2rem 0 .5rem;border:2px dashed var(--line);border-radius:.6rem;background:var(--paper);padding:.8rem 1rem}
+.heft .hefttitle{margin:0 0 .3rem;font-weight:700;color:var(--muted);font-size:.95rem}
+.heft .hl{font-size:1.35rem;color:var(--ink);margin:.3rem 0}
+.heft .fin{font-weight:700}
+.heft .small{font-size:1rem;color:var(--muted)}
+.heft .copy{font-size:1rem}
 
 .startcard{border-color:var(--ink);border-width:3px}
 .startcard h2{font-family:Fraunces,Georgia,serif;font-size:1.5rem;color:var(--ink)}
@@ -138,9 +134,6 @@ span.chip{display:inline-block;border-style:solid}
 #codeBox{flex-basis:100%;background:var(--info);border-left:6px solid var(--ink);border-radius:.5rem;padding:.7rem 1rem}
 #codeBox p{margin:.3rem 0}
 .code{font-family:ui-monospace,Consolas,"Courier New",monospace;font-size:1.35rem;font-weight:700;letter-spacing:.06em;color:var(--ink);word-break:break-all}
-.levels{display:inline-flex;border:2px solid var(--ink);border-radius:999px;overflow:hidden;margin-top:1rem}
-.levels button{border:0;border-radius:0;background:transparent;color:var(--ink);padding:.45rem 1.1rem}
-.levels button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
 .finish{display:flex;justify-content:center;margin:0 0 1.5rem}
 #summary{border-color:var(--ink);border-width:3px}
 #summary .who{margin:.4rem 0 0;color:var(--muted)}
@@ -161,29 +154,170 @@ body.locked #main{opacity:.35;filter:grayscale(.4);pointer-events:none;user-sele
 #pad .keys button{padding:.55rem 0;font-size:1.15rem;font-weight:700;background:var(--field);color:var(--text);border:2px solid var(--line);border-radius:.45rem;touch-action:manipulation}
 #pad .keys button.var{font-style:italic;font-family:Georgia,serif}
 #pad .keys button.op{background:var(--info)}
-#pad .keys button.span2{grid-column:span 2}
 #pad .keys button.go{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 body.padon .wrap{padding-bottom:20rem}
+
+/* Aufgabe mit Pfeilen */
+.exprscroll{overflow-x:auto;margin:.6rem 0 .2rem;-webkit-overflow-scrolling:touch}
+.exprwrap{position:relative;display:inline-block;white-space:nowrap;padding:4.2rem .6rem 3.2rem;font-size:1.7rem;font-family:Georgia,"Times New Roman",serif}
+.exprwrap svg.arrows{position:absolute;left:0;top:0;pointer-events:none;overflow:visible}
+.exprwrap svg.arrows path{fill:none;stroke:var(--arrow);stroke-width:2.6;stroke-linecap:round}
+.exprwrap svg.arrows path.dn{stroke:var(--accent);stroke-dasharray:0}
+.tk{display:inline-block;padding:0 .12rem;border-radius:.35rem}
+.tk.fac,.tk.trm{border:2px dashed transparent}
+.picking .tk.fac,.picking .tk.trm{cursor:pointer}
+.picking .tk.fac{border-color:var(--line)}
+.tk.fac.sel{background:var(--mark);border-color:var(--ink);border-style:solid}
+.tk.trm.got{background:var(--info)}
+.tk.op{color:var(--muted);padding:0 .25rem}
+.prod i,.tk i{font-style:italic}
+.bxn{border-bottom:3px solid var(--num);padding:0 .05rem}
+.bxv{border-bottom:3px solid var(--var);padding:0 .05rem}
+.legend{font-size:.9rem;color:var(--muted);margin:.2rem 0}
+.legend .bxn,.legend .bxv{font-weight:700;color:var(--text)}
+.prodrow{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin:.5rem 0;font-size:1.3rem}
+.prodrow .prod{min-width:9rem;font-family:Georgia,serif}
+.prodrow input{width:9rem}
+.prodrow .rowmsg{flex-basis:100%;font-size:.92rem;color:var(--bad)}
+.prodrow .rowmsg:empty{display:none}
+.levels{display:inline-flex;border:2px solid var(--ink);border-radius:999px;overflow:hidden;margin-top:1rem}
+.levels button{border:0;border-radius:0;background:transparent;color:var(--ink);padding:.45rem 1.1rem}
+.levels button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.stepcard.active{border-color:var(--ink)}
+.stepcard p{margin:.3rem 0}
+.sumafter{margin-top:.8rem;padding:.6rem .9rem;border-radius:.5rem;background:var(--mark);color:var(--text)}
+.heft .hl .prod{font-family:inherit}
+.exprwrap.mini{font-size:1.25rem;padding:3rem .3rem 3rem}
+.heft .exprwrap.mini{font-size:1.35rem;color:var(--ink)}
+#summary td .exprscroll{margin:0}
+#summary td .exprwrap.mini{font-size:1.1rem;padding-top:2.6rem;padding-bottom:2.6rem}
+.exprwrap .tk.fac,.exprwrap .tk.trm{margin:0 .3em;padding:0 .12em}
+.exprwrap .tk.mul{margin:0 .45em}
+.exprwrap svg.arrows text.anum{font:700 15px "Atkinson Hyperlegible",sans-serif;fill:var(--arrow);paint-order:stroke;stroke:var(--card);stroke-width:4px}
+.exprwrap svg.arrows text.anum.dn{fill:var(--accent)}
+.prodrow .pnum{display:inline-flex;align-items:center;justify-content:center;width:1.8rem;height:1.8rem;border-radius:50%;background:var(--info);color:var(--ink);font-weight:700;margin-right:.5rem;border:2px solid var(--arrow)}
+.prodrow input.wide{width:12rem}
+.heftcalc{border:2px solid var(--ink);border-radius:.6rem;background:var(--card);padding:.4rem .8rem .8rem;margin-top:.6rem}
+.tline{display:flex;align-items:flex-end;flex-wrap:wrap;gap:.35rem;font-family:Georgia,"Times New Roman",serif;font-size:1.55rem;margin:.2rem 0 .5rem .6rem}
+.tline.tools{font-family:"Atkinson Hyperlegible",sans-serif;font-size:1rem;align-items:center}
+.tline.ok{color:var(--ok)}
+.tline.fin{font-weight:700}
+.tline .tick{font-family:"Atkinson Hyperlegible",sans-serif;font-size:1.1rem}
+.tline .eqs{min-width:1.1rem;align-self:center}
+.tline button{font-family:"Atkinson Hyperlegible",sans-serif;font-size:1rem;align-self:center}
+.pbox{display:inline-flex;flex-direction:column;align-items:center}
+.pbox .pn{font:700 .8rem "Atkinson Hyperlegible",sans-serif;color:var(--arrow);line-height:1}
+input.pin4{width:7.2rem;font-family:Georgia,serif;font-size:1.25rem;text-align:center}
+input.linein{width:min(24rem,100%);font-family:Georgia,serif;font-size:1.3rem}
+.heftcalc .msg{margin:.1rem 0 .4rem .6rem}
+.hlist{color:var(--bad);font-size:.95rem;margin:.1rem 0 .4rem .6rem}
+.hlist div{margin:.15rem 0}
+:root{--c1:#D99A00;--c2:#1E73D6;--c3:#2E8B3A;--c4:#D81B60}
+.tchip{font:inherit;font-family:Georgia,serif;font-size:1.5rem;font-weight:400;background:transparent;color:var(--text);border:0;border-bottom:5px solid transparent;border-radius:0;padding:0 .2rem .05rem;line-height:1.35;cursor:pointer}
+.tchip:hover{background:var(--info)}
+.tchip:disabled{cursor:default;opacity:1}
+.tchip.k1{border-bottom-color:var(--c1)}.tchip.k2{border-bottom-color:var(--c2)}.tchip.k3{border-bottom-color:var(--c3)}.tchip.k4{border-bottom-color:var(--c4)}
+.tline.marks{align-items:center}
+.tline .ln{white-space:nowrap}
+.tline button.tchip{font-family:Georgia,serif;font-size:1.5rem;font-weight:400;padding:0 .25rem .05rem;margin:0 .05rem;background:transparent;color:var(--text);border:0;border-bottom:5px solid transparent;border-radius:0}
+.tline button.tchip.k1{border-bottom-color:var(--c1)}.tline button.tchip.k2{border-bottom-color:var(--c2)}.tline button.tchip.k3{border-bottom-color:var(--c3)}.tline button.tchip.k4{border-bottom-color:var(--c4)}
+.tline button.tchip:hover{background:var(--info)}
+.pin2{display:inline-flex;align-items:center;gap:.15rem}
+button.sbtn{font:700 1.3rem Georgia,serif;width:2.2rem;height:2.3rem;padding:0;border:2px dashed var(--arrow);border-radius:.45rem;background:var(--field);color:var(--muted)}
+button.sbtn.set{border-style:solid;color:var(--ink);background:var(--info)}
+input.pin4{width:6rem}
+.srule{font:.9rem "Atkinson Hyperlegible",sans-serif;color:var(--muted);margin:.1rem 0 .4rem .6rem}
+.ip{opacity:.45;font-size:.85em;margin-right:.05em}
+.srule .rl{display:inline-block;white-space:nowrap;margin:.15rem .5rem .1rem 0;padding:0 .4rem;border:1px solid var(--line);border-radius:.4rem;background:var(--info);color:var(--ink)}
+input.mline{width:min(34rem,100%)}
+.mic.on{background:#C62828;color:#fff;border-color:#C62828}
+.micmsg{max-width:34rem;margin:0 auto .4rem;font-size:.95rem;padding:.35rem .6rem;border-radius:.4rem;background:var(--info);color:var(--ink)}
+.micmsg.ok{background:var(--okbg);color:var(--ok)}.micmsg.bad{background:var(--badbg);color:var(--bad)}
+.built{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem;min-height:2.6rem;padding:.25rem .4rem;border-bottom:2px solid var(--ink);flex:1}
+.built .bt{white-space:nowrap}.bempty{color:var(--muted);font-size:.95rem}
+.bctl{display:flex;gap:.5rem;margin:.35rem 0}
+.palette{display:flex;flex-wrap:wrap;gap:.45rem;margin:.4rem 0 .6rem;padding:.5rem;border:2px dashed var(--line);border-radius:.6rem;background:var(--field)}
+.palette .tile{font:1.15rem Georgia,serif;padding:.3rem .6rem;border:2px solid var(--ink);border-radius:.45rem;background:var(--paper);color:var(--ink);min-width:2.3rem}
+.palette .tile:disabled{opacity:.25}
+.coefrow{display:inline-flex;flex-wrap:wrap;align-items:center;gap:.35rem}.cbox{display:inline-flex;align-items:center;gap:.1rem}
+input.cbx{width:3.6rem!important;text-align:center}.cvar{font-family:Georgia,serif;font-size:1.2em}
+.ubar{display:block;width:100%;height:.5rem;margin-top:.15rem;border-bottom:6px solid transparent}
+.pline .tchip{font-size:1.35rem}
+.ubar.k1{border-bottom-color:var(--c1)}.ubar.k2{border-bottom-color:var(--c2)}.ubar.k3{border-bottom-color:var(--c3)}.ubar.k4{border-bottom-color:var(--c4)}.ubar.k5{border-bottom-color:var(--c5,#8e24aa)}
+.pbox{display:inline-flex;flex-direction:column;align-items:stretch}
+.tchip.k5{border-bottom-color:var(--c5)}.tchip.k6{border-bottom-color:var(--c6)}.tchip.k7{border-bottom-color:var(--c7)}.tchip.k8{border-bottom-color:var(--c8)}
+.pline .zvb{font-size:1.35rem;padding:0 .08rem;min-width:1.1rem}
+.pline .zvb{border-bottom-width:6px}
+.tline .tchip.k1{border-bottom-color:var(--c1)}.tline .tchip.k2{border-bottom-color:var(--c2)}.tline .tchip.k3{border-bottom-color:var(--c3)}.tline .tchip.k4{border-bottom-color:var(--c4)}.tline .tchip.k5{border-bottom-color:var(--c5)}.tline .tchip.k6{border-bottom-color:var(--c6)}.tline .tchip.k7{border-bottom-color:var(--c7)}.tline .tchip.k8{border-bottom-color:var(--c8)}
+.srule.must{color:var(--bad);}
+.fbtn{font:1.15rem Georgia,serif;padding:.35rem .7rem;margin:.15rem;border:2px solid var(--line);border-radius:.5rem;background:var(--field);color:var(--ink)}
+.fbtn.set{border-color:var(--ink);background:var(--info);font-weight:700}
+.face{font-size:1.6rem;line-height:1;border:2px dashed var(--ink);border-radius:.5rem;background:var(--field);padding:.1rem .3rem;vertical-align:middle}
+.face.fixed{border-style:solid;opacity:1}
+.heftcalc .tchip.k5{border-bottom-color:var(--c5)}
+.penbar{display:flex;flex-wrap:wrap;align-items:center;gap:.45rem;margin:.4rem 0 .2rem .6rem}
+.penbar .pen{width:2.2rem;height:2.2rem;min-width:0;border-radius:50%;border:3px solid var(--paper);background:var(--sw);box-shadow:0 0 0 2px var(--line);cursor:pointer;padding:0;flex:none}
+.penbar .pen.on{box-shadow:0 0 0 3px var(--ink);transform:scale(1.12)}
+.penbar .pen.er{background:var(--field);color:var(--ink);font-size:.95rem}
+.penbar .penhint{color:var(--muted);font-size:.85rem}
+.zerl{overflow-x:auto;margin:.3rem 0 .2rem .4rem}
+.zerl table{border-collapse:collapse;font-family:Georgia,serif;font-size:1.35rem}
+.zerl td{padding:.15rem .3rem;text-align:center;vertical-align:middle}
+.zerl td.zt{border-bottom:2px solid var(--line)}.zerl td.zs{color:var(--ink);font-weight:700}
+.zerl .zd{font-size:1.05rem;color:var(--ok)}
+.zerl td.zi input{text-align:center}
+.heftcalc .tline .ln{flex:1 1 12rem;min-width:0;display:block;white-space:normal;line-height:1.9}
+.heftcalc .exprscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tline>.ln{flex:1 1 0;min-width:0;overflow-wrap:anywhere}
+@media (max-width:520px){.tline{font-size:1.3rem}}
+.mono{display:inline-flex;align-items:center;gap:.15rem;margin:0 .15rem}
+.mono input{width:3.2rem!important;text-align:center}
+.vchip{font:italic 1.25rem Georgia,serif;min-width:2rem;padding:.1rem .35rem;border:2px dashed var(--line);border-radius:.4rem;background:var(--field);color:var(--muted)}
+.vchip.on{border:2px solid var(--ink);color:var(--ink);background:var(--info)}
+.zerl td.zi{white-space:nowrap}
+.mono input.expin{width:1.7rem!important;height:1.6rem;font-size:.85rem!important;padding:0;align-self:flex-start;margin-left:-.1rem}
+.zcol{display:flex;flex-direction:column;align-items:center;gap:.15rem}
+.zerl table{width:auto;min-width:0}.zerl{overflow-x:auto}.zerl td{border-bottom:0}.zerl td.zt{border-bottom:2px solid var(--line)}
+@media (max-width:520px){.zerl .mono input{width:2.5rem!important}.zerl td{padding:.15rem .2rem}.zerl .vchip{min-width:1.6rem;padding:.05rem .2rem}}
+input.tbx{width:5.2rem!important;text-align:center}
+.tline .par{font-family:Georgia,serif;font-size:1.4rem;white-space:nowrap}
+.ca{background:#F8C9C9;border-radius:.25rem;padding:0 .12rem}.cb{background:#C8EBCB;border-radius:.25rem;padding:0 .12rem}
+.bfc{font:inherit;border:2px dashed var(--line);border-radius:.35rem;background:var(--field);padding:0 .2rem;color:var(--ink)}
+.bfc.ca{background:#F8C9C9;border:2px solid #D9534F}.bfc.cb{background:#C8EBCB;border:2px solid #3C9A47}
+.sbox{display:inline-block;width:2.6rem;height:2rem;vertical-align:middle;border:2px dashed var(--line);border-radius:.35rem;background:var(--field)}
+.sbox.ca{background:#F8C9C9;border:2px solid #D9534F}.sbox.cb{background:#C8EBCB;border:2px solid #3C9A47}
+.fbx{display:inline-block;border-radius:.4rem;padding:.1rem}.fbx.ca{background:#F8C9C9;outline:2px solid #D9534F}.fbx.cb{background:#C8EBCB;outline:2px solid #3C9A47}
+.tline button.bfc{font-family:Georgia,serif;font-size:1.5rem;line-height:1.3;padding:.05rem .35rem;margin:0 .1rem;border:2px dashed #7A8699;border-radius:.4rem;background:var(--field);color:var(--text);cursor:pointer;min-width:2.4rem}
+.tline button.bfc.ca{background:#F8C9C9;border:2px solid #D9534F;color:#1B2F6B}.tline button.bfc.cb{background:#C8EBCB;border:2px solid #3C9A47;color:#1B2F6B}
+.tline span.bfc.ca,.tline span.ca,.tline span.cb{color:#1B2F6B}
+.zvlive{margin:.2rem 0 .4rem .6rem;font-weight:700;font-size:.98rem}.zvlive.bad{color:var(--bad,#C62828)}.zvlive.ok{color:var(--ok,#2E7D32)}
+.levels{display:none!important}.tnote{font-size:.85rem;color:var(--muted);font-weight:400}
+.zfb{font:inherit;font-family:Georgia,serif;font-size:1.15rem;padding:.05rem .3rem;margin:0 .05rem;border:2px solid var(--line);border-radius:.35rem;background:var(--field);color:var(--text);cursor:pointer}
+.zfb.on{background:#FFE58A;border-color:#E0B400;color:#1B2F6B;font-weight:700}span.zfb{cursor:default}.zdot{color:var(--muted);margin:0 .05rem}
+.zerl td.zi{line-height:2.1}
+@media (max-width:520px){.zerl table{font-size:1.15rem}.zfb{font-size:1rem;padding:0 .22rem}.zerl td{padding:.1rem .15rem}}
+.abgabe{background:var(--info);border-left:6px solid var(--ink);border-radius:.5rem;padding:.6rem .9rem}.abgabe .code{font-size:1.4rem}
+[data-act="newround"],#newRound2{display:none!important}#teacher{margin-top:2rem}#teacher input{margin:.2rem 0}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
     <div>
-      <h1>Herausheben <span class="lift" aria-hidden="true">( )</span></h1>
-      <p class="sub">Zerlege jedes Glied in Faktoren, markiere die gleichen Faktoren und hebe sie heraus. Mit ◀ ▶ oder den Nummern springst du zwischen den Beispielen.</p>
+      <h1>Terme gemischt <span class="acc">– Hausübung</span></h1>
+      <p class="sub"><b>Hausübung:</b> 12 Beispiele – 1–6 leichter, 7–12 mit Hochzahlen. Jede/r bekommt <b>eigene Aufgaben</b>, und jeden Tag gibt es <b>neue</b>. Am Ende bekommst du einen <b>Abgabe-Code</b> für deine Lehrerin/deinen Lehrer. Unterstreichen ist freiwillig – wenn du unterstreichst, wird es kontrolliert.</p>
       <div class="levels" role="group" aria-label="Niveau">
         <button type="button" data-level="std" aria-pressed="true">Standard</button>
         <button type="button" data-level="ahs" aria-pressed="false">Standard AHS</button>
       </div>
     </div>
-    <div class="top"><span class="score" id="score">0 von 6 fertig</span></div>
+    <div class="top"><span class="score" id="score">0 von 8 fertig</span></div>
   </header>
 
   <section id="start" class="startcard">
     <div id="startAsk">
       <h2>Wie heißt du?</h2>
-      <p class="hint">Gib zuerst deinen Namen ein. Er steht am Ende in deiner Auswertung. Hast du auf diesem Gerät schon geübt, machst du automatisch dort weiter, wo du aufgehört hast.</p>
+      <p class="hint">Gib zuerst deinen Namen ein. Er steht am Ende in deiner Auswertung und kann danach nicht mehr geändert werden. Hast du auf diesem Gerät schon geübt, machst du automatisch dort weiter, wo du aufgehört hast.</p>
       <div class="actions"><input id="pname" placeholder="Vor- und Nachname" autocomplete="name" aria-label="Dein Name"><button id="startBtn" type="button">Los geht’s</button></div>
       <details id="codeAsk">
         <summary>Auf einem anderen Gerät angefangen? Code eingeben</summary>
@@ -208,14 +342,15 @@ body.padon .wrap{padding-bottom:20rem}
 
     <details class="info" id="howto" open>
       <summary>Zusammenfassung – schreib sie in dein Heft!</summary>
-      <p class="copy">✏️ <b>Schreib diese Zusammenfassung mit dem Beispiel ordentlich in dein Heft ab.</b></p>
-      <p class="rule">36<i>x</i><sup>2</sup> + 8<i>x</i> = <span class="mk">4</span> · 9 · <span class="mk"><i>x</i></span> · <i>x</i> + <span class="mk">4</span> · 2 · <span class="mk"><i>x</i></span> = 4<i>x</i> · 9<i>x</i> + 4<i>x</i> · 2 = 4<i>x</i> · (9<i>x</i> + 2)</p>
-      <p><b>1.</b> Zerlege jedes Glied so, dass in allen Gliedern <b>derselbe Faktor</b> vorkommt: 36 = 4 · 9 und 8 = 4 · 2. Nimm den <b>größten</b> gemeinsamen Faktor. Potenzen schreibst du als einzelne Variablen: <i>x</i><sup>2</sup> = <i>x</i> · <i>x</i>.</p>
-      <p><b>2.</b> Markiere die Faktoren, die in <b>jedem</b> Glied vorkommen.</p>
-      <p><b>3.</b> Schreib selbst an: Das Produkt der markierten Faktoren ist der <b>gemeinsame Faktor</b> – er kommt vor die Klammer.</p>
-      <p><b>4.</b> In die Klammer kommt, was von jedem Glied übrig bleibt. Bleibt nichts übrig, steht dort <b>1</b>.</p>
-      <p><b>Probe:</b> Multiplizierst du wieder aus, muss der ursprüngliche Term herauskommen.</p>
-      <p class="hint">Eingabe: Malpunkt mit · oder *, z. B. 4·9·x·x. Hochzahlen mit ^ oder ², z. B. x^2.</p>
+      <p class="copy">✏️ <b>Schreib diese Zusammenfassung mit den Beispielen ordentlich in dein Heft ab.</b></p>
+      <p><b>1 Zusammenfassen:</b> gleichartige Glieder (gleiche Variable, gleiche Hochzahl) in derselben Farbe unterstreichen und zusammenfassen: 3<i>x</i> + 5 − <i>x</i> + 2 = 2<i>x</i> + 7</p>
+      <p><b>2 Plus/Minus vor der Klammer:</b> 😊 Plus – Vorzeichen bleiben: 3<i>x</i> + (2<i>x</i> − 5) = 5<i>x</i> − 5 · ☹️ Minus – jedes Vorzeichen dreht sich um: 7<i>x</i> − (2<i>x</i> − 5) = 5<i>x</i> + 5</p>
+      <p><b>3 Monome:</b> mal – Hochzahlen addieren, durch – Hochzahlen subtrahieren, Vorzeichen: gleich → +, verschieden → −. 3<i>x</i><sup>2</sup> · 4<i>x</i><sup>3</sup> = 12<i>x</i><sup>5</sup> · 12<i>x</i><sup>5</sup> : 3<i>x</i><sup>2</sup> = 4<i>x</i><sup>3</sup></p>
+      <p><b>4 Monom mal Polynom:</b> Pfeile vom Faktor zu jedem Glied: 3<i>x</i> · (2<i>x</i> − 5) = 6<i>x</i><sup>2</sup> − 15<i>x</i>. Beim Dividieren jedes Glied durch den Teiler.</p>
+      <p><b>5 Herausheben:</b> gemeinsamen Faktor vor die Klammer: 12<i>x</i><sup>2</sup> − 18<i>x</i> = 6<i>x</i> · (2<i>x</i> − 3). Probe: ausmultiplizieren.</p>
+      <p><b>6 Binom mal Binom:</b> vier Pfeile, ausrechnen, zusammenfassen: (<i>x</i> + 3) · (<i>x</i> − 2) = <i>x</i><sup>2</sup> − 2<i>x</i> + 3<i>x</i> − 6 = <i>x</i><sup>2</sup> + <i>x</i> − 6</p>
+      
+      <div class="exprscroll" hidden><div class="exprwrap" id="sumExpr"></div></div>
     </details>
 
     <div class="finish"><button class="ghost" id="showSum" type="button">Auswertung anzeigen</button></div>
@@ -224,378 +359,765 @@ body.padon .wrap{padding-bottom:20rem}
       <div class="head"><h2 id="sumTitle">Auswertung</h2></div>
       <p id="sumWho" class="who"></p>
       <p id="sumMsg" class="summsg"></p>
+      <p id="sumCode" class="abgabe"></p>
       <div class="tablewrap"><table>
-        <thead><tr><th>Beispiel</th><th>Ergebnis</th><th class="c">Fehlversuche</th></tr></thead>
+        <thead><tr><th>Beispiel</th><th>Ergebnis</th><th>Bewertung</th><th class="c">Fehlversuche</th><th class="c">Zeit</th></tr></thead>
         <tbody id="sumBody"></tbody>
         <tfoot id="sumFoot"></tfoot>
       </table></div>
-      <div class="actions" style="margin-top:1rem"><button type="button" id="newRound2">Neue Runde mit neuen Beispielen</button></div>
+      <div class="actions" style="margin-top:1rem"><button type="button" id="newRound2">Neue Runde</button></div>
     </section>
   </div>
+  <details class="info" id="teacher">
+    <summary>Für Lehrer/innen: Abgabe-Code prüfen</summary>
+    <p class="hint">Name genau so eingeben, wie ihn die Schülerin/der Schüler verwendet hat, und den Abgabe-Code eintippen.</p>
+    <div class="actions"><input id="tName" placeholder="Vor- und Nachname" autocomplete="off"><input id="tCode" placeholder="Abgabe-Code" autocomplete="off" autocapitalize="characters" spellcheck="false" style="width:14rem"><button type="button" id="tBtn">Prüfen</button></div>
+    <div id="tOut"></div>
+  </details>
 </div>
 
 <div id="pad" hidden role="group" aria-label="Eingabehilfe">
   <div class="padtop"><span>Eingabehilfe</span>
+    <button type="button" class="mini mic" id="padMic" hidden aria-label="Sprechen">🎤 Sprechen</button>
     <button type="button" class="mini" id="padSys">Handy-Tastatur einblenden</button>
     <button type="button" class="mini" id="padHide" aria-label="Eingabehilfe schließen">✕</button>
   </div>
+  <div id="micMsg" class="micmsg" hidden aria-live="polite"></div>
   <div class="keys">
-    <button type="button" data-ins="7">7</button><button type="button" data-ins="8">8</button><button type="button" data-ins="9">9</button>
-    <button type="button" class="var" data-var="0">x</button><button type="button" class="var" data-var="1">y</button><button type="button" class="var" data-var="2">a</button><button type="button" class="var" data-var="3">b</button>
-    <button type="button" data-ins="4">4</button><button type="button" data-ins="5">5</button><button type="button" data-ins="6">6</button>
-    <button type="button" class="op" data-ins="·" aria-label="mal">·</button><button type="button" class="op" data-ins="(" aria-label="Klammer auf">(</button><button type="button" class="op" data-ins=")" aria-label="Klammer zu">)</button><button type="button" class="op" data-act="del" aria-label="Löschen">⌫</button>
-    <button type="button" data-ins="1">1</button><button type="button" data-ins="2">2</button><button type="button" data-ins="3">3</button>
-    <button type="button" class="op" data-ins="+">+</button><button type="button" class="op" data-ins="-" aria-label="minus">−</button><button type="button" class="op" data-ins="²" aria-label="hoch 2">□²</button><button type="button" class="op" data-ins="^" aria-label="hoch beliebige Zahl">□ⁿ</button>
-    <button type="button" data-ins="0">0</button><button type="button" class="op" data-act="clr" aria-label="Feld leeren">C</button>
-    <button type="button" class="op span2" data-act="left" aria-label="Cursor nach links">◀</button>
-    <button type="button" class="go span2" data-act="ok">✓ fertig</button><button type="button" class="op" data-act="right" aria-label="Cursor nach rechts">▶</button>
+    <button type="button" data-ins="7">7</button><button type="button" data-ins="8">8</button><button type="button" data-ins="9">9</button><button type="button" class="var" data-var="0">x</button><button type="button" class="var" data-var="1">y</button><button type="button" class="op" data-ins="²" aria-label="hoch 2">□²</button><button type="button" class="op" data-act="del" aria-label="Löschen">⌫</button>
+    <button type="button" data-ins="4">4</button><button type="button" data-ins="5">5</button><button type="button" data-ins="6">6</button><button type="button" class="var" data-var="2">a</button><button type="button" class="var" data-var="3">b</button><button type="button" class="op" data-ins="³" aria-label="hoch 3">□³</button><button type="button" class="op" data-act="clr" aria-label="Feld leeren">C</button>
+    <button type="button" data-ins="1">1</button><button type="button" data-ins="2">2</button><button type="button" data-ins="3">3</button><button type="button" class="op" data-ins="+">+</button><button type="button" class="op" data-ins="-" aria-label="minus">−</button><button type="button" class="op" data-ins="^" aria-label="hoch beliebige Zahl">□ⁿ</button><button type="button" class="op" data-act="left" aria-label="Cursor nach links">◀</button>
+    <button type="button" data-ins="0">0</button><button type="button" class="op" data-ins="·" aria-label="mal">·</button><button type="button" class="op" data-ins="(" aria-label="Klammer auf">(</button><button type="button" class="op" data-ins=")" aria-label="Klammer zu">)</button><button type="button" class="go" data-act="ok" style="grid-column:span 2">✓ fertig</button><button type="button" class="op" data-act="right" aria-label="Cursor nach rechts">▶</button>
   </div>
 </div>
 
 <script>
-/* ================= Zufall (reproduzierbar) ================= */
+/* ================= Hilfsfunktionen ================= */
 let RNG=Math.random;
 const rnd=(a,b)=>a+Math.floor(RNG()*(b-a+1));
 const pick=a=>a[rnd(0,a.length-1)];
 const sg=()=>RNG()<.5?1:-1;
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=rnd(0,i);[a[i],a[j]]=[a[j],a[i]];}return a;}
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296;};}
 const $=id=>document.getElementById(id);
-
-/* ================= Brüche ================= */
-const MINUS='−',B=x=>BigInt(x);
-function gcd(a,b){a=a<0n?-a:a;b=b<0n?-b:b;while(b){[a,b]=[b,a%b];}return a;}
-function rat(n,d=1n){if(d<0n){n=-n;d=-d;}const g=gcd(n,d)||1n;return {n:n/g,d:d/g};}
-const ri=k=>rat(B(k));
-const rneg=a=>({n:-a.n,d:a.d});
-const radd=(a,b)=>rat(a.n*b.d+b.n*a.d,a.d*b.d);
-const rmul=(a,b)=>rat(a.n*b.n,a.d*b.d);
-const rpow=(r,e)=>rat(r.n**B(e),r.d**B(e));
-const req=(a,b)=>a.n*b.d===b.n*a.d;
-const isZero=a=>a.n===0n;
-const isOne=a=>a.n===1n&&a.d===1n;
-const fracH=(n,d)=>'<span class="fr"><span>'+n+'</span><span>'+d+'</span></span>';
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const MINUS='−',V=k=>'<i>'+k+'</i>',sup=e=>e>1?'<sup>'+e+'</sup>':'';
 
 /* ================= Glieder (Monome) ================= */
-const V=k=>'<i>'+k+'</i>';
-const sup=e=>e>1?'<sup>'+e+'</sup>':'';
-const mono=(c,v)=>({c:typeof c==='number'?ri(c):c,v:v||{}});
-const mkey=m=>Object.keys(m.v).filter(k=>m.v[k]>0).sort().map(k=>k+(m.v[k]>1?m.v[k]:'')).join('');
-function mulMono(a,b){const m=Object.assign({},a.v);Object.keys(b.v).forEach(k=>{m[k]=(m[k]||0)+b.v[k];});
-  const v={};Object.keys(m).sort().forEach(k=>{if(m[k]>0)v[k]=m[k];});return {c:rmul(a.c,b.c),v};}
-const sameMono=(a,b)=>mkey(a)===mkey(b)&&req(a.c,b.c);
-const negMono=m=>({c:rneg(m.c),v:m.v});
-const termSig=ms=>ms.map(m=>mkey(m)+':'+m.c.n+'/'+m.c.d).sort().join('|');
-function normalize(ms){const map=new Map();
-  ms.forEach(t=>{const k=mkey(t),o=map.get(k);if(o)o.c=radd(o.c,t.c);else map.set(k,{c:t.c,v:Object.assign({},t.v)});});
-  return [...map.values()].filter(t=>!isZero(t.c));}
+const M=(c,v={})=>({c,v:Object.assign({},v)});
+const key=v=>Object.keys(v).filter(k=>v[k]>0).sort().map(k=>k+(v[k]>1?v[k]:'')).join('');
+const degOf=v=>Object.values(v).reduce((s,e)=>s+e,0);
+function mul(a,b){const v=Object.assign({},a.v);Object.keys(b.v).forEach(k=>v[k]=(v[k]||0)+b.v[k]);return M(a.c*b.c,v);}
+function dvd(a,b){const v=Object.assign({},a.v);Object.keys(b.v).forEach(k=>{v[k]=(v[k]||0)-b.v[k];if(!v[k])delete v[k];});return M(a.c/b.c,v);}
+const varsH=m=>Object.keys(m.v).sort().map(k=>V(k)+sup(m.v[k])).join('');
+function absH(m,box){const a=Math.abs(m.c),vp=varsH(m);
+  const num=(!vp||a!==1)?String(a):'';
+  if(!box)return num+vp;
+  return (num?'<span class="bxn">'+num+'</span>':'')+(vp?'<span class="bxv">'+vp+'</span>':'');}
+function monoH(m,box){return (m.c<0?MINUS:'')+absH(m,box);}
+function termH(m,first){const neg=m.c<0;return first?(neg?MINUS:'')+absH(m):(neg?' − ':' + ')+absH(m);}
+const cmp=(a,b)=>degOf(b.v)-degOf(a.v)||(key(a.v)<key(b.v)?-1:key(a.v)>key(b.v)?1:0);
+function normalize(ms){const mp=new Map();ms.forEach(m=>{const k=key(m.v),o=mp.get(k);if(o)o.c+=m.c;else mp.set(k,M(m.c,m.v));});return [...mp.values()].filter(m=>m.c!==0).sort(cmp);}
+const polyH=ms=>ms.length?ms.map((m,i)=>termH(m,!i)).join(''):'0';
+function plainT(m){const a=Math.abs(m.c),vp=Object.keys(m.v).sort().map(k=>k+(m.v[k]>1?'^'+m.v[k]:'')).join('');return vp?(a===1?'':a)+vp:String(a);}
+const polyPlain=ms=>ms.length?ms.map((m,i)=>i?(m.c<0?' - ':' + ')+plainT(m):(m.c<0?'-':'')+plainT(m)).join(''):'0';
+const sameM=(a,b)=>a.c===b.c&&key(a.v)===key(b.v);
+const keyH=k=>k===''?'den Zahlen ohne Variable':'den Gliedern mit '+k.replace(/([a-z])(\d*)/g,(m,v,e)=>V(v)+(e?'<sup>'+e+'</sup>':''));
 
-function coefH(a){return a.d===1n?String(a.n):fracH(a.n,a.d);}
-function varsH(m){return Object.keys(m.v).sort().map(k=>V(k)+sup(m.v[k])).join('');}
-function absH(m){const a=m.c.n<0n?rneg(m.c):m.c,vp=varsH(m);if(!vp)return coefH(a);if(isOne(a))return vp;return coefH(a)+vp;}
-function termH(m,first){const neg=m.c.n<0n;return first?(neg?MINUS:'')+absH(m):(neg?'− ':'+ ')+absH(m);}
-function polyH(ms){return ms.length?ms.map((m,i)=>termH(m,!i)).join(' '):'0';}
-function facH(m){return m.c.n<0n?'('+MINUS+absH(m)+')':absH(m);}
-function cPlain(a){return a.d===1n?String(a.n):a.n+'/'+a.d;}
-function polyPlain(ms){if(!ms.length)return '0';return ms.map((m,i)=>{const neg=m.c.n<0n,a=neg?rneg(m.c):m.c,ks=Object.keys(m.v).sort();
-  const s=((!ks.length||!isOne(a))?cPlain(a):'')+ks.map(k=>k+(m.v[k]>1?'^'+m.v[k]:'')).join('');
-  return i?(neg?' - ':' + ')+s:(neg?'-':'')+s;}).join('');}
-
-/* Term lesen, z. B. 3x^2 - 2xy + 5 */
-function numRat(s){s=s.replace('.',',');let m=s.match(/^(\d+)\/(\d+)$/);if(m)return +m[2]?rat(B(m[1]),B(m[2])):null;
-  m=s.match(/^(\d+)(?:,(\d+))?$/);if(!m)return null;const f=m[2]||'';return rat(B(m[1]+f),10n**B(f.length));}
-function normIn(str){return str.replace(/[−–—]/g,'-').replace(/²/g,'^2').replace(/³/g,'^3').replace(/⁴/g,'^4').replace(/[·×•]/g,'*').toLowerCase();}
-function parseTerm(str){
-  const s=normIn(str).replace(/\s+/g,'');
-  if(!s)return {err:'Schreibe einen Term.'};
-  if(/[()\[\]]/.test(s))return {err:'Schreibe hier ohne Klammern.'};
-  if(s.includes('='))return {err:'Schreibe nur den Term, ohne =.'};
+/* Eingabe lesen, z. B. -8xy oder 3x^2 - 2xy + 5 */
+function parseTerm(str){return parseTerm0(String(str||'').replace(/[⁰¹⁵⁶⁷⁸⁹]/g,c=>'^'+'⁰¹²³⁴⁵⁶⁷⁸⁹'.indexOf(c)));}
+function parseTerm0(str){
+  const s=String(str).replace(/[−–—]/g,'-').replace(/²/g,'^2').replace(/³/g,'^3').replace(/⁴/g,'^4').replace(/[·×•*]/g,'').replace(/\s+/g,'').toLowerCase();
+  if(!s)return {err:'Schreib dein Ergebnis in das Feld.'};
+  if(/[()]/.test(s))return {err:'Schreib das Ergebnis ohne Klammern.'};
+  if(/[:\/]/.test(s))return {err:'Rechne die Division aus – im Ergebnis steht kein : mehr.'};
+  if(/[^0-9a-z+\-^]/.test(s))return {err:'Das Zeichen „'+s.match(/[^0-9a-z+\-^]/)[0]+'“ kann ich nicht lesen.'};
   const chunks=s.match(/[+-]?[^+-]+/g)||[];
   if(chunks.join('')!==s)return {err:'Zwischen zwei Gliedern steht genau ein + oder −.'};
   const ms=[];
   for(const ch of chunks){
     const neg=ch[0]==='-',body=/^[+-]/.test(ch)?ch.slice(1):ch;
-    if(!body.replace(/\*/g,''))return {err:'Nach einem Rechenzeichen fehlt ein Glied.'};
-    let c=ri(neg?-1:1),last=null,pos=0;const v={};
-    const re=/(\d+(?:[.,]\d+)?(?:\/\d+)?)|([a-z])|(\^\d+)|(\*)/y;
-    while(pos<body.length){
-      re.lastIndex=pos;const m=re.exec(body);
-      if(!m)return {err:'Das Zeichen „'+body[pos]+'“ kann ich nicht lesen.'};
-      pos=re.lastIndex;
-      if(m[1]){const r=numRat(m[1]);if(!r)return {err:'Die Zahl '+m[1]+' kann ich nicht lesen.'};c=rmul(c,r);last={n:r};}
-      else if(m[2]){v[m[2]]=(v[m[2]]||0)+1;last={k:m[2]};}
-      else if(m[3]){const e=+m[3].slice(1);if(!last)return {err:'Vor ^ muss eine Zahl oder eine Variable stehen.'};
-        if(e<1)return {err:'Verwende Hochzahlen ab 1.'};
-        if(last.k)v[last.k]+=e-1;else c=rmul(c,rpow(last.n,e-1));last=null;}
-    }
-    ms.push({c,v});
+    if(!body)return {err:'Nach einem Rechenzeichen fehlt ein Glied.'};
+    const re=/(\d+)|([a-z])(?:\^(\d+))?|(\^)/y;let pos=0,c=1,v={},num=false;
+    while(pos<body.length){re.lastIndex=pos;const m=re.exec(body);if(!m)return {err:'Das kann ich nicht lesen.'};pos=re.lastIndex;
+      if(m[4])return {err:'Vor ^ muss eine Variable stehen, z. B. x^2.'};
+      if(m[1]){if(num)return {err:'Schreib die Zahl vor die Variable, z. B. 3x.'};c*= +m[1];num=true;}
+      else{const e=m[3]?+m[3]:1;if(e<1)return {err:'Verwende Hochzahlen ab 1.'};v[m[2]]=(v[m[2]]||0)+e;}}
+    if(c===0)return {err:'Ein Glied mit 0 fällt weg – lass es einfach weg.'};
+    ms.push(M(neg?-c:c,v));
   }
-  if(ms.some(m=>isZero(m.c)))return {err:'Ein Glied mit der Vorzahl 0 fällt weg – lass es einfach weg.'};
   return {ms};
 }
 
-/* ================= Zerlegen in Faktoren ================= */
-const cnt=a=>{const m={};a.forEach(x=>m[x]=(m[x]||0)+1);return m;};
-function isPrime(n){if(n<2)return false;for(let d=2;d*d<=n;d++)if(n%d===0)return false;return true;}
-function primeFactors(n){const f=[];for(let d=2;n>1;){if(n%d===0){f.push(String(d));n/=d;}else d++;}return f;}
-/* kanonische Zerlegung eines Glieds: Vorzeichen, Primfaktoren, Variablen */
-/* Musterzerlegung: gemeinsamer Faktor · Rest, z. B. 36x² = 4 · 9 · x · x */
-function canonDec(g,q){
-  const m=mulMono(g,q),gc=Number(g.c.n),qc=Number(q.c.n<0n?-q.c.n:q.c.n),toks=[];
-  if(gc>1)toks.push(String(gc));
-  if(qc>1)toks.push(String(qc));
-  Object.keys(m.v).sort().forEach(k=>{for(let i=0;i<m.v[k];i++)toks.push(k);});
-  return {neg:m.c.n<0n,toks};
-}
-/* Faktoren, die in allen Gliedern vorkommen (Zahlen zuerst) */
-function commonToks(decs){
-  const c=cnt(decs[0].toks);
-  decs.slice(1).forEach(d=>{const m=cnt(d.toks);for(const k in c)c[k]=Math.min(c[k],m[k]||0);});
-  const out=[];
-  Object.keys(c).sort((a,b)=>(/\d/.test(b)-/\d/.test(a))||(a<b?-1:1)).forEach(k=>{for(let i=0;i<c[k];i++)out.push(k);});
-  return out;
-}
-const numProd=toks=>toks.filter(t=>/\d/.test(t)).reduce((p,t)=>p*+t,1);
-const canonDecs=d=>d.qs.map(q=>canonDec(d.g,q));
-const decPlain=d=>(d.neg?'-':'')+d.toks.join(' · ');
-const tokH=t=>/\d/.test(t)?t:V(t);
-function readFactors(str){
-  let s=normIn(str).trim();
-  if(!s)return {empty:true};
-  if(/\^/.test(s))return {err:'Schreib Potenzen als Produkt: x² = x · x.'};
-  s=s.replace(/\s+/g,'*');
-  let neg=false;
-  if(s[0]==='-'){neg=true;s=s.slice(1);}else if(s[0]==='+')s=s.slice(1);
-  s=s.replace(/^\*+/,'');
-  if(/[()]/.test(s))return {err:'Schreib die Faktoren ohne Klammern, z. B. 2 · 3 · x.'};
-  if(/[+\-]/.test(s))return {err:'Ein Glied wird nur mit Malpunkten zerlegt, ohne + oder −.'};
-  const toks=[],re=/(\d+)|([a-z])|(\*)/y;let pos=0;
-  while(pos<s.length){re.lastIndex=pos;const m=re.exec(s);
-    if(!m)return {err:'Das Zeichen „'+s[pos]+'“ kann ich nicht lesen.'};
-    pos=re.lastIndex;if(m[1])toks.push(String(+m[1]));else if(m[2])toks.push(m[2]);}
-  if(!toks.length)return {err:'Schreib die Faktoren mit Malpunkt, z. B. 2 · 3 · x.'};
-  return {neg,toks};
-}
-function decToMono(d){let c=1n;const v={};
-  d.toks.forEach(t=>{if(/\d/.test(t))c*=B(t);else v[t]=(v[t]||0)+1;});
-  const vv={};Object.keys(v).sort().forEach(k=>vv[k]=v[k]);return {c:rat(d.neg?-c:c),v:vv};}
-
-/* ================= Beispiele erzeugen ================= */
-const N_EX=6,DONE=3;  /* Schritte: 0 zerlegen, 1 markieren, 2 selbst anschreiben: Faktor vor der Klammer und Inhalt der Klammer, 3 fertig */
-const X1=c=>mono(c,{x:1}),X2=c=>mono(c,{x:2}),K=c=>mono(c);
-function gcdN(a,b){a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b];}return a;}
-function pickCop(n,lo,hi){let xs;do{xs=Array.from({length:n},()=>rnd(lo,hi));}while(xs.reduce(gcdN)!==1);return xs;}
-const make=(g,qs)=>({g,qs,terms:qs.map(q=>mulMono(g,q))});
+/* ================= Aufgaben ================= */
+/* Gruppe: {f: Faktor, t: [Glieder in der Klammer], side: 'L' (Faktor vor der Klammer) | 'R' (Faktor nach der Klammer), op: '·' | ':'} */
+let N_EX=12;const DONE=4;  /* Schritte: 0 Pfeile · 1 jeden Pfeil ausrechnen · 2 Ergebnis selbst anschreiben · 3 zusammenfassen · 4 fertig */
+const L2=[['x','y'],['a','b'],['e','f'],['m','n'],['g','h'],['p','q']];
 const GEN={
   std:[
-    ()=>{const [a,b]=pickCop(2,1,9);return make(K(rnd(2,6)),[X1(a),K(b)]);},
-    ()=>{const [a,b]=pickCop(2,2,9);return make(X1(1),[X1(a),K(b)]);},
-    ()=>{const [a,b]=pickCop(2,1,7);return make(X1(rnd(2,5)),[X1(a),K(b)]);},
-    ()=>{const [a,b]=pickCop(2,1,9);return make(K(rnd(2,6)),[X1(a),K(-b)]);},
-    ()=>{const [a,b]=pickCop(2,1,5);return make(X2(rnd(2,5)),[X1(a),K(b)]);},
-    ()=>{const [a,b,c]=pickCop(3,1,6);return make(K(rnd(2,5)),[X2(a),X1(sg()*b),K(sg()*c)]);}
+    ()=>{const [v,w]=pick(L2);return [{f:M(rnd(2,6),{[w]:1}),t:[M(1,{[v]:1}),M(rnd(1,9))],side:'L',op:'·'}];},
+    ()=>{const [v,w]=pick(L2);return [{f:M(rnd(2,6),{[w]:1}),t:[M(rnd(2,12)),M(-rnd(2,6),{[v]:1})],side:'L',op:'·'}];},
+    ()=>{const [v,w]=pick(L2);return [{f:M(rnd(2,6),{[w]:1}),t:[M(rnd(2,6),{[v]:1}),M(-rnd(2,9))],side:'L',op:'·'}];},
+    ()=>{const [a,b]=pick(L2);return [{f:M(rnd(2,9)),t:[M(rnd(2,9),{[a]:1}),M(-rnd(2,9),{[b]:1})],side:'L',op:'·'}];},
+    ()=>{const [a,b]=pick(L2);return [{f:M(-rnd(2,6)),t:[M(rnd(2,7),{[a]:1}),M(sg()*rnd(2,7),{[b]:1})],side:'L',op:'·'}];},
+    ()=>{const [e,f]=pick(L2);let m,n,r;do{m=rnd(2,5);n=rnd(2,6);r=rnd(1,4);}while(m===n*r);
+      return [{f:M(m,{[f]:1}),t:[M(rnd(2,9)),M(1,{[e]:1})],side:'L',op:'·'},{f:M(n,{[e]:1}),t:[M(rnd(2,9)),M(-r,{[f]:1})],side:'L',op:'·'}];},
+    ()=>{const [x,y]=pick(L2);return [{f:M(rnd(2,5),{[x]:1}),t:[M(1,{[y]:1}),M(-rnd(2,9))],side:'L',op:'·'},{f:M(-rnd(2,6)),t:[M(rnd(2,7),{[x]:1}),M(-rnd(1,9))],side:'L',op:'·'}];},
+    ()=>{const x=pick(['x','a','y','b']);return [{f:M(1,{[x]:1}),t:[M(1,{[x]:1}),M(rnd(2,9))],side:'L',op:'·'},{f:M(rnd(2,6)),t:[M(1,{[x]:1}),M(-rnd(1,9))],side:'L',op:'·'}];}
   ],
   ahs:[
-    ()=>{const [p,r]=pickCop(2,1,7);return make(mono(rnd(2,6),{a:1}),[mono(p,{b:1}),K(r)]);},
-    ()=>{const [p,r]=pickCop(2,1,5);return make(mono(rnd(2,6),{a:1,b:1}),[mono(p,{a:1}),mono(-r,{b:1})]);},
-    ()=>{const [p,r]=pickCop(2,1,5);return make(X1(rnd(2,4)),[X2(p),X1(-r),K(1)]);},
-    ()=>{const [p,r]=pickCop(2,1,5);return make(mono(rnd(2,5),{x:1,y:1}),[mono(p,{x:1}),mono(r,{y:1}),K(-1)]);},
-    ()=>{const [p,r]=pickCop(2,1,7);return make(X1(rnd(2,5)),[X1(-p),K(r)]);},
-    ()=>{const [p,r]=pickCop(2,1,5);return make(X2(pick([6,8,12])),[X2(p),K(r)]);}
+    ()=>{const x=pick(['x','a','y']);return [{f:M(rnd(2,5),{[x]:2}),t:[M(rnd(2,6),{[x]:1}),M(-rnd(2,9))],side:'L',op:'·'}];},
+    ()=>{const [a,b]=pick(L2);return [{f:M(-rnd(2,5),{[a]:1}),t:[M(rnd(2,6),{[a]:2}),M(-rnd(2,6),{[a]:1,[b]:1})],side:'L',op:'·'}];},
+    ()=>{const x=pick(['x','a','y']);return [{f:M(-rnd(2,5),{[x]:2}),t:[M(rnd(2,6),{[x]:2}),M(-rnd(2,6),{[x]:1}),M(rnd(1,9))],side:'L',op:'·'}];},
+    ()=>{const [a,b]=pick(L2);return [{f:M(rnd(2,5),{[a]:1,[b]:1}),t:[M(rnd(2,5),{[a]:2}),M(-rnd(2,5),{[b]:2})],side:'L',op:'·'}];},
+    ()=>{const x=pick(['x','a','y']);return [{f:M(rnd(2,5),{[x]:1}),t:[M(1,{[x]:2}),M(-rnd(2,6),{[x]:1}),M(rnd(2,9))],side:'L',op:'·'}];},
+    ()=>{const [a,b]=pick(L2);let m,p,n,q;do{m=rnd(2,5);p=rnd(2,4);n=rnd(2,5);q=rnd(2,4);}while(m*p===n*q);
+      return [{f:M(m,{[a]:1}),t:[M(1,{[a]:1}),M(-p,{[b]:1})],side:'L',op:'·'},{f:M(n,{[b]:1}),t:[M(q,{[a]:1}),M(-1,{[b]:1})],side:'L',op:'·'}];},
+    ()=>{const x=pick(['x','a','y']),k=rnd(2,4);return [{f:M(1,{[x]:2}),t:[M(1,{[x]:1}),M(-rnd(2,6))],side:'L',op:'·'},{f:M(-k,{[x]:1}),t:[M(1,{[x]:2}),M(-rnd(2,6))],side:'L',op:'·'}];},
+    ()=>{const [x,y]=pick(L2),k=rnd(2,5);let p,q,m;do{p=rnd(2,6);q=rnd(2,6);m=rnd(2,6);}while(m===p||m===q);
+      return [{f:M(k,{[x]:1}),t:[M(p,{[x]:1}),M(-q,{[y]:1})],side:'L',op:'·'},{f:M(-m,{[y]:1}),t:[M(1,{[x]:1}),M(-1,{[y]:1})],side:'L',op:'·'}];}
   ]
 };
-function mixSeed(seed,lvl,round){return (Math.imul(seed^0x9E3779B9,0x85EBCA6B)^Math.imul(lvl==='ahs'?2:1,0xC2B2AE35)^Math.imul(round,0x27D4EB2F))>>>0;}
-function genRound(lvl,seed,round){const old=RNG;RNG=mulberry32(mixSeed(seed,lvl,round));try{return GEN[lvl].map(f=>f());}finally{RNG=old;}}
-function newEx(data){
-  const n=data.terms.length;
-  return {data,common:null,step:0,err:0,shown:false,msg:{},tries:[0,0,0,0,0],
-    decVals:Array(n).fill(''),decMarks:Array(n).fill(null),decHints:Array(n).fill(''),decs:null,marks:null,
-    preVal:'',preMark:null,innerVal:'',innerMark:null};
+/* ================= Mischübung Terme 4. Klasse: alle Aufgabenarten gemischt ================= */
+const bb=(A,B,C,D)=>[{f:A,t:[C,D],side:'L',op:'·'},{f:B,t:[C,D],side:'L',op:'·'}];
+const LET=()=>pick(['x','a','y','b']);
+function simple(kind,title,o){return Object.assign({kind,title,groups:[],arrows:[],prods:[],res:[],combine:false},o);}
+const pt=ms=>polyH(ms);
+const listH=(ms,first)=>ms.map((m,i)=>termH(m,first&&!i)).join('');
+/* 1 Zusammenfassen */
+function gZus(lvl){const ahs=lvl==='ahs',[a,b]=pick(L2),keys=ahs?[{[a]:2},{[a]:1},{}]:[{[a]:1},{[b]:1},{}];
+  let T;do{T=[];keys.forEach(v=>{const n=rnd(2,3);for(let k=0;k<n;k++)T.push(M(sg()*rnd(1,9),v));});shuffle(T);}while(normalize(T).length<2||normalize(T).length===T.length);
+  return simple('zus','Fasse zusammen!',{terms:T,prods:T,res:normalize(T),qh:pt(T),allm:T});}
+/* 2 Plus oder Minus vor der Klammer */
+function gKlam(lvl){const ahs=lvl==='ahs',[a,b]=pick(L2),s=RNG()<.7?-1:1;
+  for(;;){const pre=[M(rnd(2,9),{[a]:1})],inner=ahs?[M(sg()*rnd(1,9),{[a]:1}),M(sg()*rnd(1,9),{[b]:1}),M(sg()*rnd(1,9))]:[M(sg()*rnd(1,9),{[a]:1}),M(sg()*rnd(1,9))],post=ahs?[M(sg()*rnd(1,9),{[b]:1})]:[M(sg()*rnd(1,9))];
+    const all=[...pre,...inner.map(m=>M(s*m.c,m.v)),...post],res=normalize(all);if(!res.length||res.length===all.length)continue;
+    return simple('klam','Löse die Klammer auf und fasse zusammen!',{pre,inner,post,s,prods:all,res,allm:all,
+      qh:listH(pre,true)+(s<0?' − (':' + (')+listH(inner,true)+')'+listH(post,false)});}}
+/* 3 Monom mal Monom / Monom durch Monom */
+function gMono(lvl,div){const ahs=lvl==='ahs',[a,b]=pick(L2);
+  const A=M(sg()*rnd(2,ahs?9:6),ahs?{[a]:rnd(1,3),[b]:rnd(1,2)}:{[a]:rnd(1,3)}),B=M(sg()*rnd(2,ahs?6:5),ahs?{[a]:rnd(1,2),[b]:1}:{[a]:rnd(1,2)});
+  if(!div){const r=mul(A,B),F=m=>m.c<0?'('+monoH(m)+')':monoH(m);return simple('mm','Multipliziere!',{A,B,op:'·',r,qh:F(A)+' · '+F(B),allm:[A,B]});}
+  const P=mul(A,B),F=m=>m.c<0?'('+monoH(m)+')':monoH(m);return simple('mm','Dividiere!',{A:P,B,op:':',r:A,qh:F(P)+' : '+F(B),allm:[P,B]});}
+/* 4 Herausheben */
+function gcd(x,y){return y?gcd(y,x%y):Math.abs(x);}
+function gHeraus(lvl){const ahs=lvl==='ahs',[a,b]=pick(L2);
+  for(;;){const F=M(rnd(2,ahs?6:5),RNG()<.6?{[a]:1}:{}),inner=ahs?[M(rnd(1,5),{[a]:1}),M(sg()*rnd(1,5),{[b]:1}),M(sg()*rnd(1,5))]:[M(rnd(1,6),{[a]:1}),M(-rnd(1,6))];
+    if(inner.reduce((g,m)=>gcd(g,m.c),0)!==1)continue;if(Object.keys(F.v).length===0&&!ahs&&RNG()<.3)continue;
+    const T=inner.map(m=>mul(F,m));if(T.some(m=>Object.keys(m.v).length===0)&&Object.keys(F.v).length)continue;
+    return simple('heraus','Hebe den gemeinsamen Faktor heraus!',{terms:T,F,inner,qh:pt(T),allm:T});}}
+/* 5 Binomische Formeln */
+function gBinf(lvl,k){const ahs=lvl==='ahs',L=LET(),L2b=pick(['y','b','z'].filter(z=>z!==L));
+  const A=M(ahs?rnd(1,5):rnd(1,4),{[L]:1}),B=ahs&&RNG()<.5?M(rnd(1,5),{[L2b]:1}):M(rnd(1,9));
+  const sB=k===2?-1:1,sq=m=>mul(m,m);
+  const res=k===3?normalize([sq(A),M(-sq(B).c,sq(B).v)]):normalize([sq(A),M(2*sB*A.c*B.c,mul(A,B).v),sq(B)]);
+  const AH=monoH(A),BH=monoH(B),qh=k===3?'('+AH+' + '+BH+') · ('+AH+' − '+BH+')':'('+AH+(sB<0?' − ':' + ')+BH+')<sup>2</sup>';
+  return simple('binf',k===1?'1. binomische Formel':k===2?'2. binomische Formel':'3. binomische Formel',{A,B,k,res,prods:res,qh,allm:[A,B]});}
+/* 6 Rückwärts: Start finden */
+function gRueck(lvl){const ahs=lvl==='ahs',k=pick([1,2,3]),L=LET(),L2b=pick(['y','b'].filter(z=>z!==L));
+  const A=M(ahs?rnd(1,5):rnd(1,3),{[L]:1}),B=ahs&&RNG()<.5?M(rnd(1,4),{[L2b]:1}):M(rnd(2,9)),sq=m=>mul(m,m);
+  const res=k===3?normalize([sq(A),M(-sq(B).c,sq(B).v)]):normalize([sq(A),M(2*(k===2?-1:1)*A.c*B.c,mul(A,B).v),sq(B)]);
+  return simple('rueck','Finde den Start: Welche binomische Formel steckt dahinter?',{A,B,k,res,qh:pt(res),allm:[A,B]});}
+/* Pfeil-Aufgaben (wie in „Klammern mit Pfeilen“ und „Binom mal Binom“) */
+function gArrMono(lvl){const g=GEN[lvl][rnd(0,4)]();return g;}
+function gArrTwo(lvl){return GEN[lvl][rnd(5,7)]();}
+function gArrBin(lvl){const [x,y]=pick(L2),ahs=lvl==='ahs';
+  return {bin:1,groups:bb(M(ahs?rnd(1,4):1,{[x]:1}),M(sg()*rnd(1,9),ahs&&RNG()<.5?{[y]:1}:{}),M(ahs?rnd(1,3):1,{[x]:1}),M(sg()*rnd(1,9)))};}
+const MIXPLAN={
+  std:[l=>gZus(l),l=>gKlam(l),l=>gMono(l,0),l=>gMono(l,1),gArrMono,l=>gHeraus(l),gArrMono,gArrBin,l=>gBinf(l,1),l=>gBinf(l,2),l=>gBinf(l,3),l=>gRueck(l)],
+  ahs:[l=>gZus(l),l=>gKlam(l),l=>gMono(l,0),l=>gMono(l,1),gArrMono,l=>gHeraus(l),gArrTwo,gArrBin,l=>gBinf(l,1),l=>gBinf(l,2),l=>gBinf(l,3),l=>gRueck(l)]};
+
+function build(groups){
+  const arrows=[],prods=[];
+  groups.forEach((g,gi)=>g.t.forEach((t,ti)=>{arrows.push([gi,ti]);prods.push(g.op===':'?dvd(t,g.f):mul(g.f,t));}));
+  const res=normalize(prods);
+  return {groups,arrows,prods,res,combine:res.length<prods.length};
 }
+function mixSeed(seed,lvl,round){return (Math.imul(seed^0x9E3779B9,0x85EBCA6B)^Math.imul(lvl==='ahs'?2:1,0xC2B2AE35)^Math.imul(round,0x27D4EB2F))>>>0;}
+/* ================= Hausübung: Runden genau wie im Arbeitsblatt „Terme gemischt“ ================= */
+const PT=s=>parseTerm(s).ms,P1=s=>PT(s)[0];
+const FMm=m=>m.c<0?'('+monoH(m)+')':monoH(m);
+function sZus(str){const T=PT(str);return simple('zus','Fasse zusammen!',{terms:T,prods:T,res:normalize(T),qh:polyH(T),allm:T});}
+function sKlam(pre,s,inner,post){const P=pre?PT(pre):[],I=PT(inner),Q=post?PT(post):[],all=[...P,...I.map(m=>M(s*m.c,m.v)),...Q];
+  return simple('klam','Löse die Klammer auf und fasse zusammen!',{pre:P,inner:I,post:Q,s,prods:all,res:normalize(all),allm:all,qh:listH(P,true)+(s<0?' − (':' + (')+listH(I,true)+')'+listH(Q,false)});}
+function sMM(fs,op){const F=fs.map(P1),r=op===':'?dvd(F[0],F[1]):F.reduce((a,b)=>mul(a,b));
+  return simple('mm',op===':'?'Dividiere!':'Multipliziere!',{A:F[0],B:F[1],op,r,qh:F.map(FMm).join(op===':'?' : ':' · '),allm:F});}
+function gcdM(T){const g=(a,b)=>b?g(b,a%b):Math.abs(a);let c=T.reduce((a,m)=>g(a,Math.abs(m.c)),0);const v={};
+  Object.keys(T[0].v).forEach(x=>{const e=Math.min(...T.map(m=>m.v[x]||0));if(e>0)v[x]=e;});return M(c,v);}
+function sHer(str){const T=PT(str),F=gcdM(T);return simple('heraus','Hebe den gemeinsamen Faktor heraus!',{terms:T,F,inner:T.map(m=>dvd(m,F)),qh:polyH(T),allm:T});}
+const sMP=(f,p)=>({groups:[{f:P1(f),t:PT(p),side:'L',op:'·'}]});
+const sDiv=(p,d)=>({groups:[{f:P1(d),t:PT(p),side:'R',op:':'}]});
+const sBB=(a,b)=>{const A=PT(a),B=PT(b);return {bin:1,groups:bb(A[0],A[1],B[0],B[1])};};
+/* Kombi: Produkte ausrechnen (in Klammern), Klammern auflösen, zusammenfassen */
+function polyMul(A,B){const out=[];A.forEach(a=>B.forEach(b=>out.push(mul(a,b))));return out;}
+function sKombi(qh,parts){const P=parts.map(p=>{const A=PT(p.a),B=p.b?PT(p.b):null;return {s:p.s,A,B,prod:B?normalize(polyMul(A,B)):normalize(A),hasProd:!!B,a:p.a,b:p.b};});
+  let all=[];P.forEach(p=>p.prod.forEach(m=>all.push(M(p.s*m.c,m.v))));
+  return simple('kombi','Kombi-Aufgabe: Produkte ausrechnen, Klammern auflösen, zusammenfassen!',{parts:P,res:normalize(all),prods:normalize(all),qh,allm:all});}
+const WS=[
+ /* R1 */[()=>sHer('3x + 12'),()=>sZus('6x + 4y − 2x + 3y'),()=>sBB('x + 3','x + 5'),()=>sMP('3','x + 4'),()=>sKlam('9y',1,'y − 8',''),()=>sMM(['6x','5x'],'·')],
+ /* R2 */[()=>sKlam('4b',-1,'4b − 4',''),()=>sZus('4a² + 3a − a² + 5a'),()=>sBB('a + 4','a − 2'),()=>sMM(['9a','8b'],'·'),()=>sMP('5','2a − 3'),()=>sHer('5a − 15')],
+ /* R3 */[()=>sZus('7m − 2n + 3n − 4m + 6'),()=>sBB('y − 1','y − 6'),()=>sMP('x','x + 6'),()=>sKlam('8x',1,'5x − 7',''),()=>sMM(['3x²','4x³'],'·'),()=>sHer('x² + 4x')],
+ /* R4 */[()=>sMM(['12x⁵','3x²'],':'),()=>sMP('4a','3a − 2'),()=>sZus('2x² + 5x − 3 + x² − 2x + 8'),()=>sBB('x + 2','y + 7'),()=>sHer('6y + 9'),()=>sKlam('7a',-1,'a − 3','')],
+ /* R5 */[()=>sHer('8a² − 12a'),()=>sMP('−2x','5x − 7'),()=>sZus('2a + 9b + 12b + 3a − 5b'),()=>sBB('2x + 3','x − 4'),()=>sMM(['20a⁶','5a'],':'),()=>sKlam('6b',-1,'b − y − 8','−y')],
+ /* R6 */[()=>sHer('14xy + 21x'),()=>sMP('3xy','2x − y'),()=>sKlam('9y',1,'−5y + 2x − 9','4x'),()=>sMM(['−6a²','4a⁴'],'·'),()=>sBB('3a − 1','2a + 5'),()=>sZus('−7 + 11y − 11x + 5y + 4 − 2y')],
+ /* R7 */[()=>sKlam('7y',-1,'−8y + 2a − 2','7a'),()=>sMM(['4x²y','−3xy³'],'·'),()=>sZus('12 − 3n + n + 3m + n − 12n'),()=>sBB('4b + 1','b − 3'),()=>sDiv('12x² − 8x','4x'),()=>sHer('10m²n − 15mn²'),
+        ()=>sKombi('3 · (x + 2) − 2 · (x − 5)',[{s:1,a:'3',b:'x + 2'},{s:-1,a:'2',b:'x − 5'}])],
+ /* R8 */[()=>sZus('5x + 8xy + 6xy − 6xy + 3y'),()=>sBB('−x + 6','3x + 2'),()=>sDiv('15a³ + 10a² − 5a','5a'),()=>sHer('−6x² − 9x'),()=>sMM(['−5m³','−2mn²'],'·'),()=>sKlam('4b² + 3',-1,'−5b² + 7b − 9','−3b'),
+        ()=>sKombi('a · (a + 4) − (a² − 3a)',[{s:1,a:'a',b:'a + 4'},{s:-1,a:'a² − 3a'}])],
+ /* R9 */[()=>sHer('12a³ − 18a² + 6a'),()=>sKlam('3y² − 8',-1,'5y² − 3y − 5','9y'),()=>sMP('−4a²','3a² − 2a + 5'),()=>sZus('12x² − 7x + 8 − 3 − 8x² + 2'),()=>sBB('2x − 3y','x + 4y'),()=>sMM(['−36x⁴y³','9x²y'],':'),
+        ()=>sKombi('(x + 2) · (x + 4) − x · (x + 6)',[{s:1,a:'x + 2',b:'x + 4'},{s:-1,a:'x',b:'x + 6'}])],
+ /* R10 */[()=>sKlam('2x² − 6',1,'−7x² + 6x − 3','5x'),()=>sMP('2xy²','x² − 3xy + 4y'),()=>sZus('ab − 4ab + 4ab + 4b² + 4ab − 7a²'),()=>sBB('a² + 3','a − 2'),()=>sMM(['28m⁷n²','−7m³n²'],':'),()=>sHer('15x²y² + 20x²y − 25xy²'),
+        ()=>sKombi('(2a − 1) · (a + 3) − (a + 2) · (a − 4)',[{s:1,a:'2a − 1',b:'a + 3'},{s:-1,a:'a + 2',b:'a − 4'}])],
+ /* R11 */[()=>sMM(['4a²b','2a','−4b³'],'·'),()=>sMP('−5m','−2m² + mn − 3n'),()=>sZus('5xy − 7xy + 4xy² + 6x²y + 9x²y − 11xy'),()=>sBB('5m − 2n','3m − n'),
+        ()=>sKombi('(x + y) · (x + 2y) − (x − y) · (2x + y)',[{s:1,a:'x + y',b:'x + 2y'},{s:-1,a:'x − y',b:'2x + y'}])],
+ /* R12 */[()=>sDiv('−18x³y + 12x²y²','−6xy'),()=>sMM(['−45a⁵b⁴','−15a⁵b'],':'),()=>sZus('−2 + 11 + 7a + 7a³ − 10a² − 6a + 3a'),
+        ()=>sKombi('2x · (3x − y) − (x − 2y) · (x + y)',[{s:1,a:'2x',b:'3x − y'},{s:-1,a:'x − 2y',b:'x + y'}])]];
+
+function genRoundRandom(lvl,seed,round){
+  const old=RNG;RNG=mulberry32(mixSeed(seed,lvl,round));
+  try{return MIXPLAN[lvl].map(g=>{for(let k=0;k<100;k++){const x=g(lvl);if(x.kind)return x;const t=Object.assign(build(x.groups||x),{bin:x.bin||0});if(t.res.length&&t.res.every(m=>Math.abs(m.c)<=200))return t;}const x=g(lvl);return x.kind?x:Object.assign(build(x.groups||x),{bin:x.bin||0});});}finally{RNG=old;}
+}
+/* ================= 12 Aufgaben pro Runde: 1–6 leichter (ohne Hochzahlen), 7–12 mit Hochzahlen ================= */
+const zusM=T=>simple('zus','Fasse zusammen!',{terms:T,prods:T,res:normalize(T),qh:polyH(T),allm:T});
+const klamM=(P,s,I,Q)=>{const all=[...P,...I.map(m=>M(s*m.c,m.v)),...Q];return simple('klam','Löse die Klammer auf und fasse zusammen!',{pre:P,inner:I,post:Q,s,prods:all,res:normalize(all),allm:all,qh:listH(P,true)+(s<0?' − (':' + (')+listH(I,true)+')'+listH(Q,false)});};
+const mmM=(F,op)=>{const r=op===':'?dvd(F[0],F[1]):F.reduce((a,b)=>mul(a,b));return simple('mm',op===':'?'Dividiere!':'Multipliziere!',{A:F[0],B:F[1],op,r,qh:F.map(FMm).join(op===':'?' : ':' · '),allm:F});};
+const herM=T=>{const F=gcdM(T);return simple('heraus','Hebe den gemeinsamen Faktor heraus!',{terms:T,F,inner:T.map(m=>dvd(m,F)),qh:polyH(T),allm:T});};
+const nz=(a,b)=>{let x;do{x=rnd(a,b);}while(!x);return x;};
+const sx=()=>RNG()<.5?1:-1;
+const G12={
+ /* 1–6 leichter, ohne Hochzahlen */
+ e1:()=>{for(;;){const [a,b]=pick(L2),T=[M(rnd(2,9),{[a]:1}),M(sx()*rnd(1,9),{[b]:1}),M(sx()*rnd(1,9),{[a]:1}),M(sx()*rnd(1,9),{[b]:1}),...(RNG()<.5?[M(sx()*rnd(1,9))]:[])];
+     const r=normalize(T);if(r.length>=2&&r.length<T.length)return zusM(T);}},
+ e2:()=>{for(;;){const [a]=pick(L2),s=sx(),P=[M(rnd(2,9),{[a]:1})],I=[M(rnd(1,9),{[a]:1}),M(sx()*rnd(1,9))],Q=RNG()<.5?[M(sx()*rnd(1,9))]:[];const k=klamM(P,s,I,Q);if(k.res.length)return k;}},
+ e3:()=>{const [a,b]=pick(L2);return mmM([M(sx()*rnd(2,9),{[a]:1}),M(rnd(2,9),{[b]:1})],'·');},
+ e4:()=>{for(;;){const [a]=pick(L2),k=rnd(2,7),p=rnd(1,6),q=rnd(1,9)*sx();if(gcdM([M(p,{[a]:1}),M(q)]).c!==1)continue;return herM([M(k*p,{[a]:1}),M(k*q)]);}},
+ e5:()=>{const [a,b]=pick(L2),k=sx()*rnd(2,7);return RNG()<.5?{groups:[{f:M(k),t:[M(rnd(1,6),{[a]:1}),M(sx()*rnd(1,9))],side:'L',op:'·'}]}:{groups:[{f:M(k),t:[M(rnd(1,6),{[a]:1}),M(sx()*rnd(1,6),{[b]:1})],side:'L',op:'·'}]};},
+ e6:()=>{const [a,b]=pick(L2);return {bin:1,groups:bb(M(1,{[a]:1}),M(sx()*rnd(1,9)),M(1,{[b]:1}),M(sx()*rnd(1,9)))};},
+ /* 7–12 mit Hochzahlen */
+ h7:()=>{for(;;){const [a]=pick(L2),T=[M(rnd(2,9),{[a]:2}),M(sx()*rnd(1,9),{[a]:1}),M(sx()*rnd(1,9),{[a]:2}),M(sx()*rnd(1,9),{[a]:1}),M(sx()*rnd(1,9))];const r=normalize(T);if(r.length>=2)return zusM(T);}},
+ h8:()=>{const [a,b]=pick(L2),m=rnd(1,4),n=rnd(1,4);return mmM([M(sx()*rnd(2,8),{[a]:m}),M(sx()*rnd(2,8),RNG()<.5?{[a]:n}:{[a]:n,[b]:1})],'·');},
+ h9:()=>{const [a,b]=pick(L2),n=rnd(1,3),q=rnd(1,4),d=rnd(2,8),c=rnd(2,6)*sx(),wb=RNG()<.4;const D=M(sx()*d,wb?{[a]:n,[b]:1}:{[a]:n}),Q=M(c,wb?{[a]:q,[b]:1}:{[a]:q});return mmM([mul(D,Q),D],':');},
+ h10:()=>{for(;;){const [a]=pick(L2),k=rnd(2,6),p=rnd(1,5),q=rnd(1,7)*sx();if(gcdM([M(p,{[a]:1}),M(q)]).c!==1)continue;return herM([M(k*p,{[a]:2}),M(k*q,{[a]:1})]);}},
+ h11:()=>{const [a,b]=pick(L2),k=sx()*rnd(2,6);return RNG()<.5?{groups:[{f:M(k,{[a]:1}),t:[M(rnd(1,6),{[a]:1}),M(sx()*rnd(1,9))],side:'L',op:'·'}]}:{groups:[{f:M(k,{[a]:1,[b]:1}),t:[M(rnd(1,5),{[a]:1}),M(sx()*rnd(1,5),{[b]:1})],side:'L',op:'·'}]};},
+ h12:()=>{const [a]=pick(L2),p=rnd(1,4);return {bin:1,groups:bb(M(p,{[a]:1}),M(sx()*rnd(1,9)),M(1,{[a]:1}),M(sx()*rnd(1,9)))};}};
+const ORDER12=['e1','e2','e3','e4','e5','e6','h7','h8','h9','h10','h11','h12'];
+
+function genRound(lvl,seed,round){const old=RNG;RNG=mulberry32(mixSeed(seed,lvl,round));try{return ORDER12.map(k=>{for(let n=0;n<60;n++){const x=G12[k]();const t=x.kind?x:Object.assign(build(x.groups),{bin:x.bin||0});if(t.res&&t.res.length&&t.res.every(m=>Math.abs(m.c)<=200))return t;}const x=G12[k]();return x.kind?x:Object.assign(build(x.groups),{bin:x.bin||0});});}finally{RNG=old;}}
+function newEx(t){return {t,step:0,err:0,shown:false,msg:{},arr:[],selF:null,ps:t.prods.map(()=>''),pv:t.prods.map(()=>''),pm:t.prods.map(()=>null),ph:t.prods.map(()=>''),lv:'',lm:null,rv:'',rm:null,tries:[0,0,0,0]};}
+const applies=(e,s)=>e.t.kind?s===0:true; /* Unterstreichen immer – auch wenn nichts zusammenpasst */
+const nextStep=(e,s)=>{let n=s+1;while(n<DONE&&!applies(e,n))n++;return n;};
+
+/* Aufgabe als Text (mit klickbaren Teilen) */
+function factorTxt(g,gi){
+  /* Faktor-Anzeige; bei der 2. Gruppe steht das Vorzeichen als Rechenzeichen davor */
+  if(gi===0)return {sign:'',body:(g.side==='R'&&g.f.c<0)?'('+monoH(g.f)+')':monoH(g.f)};
+  return {sign:g.f.c<0?' − ':' + ',body:absH(g.f)};
+}
+function exprHTML_K(t,interactive){
+  let h='';
+  t.groups.forEach((g,gi)=>{
+    const ft=factorTxt(g,gi),fac='<span class="tk fac" data-g="'+gi+'">'+ft.body+'</span>';
+    const br='<span class="tk op">(</span>'+g.t.map((m,ti)=>'<span class="tk trm" data-g="'+gi+'" data-t="'+ti+'">'+(ti?(m.c<0?MINUS:'+')+'&#8202;'+absH(m):monoH(m))+'</span>').join('')+'<span class="tk op">)</span>';
+    const op='<span class="tk op">'+(g.op===':'?':':'·')+'</span>';
+    if(ft.sign)h+='<span class="tk op">'+ft.sign.trim()+'</span>';
+    h+=g.side==='L'?fac+op+br:br+op+fac;
+  });
+  return h+'<span class="tk op">=</span>';
+}
+function exprHTML_B(t,interactive){
+  const [g0,g1]=t.groups;
+  const f0='<span class="tk fac" data-g="0">'+(g0.f.c<0?'':'<span class="ip">+</span>')+monoH(g0.f)+'</span>',f1='<span class="tk fac" data-g="1">'+(g1.f.c<0?MINUS:'+')+'&#8202;'+absH(g1.f)+'</span>';
+  const br2=g0.t.map((m,ti)=>'<span class="tk trm" data-g="*" data-t="'+ti+'">'+(ti?(m.c<0?MINUS:'+')+'&#8202;'+absH(m):(m.c<0?'':'<span class="ip">+</span>')+monoH(m))+'</span>').join('');
+  return '<span class="tk op">(</span>'+f0+f1+'<span class="tk op">)</span><span class="tk op mul">·</span><span class="tk op">(</span>'+br2+'<span class="tk op">)</span><span class="tk op">=</span>';
+}
+function exprHTML(t,i){return t.bin?exprHTML_B(t,i):exprHTML_K(t,i);}
+
+const exprPlain=t=>{const d=document.createElement('div');d.innerHTML=exprHTML(t);return d.textContent.replace(/\u200A/g,'');};
+/* Produkt eines Pfeils, z. B. 4y · (−2x) bzw. 8a : 2 */
+function opndH(m,first,box){return (!first&&m.c<0)?'('+monoH(m,box)+')':monoH(m,box);}
+function prodH(t,k,box){const [gi,ti]=t.arrows[k],g=t.groups[gi],term=g.t[ti];
+  return g.op===':'?opndH(term,true,box)+' : '+opndH(g.f,false,box):opndH(g.f,true,box)+' · '+opndH(term,false,box);}
+function prodLineH(t){return t.arrows.map((a,k)=>{const s=prodH(t,k);return k?(s.startsWith(MINUS)?' − '+s.slice(1):' + '+s):s;}).join('');}
+
+/* Pfeile zeichnen (Bogen vom Faktor zum Glied) */
+function arrowExprH(t,id,arr){return '<div class="exprscroll"><div class="exprwrap mini" id="'+id+'" data-arr="'+esc(JSON.stringify(arr||t.arrows))+'">'+exprHTML(t)+'</div></div>';}
+function redrawAll(){
+  document.querySelectorAll('.exprwrap[data-arr]').forEach(w=>{if(w.offsetParent!==null)drawArrows(w,JSON.parse(w.dataset.arr));});
+  const w=$('task');if(w&&curEx())drawArrows(w,curEx().arr);
+}
+function drawArrows_K(wrap,arr){
+  const old=wrap.querySelector('svg.arrows');if(old)old.remove();
+  const W=wrap.scrollWidth,H=wrap.offsetHeight,ns='http://www.w3.org/2000/svg';
+  const svg=document.createElementNS(ns,'svg');svg.setAttribute('class','arrows');svg.setAttribute('width',W);svg.setAttribute('height',H);svg.setAttribute('aria-hidden','true');
+  const defs=document.createElementNS(ns,'defs');defs.innerHTML='<marker id="ah'+wrap.id+'" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--arrow);stroke:none"/></marker>';svg.appendChild(defs);
+  const box=wrap.getBoundingClientRect();
+  const byF={};arr.forEach(([gi,ti])=>{(byF[gi]=byF[gi]||[]).push(ti);});
+  arr.forEach(([gi,ti])=>{
+    const f=wrap.querySelector('.tk.fac[data-g="'+gi+'"]'),tm=wrap.querySelector('.tk.trm[data-g="'+gi+'"][data-t="'+ti+'"]');if(!f||!tm)return;
+    const fr=f.getBoundingClientRect(),tr=tm.getBoundingClientRect();
+    const x1=fr.left+fr.width/2-box.left,x2=tr.left+tr.width/2-box.left,y=Math.min(fr.top,tr.top)-box.top-2;
+    const fs=parseFloat(getComputedStyle(wrap).fontSize)||27,lift=fs*0.8+Math.min(fs*1.25,Math.abs(x2-x1)*0.22);
+    const p=document.createElementNS(ns,'path');p.setAttribute('d','M'+x1+','+y+' C'+x1+','+(y-lift)+' '+x2+','+(y-lift)+' '+x2+','+y);
+    p.setAttribute('marker-end','url(#ah'+wrap.id+')');svg.appendChild(p);
+  });
+  wrap.prepend(svg);
+}
+
+function drawArrows_B(wrap,arr){
+  const old=wrap.querySelector('svg.arrows');if(old)old.remove();
+  const W=wrap.scrollWidth,H=wrap.offsetHeight,ns='http://www.w3.org/2000/svg';
+  const svg=document.createElementNS(ns,'svg');svg.setAttribute('class','arrows');svg.setAttribute('width',W);svg.setAttribute('height',H);svg.setAttribute('aria-hidden','true');
+  const defs=document.createElementNS(ns,'defs');defs.innerHTML='<marker id="ah'+wrap.id+'" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--arrow);stroke:none"/></marker>';svg.appendChild(defs);
+  const box=wrap.getBoundingClientRect();
+  const byF={};arr.forEach(([gi,ti])=>{(byF[gi]=byF[gi]||[]).push(ti);});
+  arr.forEach(([gi,ti])=>{
+    const f=wrap.querySelector('.tk.fac[data-g="'+gi+'"]'),tm=wrap.querySelector('.tk.trm[data-t="'+ti+'"]');if(!f||!tm)return;
+    const fr=f.getBoundingClientRect(),tr=tm.getBoundingClientRect(),down=gi===1;
+    const x1=fr.left+fr.width/2-box.left+(down?4:0),x2=tr.left+tr.width/2-box.left+(down?4:-4),y=down?Math.max(fr.bottom,tr.bottom)-box.top+2:Math.min(fr.top,tr.top)-box.top-2;
+    const fs=parseFloat(getComputedStyle(wrap).fontSize)||27,lift=(fs*0.8+Math.min(fs*1.25,Math.abs(x2-x1)*0.22))*(down?-1:1);
+    const p=document.createElementNS(ns,'path');p.setAttribute('d','M'+x1+','+y+' C'+x1+','+(y-lift)+' '+x2+','+(y-lift)+' '+x2+','+y);if(down)p.setAttribute('class','dn');
+    p.setAttribute('marker-end','url(#ah'+wrap.id+')');svg.appendChild(p);
+    const k=arr.findIndex(a=>a[0]===gi&&a[1]===ti),lab=document.createElementNS(ns,'text');const ord=gi*2+ti;
+    lab.setAttribute('x',x2-(x2>x1?16:-16));lab.setAttribute('y',y-lift*0.62+(down?6:2));lab.setAttribute('text-anchor','middle');lab.setAttribute('class','anum'+(down?' dn':''));lab.textContent=String(ord+1);svg.appendChild(lab);
+  });
+  wrap.prepend(svg);
+}
+
+function drawArrows(w,a){return w.querySelector('.tk.trm[data-g="*"]')?drawArrows_B(w,a):drawArrows_K(w,a);}
+
+/* ================= Einfache Aufgabenarten (ohne Pfeile) ================= */
+function sIn(name,e,w,ph){return inp('data-sv="'+name+'"',(e.sv||{})[name]||'',((e.svm||{})[name]||'')+' sin','Eingabe '+name,ph||'').replace('<input','<input style="width:'+(w||'7rem')+'"');}
+function coefCheck(e,ms,want){const p=termPre(e,want);if(p!==true)return p;
+  const raw=composeRv(e,want),r=parseTerm(raw);if(r.err)return {soft:r.err};
+  const n=normalize(r.ms),exp=normalize(want);
+  if(n.length===exp.length&&n.every((m,i)=>sameM(m,exp[i]))){if(r.ms.length>n.length)return {soft:'Richtig gerechnet – fasse gleichartige Glieder noch ganz zusammen.'};return true;}
+  const ek=new Map(exp.map(m=>[key(m.v),m.c])),nk=new Map(n.map(m=>[key(m.v),m.c])),wrong=[...new Set([...ek.keys(),...nk.keys()])].filter(k=>ek.get(k)!==nk.get(k));
+  if(wrong.some(k=>!ek.has(k)))return 'Nur gleichartige Glieder darf man zusammenfassen – gleiche Variablen mit gleichen Hochzahlen.';
+  if(wrong.every(k=>nk.get(k)===-ek.get(k)))return 'Kontrolliere die Rechenzeichen bei '+wrong.map(keyH).join(' und ')+'.';
+  return 'Schau nochmal bei '+wrong.map(keyH).join(' und ')+' – zähle mit den Vorzeichen zusammen.';}
+function oneMono(raw){const r=parseTerm(raw||'');if(r.err)return {err:r.err};if(r.ms.length!==1)return {err:'Hier kommt genau ein Glied hinein.'};return {m:r.ms[0]};}
+/* Farbpalette: Farbe wählen, dann Glieder antippen */
+function paletteH(e,n){const p=e.pen||0;return '<div class="penbar" role="group" aria-label="Farben">'+Array.from({length:n},(_,i)=>i+1).map(c=>'<button type="button" class="pen'+(p===c?' on':'')+'" data-pen="'+c+'" style="--sw:var(--c'+c+')" aria-label="Farbe '+c+'"></button>').join('')+
+  '<button type="button" class="pen er'+(p===-1?' on':'')+'" data-pen="-1" aria-label="Radiergummi">⌫</button><span class="penhint">'+(p?'Jetzt Glieder antippen':'Farbe wählen, dann antippen')+'</span></div>';}
+const paint=(e,old,cyc)=>{const p=e.pen||0;if(p===-1)return 0;if(p>0)return old===p?0:p;return cyc;};
+function chipsH(e,ms,live){const zc=e.zc||[];return ms.map((m,k)=>(live?'<button type="button" class="tchip'+(zc[k]?' k'+zc[k]:'')+'" data-zc="'+k+'">':'<span class="tchip'+(zc[k]?' k'+zc[k]:'')+'">')+termH(m,!k)+(live?'</button>':'</span>')).join('');}
+function zcCheck(e,ms){const zc=e.zc||[],ks=ms.map(m=>key(m.v));
+  if(ms.some((_,k)=>!zc[k]))return {soft:'Unterstreiche <b>jedes</b> Glied – antippen wechselt die Farbe.'};
+  for(const k of new Set(ks)){const cs=new Set(ks.map((x,i)=>x===k?zc[i]:null).filter(x=>x!==null));if(cs.size>1)return 'Gleichartige Glieder bekommen <b>dieselbe</b> Farbe – schau dir '+keyH(k)+' an.';}
+  const used=[...new Set(ks)].map(k=>zc[ks.indexOf(k)]);if(new Set(used).size<used.length)return 'Verschiedene Arten von Gliedern brauchen <b>verschiedene</b> Farben.';
+  return true;}
+/* Herausheben: Zerlegung genau unter jedem Glied – wie im Heft */
+/* Monom eingeben ohne Variablen zu tippen: [Zeichen] [Zahl] + Variablen antippen (x → x² → x³ → aus) */
+const varsOf=t=>[...new Set((t.allm||[]).concat(t.terms||[],t.res||[]).flatMap(m=>Object.keys(m.v)))].sort();
+function monoIn(e,p,vars,sign){const sv=e.sv||{};let h='<span class="mono">';
+  if(sign){const g=sv[p+'s']||(sign==='opt'?'+':'');h+='<button type="button" class="sbtn'+(g?' set':'')+'" data-ms="'+p+'">'+(g||'±')+'</button>';}
+  h+=sIn(p+'c',e,'3.4rem','');
+  vars.forEach(v=>{const on=!!sv[p+'o'+v];h+='<button type="button" class="vchip'+(on?' on':'')+'" data-mv="'+p+':'+v+'" aria-label="Variable '+v+'"><i>'+v+'</i></button>'+(on?'<input class="pin expin" data-sv="'+p+'e'+v+'" value="'+esc(sv[p+'e'+v]||'')+'" autocomplete="off" aria-label="Hochzahl von '+v+'" placeholder="1">':'');});
+  return h+'</span>';}
+function rdMono(e,p,vars,sign){const sv=e.sv||{},raw=String(sv[p+'c']||'').replace(/\s+/g,''),v={};for(const x of vars){if(!sv[p+'o'+x])continue;const er=String(sv[p+'e'+x]||'').trim();if(er!==''&&!/^\d+$/.test(er))return {err:'Bei der Hochzahl steht nur eine Zahl.'};const n=er===''?1:+er;if(n)v[x]=n;}
+  if(raw!==''&&!/^\d+$/.test(raw))return {err:'In das Kästchen kommt nur eine Zahl – die Variablen tippst du darunter an.'};
+  if(raw===''&&!Object.keys(v).length)return {err:'Schreib eine Zahl ins Kästchen oder tippe eine Variable an.'};
+  const g=sv[p+'s']||(sign==='opt'||!sign?'+':'');if(sign==='req'&&!g)return {err:'Tippe zuerst das Vorzeichen an (±).'};
+  const c=(raw===''?1:+raw)*(g==='−'?-1:1);return {m:M(c,v)};}
+function setMono(e,p,m,sign){e.sv=e.sv||{};e.sv[p+'c']=Math.abs(m.c)===1&&Object.keys(m.v).length?'':String(Math.abs(m.c));if(sign)e.sv[p+'s']=m.c<0?'−':'+';Object.keys(m.v).forEach(x=>{e.sv[p+'o'+x]='1';e.sv[p+'e'+x]=m.v[x]>1?String(m.v[x]):'';});}
+function zerlTabF(e,live){const t=e.t,c1=[],c2=[],zm=e.zm||{};
+  t.terms.forEach((m,k)=>{if(k){c1.push('<td class="zs">'+(m.c<0?'−':'+')+'</td>');c2.push('<td class="zs">'+(m.c<0?'−':'+')+'</td>');}
+    c1.push('<td class="zt">'+(k?absH(m):monoH(m))+'</td>');
+    const fs=(e.zf||[])[k]||[];c2.push('<td class="zi">'+fs.map((x,i)=>{const on=(zm[k]||[]).includes(i),txt=x.c<0?'('+monoH(x)+')':monoH(x);
+      return live?'<button type="button" class="zfb'+(on?' on':'')+'" data-zf="'+k+':'+i+'">'+txt+'</button>':'<span class="zfb'+(on?' on':'')+'">'+txt+'</span>';}).join('<span class="zdot">·</span>')+'</td>');});
+  return '<div class="zerl"><table><tr>'+c1.join('')+'</tr><tr>'+c2.join('')+'</tr></table></div>';}
+function subsetMake(fs,F){const n=fs.length;for(let b=1;b<(1<<n);b++){let p=M(1);for(let i=0;i<n;i++)if(b&(1<<i))p=mul(p,fs[i]);if(Math.abs(p.c)===F.c&&key(p.v)===key(F.v))return true;}return false;}
+function zerlTab(e,live){const t=e.t,c1=[],c2=[];
+  t.terms.forEach((m,k)=>{if(k){c1.push('<td class="zs">'+(m.c<0?'−':'+')+'</td>');c2.push('<td class="zs">'+(live?sIn('zo'+k,e,'2.4rem','±'):(m.c<0?'−':'+'))+'</td>');}
+    c1.push('<td class="zt">'+(k?absH(m):monoH(m))+'</td>');
+    c2.push('<td class="zi">'+(live?sIn('z'+k,e,'7.5rem','z. B. 4·3m'):'<span class="zd">'+(k&&m.c<0?zerlH(M(-m.c,m.v),t.F):zerlH(m,t.F))+'</span>')+'</td>');});
+  return '<div class="zerl"><table><tr>'+c1.join('')+'</tr><tr>'+c2.join('')+'</tr></table></div>';}
+function simpleBody(e){const t=e.t,sv=e.sv||{},sub=e.sub||0;let h='<div class="tline"><span class="ln">'+t.qh+'</span></div>';
+  const btn='<button type="button" data-act="check0">Prüfen</button>';
+  if(t.kind==='kombi'){const P=t.parts,FA=A=>A.length===1?FMm(A[0]):'('+polyH(A)+')';
+    if(sub===0)h+=P.map((p,k)=>p.hasProd?'<div class="tline"><span class="par">'+FA(p.A)+' · '+FA(p.B)+' =&nbsp;</span>'+sIn('p'+k,e,'13rem','ausmultipliziert')+'</div>':'').join('')+'<div class="tline">'+btn+'</div><p class="srule">① Rechne zuerst jedes <b>Produkt</b> aus (im Heft mit Pfeilen) und fasse es zusammen.</p>';
+    else h+='<div class="tline ok"><span class="eqs">=</span><span class="ln">'+P.map((p,k)=>(k?(p.s<0?' − ':' + '):(p.s<0?'−':''))+'('+polyH(p.prod)+')').join('')+'</span> <span class="tick">✓</span></div><div class="tline"><span class="eqs">=</span>'+sIn('res',e,'16rem','Ergebnis')+btn+'</div><p class="srule">② Klammern auflösen – 😊 Plus: Vorzeichen bleiben, ☹️ Minus: <b>jedes</b> Vorzeichen dreht sich um – und gleichartige Glieder zusammenfassen.</p>';}
+  if(t.kind==='zus'){const live=e.step!==DONE;h='<div class="tline marks"><span class="ln">'+chipsH(e,t.terms,live)+'</span></div>'+(live?paletteH(e,5)+'<p class="srule"><b>Freiwillig:</b> Unterstreiche gleichartige Glieder in derselben Farbe – wenn du unterstreichst, wird es kontrolliert.</p>':'')+
+    '<div class="tline"><span class="eqs">=</span>'+coefUI(e,t.terms,e.rm||'')+btn+'</div><p class="srule">Tippe vor jedem Kästchen das <b>Rechenzeichen</b> an (± → + oder −) und schreib das <b>ganze Glied</b> hinein – Zahl <b>und</b> Buchstaben, z. B. 3x oder x².</p>';}
+  if(t.kind==='klam'){const ks=e.ks||[],face=e.face||'';
+    h='<div class="tline"><span class="ln">'+listH(t.pre,true)+' <button type="button" class="face'+(sub>0?' fixed':'')+'" data-face="1"'+(sub>0?' disabled':'')+'>'+(face||'❔')+'</button>'+(t.s<0?' − (':' + (')+listH(t.inner,true)+')'+listH(t.post,false)+'</span>'+(sub===0?btn:'')+'</div>';
+    if(sub===0)h+='<p class="srule">Steht vor der Klammer ein Plus oder ein Minus? Tippe auf ❔ und wähle das passende Gesicht: 😊 Plus – die Vorzeichen bleiben. ☹️ Minus – jedes Vorzeichen dreht sich um.</p>';
+    else if(sub===1)h+='<div class="tline"><span class="eqs">=</span><span class="ln">'+listH(t.pre,true)+t.inner.map((m,k)=>' <button type="button" class="sbtn'+(ks[k]?' set':'')+'" data-ks="'+k+'">'+(ks[k]||'±')+'</button> '+absH(m)).join('')+listH(t.post,false)+'</span>'+btn+'</div><p class="srule">Lass die Klammer weg und tippe bei jedem Glied aus der Klammer das richtige Vorzeichen an'+(face==='☹️'?' – ☹️ <b>jedes</b> Vorzeichen dreht sich um.':' – 😊 die Vorzeichen bleiben.')+'</p>';
+    else if(sub===2)h+='<div class="tline marks"><span class="eqs">=</span><span class="ln">'+chipsH(e,t.prods,true)+'</span>'+btn+'</div>'+paletteH(e,5)+'<p class="srule">Unterstreiche <b>jedes</b> Glied: gleichartige Glieder in derselben Farbe, verschiedene in verschiedenen Farben.</p>';
+    else h+='<div class="tline marks"><span class="eqs">=</span><span class="ln">'+chipsH(e,t.prods,e.step!==DONE)+'</span></div>'+(e.step!==DONE?paletteH(e,5)+'<p class="srule"><b>Freiwillig:</b> gleichartige Glieder in derselben Farbe unterstreichen – wenn du unterstreichst, wird es kontrolliert.</p>':'')+'<div class="tline"><span class="eqs">=</span>'+coefUI(e,t.prods,e.rm||'')+btn+'</div><p class="srule">Jetzt zusammenfassen: Rechenzeichen antippen (±), dann das ganze Glied ins Kästchen, z. B. 3x.</p>';}
+  if(t.kind==='mm')h+='<div class="tline"><span class="eqs">=</span><span class="cbox"><button type="button" class="sbtn'+(e.ms?' set':'')+'" data-msg="1" aria-label="Vorzeichen">'+(e.ms||'±')+'</button>'+sIn('r',e,'7rem','z. B. 12x²')+'</span>'+btn+'</div><p class="srule">Vorzeichen antippen (±), dann das Ergebnis ins Kästchen schreiben – Zahl <b>und</b> Buchstaben mit Hochzahl, z. B. 12x⁵ (Hochzahl mit ▢²/▢³/▢ⁿ).</p><p class="srule">'+(t.op==='·'?'Zahl mal Zahl, Variable mal Variable: gleiche Variablen – Hochzahlen <b>addieren</b>.':'Zahl durch Zahl, gleiche Variablen – Hochzahlen <b>subtrahieren</b>.')+' Vorzeichen: gleiche Zeichen → +, verschiedene → −.</p>';
+  if(t.kind==='heraus'&&sub===0){h=zerlTab(e,true)+
+      '<div class="tline">'+btn+'<button type="button" class="mini" data-act="skipz">Überspringen</button></div><p class="srule"><b>Schreib jedes Glied als Produkt</b> und das <b>Rechenzeichen</b> dazwischen selbst hin. In jedem Produkt soll derselbe Faktor vorkommen – mit · zwischen den Faktoren, z. B. 12<i>x</i><sup>2</sup> = 2 · 6 · <i>x</i> · <i>x</i> und 18<i>x</i> = 3 · 6 · <i>x</i>. Wenn du es schon im Kopf siehst, kannst du überspringen.</p>';return h+msgHTML(e,0);}
+  if(t.kind==='heraus'&&e.zdone&&e.mark===1){h=zerlTabF(e,true)+'<div class="tline"><button type="button" data-act="check0">Markierung prüfen</button></div><p class="srule"><b>Markiere</b> in jedem Glied die Faktoren, die in <b>allen</b> Gliedern vorkommen (antippen). Nochmal antippen hebt die Markierung auf.</p>';return h+msgHTML(e,0);}
+  if(t.kind==='heraus'&&e.zdone)h=e.zf?zerlTabF(e,false):zerlTab(e,false);
+  if(t.kind==='heraus'){const hs=e.hs||{};h+='<div class="tline"><span class="eqs">=</span>'+sIn('f',e,'5rem','z. B. 3x')+'<span class="par">&nbsp;· (</span>'+t.terms.map((m,k)=>'<span class="cbox">'+(k?'<span class="par">&nbsp;'+(m.c<0?'−':'+')+'&nbsp;</span>':(m.c<0?'<span class="par">−</span>':''))+sIn('b'+k,e,'4.8rem','z. B. 2x')+'</span>').join('')+'<span class="par">)</span>'+btn+'</div>';}
+  if(t.kind==='heraus')h+='<p class="srule">Größten gemeinsamen Faktor (Zahl <b>und</b> Variable) vor die Klammer, in die Klammer kommt, was übrig bleibt. Probe: ausmultiplizieren.</p>';
+  if(t.kind==='binf'){const bc=e.bc||{},sc=e.sc||{},C=x=>x==='a'?' ca':x==='b'?' cb':'',AH=monoH(t.A),BH=monoH(t.B),op=t.k===2?'−':'+';
+    /* Schritt 0: in der Angabe a rot und b grün markieren */
+    const chip=(r,html,live)=>live?'<button type="button" class="bfc'+C(bc[r])+'" data-bc="'+r+'">'+html+'</button>':'<span class="bfc'+C(r==='A'?'a':'b')+'">'+html+'</span>';
+    const live0=sub===0,q=t.k===3?'('+chip('A',AH,live0)+' + '+chip('B',BH,live0)+') · ('+(live0?AH:chip('A',AH,false))+' − '+(live0?BH:chip('B',BH,false))+')':'('+chip('A',AH,live0)+' '+op+' '+chip('B',BH,live0)+')<sup>2</sup>';
+    h='<div class="tline"><span class="ln">'+q+'</span>'+(sub===0?btn:'')+'</div>';
+    if(sub===0){h+='<p class="srule">Tippe die Glieder in der Klammer an: 1× = <b class="ca">a</b> rot, 2× = <b class="cb">b</b> grün. '+(t.k===1?'(a + b)² = a² + 2ab + b²':t.k===2?'(a − b)² = a² − 2ab + b²':'(a + b)(a − b) = a² − b²')+'</p>';return h+msgHTML(e,0);}
+    /* Schritt 1–2: leere Formel – Kästchen färben, dann a und b einsetzen */
+    const SL=t.k===3?['a','b']:['a','a','b','b'];
+    const box=(i,sq)=>{const c=sub>=2?C(SL[i]):C(sc[i]);let inner;
+      if(sub===1)inner='<button type="button" class="sbox'+c+'" data-sc="'+i+'" aria-label="Kästchen färben">&nbsp;</button>';
+      else if(sub===2)inner='<span class="fbx'+c+'">'+sIn('f'+i,e,'4.2rem','')+'</span>';
+      else inner='<span class="'+c.trim()+'">'+(SL[i]==='a'?AH:BH)+'</span>';
+      return sq?'('+inner+')<sup>2</sup>':inner;};
+    const skel=t.k===3?box(0,1)+' − '+box(1,1):box(0,1)+' '+op+' 2 · '+box(1,0)+' · '+box(2,0)+' + '+box(3,1);
+    h+='<div class="tline'+(sub>2?' ok':'')+'"><span class="eqs">=</span><span class="ln">'+skel+'</span>'+(sub===1||sub===2?btn:' <span class="tick">✓</span>')+'</div>';
+    if(sub===1){h+='<p class="srule">Das ist die leere Formel. Tippe jedes Kästchen an: <b class="ca">rot</b> für a, <b class="cb">grün</b> für b.</p>';return h+msgHTML(e,0);}
+    if(sub===2){h+='<p class="srule">Setz ein: in die roten Kästchen a = '+AH+', in die grünen b = '+BH+' (ohne Vorzeichen).</p>';return h+msgHTML(e,0);}
+    /* Schritt 3: Ergebnis selbst anschreiben */
+    h+='<div class="tline"><span class="eqs">=</span>'+sIn('res',e,'14rem','z. B. 9x² − 30x + 25')+btn+'</div><p class="srule">Rechne aus und schreib das Ergebnis an – mit Rechenzeichen, Zahlen und Buchstaben. Hochzahl mit ▢², z. B. 9x² − 30x + 25.</p>';}
+  if(t.kind==='rueck'){const f=e.form||0;
+    if(sub===0)h+='<div class="tline">'+[1,2,3].map(k=>'<button type="button" class="fbtn'+(f===k?' set':'')+'" data-form="'+k+'">'+(k===1?'(a + b)²':k===2?'(a − b)²':'(a + b) · (a − b)')+'</button>').join(' ')+btn+'</div><p class="srule">Welche Formel steckt dahinter? Drei Glieder mit + in der Mitte → (a + b)², mit − in der Mitte → (a − b)², nur zwei Glieder mit − → (a + b)(a − b).</p>';
+    else{const a=monoIn(e,'a',varsOf(t)),b=monoIn(e,'b',varsOf(t));
+      h+='<div class="tline"><span class="eqs">=</span><span class="ln">(</span>'+a+'<span class="ln">&nbsp;'+(t.k===2?'−':'+')+'&nbsp;</span>'+b+'<span class="ln">)'+(t.k===3?' · (a − b)':'<sup>2</sup>')+'</span>'+btn+'</div><p class="srule">a² ist das erste Glied, b² das letzte. Probe mit dem mittleren Glied 2 · a · b.</p>';}}
+  return h+msgHTML(e,0);}
+function primesOf(n){const f=[];let m=Math.abs(n),p=2;while(m>1){while(m%p===0){f.push(p);m/=p;}p++;}return f;}
+/* Zerlegen beim Herausheben: jedes Glied als Produkt, in dem der gemeinsame Faktor vorkommt (keine Primfaktorzerlegung) */
+function zerlH(m,F){F=F||curEx().t.F;const r=dvd(m,F);return monoH(F)+' · '+(r.c<0?'('+monoH(r)+')':monoH(r));}
+function readZerl(raw,m){let x=String(raw||'').replace(/[−–—]/g,'-').replace(/\s+/g,'').replace(/[*×.]/g,'·');if(!x)return 'leer';
+  const parts=x.split('·');if(parts.length<2)return 'einer';const fs=[];
+  for(const p of parts){const q=p.replace(/^\((.*)\)$/,'$1'),r=parseTerm(q);if(r.err||r.ms.length!==1)return 'form';fs.push(r.ms[0]);}
+  const prod=fs.reduce((a,b)=>mul(a,b),M(1));if(!sameM(prod,m))return 'falsch';return {fs};}
+function simpleCheck(e){const t=e.t,sv=e.sv||{},sub=e.sub||0;e.svm={};
+  const bad=x=>{e.err++;e.tries[0]++;e.msg[0]={kind:'bad',text:x+(e.tries[0]===1?' Versuch es nochmal!':''),offer:e.tries[0]>=2};},soft=x=>{e.msg[0]={kind:'bad',text:x,offer:e.tries[0]>=2};},done=x=>{e.msg[0]={kind:'ok',text:x};e.step=DONE;};
+  const res=r=>{if(r===true)return true;if(typeof r==='object'){soft(r.soft);return false;}bad(r);return false;};
+  if(t.kind==='kombi'){const eqP=(a,b)=>a.length===b.length&&a.every((m,i)=>sameM(m,b[i]));
+    if(sub===0){for(let k=0;k<t.parts.length;k++){const p=t.parts[k];if(!p.hasProd)continue;const raw=String(sv['p'+k]||'').trim();if(!raw)return soft('Rechne jedes Produkt aus und schreib es ins Feld.');
+        const r=parseTerm(raw);if(r.err)return soft(r.err);const n=normalize(r.ms);if(!eqP(n,p.prod))return bad('Rechne das '+(k+1)+'. Produkt nochmal: jedes Glied mal jedes Glied (Pfeile!), dann gleichartige zusammenfassen.');
+        if(r.ms.length>n.length)return soft('Das '+(k+1)+'. Produkt stimmt – fasse es aber noch zusammen.');}
+      e.sub=1;e.msg[0]={kind:'ok',text:'Richtig ausgerechnet! Jetzt Klammern auflösen und zusammenfassen.'};return;}
+    const raw=String(sv.res||'').trim();if(!raw)return soft('Schreib das Ergebnis an.');const r=parseTerm(raw);if(r.err)return soft(r.err);const n=normalize(r.ms);
+    if(eqP(n,t.res)){if(r.ms.length>n.length)return soft('Richtig – fasse aber noch ganz zusammen.');return done('Richtig! Kombi-Aufgabe geschafft.');}
+    let alt=[];t.parts.forEach(p=>p.prod.forEach(m=>alt.push(M(m.c,m.v))));if(eqP(n,normalize(alt)))return bad('☹️ Minus vor der Klammer: <b>jedes</b> Vorzeichen in der Klammer dreht sich um!');
+    return bad('Löse die Klammern auf (😊/☹️) und fasse gleichartige Glieder zusammen.');}
+  if(t.kind==='zus'){if((e.zc||[]).some(Boolean)&&!res(zcCheck(e,t.terms)))return;if(res(coefCheck(e,t.terms,t.terms)))done('Richtig zusammengefasst!');return;}
+  if(t.kind==='klam'){
+    if(sub===0){if(!e.face)return soft('Tippe auf ❔ und wähle ein Gesicht.');if(e.face!==(t.s<0?'☹️':'😊'))return bad('Schau genau, welches Rechenzeichen vor der Klammer steht.');e.sub=1;e.msg[0]={kind:'ok',text:'Richtig! Jetzt lass die Klammer weg.'};return;}
+    if(sub===1){const ks=e.ks||[];if(t.inner.some((_,k)=>!ks[k]))return soft('Wähle bei jedem Glied aus der Klammer das Vorzeichen.');
+      const w=t.inner.findIndex((m,k)=>ks[k]!==((t.s*m.c)<0?'−':'+'));if(w>=0)return bad(t.s<0?'☹️ Minus vor der Klammer: Jedes Vorzeichen dreht sich um – auch das unsichtbare + vor dem ersten Glied.':'😊 Plus vor der Klammer: Die Vorzeichen bleiben gleich.');
+      e.sub=3;e.zc=[];e.msg[0]={kind:'ok',text:'Richtig! Jetzt fasse zusammen.'};return;}
+    if(sub===2){if(res(zcCheck(e,t.prods))){e.sub=3;e.msg[0]={kind:'ok',text:'✓ Richtig markiert! Jetzt fasse zusammen.'};}return;}
+    if((e.zc||[]).some(Boolean)&&!res(zcCheck(e,t.prods)))return;if(res(coefCheck(e,t.prods,t.prods)))done('Richtig!');return;}
+  if(t.kind==='mm'){const raw=String(sv.r||'').trim();if(!raw)return soft('Schreib das Ergebnis ins Kästchen – Zahl und Buchstaben.');if(/^[+−-]/.test(raw))return soft('Das Vorzeichen tippst du vor dem Kästchen an (±).');if(!e.ms)return soft('Wähle vor dem Kästchen das Vorzeichen: tippe auf ± für + oder −.');
+    const u0=oneMono(raw);if(u0.err)return soft(u0.err);const u={m:e.ms==='−'?M(-u0.m.c,u0.m.v):u0.m};e.svm.r='bad';
+    if(sameM(u.m,t.r)){e.svm.r='ok';return done('Richtig!');}
+    if(key(u.m.v)===key(t.r.v))return bad(u.m.c===-t.r.c?'Achte auf das Vorzeichen: gleiche Zeichen → +, verschiedene → −.':(t.op==='·'?'Rechne Zahl mal Zahl nochmal.':'Rechne Zahl durch Zahl nochmal.'));
+    return bad(t.op==='·'?'Gleiche Variablen: Hochzahlen addieren, z. B. x² · x³ = x⁵.':'Gleiche Variablen: Hochzahlen subtrahieren, z. B. x⁵ : x² = x³.');}
+  if(t.kind==='heraus'&&sub===0){const all=[];
+    for(let k=1;k<t.terms.length;k++){const got=String(sv['zo'+k]||'').trim().replace(/[−–—]/g,'-'),want=t.terms[k].c<0?'-':'+';
+      if(!got)return soft('Schreib zwischen den Produkten das Rechenzeichen hin – genau wie im ursprünglichen Term (+ oder −).');
+      if(got!==want)return bad('Das Rechenzeichen zwischen den Produkten stimmt nicht – schau im ursprünglichen Term nach.');}
+    for(let k=0;k<t.terms.length;k++){const m=t.terms[k];let r=readZerl(sv['z'+k],m);if(r==='falsch'&&k>0&&m.c<0)r=readZerl(sv['z'+k],M(-m.c,m.v));
+      if(r==='leer')return soft('Schreib jedes Glied als Produkt – oder tippe auf „Überspringen“.');
+      if(r==='einer')return soft('Schreib '+monoH(m)+' als Produkt mit · dazwischen, z. B. 5p·6p.');
+      if(r==='form')return soft('Schreib das Produkt mit · zwischen den Faktoren, z. B. 4·3m oder 2a·a – Zahlen und Buchstaben selbst hinschreiben.');
+      if(r==='falsch')return bad('Das Produkt ergibt nicht '+monoH(m)+'. Rechne nach: Faktor mal Faktor muss das Glied ergeben.');
+      all.push(r.fs);}
+    const same=(a,b)=>Math.abs(a.c)===Math.abs(b.c)&&key(a.v)===key(b.v),isOne=x=>Math.abs(x.c)===1&&key(x.v)==='';
+    const common=all[0].filter(f=>!isOne(f)&&all.every(L=>L.some(g=>same(f,g))));
+    if(!common.length)return bad('In allen Produkten muss <b>derselbe Faktor</b> vorkommen – den hebst du dann heraus. Z. B. 12x² = 6x · 2x und 18x = 6x · 3.');
+    if(!all.every(L=>subsetMake(L,t.F)))return bad('Es gibt einen <b>größeren</b> gemeinsamen Faktor – zerlege so, dass er in jedem Glied vorkommt.');
+    e.zf=all;e.zm={};e.mark=1;e.zdone=1;e.sub=1;e.msg[0]={kind:'ok',text:'Gut zerlegt! Jetzt markiere die gemeinsamen Faktoren.'};return;}
+  if(t.kind==='heraus'&&e.mark===1){const zm=e.zm||{},P=[];
+    for(let k=0;k<t.terms.length;k++){const ix=zm[k]||[];if(!ix.length)return soft('Markiere in <b>jedem</b> Glied die gemeinsamen Faktoren.');let p=M(1);ix.forEach(i=>p=mul(p,e.zf[k][i]));P.push(M(Math.abs(p.c),p.v));}
+    if(P.some(p=>p.c!==P[0].c||key(p.v)!==key(P[0].v)))return bad('In jedem Glied müssen <b>dieselben</b> Faktoren markiert sein.');
+    if(P[0].c!==t.F.c||key(P[0].v)!==key(t.F.v))return bad('Es gibt noch mehr gemeinsame Faktoren – markiere <b>alle</b>, die in jedem Glied vorkommen.');
+    e.mark=2;e.msg[0]={kind:'ok',text:'Richtig markiert! Das Produkt der markierten Faktoren kommt vor die Klammer.'};return;}
+  if(t.kind==='heraus'){const f=oneMono(sv.f);if(!String(sv.f||'').trim())return soft('Schreib den Faktor vor die Klammer – Zahl und Buchstaben, z. B. 3x.');if(f.err)return soft('Faktor: '+f.err);
+    const hs=e.hs||{},bl=[];for(let k=0;k<t.terms.length;k++){const raw=String(sv['b'+k]||'').trim();if(!raw)return soft('Schreib in jedes Kästchen der Klammer ein Glied – Zahl und Buchstaben.');if(/^[+−-]/.test(raw))return soft('Das Rechenzeichen steht schon da – ins Kästchen kommt nur das Glied ohne Vorzeichen.');const u=oneMono(raw);if(u.err)return soft('Klammer: '+u.err);bl.push(t.terms[k].c<0?M(-u.m.c,u.m.v):u.m);}
+    const b={ms:bl};
+    const prod=normalize(b.ms.map(m=>mul(f.m,m))),want=normalize(t.terms),same=prod.length===want.length&&prod.every((m,i)=>sameM(m,want[i]));
+    if(!same)return bad('Mach die Probe: '+monoH(f.m)+' mal jedes Glied in der Klammer muss wieder '+polyH(t.terms)+' ergeben.');
+    if(Math.abs(f.m.c)!==t.F.c||key(f.m.v)!==key(t.F.v))return bad('Die Probe stimmt – aber in der Klammer steckt noch ein gemeinsamer Faktor. Hebe den <b>größten</b> Faktor heraus.');
+    return done('Richtig herausgehoben!');}
+  if(t.kind==='binf'){const SL=t.k===3?['a','b']:['a','a','b','b'];
+    if(sub===0){const bc=e.bc||{};if(!bc.A||!bc.B)return soft('Markiere beide Glieder in der Klammer: a rot, b grün.');if(bc.A!=='a'||bc.B!=='b')return bad('a ist das erste Glied in der Klammer (rot), b das zweite (grün).');e.sub=1;e.sc={};e.msg[0]={kind:'ok',text:'Richtig markiert! Jetzt färbe die Kästchen der leeren Formel.'};return;}
+    if(sub===1){const sc=e.sc||{};if(SL.some((_,i)=>!sc[i]))return soft('Färbe jedes Kästchen: rot für a, grün für b.');const w=SL.findIndex((r,i)=>sc[i]!==r);if(w>=0)return bad(t.k===3?'Zuerst kommt a², dann b².':'Die Formel heißt a² '+(t.k===2?'−':'+')+' 2 · a · b + b² – vorne a, hinten b, in der Mitte zuerst a, dann b.');e.sub=2;e.msg[0]={kind:'ok',text:'Richtig! Jetzt setz a und b ein.'};return;}
+    if(sub===2){for(let i=0;i<SL.length;i++){const raw=String(sv['f'+i]||'').trim();if(!raw)return soft('Schreib in jedes Kästchen dein a bzw. b.');const u=oneMono(raw);if(u.err)return soft(u.err);if(!sameM(u.m,SL[i]==='a'?t.A:t.B))return bad('In die roten Kästchen kommt a = '+monoH(t.A)+', in die grünen b = '+monoH(t.B)+' – ohne Vorzeichen.');}
+      e.sub=3;e.msg[0]={kind:'ok',text:'Richtig eingesetzt! Jetzt rechne aus.'};return;}
+    const raw=String(sv.res||'').trim();if(!raw)return soft('Schreib das Ergebnis an.');const r=parseTerm(raw);if(r.err)return soft(r.err);
+    const n=normalize(r.ms),w=normalize(t.res);if(n.length===w.length&&n.every((m,i)=>sameM(m,w[i]))){if(r.ms.length>n.length)return soft('Fasse noch ganz zusammen.');return done('Richtig ausgerechnet!');}
+    const mid=t.res.find(m=>key(m.v)===key(mul(t.A,t.B).v));
+    if(t.k!==3&&mid&&!n.some(m=>key(m.v)===key(mid.v)))return bad('Das mittlere Glied 2 · a · b fehlt!');
+    const sqA=mul(t.A,t.A);if(!n.some(m=>sameM(m,sqA)))return bad('Rechne a² nochmal: ('+monoH(t.A)+')² = '+monoH(sqA)+' – die Zahl wird auch quadriert.');
+    return bad('Rechne jedes Glied der Formel genau aus: '+(t.k===3?'a² − b²':'a² '+(t.k===2?'−':'+')+' 2 · a · b + b²')+'.');}
+  if(t.kind==='rueck'){if(sub===0){if(!e.form)return soft('Wähle zuerst eine Formel.');if(e.form!==t.k)return bad('Schau auf das mittlere Glied: + → (a + b)², − → (a − b)². Nur zwei Glieder mit Minus → (a + b)(a − b).');e.sub=1;e.msg[0]={kind:'ok',text:'Richtig! Jetzt finde a und b.'};return;}
+    const a=rdMono(e,'a',varsOf(t)),b=rdMono(e,'b',varsOf(t));if(a.err||b.err)return soft('Schreib a und b jeweils als ein Glied, z. B. 3x und 5.');
+    const ok=(sameM(a.m,t.A)&&sameM(b.m,t.B))||(t.k!==3&&sameM(a.m,t.B)&&sameM(b.m,t.A));
+    if(!ok)return bad('a ist die Wurzel aus dem ersten Glied, b die Wurzel aus dem letzten. Probe: 2 · a · b muss das mittlere Glied ergeben.');return done('Richtig – das ist der Start!');}}
+function simpleSolve(e){const t=e.t;e.sv={};e.rc={};
+  e.rs={};e.rt={};const fill=ms=>{normalize(ms).forEach((m,i)=>{e.rt[i]=plainT(m);e.rs[i]=m.c<0?'−':'+';});};
+  const zcs=ms=>{const ks=[...new Set(ms.map(m=>key(m.v)))];return ms.map(m=>1+ks.indexOf(key(m.v))%5);};
+  if(t.kind==='zus'){e.zc=zcs(t.terms);e.sub=1;fill(t.terms);}if(t.kind==='klam'){e.face=t.s<0?'☹️':'😊';e.ks=t.inner.map(m=>(t.s*m.c)<0?'−':'+');e.zc=zcs(t.prods);e.sub=3;fill(t.prods);}
+  if(t.kind==='kombi'){t.parts.forEach((p,k)=>{if(p.hasProd)e.sv['p'+k]=polyPlain(p.prod);});e.sv.res=polyPlain(t.res);e.sub=1;}
+  if(t.kind==='mm'){e.sv.r=plainT(t.r);e.ms=t.r.c<0?'−':'+';}if(t.kind==='heraus'){e.sub=1;e.zdone=1;e.zf=t.terms.map((m,k)=>{const r=dvd(m,t.F);return [t.F,k&&m.c<0?M(-r.c,r.v):r];});e.zm={};t.terms.forEach((_,k)=>e.zm[k]=[0]);e.mark=2;e.sv.f=plainT(t.F);t.inner.forEach((m,k)=>{e.sv['b'+k]=plainT(m);});}
+  if(t.kind==='binf'){e.bc={A:'a',B:'b'};const SL=t.k===3?['a','b']:['a','a','b','b'];e.sc={};SL.forEach((r,i)=>{e.sc[i]=r;e.sv['f'+i]=plainT(r==='a'?t.A:t.B);});e.sv.res=polyPlain(t.res);e.sub=3;}
+  if(t.kind==='rueck'){e.form=t.k;e.sub=1;setMono(e,'a',t.A);setMono(e,'b',t.B);}
+  e.shown=true;e.msg[0]={kind:'shown',text:'Die Lösung ist jetzt eingetragen – schau sie dir genau an.'};e.step=DONE;}
+function simpleAnsH(t){if(t.kind==='mm')return monoH(t.r);if(t.kind==='heraus')return monoH(t.F)+' · ('+polyH(t.inner)+')';
+  if(t.kind==='rueck')return t.k===3?'('+monoH(t.A)+' + '+monoH(t.B)+') · ('+monoH(t.A)+' − '+monoH(t.B)+')':'('+monoH(t.A)+(t.k===2?' − ':' + ')+monoH(t.B)+')<sup>2</sup>';return polyH(t.res);}
 
 /* ================= Zustand ================= */
 const LEVELS={std:'Standard',ahs:'Standard AHS'};
 const G={std:{seed:Math.floor(Math.random()*65536),round:1,cur:0,ex:[]},ahs:{seed:Math.floor(Math.random()*65536),round:1,cur:0,ex:[]}};
 let level=location.hash==='#ahs'?'ahs':'std',PUPIL='',restoring=false,summaryRequested=false;
-function makeRound(lvl){const g=G[lvl];g.ex=genRound(lvl,g.seed,g.round).map(newEx);g.cur=0;}
-const curG=()=>G[level];
-const curEx=()=>curG().ex[curG().cur];
+function makeRound(lvl){const g=G[lvl];g.ex=genRound(lvl,g.seed,g.round).map(newEx);g.cur=0;if(lvl===level)N_EX=g.ex.length;tLoad(lvl);}
+const curG=()=>G[level],curEx=()=>curG().ex[curG().cur];
 
 /* ================= Prüfen ================= */
 function fail(e,s,text){e.err++;e.tries[s]++;e.msg[s]={kind:'bad',text:text+(e.tries[s]===1?' Versuch es nochmal!':''),offer:e.tries[s]>=2};}
 function hint(e,s,text){e.msg[s]={kind:'bad',text,offer:e.tries[s]>=2};}
-function advance(e,s,text){e.step=s+1;e.msg[s]={kind:'ok',text};}
-function rowCheck(e,s,rs,marks,hints,okText,failText){
-  rs.forEach((r,k)=>{marks[k]=r.ok?'ok':r.empty?null:'bad';hints[k]=r.ok?'':r.text;});
-  if(rs.every(r=>r.ok)){advance(e,s,okText);return true;}
-  if(rs.some(r=>r.empty)){hint(e,s,'Fülle zuerst alle Felder aus.');return false;}
-  if(rs.every(r=>r.ok||r.fmt)){hint(e,s,'Kontrolliere die Schreibweise in den markierten Zeilen.');return false;}
-  fail(e,s,failText);return false;
-}
-
-/* Schritt 1: zerlegen */
-function judgeDec(t,s){
-  const r=readFactors(s);
-  if(r.empty)return {empty:true,text:''};
-  if(r.err)return {fmt:true,text:r.err};
-  if(r.toks.includes('0'))return {text:'Mit dem Faktor 0 wird alles 0.'};
-  const p=decToMono(r);
-  if(!sameMono(p,t)){
-    if(sameMono(negMono(p),t))return {text:t.c.n<0n?'Vergiss das Vorzeichen nicht: Das Glied ist negativ, schreib − davor.':'Das Glied ist positiv – lass das Minus weg.'};
-    return {text:'Dein Produkt ergibt '+termH(p,true)+', nicht '+termH(t,true)+'.'};
-  }
-  if(r.toks.includes('1'))return {text:'Den Faktor 1 brauchst du nicht – lass ihn weg.'};
-  return {ok:true,dec:r};
-}
+function advance(e,s,text){e.step=nextStep(e,s);e.msg[s]={kind:'ok',text};}
+/* Schritt 1: Pfeile */
 function check0(e){
-  const rs=e.data.terms.map((t,k)=>judgeDec(t,e.decVals[k]));
-  const ok=rowCheck(e,0,rs,e.decMarks,e.decHints,'Richtig! In jedem Glied steckt jetzt derselbe Faktor.','Nicht alle Zerlegungen stimmen – schau dir die rot markierten an.');
-  if(!ok)return false;
-  const decs=rs.map(r=>r.dec),com=commonToks(decs),gc=Number(e.data.g.c.n),have=numProd(com);
-  if(have!==gc){
-    e.step=0;e.decMarks=e.decMarks.map(()=>null);
-    const nums=e.data.terms.map(t=>String(t.c.n<0n?-t.c.n:t.c.n)).join(', ');
-    fail(e,0,have===1?'Die Produkte stimmen, aber es kommt noch keine Zahl in jedem Glied vor. Welche Zahl steckt in '+nums+'? Zerlege so, dass sie in jedem Glied als Faktor dasteht.'
-      :'Die Produkte stimmen, aber es gibt einen größeren gemeinsamen Faktor als '+have+'. Zerlege so, dass er in jedem Glied als Faktor dasteht.');
-    return false;
-  }
-  e.decs=decs;e.common=com;e.marks=decs.map(d=>d.toks.map(()=>false));
-  return true;
+  const t=e.t,has=(gi,ti)=>e.arr.some(a=>a[0]===gi&&a[1]===ti);
+  if(!e.arr.length){hint(e,0,'Tippe zuerst auf den Faktor außerhalb der Klammer und dann auf jedes Glied in der Klammer.');return;}
+  const missing=t.arrows.filter(([gi,ti])=>!has(gi,ti));
+  if(!missing.length){advance(e,0,'Richtig! Alle Pfeile sind da – jetzt wird gerechnet.');return;}
+  const g=t.groups[missing[0][0]];
+  fail(e,0,(missing.length===1?'Es fehlt noch ein Pfeil':'Es fehlen noch '+missing.length+' Pfeile')+': Vom Faktor '+monoH(g.f)+' muss zu <b>jedem</b> Glied in der Klammer ein Pfeil gehen'+(t.groups.length>1?' – bei beiden Klammern':'')+'.');
 }
-
-/* Schritt 2: gleiche Faktoren markieren */
+/* Schritt 2: jeden Pfeil ausrechnen */
+function judgeProd(t,k,s){
+  if(!s.trim())return {empty:true};
+  const raw=String(s).replace(/[*×•]/g,'·');
+  if(raw.includes('·')){
+    const parts=raw.split('·').map(x=>x.trim().replace(/^\((.*)\)$/,'$1'));
+    if(parts.length!==2||parts.some(x=>!x))return {fmt:true,text:'Schreib die Multiplikation mit zwei Faktoren, z. B. x · (−3) – oder gleich das Ergebnis.'};
+    const A=parseTerm(parts[0]),Bp=parseTerm(parts[1]);
+    if(A.err||Bp.err||A.ms.length!==1||Bp.ms.length!==1)return {fmt:true,text:'Jeder Faktor ist genau ein Glied, z. B. 2x · (−5).'};
+    const [gi,ti]=t.arrows[k],f=t.groups[gi].f,term=t.groups[gi].t[ti],a=A.ms[0],b=Bp.ms[0];
+    if((sameM(a,f)&&sameM(b,term))||(sameM(a,term)&&sameM(b,f)))return {ok:true};
+    const hit=x=>sameM(x,f)||sameM(x,term),absEq=(x,y)=>Math.abs(x.c)===Math.abs(y.c)&&key(x.v)===key(y.v);
+    if((absEq(a,f)&&absEq(b,term))||(absEq(a,term)&&absEq(b,f)))return {text:'Die Vorzeichen gehören zu den Gliedern: Schreib das Glied mit seinem Vorzeichen, z. B. (−3).'};
+    if(hit(a)||hit(b))return {text:'Ein Faktor stimmt – schau, wohin Pfeil '+(k+1)+' zeigt.'};
+    return {text:'Pfeil '+(k+1)+' geht von '+monoH(f)+' weg. Wohin zeigt er?'};
+  }
+  const r=parseTerm(s);if(r.err)return {fmt:true,text:r.err};
+  if(r.ms.length!==1)return {fmt:true,text:'Hier kommt genau ein Glied heraus.'};
+  const u=r.ms[0],x=t.prods[k],[gi,ti]=t.arrows[k],g=t.groups[gi],div=g.op===':';
+  if(sameM(u,x))return {ok:true};
+  if(key(u.v)===key(x.v)){
+    if(u.c===-x.c)return {text:'Achte auf das Vorzeichen: minus mal minus = plus, plus mal minus = minus.'+(div?' (Bei : gilt dasselbe.)':'')};
+    return {text:div?'Rechne Zahl durch Zahl: '+Math.abs(g.t[ti].c)+' : '+Math.abs(g.f.c)+'.':'Rechne Zahl mal Zahl: '+Math.abs(g.f.c)+' · '+Math.abs(g.t[ti].c)+'.'};
+  }
+  const xv=x.v,uv=u.v,names=new Set([...Object.keys(xv),...Object.keys(uv)]);
+  if([...names].some(n=>!uv[n]&&xv[n]))return {text:'Vergiss die Variablen nicht: '+(div?'Variable durch Variable.':'Variable mal Variable – alle Variablen kommen ins Ergebnis.')};
+  if(!div&&[...names].some(n=>uv[n]&&xv[n]&&uv[n]!==xv[n]))return {text:'Gleiche Variablen: Die Hochzahlen werden addiert, z. B. x² · x = x³.'};
+  if(div&&[...names].some(n=>(uv[n]||0)!==(xv[n]||0)))return {text:'Beim Dividieren werden die Hochzahlen subtrahiert, z. B. x³ : x = x². Kürzt sich eine Variable ganz weg, fällt sie weg.'};
+  return {text:'Rechne nochmal: Zahl mit Zahl, Variable mit Variable.'};
+}
+function judgeSigned(t,k,s,sgn){
+  const x=t.prods[k],[gi,ti]=t.arrows[k],f=t.groups[gi].f,term=t.groups[gi].t[ti];
+  if(!s.trim()&&!sgn)return {empty:true};
+  if(!sgn)return {fmt:true,text:'Wähle zuerst das Vorzeichen: Tippe auf ± vor dem Kästchen.'};
+  if(!s.trim())return {empty:true};
+  const absEq=(p,q)=>Math.abs(p.c)===Math.abs(q.c)&&key(p.v)===key(q.v);
+  const one=m=>Math.abs(m.c)===1&&key(m.v)==='';
+  const signTxt=()=>'Bestimme das Vorzeichen: Pfeil '+(k+1)+' verbindet '+(f.c<0?'<b>minus</b>':'<b>plus</b>')+' '+absH(f)+' mit '+(term.c<0?'<b>minus</b>':'<b>plus</b>')+' '+absH(term)+'. Gleiche Zeichen → +, verschiedene Zeichen → −.';
+  let mag=false;const raw=String(s).replace(/[*×•]/g,'·').replace(/[–—]/g,'−');
+  if(raw.includes('·')){const parts=raw.split('·').map(z=>z.trim());
+    if(parts.length!==2||parts.some(z=>!z))return {fmt:true,text:'Schreib die Multiplikation mit zwei Faktoren, z. B. x · (−2) – oder gleich das Ergebnis.'};
+    if(parts.some(z=>/^[-−]/.test(z)))return {fmt:true,text:'Negative Zahlen kommen in der Multiplikation in <b>Klammern</b>: z. B. x · (−2).'};
+    const P=parts.map(z=>parseTerm(z.replace(/^\((.*)\)$/,'$1')));
+    if(P.some(p=>p.err||p.ms.length!==1))return {fmt:true,text:'Jeder Faktor ist genau ein Glied, z. B. 2x · (−5).'};
+    const a=P[0].ms[0],b=P[1].ms[0];
+    const exact=(sameM(a,f)&&sameM(b,term))||(sameM(a,term)&&sameM(b,f));
+    if(exact)return (sgn==='+')===(x.c>0)?{ok:true}:{text:signTxt()};
+    if((absEq(a,f)&&absEq(b,term))||(absEq(a,term)&&absEq(b,f))){const neg=f.c<0?f:term;
+      return {text:'Schreib die Faktoren mit ihrem Vorzeichen: Das negative Glied kommt mit Minus in <b>Klammern</b>, z. B. ('+MINUS+absH(neg)+').'};}
+  }
+  if(!raw.includes('·')){const r=parseTerm(s);if(!r.err&&r.ms.length===1)mag=absEq(r.ms[0],x);}
+  if(mag)return (sgn==='+')===(x.c>0)?{ok:true}:{text:signTxt()};
+  if(one(term)||one(f)){const o=one(term)?f:term;return {text:'Mal 1 bleibt alles gleich: '+absH(o)+' · 1 = '+absH(o)+'. Das Vorzeichen wählst du extra.'};}
+  const old=judgeProd(t,k,s);return old.ok?{text:signTxt()}:old;
+}
+/* Schritt 2: die Rechnung nach den Pfeilen anschreiben, z. B. y·y + y·(−4) + 2·y + 2·(−4) */
+function splitTop(str){const out=[];let d=0,cur='';for(const ch of str){if(ch==='('||ch==='[')d++;if(ch===')'||ch===']')d--;if(ch==='+'&&d===0){out.push(cur);cur='';}else cur+=ch;}out.push(cur);return out.map(x=>x.trim());}
 function check1(e){
-  const gc=cnt(e.common);
-  const marked=e.decs.map((d,t)=>d.toks.filter((x,k)=>e.marks[t][k]));
-  if(marked.every(m=>!m.length)){hint(e,1,'Tippe die Faktoren an, die in jedem Glied vorkommen.');return false;}
-  for(let t=0;t<marked.length;t++){
-    const mc=cnt(marked[t]);
-    for(const tok in mc){
-      if(mc[tok]>(gc[tok]||0)){
-        const inAll=e.decs.every(d=>d.toks.includes(tok));
-        fail(e,1,inAll?'In Glied '+(t+1)+' hast du '+tokH(tok)+' zu oft markiert – markiere es nur so oft, wie es in jedem Glied vorkommt.'
-          :'Der Faktor '+tokH(tok)+' kommt nicht in jedem Glied vor.');
-        return false;
-      }
-    }
+  if(e.mpal&&(e.mb||[]).length<e.mpal.length){hint(e,1,(e.mb||[]).length?'Es fehlen noch Bausteine – jeder Baustein kommt genau einmal in die Zeile.':'Tippe die Bausteine in der richtigen Reihenfolge an.');return;}
+  const t=e.t,raw=String(e.ml||'').replace(/[*×•.]/g,'·').replace(/[–—]/g,'−').replace(/-/g,'−');
+  if(!raw.trim()){hint(e,1,'Schreib die Rechnung an: für jeden Pfeil eine Multiplikation, mit + dazwischen, z. B. y · y + y · (−4) + … – oder gleich das Ergebnis.');return;}
+  /* gleich das Ergebnis? – nur, solange nicht schon einmal ein falsches Ergebnis da war */
+  if(!/[·:]/.test(raw)){
+    if(e.forceMul){e.mlm='bad';return hint(e,1,'Schreib jetzt zuerst die <b>Multiplikationen</b> an, z. B. y · y + y · (−4) + 2 · y + 2 · (−4).');}
+    const r=parseTerm(raw.replace(/−/g,'-'));
+    if(!r.err){const want=t.prods.slice(),got=r.ms.slice();
+      const same=got.length===want.length&&want.every(w=>{const i=got.findIndex(g=>sameM(g,w));if(i<0)return false;got.splice(i,1);return true;});
+      if(same){e.direct=1;e.mlm='ok';e.ps=t.prods.map(p=>p.c<0?'−':'+');e.pv=t.prods.map(p=>plainT(p));e.lv=polyPlain(t.prods);e.lm='ok';
+        e.msg[1]={kind:'ok',text:''};e.mmsg={kind:'ok',text:'Super – gleich richtig ausmultipliziert! Jetzt unterstreiche jedes Glied in einer Farbe.'};e.step=3;return;}
+      const n=normalize(r.ms);if(t.combine&&n.length===t.res.length&&n.every((m,i)=>sameM(m,t.res[i]))){e.mlm='bad';return hint(e,1,'Du hast schon zusammengefasst – schreib zuerst <b>alle vier</b> Glieder an. Zusammenfassen kommt später.');}}
+    e.forceMul=1;e.mlm='bad';
+    return fail(e,1,'Das Ergebnis stimmt noch nicht. Schreib jetzt zuerst die <b>Multiplikationen</b> an, z. B. y · y + y · (−4) + 2 · y + 2 · (−4) – dann rechnest du sie aus.');
   }
-  for(let t=0;t<marked.length;t++){
-    const mc=cnt(marked[t]);
-    if(Object.keys(gc).some(tok=>(mc[tok]||0)<gc[tok])){
-      const others=marked.some((m,u)=>u!==t&&m.length);
-      fail(e,1,others&&marked[t].length===0?'Markiere die gleichen Faktoren in jedem Glied – auch in Glied '+(t+1)+'.'
-        :'Es gibt noch gleiche Faktoren – schau dir Glied '+(t+1)+' nochmal an.');
-      return false;
-    }
+  if(/[^(]−/.test(' '+raw.replace(/\(\s*−/g,'(N')))return e.mlm='bad',hint(e,1,'Zwischen den Multiplikationen steht immer <b>+</b>. Negative Zahlen kommen in <b>Klammern</b>: y · (−4).');
+  const parts=splitTop(raw.replace(/^\+/,''));
+  if(parts.some(p=>!p))return e.mlm='bad',hint(e,1,'Zwischen zwei Multiplikationen steht genau ein +.');
+  if(parts.length!==t.arrows.length){e.mlm='bad';return fail(e,1,'Jeder Pfeil gibt eine Multiplikation – das sind hier '+t.arrows.length+' Stück, mit + dazwischen.');}
+  const want=t.arrows.map(([gi,ti])=>[t.groups[gi].f,t.groups[gi].t[ti],t.groups[gi].op===':'?':':'·']),used=want.map(()=>false);
+  for(let k=0;k<parts.length;k++){
+    const op=parts[k].includes(':')?':':'·',fs=parts[k].split(/[·:]/).map(z=>z.trim());
+    if(fs.length!==2||fs.some(z=>!z)){e.mlm='bad';return hint(e,1,'Jede Multiplikation hat zwei Faktoren mit Malpunkt dazwischen, z. B. y · (−4).');}
+    const P=fs.map(z=>parseTerm(z.replace(/^\((.*)\)$/,'$1').replace(/N/g,'-')));
+    if(P.some(p=>p.err||p.ms.length!==1)){e.mlm='bad';return hint(e,1,'Jeder Faktor ist genau ein Glied, z. B. 2y · (−4).');}
+    const [a,b]=[P[0].ms[0],P[1].ms[0]];
+    const j=want.findIndex((w,i)=>!used[i]&&(w[2]===':'?(op===':'&&sameM(a,w[1])&&sameM(b,w[0])):(op==='·'&&((sameM(a,w[0])&&sameM(b,w[1]))||(sameM(a,w[1])&&sameM(b,w[0]))))));
+    if(j<0){e.mlm='bad';
+      const absEq=(p,q)=>Math.abs(p.c)===Math.abs(q.c)&&key(p.v)===key(q.v);
+      if(want.some(w=>(absEq(a,w[0])&&absEq(b,w[1]))||(absEq(a,w[1])&&absEq(b,w[0]))))return fail(e,1,'Bei der '+(k+1)+'. Multiplikation fehlt ein Minus: Negative Glieder schreibst du mit Minus in Klammern, z. B. (−4).');
+      return fail(e,1,'Die '+(k+1)+'. Multiplikation passt zu keinem Pfeil. Schau, von wo nach wo die Pfeile gehen.');}
+    used[j]=true;
   }
-  advance(e,1,'Richtig! Das sind alle gleichen Faktoren.');return true;
+  e.mlm='ok';advance(e,1,'Richtig angeschrieben! Jetzt rechne jede Multiplikation aus.');
 }
-
-/* Schritt 3: selbst anschreiben – was kommt vor die Klammer, was in die Klammer? */
+/* Schritt 3: jede Multiplikation ausrechnen – Vorzeichen extra wählen */
 function check2(e){
-  const d=e.data;
-  if(!e.preVal.trim()||!e.innerVal.trim()){hint(e,2,'Fülle beide Felder aus: vor der Klammer und in der Klammer.');return false;}
-  const P=parseTerm(e.preVal);if(P.err){e.preMark='bad';hint(e,2,'Vor der Klammer: '+P.err);return false;}
-  if(P.ms.length!==1){e.preMark='bad';hint(e,2,'Vor die Klammer kommt nur ein Glied – der gemeinsame Faktor.');return false;}
-  const I=parseTerm(e.innerVal);if(I.err){e.innerMark='bad';hint(e,2,'In der Klammer: '+I.err);return false;}
-  const pre=P.ms[0],inner=I.ms;
-  const preOk=sameMono(pre,d.g),preNeg=sameMono(pre,negMono(d.g));
-  const innerOk=termSig(inner)===termSig(d.qs),innerNeg=termSig(inner)===termSig(d.qs.map(negMono));
-  if(preOk&&innerOk){e.preMark=e.innerMark='ok';advance(e,2,'Richtig herausgehoben!');return true;}
-  if(preNeg&&innerNeg){e.preMark=e.innerMark='ok';advance(e,2,'Richtig – du hast sogar das Minus mit herausgehoben!');return true;}
-  e.preMark=(preOk||preNeg)?'ok':'bad';e.innerMark=(preOk&&innerOk)||(preNeg&&innerNeg)?'ok':'bad';
-  /* vor der Klammer stimmt nicht */
-  if(!preOk&&!preNeg){
-    const prod=normalize(inner.map(m=>mulMono(pre,m)));
-    if(termSig(prod)===termSig(d.terms)){e.innerMark='ok';hint(e,2,'Richtig umgeformt – aber du kannst noch mehr herausheben. Vor die Klammer kommt das Produkt <b>aller</b> markierten Faktoren.');return false;}
-    return fail(e,2,'Vor die Klammer kommt der gemeinsame Faktor: Multipliziere alle Faktoren, die du in einem Glied markiert hast.'),false;
-  }
-  /* vor der Klammer stimmt, in der Klammer nicht */
-  if(termSig(normalize(inner))===termSig(d.terms))return fail(e,2,'In die Klammer kommt nur, was von jedem Glied <b>übrig bleibt</b> – nicht das ganze Glied.'),false;
-  if(inner.length!==d.qs.length)return fail(e,2,'In der Klammer steht für jedes Glied ein Rest – hier sind es '+d.qs.length+' Glieder.'+(d.qs.some(q=>mkey(q)===''&&isOne(q.c.n<0n?rneg(q.c):q.c))?' Bleibt bei einem Glied nichts übrig, schreib <b>1</b>.':'')),false;
-  const want=preOk?d.qs:d.qs.map(negMono);
-  if(termSig(inner.map(negMono))===termSig(want)||inner.some(m=>!want.some(w=>sameMono(w,m))&&want.some(w=>sameMono(w,negMono(m)))))
-    return fail(e,2,'Kontrolliere die Vorzeichen in der Klammer: Das Vorzeichen bleibt beim Glied.'),false;
-  return fail(e,2,'In der Klammer: Multipliziere bei jedem Glied die Faktoren, die <b>nicht</b> markiert sind.'),false;
+  if(e.forceZv||Object.values(e.ucols||{}).some(Boolean)){const zm=zvCheck(e);  /* wer unterstreicht, wird auch kontrolliert */if(zm){if(!/jede/.test(zm))e.tries[2]++;hint(e,2,zm);return;}}
+  const t=e.t,rs=t.prods.map((p,k)=>/[·*×]/.test(e.pv[k]||'')?{fmt:true,text:'Hier schreibst du das <b>Ergebnis</b> der Multiplikation, z. B. 4y.'}:judgeSigned(t,k,e.pv[k],e.ps[k]));
+  rs.forEach((r,k)=>{e.pm[k]=r.ok?'ok':r.empty?null:'bad';e.ph[k]=r.ok?'':(r.text||'');});
+  if(rs.every(r=>r.ok)){e.lv=polyPlain(t.prods);e.lm='ok';e.mmsg=null;
+    if(!t.combine){e.msg[2]={kind:'ok',text:'Richtig ausgerechnet! Hier gibt es nichts zusammenzufassen – fertig.'};e.step=DONE;return;}
+    e.cols=t.prods.map(()=>0);e.mok=1;e.mmsg=null;advance(e,2,'Richtig ausgerechnet! Jetzt fasse zusammen.');return;}
+  if(rs.some(r=>r.empty)){hint(e,2,'Wähle bei jedem Glied das Vorzeichen und rechne alle Multiplikationen aus.');return;}
+  if(rs.every(r=>r.ok||r.fmt)){hint(e,2,'Kontrolliere die Schreibweise in den markierten Kästchen.');return;}
+  fail(e,2,'Nicht alles ist richtig ausgerechnet – schau dir die rot markierten an.');
 }
-
-function canonMarks(e){
-  return e.decs.map(d=>{const need=cnt(e.common);return d.toks.map(t=>{if(need[t]>0){need[t]--;return true;}return false;});});
+/* Schritt 4: zusammenfassen */
+function markProblem(e){const t=e.t,ks=t.prods.map(m=>key(m.v)),cols=e.cols||[];if(!cols.some(Boolean))return null;
+  if(t.prods.some((_,i)=>!cols[i]))return 'Du hast mit dem Unterstreichen angefangen – unterstreiche <b>jedes</b> Glied.';
+  for(const c of new Set(cols)){if(new Set(ks.filter((_,i)=>cols[i]===c)).size>1)return 'In einer Farbe sind Glieder, die nicht gleichartig sind (gleiche Variablen, gleiche Hochzahlen).';}
+  for(const k of new Set(ks)){if(new Set(cols.filter((_,i)=>ks[i]===k)).size>1)return 'Gleichartige Glieder sollen dieselbe Farbe haben – schau dir '+keyH(k)+' an.';}
+  return null;}
+function check3(e){
+  {const mp=markProblem(e);if(mp){e.tries[3]++;hint(e,3,mp);return;}}
+  {const p=termPre(e,e.t.res);if(p!==true){hint(e,3,p.soft);return;}e.rv=composeRv(e,e.t.res);}
+  const t=e.t,raw=e.rv;
+  if(!e.mok){hint(e,3,'Unterstreiche zuerst gleichartige Glieder mit derselben Farbe und tippe auf „Markierung prüfen“.');return;}
+  if(!raw.trim()){hint(e,3,'Schreib das Ergebnis in das Feld.');return;}
+  const r=parseTerm(raw);if(r.err){hint(e,3,r.err);return;}
+  const n=normalize(r.ms),exp=t.res,same=n.length===exp.length&&n.every((m,i)=>sameM(m,exp[i]));
+  if(same){if(r.ms.length>n.length){hint(e,3,'Richtig gerechnet – fasse gleichartige Glieder noch ganz zusammen.');return;}
+    e.rm='ok';advance(e,3,'Richtig zusammengefasst!');return;}
+  e.rm='bad';
+  const ek=new Map(exp.map(m=>[key(m.v),m.c])),nk=new Map(n.map(m=>[key(m.v),m.c]));
+  const wrong=[...new Set([...ek.keys(),...nk.keys()])].filter(k=>ek.get(k)!==nk.get(k));
+  if(wrong.some(k=>!ek.has(k)))return fail(e,3,'Nur gleichartige Glieder darf man zusammenfassen – gleiche Variablen mit gleichen Hochzahlen.');
+  if(wrong.every(k=>nk.get(k)===-ek.get(k)))return fail(e,3,'Kontrolliere die Vorzeichen bei '+wrong.map(keyH).join(' und ')+'.');
+  fail(e,3,'Schau nochmal bei '+wrong.map(keyH).join(' und ')+'.');
+}
+function markCheck(e){
+  const t=e.t,ks=t.prods.map(m=>key(m.v)),cols=e.cols||ks.map(()=>0);
+  if(!cols.some(Boolean)){e.mmsg={kind:'bad',text:'Tippe jedes Glied an, bis es unterstrichen ist – gleichartige in derselben Farbe.'};return;}
+  if(cols.some(c=>!c)){e.mmsg={kind:'bad',text:'Unterstreiche <b>jedes</b> Glied – auch die, die allein sind. Sie bekommen eine eigene Farbe.'};return;}
+  for(const c of [1,2,3,4,5,6,7,8]){const idx=cols.map((x,i)=>x===c?i:-1).filter(i=>i>=0);if(new Set(idx.map(i=>ks[i])).size>1){e.err++;e.mmsg={kind:'bad',text:'In einer Farbe sind Glieder, die nicht gleichartig sind. Gleichartig: dieselben Variablen mit denselben Hochzahlen.'};return;}}
+  for(const k of new Set(ks)){const n=ks.filter(x=>x===k).length,cs=new Set(ks.map((x,i)=>x===k?cols[i]:null).filter(x=>x!==null));
+    if(n>1&&(cs.size>1||cs.has(0))){e.err++;e.mmsg={kind:'bad',text:'Gleichartige Glieder sollen dieselbe Farbe haben – schau dir '+keyH(k)+' an.'};return;}}
+  const used=[...new Set(ks)].map(k=>cols[ks.indexOf(k)]);
+  if(new Set(used).size<used.length){e.err++;e.mmsg={kind:'bad',text:'Eine Farbe kommt doppelt vor. Jedes Glied bekommt seine <b>eigene</b> Farbe – nur gleichartige Glieder teilen sich eine Farbe.'};return;}
+  e.mok=1;if(!t.combine){e.mmsg={kind:'ok',text:'✓ Richtig markiert! Alle Glieder haben verschiedene Farben – hier gibt es nichts zusammenzufassen. Das Ergebnis bleibt so.'};e.step=DONE;return;}
+  e.mmsg={kind:'ok',text:'✓ Richtig markiert! Jetzt fasse zusammen.'};
 }
 function showSolution(e,s){
-  const d=e.data;
-  if(s===0){e.decs=canonDecs(d);e.common=commonToks(e.decs);e.decVals=e.decs.map(decPlain);e.decMarks=e.decs.map(()=>'ok');e.decHints=e.decs.map(()=>'');
-    e.marks=e.decs.map(x=>x.toks.map(()=>false));e.msg[0]={kind:'shown',text:'Die Zerlegungen sind jetzt eingetragen – rechne sie nach.'};}
-  if(s===1){e.marks=canonMarks(e);e.msg[1]={kind:'shown',text:'Die gleichen Faktoren sind jetzt markiert.'};}
-  if(s===2){e.preVal=polyPlain([d.g]);e.innerVal=polyPlain(d.qs);e.preMark=e.innerMark='ok';
-    e.msg[2]={kind:'shown',text:'Lösung: '+finH(d)+' – vor der Klammer das Produkt der markierten Faktoren, in der Klammer die nicht markierten Reste.'};}
-  e.shown=true;e.step=s+1;
+  const t=e.t;if(t.kind){simpleSolve(e);return;}
+  if(s===0){e.arr=t.arrows.map(a=>a.slice());e.selF=null;}
+  if(s===1){const F=m=>m.c<0?'('+polyPlain([m])+')':polyPlain([m]);e.ml=t.arrows.map(([gi,ti])=>F(t.groups[gi].f)+'·'+F(t.groups[gi].t[ti])).join(' + ');e.mlm='ok';}
+  if(s===2){e.ps=t.prods.map(p=>p.c<0?'−':'+');e.pv=t.prods.map(p=>plainT(p));e.pm=t.prods.map(()=>'ok');e.ph=t.prods.map(()=>'');e.lv=polyPlain(t.prods);e.lm='ok';}
+  if(s===3){if(!t.combine){const ks=[...new Set(t.prods.map(m=>key(m.v)))];e.cols=t.prods.map(m=>1+ks.indexOf(key(m.v))%4);e.mok=1;}e.rv=polyPlain(t.res);e.rm='ok';const ks=[...new Set(t.prods.map(m=>key(m.v)))];e.cols=t.prods.map(m=>1+ks.indexOf(key(m.v))%4);e.mok=1;}
+  e.shown=true;e.msg[s]={kind:'shown',text:'Die Lösung ist jetzt eingetragen – schau sie dir genau an.'};
+  e.step=nextStep(e,s);
 }
 
 /* ================= Anzeige ================= */
-const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-const finH=d=>absH(d.g)+' · ('+polyH(d.qs)+')';
-function gqH(d){return d.qs.map((q,i)=>{const neg=q.c.n<0n;return (i?(neg?' − ':' + '):(neg?MINUS:''))+absH(d.g)+' · '+absH(q);}).join('');}
-function decLineH(e,withMarks){
-  return e.decs.map((d,t)=>(t?(d.neg?' − ':' + '):(d.neg?MINUS:''))+
-    d.toks.map((x,k)=>withMarks&&e.marks[t][k]?'<span class="mk">'+tokH(x)+'</span>':tokH(x)).join(' · ')).join('');
-}
-/* die ganze Rechnung in einer Zeile: Zerlegung mit Markierungen, Rechenzeichen in der Mitte */
-function markLineH(e,clickable){
-  return '<div class="row markline">'+e.decs.map((dc,t)=>(t?'<span class="opsign">'+(dc.neg?MINUS:'+')+'</span>':(dc.neg?'<span class="opsign">'+MINUS+'</span>':''))+
-    dc.toks.map((x,k)=>clickable
-      ?'<button type="button" class="chip'+(e.marks[t][k]?' mk':'')+'" data-ti="'+t+'" data-fk="'+k+'" aria-pressed="'+(e.marks[t][k]?'true':'false')+'" aria-label="Faktor '+x+' in Glied '+(t+1)+'">'+tokH(x)+'</button>'
-      :'<span class="chip'+(e.marks[t][k]?' mk':'')+'">'+tokH(x)+'</span>').join('<span class="sep">·</span>')).join('')+'</div>';
-}
 function msgHTML(e,s){const m=e.msg[s];if(!m)return '';
   return '<p class="msg '+m.kind+'">'+m.text+(m.offer&&e.step===s?' <button type="button" class="mini" data-act="show'+s+'">Lösung zeigen</button>':'')+'</p>';}
 function inp(attr,val,cls,label,ph){return '<input class="pin'+(cls?' '+cls:'')+'" '+attr+' value="'+esc(val)+'" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="'+label+'"'+(ph?' placeholder="'+ph+'"':'')+'>';}
-function exStatus(e){return e.step===DONE?(e.shown?'done shown':'done'):(e.step>0||e.decVals.some(Boolean)?'started':'');}
-
-function renderEx(focus){
-  const g=curG(),e=curEx(),d=e.data,cur=g.cur;
-  const allDone=g.ex.every(x=>x.step===DONE);
-  let h='<div class="nav">'+
-    '<button type="button" class="ghost" data-act="prev" aria-label="Vorheriges Beispiel"'+(cur===0?' disabled':'')+'>◀</button>'+
+function exStatus(e){return e.step===DONE?(e.shown?'done shown':'done'):(e.step>0||e.arr.length?'started':'');}
+function stepNo(e,s){let n=0;for(let k=0;k<=s;k++)if(applies(e,k))n++;return n;}
+function card(e,s,title,body,doneTxt){
+  if(!applies(e,s)||e.step<s)return '';
+  return '<div class="stepcard '+(e.step===s?'active':'done')+'"><h3>'+stepNo(e,s)+'. '+title+'</h3>'+(e.step===s?body:'<div class="donetxt">✓ '+doneTxt+'</div>')+msgHTML(e,s)+'</div>';
+}
+let TCUR=null;
+function tTick(){const now=Date.now();if(TCUR&&TCUR.e&&!TCUR.e.tdone&&PUPIL){TCUR.e.tms=(TCUR.e.tms||0)+Math.min(now-TCUR.t0,300000);if(TCUR.e.step===DONE)TCUR.e.tdone=1;}
+  const g=curG(),e=g.ex[g.cur];if(e&&e.step===DONE)e.tdone=1;TCUR={e,t0:now};tSave();}
+function tKey(lvl){return STORE+'t:'+normName(PUPIL)+':'+lvl+':'+G[lvl].round;}
+function tSave(){if(!PUPIL)return;try{const g=curG();localStorage.setItem(tKey(level),JSON.stringify(g.ex.map(e=>[Math.round(e.tms||0),e.tdone?1:0])));}catch(x){}}
+function tLoad(lvl){if(!PUPIL)return;try{const a=JSON.parse(localStorage.getItem(tKey(lvl))||'null');if(a)G[lvl].ex.forEach((e,k)=>{if(a[k]){e.tms=a[k][0];e.tdone=!!a[k][1];}});}catch(x){}}
+const fmtT=ms=>{const s=Math.max(0,Math.round((ms||0)/1000));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
+setInterval(()=>{if(PUPIL&&!document.hidden){tTick();}},15000);
+function renderEx(focus){N_EX=curG().ex.length;tTick();if(curEx().t.kind)return renderSimple(focus);return renderArrow(focus);}
+function renderSimple(focus){
+  const g=curG(),e=curEx(),t=e.t,cur=g.cur,allDone=g.ex.every(x=>x.step===DONE);
+  let h='<div class="nav"><button type="button" class="ghost" data-act="prev" aria-label="Vorheriges Beispiel"'+(cur===0?' disabled':'')+'>◀</button>'+
     '<div class="dots" role="group" aria-label="Beispiele">'+g.ex.map((x,k)=>'<button type="button" class="dot '+exStatus(x)+(k===cur?' cur':'')+'" data-go="'+k+'" aria-label="Beispiel '+(k+1)+'"'+(k===cur?' aria-current="true"':'')+'>'+(k+1)+'</button>').join('')+'</div>'+
-    '<button type="button" class="ghost" data-act="next" aria-label="Nächstes Beispiel"'+(cur===g.ex.length-1?' disabled':'')+'>▶</button>'+
-    '<span class="round">Runde '+g.round+'</span>'+
-    '<button type="button" class="mini" data-act="newround">Neue Runde</button></div>';
-
-  h+='<div class="head"><span class="num">'+(cur+1)+'</span><h2>Hebe heraus: '+polyH(d.terms)+'</h2></div>';
-
-
-  /* Schritt 1 */
-  h+='<div class="stepcard '+(e.step===0?'active':'done')+'"><h3>1. Zerlege jedes Glied in Faktoren</h3>';
-  if(e.step===0)h+='<p>Zerlege so, dass in jedem Glied <b>derselbe Faktor</b> vorkommt – nimm den größten: 36<i>x</i> + 8 = 4 · 9 · <i>x</i> + 4 · 2. Potenzen als einzelne Variablen: <i>x</i><sup>2</sup> = <i>x</i> · <i>x</i>. Ist das Glied negativ, schreib − davor.</p>';
-  d.terms.forEach((t,k)=>{
-    h+='<div class="row"><span class="badge">'+(k+1)+'</span>'+termH(t,true)+' = ';
-    if(e.step===0)h+=inp('data-di="'+k+'"',e.decVals[k],'wide'+(e.decMarks[k]?' '+e.decMarks[k]:''),'Zerlegung von Glied '+(k+1),'z. B. 4·9·x·x')+'<span class="rowmsg">'+esc(e.decHints[k])+'</span>';
-    else h+='<b>'+(e.decs[k].neg?MINUS:'')+e.decs[k].toks.map(tokH).join(' · ')+'</b>';
-    h+='</div>';
-  });
-  if(e.step===0)h+='<div class="actions"><button type="button" data-act="check0">Zerlegung prüfen</button></div>';
-  h+=msgHTML(e,0)+'</div>';
-
-  /* Schritt 2 */
+    '<button type="button" class="ghost" data-act="next" aria-label="Nächstes Beispiel"'+(cur===N_EX-1?' disabled':'')+'>▶</button>'+
+    '<span class="round">Runde '+g.round+'</span><button type="button" class="mini" data-act="newround">Neue Runde</button></div>';
+    h+='<div class="head"><span class="num">'+(cur+1)+'</span><h2>'+t.title+'</h2></div>';
+  h+='<div class="heftcalc">'+simpleBody(e)+'</div>';
+  if(e.step===DONE){
+    const nextOpen=g.ex.findIndex((x,k)=>k>cur&&x.step<DONE),anyOpen=g.ex.findIndex(x=>x.step<DONE);
+    h+='<div class="donebox"><b>Beispiel '+(cur+1)+' geschafft!</b>'+
+      (nextOpen>=0?'<button type="button" data-act="go" data-to="'+nextOpen+'">Weiter zu Beispiel '+(nextOpen+1)+' ▶</button>'
+      :anyOpen>=0?'<button type="button" data-act="go" data-to="'+anyOpen+'">Noch offen: Beispiel '+(anyOpen+1)+' ▶</button>'
+      :'<button type="button" data-act="sum">Zur Auswertung</button>')+'</div>';
+    if(cur===0)h+='<p class="sumafter">✏️ <b>Schreib jetzt die Zusammenfassung unten auf der Seite in dein Heft ab</b> – dann geht es mit Beispiel 2 weiter.</p>';
+  }
+  $('exCard').innerHTML=h;
+  $('score').textContent=g.ex.filter(x=>x.step===DONE).length+' von '+N_EX+' fertig';
+  if(window.padApply)window.padApply();
+  if(focus){const f=document.querySelector('#exCard input:not([readonly])');if(f)f.focus({preventScroll:true});}
+  if(allDone&&!summaryRequested&&!restoring)summaryRequested=true;
+  updateSummary();saveProgress();}
+function renderArrow(focus){
+  const g=curG(),e=curEx(),t=e.t,cur=g.cur,allDone=g.ex.every(x=>x.step===DONE);
+  let h='<div class="nav"><button type="button" class="ghost" data-act="prev" aria-label="Vorheriges Beispiel"'+(cur===0?' disabled':'')+'>◀</button>'+
+    '<div class="dots" role="group" aria-label="Beispiele">'+g.ex.map((x,k)=>'<button type="button" class="dot '+exStatus(x)+(k===cur?' cur':'')+'" data-go="'+k+'" aria-label="Beispiel '+(k+1)+'"'+(k===cur?' aria-current="true"':'')+'>'+(k+1)+'</button>').join('')+'</div>'+
+    '<button type="button" class="ghost" data-act="next" aria-label="Nächstes Beispiel"'+(cur===N_EX-1?' disabled':'')+'>▶</button>'+
+    '<span class="round">Runde '+g.round+'</span><button type="button" class="mini" data-act="newround">Neue Runde</button></div>';
+  h+='<div class="head"><span class="num">'+(cur+1)+'</span><h2>Löse die Klammer'+(t.groups.length>1?'n':'')+' auf'+(t.combine?' und fasse zusammen':'')+'!</h2></div>';
+  /* alles wie im Heft: Zeile für Zeile direkt unter der Angabe */
+  h+='<div class="heftcalc"><div class="exprscroll"><div class="exprwrap'+(e.step===0?' picking':'')+'" id="task">'+exprHTML(t)+'</div></div>';
+  if(e.step===0)h+='<div class="tline tools"><button type="button" data-act="check0">Pfeile prüfen</button><button type="button" class="mini" data-act="clrarr">Alle Pfeile löschen</button><span class="hint" style="margin:0">Faktor vor der Klammer antippen, dann jedes Glied in der Klammer.</span></div>'+msgHTML(e,0);
   if(e.step>=1){
-    h+='<div class="stepcard '+(e.step===1?'active':'done')+'"><h3>2. Markiere die gleichen Faktoren</h3>';
-    if(e.step===1)h+='<p>Tippe in <b>jedem</b> Glied die Faktoren an, die in allen Gliedern vorkommen. Nochmal antippen hebt die Markierung auf.</p>';
-    h+=markLineH(e,e.step===1);
-    if(e.step===1)h+='<div class="actions"><button type="button" data-act="check1">Markierung prüfen</button></div>';
-    h+=msgHTML(e,1)+'</div>';
+    if(e.step===1){if(!e.mpal){let n=0;const T=[];t.arrows.forEach(([gi,ti],k)=>{const g=t.groups[gi],x=g.t[ti];
+        /* wie im Heft: steht vorne ein negativer Faktor, wird er mit − verbunden und ohne Klammer geschrieben: … − 4 · 3g */
+        const first=g.op===':'?x:g.f,neg=first.c<0,abs=M(-first.c,first.v);
+        if(k)T.push({id:n++,h:neg?'−':'+',p:neg?'−':'+'});
+        const fh=neg?(k?monoH(abs):monoH(first)):FH(first),fp=neg?(k?plainT(abs):'−'+plainT(abs)):FP(first);
+        if(g.op===':')T.push({id:n++,h:fh,p:fp},{id:n++,h:':',p:':'},{id:n++,h:FH(g.f),p:FP(g.f)});
+        else T.push({id:n++,h:fh,p:fp},{id:n++,h:'·',p:'·'},{id:n++,h:FH(x),p:FP(x)});});e.mpal=shufT(T);}
+      h+='<div class="tline"><span class="eqs">=</span>'+tileUI(e,'m')+'</div><div class="tline"><button type="button" data-act="check1">Prüfen</button></div>'+
+        '<p class="srule">Bau die Rechnung nach den Pfeilen: für jeden Pfeil eine Multiplikation, mit <b>+</b> oder <b>−</b> dazwischen – wie im Heft. Negative Glieder stehen schon in Klammern.</p>'+msgHTML(e,1);}
+    else if(!e.direct){const live=e.step===2;
+      h+='<div class="tline ok'+(live?' pline':'')+'"><span class="eqs">=</span><span class="ln">'+zvLine(e,live)+'</span> <span class="tick">✓</span></div>';
+      if(live)h+=paletteH(e,8)+(e.zvlive?'<p class="zvlive '+e.zvlive.kind+'">'+e.zvlive.text+'</p>':'')+'<p class="srule'+(e.forceZv?' must':'')+'" style="margin-top:0">'+(e.forceZv?'<b>Jetzt Pflicht:</b> ':'<b>Freiwillig – hilft dir beim Rechnen</b> (wenn du unterstreichst, wird es auch kontrolliert): ')+'Unterstreiche in jedem Teil die <b>Zahlen</b> in einer Farbe und jeden <b>Buchstaben</b> in einer eigenen Farbe (antippen) – gleiche Buchstaben in derselben Farbe. Nach jedem + bzw. − kommen <b>neue</b> Farben – sonst rechnest du alles zusammen.</p>';}
   }
-
-  /* Schritt 3: selbst anschreiben */
   if(e.step>=2){
-    h+='<div class="stepcard '+(e.step===2?'active':'done')+'"><h3>3. Schreib an: Was kommt vor die Klammer, was in die Klammer?</h3>';
     if(e.step===2){
-      h+=markLineH(e,false)+'<div class="finline">= '+
-        inp('data-pre',e.preVal,'pre'+(e.preMark?' '+e.preMark:''),'Faktor vor der Klammer','z. B. 4x')+'<span> · (</span>'+
-        inp('data-inner',e.innerVal,'inner'+(e.innerMark?' '+e.innerMark:''),'Inhalt der Klammer','z. B. 9x + 2')+'<span>)</span></div>'+
-        '<div class="actions"><button type="button" data-act="check2">Prüfen</button></div>';
-    }else h+='<div class="finline">= <b class="donetxt">'+finH(d)+' ✓</b></div>';
-    h+=msgHTML(e,2)+'</div>';
+      h+='<div class="tline"><span class="eqs">=</span>'+t.prods.map((p,k)=>'<span class="pbox"><span class="pn">'+(k+1)+'</span><span class="pin2"><button type="button" class="sbtn'+(e.ps[k]?' set':'')+'" data-sg="'+k+'" aria-label="Vorzeichen für Glied '+(k+1)+'">'+(e.ps[k]||'±')+'</button>'+inp('data-pi="'+k+'"',e.pv[k],(e.pm[k]||'')+' pin4','Ergebnis von Multiplikation '+(k+1)+' ohne Vorzeichen','')+'</span><span class="ubar"'+zvBar(e,k)+'></span></span>').join('')+
+        '<button type="button" data-act="check2">Prüfen</button></div>'+
+        '<p class="srule">Zuerst das <b>Vorzeichen</b> wählen (± antippen), dann das Ergebnis ohne Vorzeichen ins Kästchen. Die Farben unter dem Kästchen zeigen, zu welchem Teil es gehört.<br>'+['+ · + = +','− · − = +','+ · − = −','− · + = −','mal 1 bleibt gleich'].map(x=>'<span class="rl">'+x+'</span>').join('')+'</p>';
+      const hs=e.ph.map((x,k)=>x?'<b>'+(k+1)+':</b> '+x:'').filter(Boolean);if(hs.length)h+='<div class="hlist">'+hs.map(x=>'<div>'+x+'</div>').join('')+'</div>';
+      h+=msgHTML(e,2);
+    }else h+='<div class="tline ok"><span class="eqs">=</span><span class="ln">'+polyH(t.prods)+'</span> <span class="tick">✓</span></div>';
   }
+  if(e.step>=3){
+    if(e.step===3){
+      const cols=e.cols||t.prods.map(()=>0);
+      h+='<div class="tline marks"><span class="eqs">=</span>'+t.prods.map((m,k)=>'<button type="button" class="tchip'+(cols[k]?' k'+cols[k]:'')+'" data-mk="'+k+'">'+termH(m,k===0)+'</button>').join('')+
+        (e.mok?'':'<button type="button" class="mini" data-act="mchk">Markierung prüfen</button>')+'</div>';
+      h+=paletteH(e,6)+'<p class="hint" style="margin:.1rem 0 .4rem .6rem">'+(e.mok?'<b>Freiwillig:</b> Unterstreiche gleichartige Glieder in derselben Farbe – das hilft dir beim Zusammenfassen.':'Unterstreiche <b>jedes</b> Glied: gleichartige Glieder in derselben Farbe, verschiedene in verschiedenen Farben.')+'</p>';
+      if(e.mmsg)h+='<p class="msg '+e.mmsg.kind+'" style="margin-left:.6rem">'+e.mmsg.text+'</p>';
+      if(e.mok&&t.combine)h+='<div class="tline"><span class="eqs">=</span>'+coefUI(e,t.prods,e.rm||'')+'<button type="button" data-act="check3">Prüfen</button></div><p class="srule">Tippe vor jedem Kästchen das Rechenzeichen an (±) und schreib das <b>ganze Glied</b> hinein – Zahl <b>und</b> Buchstaben, z. B. 3x oder x².</p>'+msgHTML(e,3);
+    }
+    else if(t.combine)h+='<div class="tline ok fin"><span class="eqs">=</span><span class="ln">'+polyH(t.res)+'</span> <span class="tick">✓</span></div>';
+  }
+  h+='</div>';
 
   if(e.step===DONE){
     const nextOpen=g.ex.findIndex((x,k)=>k>cur&&x.step<DONE),anyOpen=g.ex.findIndex(x=>x.step<DONE);
@@ -603,113 +1125,190 @@ function renderEx(focus){
       (nextOpen>=0?'<button type="button" data-act="go" data-to="'+nextOpen+'">Weiter zu Beispiel '+(nextOpen+1)+' ▶</button>'
       :anyOpen>=0?'<button type="button" data-act="go" data-to="'+anyOpen+'">Noch offen: Beispiel '+(anyOpen+1)+' ▶</button>'
       :'<button type="button" data-act="sum">Zur Auswertung</button>')+'</div>';
+    if(cur===0)h+='<p class="sumafter">✏️ <b>Schreib jetzt die Zusammenfassung unten auf der Seite in dein Heft ab</b> – dann geht es mit Beispiel 2 weiter.</p>';
   }
-
-  /* Heft: Rechenweg ganz unten */
-  h+='<div class="heft"><p class="hefttitle">Dein Rechenweg</p><div class="task">'+polyH(d.terms)+'</div>';
-  if(e.step>=1)h+='<div>= '+decLineH(e,e.step>=2)+'</div>';
-  if(e.step>=DONE)h+='<div class="fin">= '+finH(d)+'</div><div class="probe">Probe: '+gqH(d)+' = '+polyH(d.terms)+' ✓</div>';
-  if(e.step>=DONE)h+='<p class="copy">✏️ <b>Schreib diesen Rechenweg ordentlich in dein Heft ab.</b></p>';
-  h+='</div>';
-
+  if(e.step>=DONE)h+='<p class="copy">✏️ <b>Schreib die Rechnung Zeile für Zeile in dein Heft ab – zeichne die Pfeile mit ein!</b></p>';
   $('exCard').innerHTML=h;
-  $('score').textContent=g.ex.filter(x=>x.step===DONE).length+' von '+g.ex.length+' fertig';
-  document.querySelectorAll('#exCard [data-prev]').forEach(pv=>updatePrev(pv.previousElementSibling));
+  $('score').textContent=g.ex.filter(x=>x.step===DONE).length+' von '+N_EX+' fertig';
+  const wrap=$('task');
+  wrap.querySelectorAll('.tk.fac').forEach(f=>{if(e.step===0&&e.selF===+f.dataset.g)f.classList.add('sel');});
+  wrap.querySelectorAll('.tk.trm').forEach(tm=>{if(e.selF!==null&&e.arr.some(a=>a[0]===e.selF&&a[1]===+tm.dataset.t))tm.classList.add('got');});
+  requestAnimationFrame(redrawAll);
   if(window.padApply)window.padApply();
-  if(focus){
-    let f=null;
-    const firstBad=sel=>[...document.querySelectorAll('#exCard '+sel)].find(i=>i.classList.contains('bad'))||document.querySelector('#exCard '+sel);
-    if(focus==='step'){
-      if(e.step===0)f=firstBad('[data-di]');
-      else if(e.step===1)f=document.querySelector('#exCard .chip');
-      else if(e.step===2)f=document.querySelector('#exCard .pre.bad')||document.querySelector('#exCard .inner.bad')||document.querySelector('#exCard [data-pre]');
-    }else f=document.querySelector(focus);
-    if(f){f.focus({preventScroll:false});if(f.select&&f.classList.contains('bad'))f.select();}
-  }
+  if(focus){let f=null;
+    if(focus==='step'){const firstBad=sel=>[...document.querySelectorAll('#exCard '+sel)].find(i=>i.classList.contains('bad'))||document.querySelector('#exCard '+sel);
+      f=e.step===1?document.querySelector('#exCard [data-ml]'):e.step===2?firstBad('[data-pi]'):e.step===3?document.querySelector('#exCard [data-rv]'):null;}
+    else f=document.querySelector(focus);
+    if(f)f.focus({preventScroll:true});}
   if(allDone&&!summaryRequested&&!restoring)summaryRequested=true;
-  updateSummary();
-  saveProgress();
+  updateSummary();saveProgress();
 }
-function updatePrev(i){
-  if(!i||!i.nextElementSibling||!i.nextElementSibling.hasAttribute('data-prev'))return;
-  const pv=i.nextElementSibling,q=parseTerm(i.value);
-  pv.innerHTML=(!i.value.trim()||q.err)?'':'→ <b>'+polyH(q.ms)+'</b>';
-}
+function exprPlainH(t){const d=document.createElement('div');d.innerHTML=exprHTML(t);d.querySelectorAll('.tk').forEach(s=>{s.outerHTML='<span>'+s.innerHTML+'</span>';});return d.innerHTML.replace(/<span>=<\/span>$/,'');}
+window.addEventListener('resize',redrawAll);
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>requestAnimationFrame(redrawAll));
+window.addEventListener('load',()=>requestAnimationFrame(redrawAll));
 
 /* ================= Auswertung ================= */
 function updateSummary(){
-  const g=curG(),sum=$('summary');
-  const allDone=g.ex.every(e=>e.step===DONE);
+  const g=curG(),sum=$('summary'),allDone=g.ex.every(e=>e.step===DONE);
   if(!summaryRequested){sum.hidden=true;return;}
   let T={done:0,first:0,shown:0,open:0,err:0},rows='';
-  g.ex.forEach((e,k)=>{
-    let st;
+  g.ex.forEach((e,k)=>{let st;
     if(e.step<DONE){st='offen';T.open++;}
     else{T.done++;if(e.shown){st='Lösung angesehen';T.shown++;}else if(!e.err){st='✓ beim 1. Versuch';T.first++;}else st='✓ richtig';}
     T.err+=e.err;
-    rows+='<tr><td>'+(k+1)+') '+polyH(e.data.terms)+(e.step===DONE?' = '+finH(e.data):'')+'</td><td>'+st+'</td><td class="c">'+e.err+'</td></tr>';
-  });
+    rows+='<tr><td><b>'+(k+1)+')</b> '+(e.t.kind?e.t.qh:e.step===DONE?arrowExprH(e.t,'sumRow'+k):exprPlainH(e.t))+'</td><td>'+(e.step===DONE?(e.t.kind?simpleAnsH(e.t):polyH(e.t.res)):'–')+'</td><td>'+st+'</td><td class="c">'+e.err+'</td><td class="c">'+(e.tms?fmtT(e.tms)+(e.step===DONE&&!e.shown&&e.tms<20000?' ⚡':''):'–')+'</td></tr>';});
   $('sumBody').innerHTML=rows;
-  $('sumFoot').innerHTML='<tr><td>Gesamt: '+T.done+' von '+g.ex.length+' fertig</td><td>'+T.first+' beim 1. Versuch, '+T.shown+' mit Lösung</td><td class="c">'+T.err+'</td></tr>';
-  const n=g.ex.length,ok=T.done-T.shown;let msg;
-  if(T.first===n)msg='Perfekt! Alle Beispiele beim ersten Versuch richtig.';
-  else if(ok===n)msg='Super, alle Beispiele selbst gelöst!';
-  else if(ok/n>=.75)msg='Sehr gut gemacht!';
-  else if(ok/n>=.5)msg='Gut! Mit ein bisschen Übung klappt der Rest auch.';
-  else msg='Übe noch ein bisschen weiter – starte eine neue Runde und probier es nochmal.';
+  const TT=g.ex.reduce((a,e)=>a+(e.tms||0),0);
+  $('sumFoot').innerHTML='<tr><td>Gesamt: '+T.done+' von '+N_EX+' fertig</td><td></td><td>'+T.first+' beim 1. Versuch, '+T.shown+' mit Lösung</td><td class="c">'+T.err+'</td><td class="c">'+fmtT(TT)+'</td></tr><tr><td colspan="5" class="tnote">Zeit = Arbeitszeit am Beispiel (Ø '+fmtT(TT/Math.max(1,N_EX))+' pro Beispiel). ⚡ = in unter 20 Sekunden gelöst.'+(T.done>=3&&g.ex.filter(e=>e.step===DONE&&!e.shown&&e.tms<20000).length/T.done>0.5?' <b>Auffällig: Mehr als die Hälfte sehr schnell gelöst.</b>':'')+'</td></tr>';
+  const ok=T.done-T.shown;let msg;
+  if(T.first===N_EX)msg='Perfekt! Alle Beispiele beim ersten Versuch richtig.';
+  else if(ok===N_EX)msg='Super, alle Beispiele selbst gelöst!';
+  else if(ok/N_EX>=.75)msg='Sehr gut gemacht!';
+  else if(ok/N_EX>=.5)msg='Gut! Mit ein bisschen Übung klappt der Rest auch.';
+  else msg='Übe die Beispiele noch einmal im Heft – frag nach, wo du unsicher bist.';
   if(!allDone)msg='Noch nicht alles erledigt: '+T.open+' Beispiel'+(T.open===1?' ist':'e sind')+' noch offen. '+msg;
-  $('sumTitle').textContent=(allDone?'Geschafft'+(PUPIL?', '+PUPIL:'')+'! Deine Auswertung':'Zwischenstand'+(PUPIL?' von '+PUPIL:''))+' ('+LEVELS[level]+', Runde '+g.round+')';
+  $('sumTitle').textContent=(allDone?'Geschafft'+(PUPIL?', '+PUPIL:'')+'! Deine Auswertung':'Zwischenstand'+(PUPIL?' von '+PUPIL:''))+' (Runde '+g.round+')';
   const now=new Date(),who=$('sumWho');
-  who.innerHTML='👤 <b></b> · '+now.toLocaleDateString('de-AT')+', '+now.toLocaleTimeString('de-AT',{hour:'2-digit',minute:'2-digit'})+' Uhr · '+LEVELS[level];
+  who.innerHTML='👤 <b></b> · '+now.toLocaleDateString('de-AT')+', '+now.toLocaleTimeString('de-AT',{hour:'2-digit',minute:'2-digit'})+' Uhr · Runde '+g.round+' · Bearbeitungszeit '+fmtT(g.ex.reduce((a,e)=>a+(e.tms||0),0))+' min';
   who.querySelector('b').textContent=PUPIL||'(kein Name)';
   $('sumMsg').textContent=msg;
-  const wasHidden=sum.hidden;sum.hidden=false;
+  $('sumCode').innerHTML='📋 <b>Abgabe-Code</b> für die Lehrkraft ('+TODAYH+'): <span class="code">'+abgabeCode()+'</span><br><span class="tnote">Schreib den Code ab oder mach ein Foto – er enthält deine Ergebnisse, Fehlversuche, Lösungen und die Zeit und lässt sich nicht verändern.</span>';
+  const wasHidden=sum.hidden;sum.hidden=false;requestAnimationFrame(redrawAll);
   if(wasHidden&&!restoring&&allDone)setTimeout(()=>sum.scrollIntoView({behavior:'smooth',block:'start'}),300);
 }
 
 /* ================= Bedienung ================= */
-function goTo(k){const g=curG();g.cur=Math.max(0,Math.min(g.ex.length-1,k));renderEx();$('exCard').scrollIntoView({behavior:'smooth',block:'start'});}
-function newRound(){
+function goTo(k){const g=curG();g.cur=Math.max(0,Math.min(N_EX-1,k));renderEx();$('exCard').scrollIntoView({behavior:'smooth',block:'start'});}
+function newRound(){return; /* Hausübung: keine neuen Runden – die Aufgaben gelten für den ganzen Tag */
+}
+function newRoundOld(){
   const g=curG();
   if(g.ex.some(e=>e.step<DONE)&&!confirm('Neue Runde starten? Die offenen Beispiele werden durch neue ersetzt.'))return;
   g.round=g.round>=100?1:g.round+1;makeRound(level);summaryRequested=false;renderEx();
   $('exCard').scrollIntoView({behavior:'smooth',block:'start'});
 }
-const CHECKS=[check0,check1,check2];
-function runCheck(s){const e=curEx();if(e.step!==s)return;CHECKS[s](e);renderEx(e.step===DONE?null:'step');}
+const CHECKS=[check0,check1,check2,check3];
+function runCheck(s){const e=curEx();if(e.t.kind){if(e.step===DONE)return;simpleCheck(e);renderEx(e.step===DONE?null:'step');return;}if(e.step!==s)return;CHECKS[s](e);renderEx(e.step===DONE?null:'step');}
+/* ===== Zahlen und Buchstaben getrennt unterstreichen ===== */
+function zvParts(t){/* je Teil k: Liste von Stücken {id,kind:'n'|'v',h} und Anzeige-Bausteine */
+  return t.arrows.map(([gi,ti],k)=>{const g=t.groups[gi],term=g.t[ti],fac=g.op===':'?[term,g.f]:[g.f,term],op=g.op===':'?' : ':' · ';
+    let pieces=[],html='',neg=false,n=0;
+    fac.forEach((m,fi)=>{if(fi)html+=op;const vs=Object.keys(m.v).filter(x=>m.v[x]>0).sort(),hasNum=Math.abs(m.c)!==1||!vs.length;
+      let sign=m.c<0?MINUS:'',open='',close='';
+      if(m.c<0){if(fi===0&&k>0){neg=true;sign='';}else if(fi>0){open='(';close=')';}}
+      html+=open;
+      if(hasNum){const id=k+'_'+(n++);pieces.push({id,kind:'n'});html+='<span class="zv" data-zv="'+id+'">'+sign+Math.abs(m.c)+'</span>';}
+      else if(sign)html+=sign;
+      vs.forEach(x=>{const id=k+'_'+(n++);pieces.push({id,kind:'v',name:x});html+='<span class="zv" data-zv="'+id+'"><i>'+x+'</i>'+(m.v[x]>1?'<sup>'+m.v[x]+'</sup>':'')+'</span>';});
+      html+=close;});
+    return {pieces,html,neg};});}
+function zvLine(e,live){const P=zvParts(e.t),uc=e.ucols||{};
+  return P.map((p,k)=>{let h=p.html.replace(/<span class="zv" data-zv="([^"]+)">/g,(m,id)=>live?'<button type="button" class="tchip zvb'+(uc[id]?' k'+uc[id]:'')+'" data-zv="'+id+'">':'<span class="tchip zvb'+(uc[id]?' k'+uc[id]:'')+'">').replace(/<\/span>/g,live?'</button>':'</span>');
+    if(live)h=h.replace(/<\/button>(?=[^<]*<\/button>)/g,'</button>');
+    return (k?(p.neg?' − ':' + '):'')+h;}).join('');}
+function zvCheck(e,partial){const P0=zvParts(e.t),uc=e.ucols||{},P=partial?P0.map(p=>Object.assign({},p,{pieces:p.pieces.filter(x=>uc[x.id])})):P0;let prev=null;
+  for(let k=0;k<P.length;k++){const p=P[k];if(!partial&&p.pieces.some(x=>!uc[x.id]))return 'Unterstreiche in der grünen Zeile <b>jede</b> Zahl und <b>jeden</b> Buchstaben.';
+    const nc=new Set(p.pieces.filter(x=>x.kind==='n').map(x=>uc[x.id]));
+    if(nc.size>1)return 'Im '+(k+1)+'. Teil haben die Zahlen verschiedene Farben – die Zahlen eines Teils bekommen <b>dieselbe</b> Farbe (Zahl mit Zahl).';
+    const byName={};for(const x of p.pieces.filter(x=>x.kind==='v')){(byName[x.name]=byName[x.name]||new Set()).add(uc[x.id]);}
+    for(const nm in byName)if(byName[nm].size>1)return 'Im '+(k+1)+'. Teil hat <i>'+nm+'</i> verschiedene Farben – gleiche Buchstaben bekommen <b>dieselbe</b> Farbe (<i>'+nm+'</i> mit <i>'+nm+'</i>).';
+    const groups=[...(nc.size?[['die Zahlen',[...nc][0]]]:[]),...Object.keys(byName).map(nm=>['<i>'+nm+'</i>',[...byName[nm]][0]])];
+    for(let i=0;i<groups.length;i++)for(let j=i+1;j<groups.length;j++)if(groups[i][1]===groups[j][1])return 'Im '+(k+1)+'. Teil haben '+groups[i][0]+' und '+groups[j][0]+' dieselbe Farbe – verschiedene Dinge bekommen <b>verschiedene</b> Farben.';
+    const cols=new Set(groups.map(g=>g[1]));
+    if(prev&&[...cols].some(c=>prev.has(c)))return 'Der '+k+'. und der '+(k+1)+'. Teil haben eine gleiche Farbe. Nach dem + bzw. − kommen <b>neue</b> Farben – sonst rechnest du alles zusammen.';
+    if(!partial||cols.size)prev=cols;else prev=null;}
+  return null;}
+/* sofortige Kontrolle beim Unterstreichen */
+function zvLive(e){const uc=e.ucols||{};if(!Object.values(uc).some(Boolean)){e.zvlive=null;return;}const m=zvCheck(e,true);if(m){e.zvlive={kind:'bad',text:m};return;}
+  const all=zvParts(e.t).every(p=>p.pieces.every(x=>uc[x.id]));e.zvlive=all?{kind:'ok',text:'✓ Richtig unterstrichen!'}:null;}
+function zvBar(e,k){const P=zvParts(e.t)[k],uc=e.ucols||{},seen=[];P.pieces.forEach(x=>{const c=uc[x.id];if(c&&!seen.includes(c))seen.push(c);});
+  if(!seen.length)return '';const w=100/seen.length;return ' style="border-bottom-color:transparent;background:linear-gradient(90deg,'+seen.map((c,i)=>'var(--c'+c+') '+(i*w)+'% '+((i+1)*w)+'%').join(',')+') bottom/100% 6px no-repeat"';}
+/* ===== Bausteine und Kästchen statt langer Eingaben ===== */
+const shufT=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const FH=m=>m.c<0?'('+monoH(m)+')':monoH(m),FP=m=>m.c<0?'(−'+plainT(m)+')':plainT(m);
+function tileUI(e,K){const tiles=e[K+'pal'],b=e[K+'b']||(e[K+'b']=[]);
+  let h='<div class="built">'+(b.length?b.map((id,n)=>{const t=tiles.find(x=>x.id===id);return '<span class="bt">'+(n===0&&t.h0!==undefined?t.h0:t.h)+'</span>';}).join(''):'<span class="bempty">Tippe unten die Bausteine in der richtigen Reihenfolge an …</span>')+'</div>';
+  h+='<div class="bctl"><button type="button" class="mini" data-tb="'+K+'">⌫ zurück</button><button type="button" class="mini" data-tc="'+K+'">neu anfangen</button></div>';
+  return h+'<div class="palette">'+tiles.map(t=>'<button type="button" class="tile" data-tl="'+K+':'+t.id+'"'+(b.includes(t.id)?' disabled':'')+'>'+t.h+'</button>').join('')+'</div>';}
+function mlNorm(x){return x.replace(/^\s*−\s*([^\s·:()]+)\s*([·:])/,'(−$1) $2').replace(/\s−\s([^\s·:()]+)\s*([·:])/g,' + (−$1) $2');}
+function tilePlain(e,K){const tiles=e[K+'pal'];return (e[K+'b']||[]).map((id,n)=>{const t=tiles.find(x=>x.id===id);return n===0&&t.p0!==undefined?t.p0:t.p;}).join(' ');}
+const kindsP=ms=>[...new Set(ms.map(m=>key(m.v)))].map(k=>ms.find(m=>key(m.v)===k).v).sort((a,b)=>cmp({c:1,v:a},{c:1,v:b}));
+const varH=v=>key(v)===''?'':absH({c:1,v});
+/* Zusammenfassen: vor jedem Kästchen das Rechenzeichen (±), ins Kästchen das ganze Glied mit Zahl und Buchstaben */
+function coefUI(e,ms,cls){const n=normalize(ms).length,rs=e.rs||{},rt=e.rt||{};
+  return '<span class="coefrow">'+Array.from({length:n},(_,i)=>'<span class="cbox"><button type="button" class="sbtn'+(rs[i]?' set':'')+'" data-rs="'+i+'" aria-label="Rechenzeichen">'+(rs[i]||'±')+'</button>'+inp('data-rt="'+i+'"',rt[i]||'',(cls||'')+' tbx','Glied '+(i+1),'z. B. 3x')+'</span>').join('')+'</span>';}
+function composeRv(e,ms){const n=normalize(ms).length,rs=e.rs||{},rt=e.rt||{},out=[];for(let i=0;i<n;i++){const x=String(rt[i]||'').trim();if(!x||!rs[i])return '';out.push((rs[i]==='−'?'- ':'+ ')+x);}return out.join(' ').replace(/^\+ /,'');}
+function termPre(e,ms){const n=normalize(ms).length,rs=e.rs||{},rt=e.rt||{};
+  for(let i=0;i<n;i++){const x=String(rt[i]||'').trim();if(!x)return {soft:'Schreib in jedes Kästchen ein Glied – mit Zahl und Buchstaben, z. B. 3x oder x².'};
+    if(/^[+−-]/.test(x))return {soft:'Das Rechenzeichen tippst du vor dem Kästchen an (±) – ins Kästchen kommt das Glied ohne Vorzeichen.'};
+    if(!rs[i])return {soft:'Wähle vor jedem Kästchen das Rechenzeichen: tippe auf ± für + oder −.'};}
+  const nums=Object.values(rt).slice(0,n).filter(x=>/^\s*\d+([.,]\d+)?\s*$/.test(x)).length,cst=normalize(ms).filter(m=>key(m.v)==='').length;
+  if(nums>cst)return {soft:'Vergiss die <b>Buchstaben</b> nicht: Schreib das ganze Glied, z. B. 7x oder 3x² – nicht nur die Zahl.'};
+  return true;}
 $('exCard').addEventListener('click',ev=>{
-  const t=ev.target.closest('button');if(!t)return;
   const e=curEx();
-  if(t.classList.contains('chip')){
-    if(e.step!==1)return;
-    const ti=+t.dataset.ti,fk=+t.dataset.fk;e.marks[ti][fk]=!e.marks[ti][fk];e.msg[1]=null;
-    renderEx('[data-ti="'+ti+'"][data-fk="'+fk+'"]');return;
+  /* Pfeile: Faktor wählen, dann Glieder antippen */
+  const tk=ev.target.closest('.tk');
+  if(tk&&e.step===0&&(tk.classList.contains('fac')||tk.classList.contains('trm'))){
+    let gi=+tk.dataset.g;
+    if(tk.classList.contains('fac')){e.selF=e.selF===gi?null:gi;e.msg[0]=null;renderEx();return;}
+    const ti=+tk.dataset.t;
+    if(e.selF===null){e.msg[0]={kind:'bad',text:e.t.bin?'Tippe zuerst auf ein Glied der <b>ersten Klammer</b> – dort beginnt der Pfeil.':'Tippe zuerst auf den <b>Faktor außerhalb der Klammer</b> – dort beginnt der Pfeil.'};renderEx();return;}
+    if(tk.dataset.g==='*')gi=e.selF;
+    if(e.selF!==gi){e.msg[0]={kind:'bad',text:'Ein Pfeil geht nur zu den Gliedern in der <b>eigenen</b> Klammer. Wähle den Faktor, der zu dieser Klammer gehört.'};renderEx();return;}
+    const i=e.arr.findIndex(a=>a[0]===gi&&a[1]===ti);
+    if(i>=0)e.arr.splice(i,1);else e.arr.push([gi,ti]);
+    e.msg[0]=null;renderEx();return;
   }
-  if(t.dataset.go!==undefined){goTo(+t.dataset.go);return;}
-  const a=t.dataset.act;
+  const b=ev.target.closest('button');if(!b)return;
+  if(b.dataset.ms!==undefined&&e.t.kind){e.sv=e.sv||{};const p=b.dataset.ms;e.sv[p+'s']=e.sv[p+'s']==='+'?'−':'+';e.msg[0]=null;renderEx();return;}
+  if(b.dataset.mv!==undefined&&e.t.kind){e.sv=e.sv||{};const [p,v]=b.dataset.mv.split(':');if(e.sv[p+'o'+v]){delete e.sv[p+'o'+v];delete e.sv[p+'e'+v];}else e.sv[p+'o'+v]='1';e.msg[0]=null;renderEx();return;}
+  if(b.dataset.face!==undefined&&e.t.kind==='klam'&&!(e.sub)){e.face=e.face==='😊'?'☹️':'😊';e.msg[0]=null;renderEx();return;}
+  if(b.dataset.pen!==undefined){const c=+b.dataset.pen;e.pen=e.pen===c?0:c;renderEx();return;}
+  if(b.dataset.zc!==undefined&&e.t.kind){const k=+b.dataset.zc;e.zc=e.zc||[];e.zc[k]=paint(e,e.zc[k]||0,((e.zc[k]||0)%8)+1);e.msg[0]=null;renderEx();return;}
+  if(b.dataset.bc!==undefined&&e.t.kind==='binf'&&!e.sub){e.bc=e.bc||{};const r=b.dataset.bc;e.bc[r]=e.bc[r]==='a'?'b':'a';e.msg[0]=null;renderEx();return;}
+  if(b.dataset.sc!==undefined&&e.t.kind==='binf'&&e.sub===1){e.sc=e.sc||{};const i=b.dataset.sc;e.sc[i]=e.sc[i]==='a'?'b':'a';e.msg[0]=null;renderEx();return;}
+  if(b.dataset.msg!==undefined&&e.t.kind==='mm'){e.ms=e.ms==='+'?'−':'+';e.msg[0]=null;renderEx();return;}
+  if(b.dataset.hs!==undefined&&e.t.kind==='heraus'){e.hs=e.hs||{};const k=b.dataset.hs;e.hs[k]=e.hs[k]==='+'?'−':'+';e.msg[0]=null;renderEx();return;}
+  if(b.dataset.zf!==undefined&&e.t.kind==='heraus'&&e.mark===1){const [k,i]=b.dataset.zf.split(':').map(Number);e.zm=e.zm||{};const a=e.zm[k]=e.zm[k]||[];const j=a.indexOf(i);if(j>=0)a.splice(j,1);else a.push(i);e.msg[0]=null;renderEx();return;}
+  if(b.dataset.act==='skipz'&&e.t.kind==='heraus'&&!(e.sub)){e.sub=1;e.msg[0]=null;renderEx('step');return;}
+  if(b.dataset.rs!==undefined){e.rs=e.rs||{};const i=b.dataset.rs;e.rs[i]=e.rs[i]==='+'?'−':'+';const ms=e.t.kind==='zus'?e.t.terms:e.t.kind==='binf'?e.t.res:e.t.kind==='klam'?e.t.prods:e.t.res;e.rv=composeRv(e,ms);e.rm=null;e.msg[0]=null;e.msg[3]=null;renderEx();return;}
+  if(b.dataset.ks!==undefined&&e.t.kind==='klam'&&e.sub===1){e.ks=e.ks||[];const k=+b.dataset.ks;e.ks[k]=e.ks[k]==='+'?'−':'+';e.msg[0]=null;renderEx();return;}
+  if(b.dataset.form!==undefined&&e.t.kind==='rueck'&&!(e.sub)){e.form=+b.dataset.form;e.msg[0]=null;renderEx();return;}
+  if(b.dataset.tl){const [K,id]=b.dataset.tl.split(':');const arr=e[K+'b']||(e[K+'b']=[]);if(!arr.includes(+id))arr.push(+id);e.ml=mlNorm(tilePlain(e,'m'));e.mlm=null;renderEx();return;}
+  if(b.dataset.tb){(e[b.dataset.tb+'b']||[]).pop();e.ml=mlNorm(tilePlain(e,'m'));e.mlm=null;renderEx();return;}
+  if(b.dataset.tc){e[b.dataset.tc+'b']=[];e.ml=mlNorm(tilePlain(e,'m'));e.mlm=null;renderEx();return;}
+  if(b.dataset.sg!==undefined&&e.step===2){const k=+b.dataset.sg;e.ps[k]=e.ps[k]==='+'?'−':'+';e.pm[k]=null;e.ph[k]='';renderEx('[data-pi="'+k+'"]');return;}
+  if(b.dataset.zv!==undefined&&e.step===2){const id=b.dataset.zv;e.ucols=e.ucols||{};e.ucols[id]=paint(e,e.ucols[id]||0,((e.ucols[id]||0)%8)+1);e.msg[2]=null;zvLive(e);renderEx();return;}
+  if(b.dataset.mk!==undefined&&e.step===3){const k=+b.dataset.mk;e.cols=e.cols||e.t.prods.map(()=>0);e.cols[k]=paint(e,e.cols[k]||0,((e.cols[k]||0)%8)+1);e.mmsg=null;renderEx();return;}
+  if(b.dataset.act==='mchk'&&e.step===3){markCheck(e);renderEx(e.mok?'[data-rc]':null);return;}
+  if(b.dataset.go!==undefined){goTo(+b.dataset.go);return;}
+  const a=b.dataset.act;
   if(a==='prev')goTo(curG().cur-1);
   else if(a==='next')goTo(curG().cur+1);
-  else if(a==='go')goTo(+t.dataset.to);
+  else if(a==='go')goTo(+b.dataset.to);
   else if(a==='newround')newRound();
   else if(a==='sum'){summaryRequested=true;updateSummary();$('summary').scrollIntoView({behavior:'smooth',block:'start'});}
+  else if(a==='clrarr'&&e.step===0){e.arr=[];e.selF=null;e.msg[0]=null;renderEx();}
   else if(/^check\d$/.test(a))runCheck(+a.slice(5));
   else if(/^show\d$/.test(a)){showSolution(e,+a.slice(4));renderEx(e.step===DONE?null:'step');}
 });
 $('exCard').addEventListener('input',ev=>{
   const t=ev.target,e=curEx();
-  const clearRow=()=>{t.classList.remove('ok','bad');const rm=t.parentNode.querySelector('.rowmsg');if(rm)rm.textContent='';};
-  if(t.dataset.di!==undefined){const k=+t.dataset.di;e.decVals[k]=t.value;e.decMarks[k]=null;e.decHints[k]='';clearRow();}
-  else if(t.hasAttribute('data-pre')){e.preVal=t.value;e.preMark=null;t.classList.remove('ok','bad');}
-  else if(t.hasAttribute('data-inner')){e.innerVal=t.value;e.innerMark=null;t.classList.remove('ok','bad');}
-  updatePrev(t);
+  if(t.dataset.sv!==undefined){e.sv=e.sv||{};e.sv[t.dataset.sv]=t.value;t.classList.remove('ok','bad');return;}
+  if(t.dataset.pi!==undefined){const k=+t.dataset.pi;e.pv[k]=t.value;e.pm[k]=null;e.ph[k]='';t.classList.remove('ok','bad');const rm=t.parentNode.querySelector('.rowmsg');if(rm)rm.textContent='';}
+  else if(t.hasAttribute('data-lv')){e.lv=t.value;e.lm=null;t.classList.remove('ok','bad');}
+  else if(t.hasAttribute('data-ml')){e.ml=t.value;e.mlm=null;t.classList.remove('ok','bad');}
+  else if(t.hasAttribute('data-rv')){e.rv=t.value;e.rm=null;t.classList.remove('ok','bad');}
+  else if(t.dataset.rt!==undefined){e.rt=e.rt||{};e.rt[t.dataset.rt]=t.value;e.rv=composeRv(e,e.t.kind==='zus'?e.t.terms:e.t.kind==='binf'?e.t.res:e.t.kind==='klam'?e.t.prods:e.t.res);e.rm=null;t.classList.remove('ok','bad');}
+  else if(t.dataset.rc!==undefined){e.rc=e.rc||{};e.rc[t.dataset.rc]=t.value;e.rv=composeRv(e,e.t.kind==='zus'?e.t.terms:e.t.kind==='binf'?e.t.res:e.t.prods);e.rm=null;document.querySelectorAll('#exCard [data-rc]').forEach(x=>x.classList.remove('ok','bad'));}
 });
 $('exCard').addEventListener('keydown',ev=>{
   if(ev.key!=='Enter'||ev.target.tagName!=='INPUT')return;
   ev.preventDefault();const t=ev.target;
-  if(t.hasAttribute('data-pre')){const n=document.querySelector('#exCard [data-inner]');if(n&&!n.value.trim()){n.focus();return;}}
-  const group=t.dataset.di!==undefined?'[data-di]':null;
-  if(group){const all=[...document.querySelectorAll('#exCard '+group)],nx=all.slice(all.indexOf(t)+1).find(i=>!i.value.trim());
-    if(nx){nx.focus();return;}}
+  const all=[...document.querySelectorAll('#exCard .stepcard.active input')],nx=all.slice(all.indexOf(t)+1).find(i=>!i.value.trim());
+  if(nx){nx.focus();return;}
   runCheck(curEx().step);
 });
 $('showSum').addEventListener('click',()=>{summaryRequested=true;updateSummary();$('summary').scrollIntoView({behavior:'smooth',block:'start'});});
@@ -723,19 +1322,18 @@ function setLevel(l){
 document.querySelectorAll('.levels button').forEach(b=>b.addEventListener('click',()=>setLevel(b.dataset.level)));
 
 /* ================= Fortschritt: speichern (gleiches Gerät) & Code (anderes Gerät) ================= */
-const STORE='heraus3:',ALPH='23456789ABCDEFGHJKMNPQRSTUVWXYZ',AL=B(ALPH.length);
+const STORE='termehue4:',ALPH='23456789ABCDEFGHJKMNPQRSTUVWXYZ',AL=BigInt(ALPH.length),B=x=>BigInt(x);
 const normName=s=>s.trim().replace(/\s+/g,' ').toLowerCase();
 function nameHash(n){let h=2166136261;for(const ch of normName(n)){h^=ch.codePointAt(0);h=Math.imul(h,16777619);}return (h>>>0)%1024;}
 function checkChar(s){let c=0;for(let k=0;k<s.length;k++)c=(c+(k+1)*ALPH.indexOf(s[k]))%ALPH.length;return ALPH[c];}
 function makeCode(lvl){
   const g=G[lvl],F=[],f=(v,r)=>F.push([v,r]);
-  f(lvl==='ahs'?1:0,2);f(g.seed,65536);f(g.round-1,100);f(g.cur,N_EX);
-  g.ex.forEach(e=>f(e.step*8+Math.min(e.err,3)*2+(e.shown?1:0),48));
+  f(lvl==='ahs'?1:0,2);f(g.seed,65536);f(g.round-1,100);f(g.cur,g.ex.length);
+  g.ex.forEach(e=>f(e.step*8+Math.min(e.err,3)*2+(e.shown?1:0),40));
   f(nameHash(PUPIL),1024);
   let N=0n;for(let k=F.length-1;k>=0;k--)N=N*B(F[k][1])+B(F[k][0]);
   let s='';do{s=ALPH[Number(N%AL)]+s;N/=AL;}while(N>0n);
-  s+=checkChar(s);
-  return s.match(/.{1,4}/g).join('-');
+  s+=checkChar(s);return s.match(/.{1,4}/g).join('-');
 }
 function readCode(str){
   const bad={err:'Dieser Code ist ungültig. Kontrolliere, ob du ihn richtig abgeschrieben hast.'};
@@ -745,24 +1343,20 @@ function readCode(str){
   if(checkChar(body)!==s.slice(-1))return {err:'Im Code ist ein Tippfehler. Kontrolliere ihn Zeichen für Zeichen.'};
   let N=0n;for(const ch of body)N=N*AL+B(ALPH.indexOf(ch));
   const g=r=>{const v=Number(N%B(r));N/=B(r);return v;};
-  const lvl=g(2)?'ahs':'std',seed=g(65536),round=g(100)+1,cur=g(N_EX),ex=[];
-  for(let k=0;k<N_EX;k++){const v=g(48);ex.push({step:v>>3,err:(v>>1)&3,shown:!!(v&1)});}
+  const lvl=g(2)?'ahs':'std',seed=g(65536),round=g(100)+1,NN=12,cur=g(NN),ex=[];
+  for(let k=0;k<NN;k++){const v=g(40);ex.push({step:v>>3,err:(v>>1)&3,shown:!!(v&1)});}
   const nh=g(1024);
-  if(N!==0n||ex.some(x=>x.step>4))return bad;
-  ex.forEach(x=>{if(x.step>DONE)x.step=DONE;});
+  if(N!==0n||ex.some(x=>x.step>DONE))return bad;
   return {lvl,seed,round,cur,ex,nh};
 }
 function applyCode(p){
   const g=G[p.lvl];g.seed=p.seed;g.round=p.round;makeRound(p.lvl);g.cur=p.cur;
-  p.ex.forEach((s,k)=>{const e=g.ex[k],d=e.data;e.err=s.err;e.shown=s.shown;
-    if(s.step>=1){e.decs=canonDecs(d);e.common=commonToks(e.decs);e.decVals=e.decs.map(decPlain);e.decMarks=e.decs.map(()=>'ok');e.marks=e.decs.map(x=>x.toks.map(()=>false));}
-    if(s.step>=2)e.marks=canonMarks(e);
-    if(s.step>=DONE){e.preVal=polyPlain([d.g]);e.innerVal=polyPlain(d.qs);e.preMark=e.innerMark='ok';}
-    e.step=s.step;});
+  p.ex.forEach((s,k)=>{const e=g.ex[k];
+    for(let st=0;st<s.step&&st<DONE;st++){if(applies(e,st))showSolution(e,st);}
+    e.msg={};e.err=s.err;e.shown=s.shown;e.step=s.step;});
 }
 function saveProgress(lvl){
-  lvl=lvl||level;
-  if(!PUPIL||restoring)return;
+  lvl=lvl||level;if(!PUPIL||restoring)return;
   const code=makeCode(lvl);
   try{const k=STORE+normName(PUPIL),o=JSON.parse(localStorage.getItem(k)||'{}');o.last=level;o[lvl]=code;localStorage.setItem(k,JSON.stringify(o));}catch(x){}
   if(lvl===level)$('codeShow').textContent=code;
@@ -772,15 +1366,36 @@ function loadSaved(name){try{return JSON.parse(localStorage.getItem(STORE+normNa
 /* ================= Name zu Beginn (danach nicht mehr änderbar) ================= */
 function setLocked(on){document.body.classList.toggle('locked',on);if(on)$('main').setAttribute('inert','');else $('main').removeAttribute('inert');}
 function startErr(msg,el){const err=$('pnameErr');err.textContent=msg;err.hidden=false;el.focus();}
+const TODAY=(()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');})();
+const TODAYH=TODAY.split('-').reverse().join('.');
+function hashS(str){let h=2166136261;for(const ch of str){h^=ch.codePointAt(0);h=Math.imul(h,16777619);}return h>>>0;}
+function daySeed(lvl){return hashS(normName(PUPIL)+'|'+TODAY+'|'+lvl)%65536;}
+/* jede Schülerin, jeder Schüler bekommt eigene Aufgaben – und jeden Tag neue */
+function ensureToday(){let reset=false;['std','ahs'].forEach(l=>{const g=G[l],sd=daySeed(l);if(g.seed!==sd||g.round!==1){g.seed=sd;g.round=1;makeRound(l);reset=true;}});return reset;}
+const ABSALT='hue-terme-4kl';
+function abgabeCode(){const g=G[level],ex=g.ex,F=[],f=(v,r)=>F.push([v,r]);
+  const day=Math.round((Date.UTC(+TODAY.slice(0,4),+TODAY.slice(5,7)-1,+TODAY.slice(8,10))-Date.UTC(2026,0,1))/864e5);
+  f(((day%4096)+4096)%4096,4096);for(let k=0;k<12;k++){const e=ex[k];f(!e||e.step<DONE?0:e.shown?3:e.err?2:1,4);}
+  f(Math.min(63,ex.reduce((a,e)=>a+e.err,0)),64);f(Math.min(255,Math.round(ex.reduce((a,e)=>a+(e.tms||0),0)/60000)),256);
+  f(Math.min(12,ex.filter(e=>e.step===DONE&&!e.shown&&(e.tms||0)<20000).length),13);f(nameHash(PUPIL),1024);
+  f(hashS(ABSALT+'|'+F.map(x=>x[0]).join(',')+'|'+normName(PUPIL))%1024,1024);
+  let N=0n;for(let k=F.length-1;k>=0;k--)N=N*B(F[k][1])+B(F[k][0]);let s='';do{s=ALPH[Number(N%AL)]+s;N/=AL;}while(N>0n);
+  s+=checkChar(s);return s.match(/.{1,4}/g).join('-');}
+function readAbgabe(code,name){const s=String(code||'').toUpperCase().replace(/[\s\-–—_.]/g,'');if(s.length<4||[...s].some(ch=>!ALPH.includes(ch)))return {err:'Ungültiger Code.'};
+  const body=s.slice(0,-1);if(checkChar(body)!==s.slice(-1))return {err:'Tippfehler im Code.'};
+  let N=0n;for(const ch of body)N=N*AL+B(ALPH.indexOf(ch));const vals=[],g=r=>{const v=Number(N%B(r));N/=B(r);vals.push(v);return v;};
+  const day=g(4096),st=[];for(let k=0;k<12;k++)st.push(g(4));const err=g(64),min=g(256),fast=g(13),nh=g(1024),sig=Number(N%1024n);
+  if(N/1024n!==0n)return {err:'Ungültiger Code.'};
+  if(nh!==nameHash(name))return {err:'Der Code gehört nicht zu diesem Namen.'};
+  if(sig!==hashS(ABSALT+'|'+vals.join(',')+'|'+normName(name))%1024)return {err:'Der Code wurde verändert – er ist nicht echt.'};
+  const d=new Date(Date.UTC(2026,0,1)+day*864e5);return {date:d.getUTCDate()+'.'+(d.getUTCMonth()+1)+'.'+d.getUTCFullYear(),st,err,min,fast};}
 function startWithName(){
-  const inp=$('pname'),v=inp.value.trim().replace(/\s+/g,' '),codeInp=$('pcode');
-  if(v.length<2){startErr('Bitte gib deinen Namen ein.',inp);return;}
+  const inpEl=$('pname'),v=inpEl.value.trim().replace(/\s+/g,' '),codeInp=$('pcode');
+  if(v.length<2){startErr('Bitte gib deinen Namen ein.',inpEl);return;}
   let p=null;
-  if(codeInp.value.trim()){
-    p=readCode(codeInp.value);
+  if(codeInp.value.trim()){p=readCode(codeInp.value);
     if(p.err){$('codeAsk').open=true;startErr(p.err,codeInp);return;}
-    if(p.nh!==nameHash(v)){startErr('Dieser Code gehört zu einem anderen Namen. Schreib deinen Namen genau so wie auf dem anderen Gerät.',inp);return;}
-  }
+    if(p.nh!==nameHash(v)){startErr('Dieser Code gehört zu einem anderen Namen. Schreib deinen Namen genau so wie auf dem anderen Gerät.',inpEl);return;}}
   $('pnameErr').hidden=true;PUPIL=v;
   const saved=loadSaved(v);let msg='';
   restoring=true;
@@ -789,21 +1404,27 @@ function startWithName(){
       msg='Willkommen zurück! Du machst dort weiter, wo du auf diesem Gerät aufgehört hast.';}
     if(p){applyCode(p);msg='Dein Fortschritt vom anderen Gerät wurde übernommen.';}
   }finally{restoring=false;}
+  if(ensureToday()&&saved)msg='Neuer Tag – du bekommst neue Aufgaben für heute ('+TODAYH+').';
   saveProgress('std');saveProgress('ahs');
   $('pnameShow').textContent=v;$('startMsg').textContent=msg;
   $('startAsk').hidden=true;$('startDone').hidden=false;
-  setLocked(false);
-  setLevel(p?p.lvl:(saved&&saved.last)||level);
+  setLocked(false);setLevel(p?p.lvl:(saved&&saved.last)||level);
 }
 $('startBtn').addEventListener('click',startWithName);
+$('tBtn').addEventListener('click',()=>{const r=readAbgabe($('tCode').value,$('tName').value);const o=$('tOut');
+  if(r.err){o.innerHTML='<p class="msg bad">'+r.err+'</p>';return;}
+  const lab=['offen','✓ beim 1. Versuch','✓ mit Fehlern','Lösung angesehen'],n=r.st.filter(x=>x===1||x===2).length;
+  o.innerHTML='<p class="msg ok">✓ Echter Code vom '+r.date+'</p><p><b>'+n+' von 12</b> selbst gelöst ('+r.st.filter(x=>x===1).length+' beim 1. Versuch) · '+r.st.filter(x=>x===3).length+' Lösungen angesehen · '+r.st.filter(x=>x===0).length+' offen · '+r.err+' Fehlversuche · ca. '+r.min+' min · '+r.fast+'× unter 20 s'+(r.fast>6?' <b>(auffällig schnell)</b>':'')+'</p>'+
+    '<div class="tablewrap"><table><tr>'+r.st.map((x,k)=>'<th class="c">'+(k+1)+'</th>').join('')+'</tr><tr>'+r.st.map(x=>'<td class="c">'+['–','✓','✓*','L'][x]+'</td>').join('')+'</tr></table></div><p class="tnote">✓ beim 1. Versuch · ✓* mit Fehlern · L Lösung angesehen · – offen</p>';});
 ['pname','pcode'].forEach(k=>$(k).addEventListener('keydown',ev=>{if(ev.key==='Enter'){ev.preventDefault();startWithName();}}));
-$('codeBtn').addEventListener('click',ev=>{
-  const box=$('codeBox'),open=box.hidden;saveProgress();box.hidden=!open;ev.currentTarget.setAttribute('aria-expanded',open?'true':'false');
-});
-$('codeCopy').addEventListener('click',ev=>{
-  const b=ev.currentTarget,txt=$('codeShow').textContent;
-  try{navigator.clipboard.writeText(txt).then(()=>{b.textContent='Kopiert ✓';setTimeout(()=>{b.textContent='Kopieren';},1500);},()=>{});}catch(x){}
-});
+$('codeBtn').addEventListener('click',ev=>{const box=$('codeBox'),open=box.hidden;saveProgress();box.hidden=!open;ev.currentTarget.setAttribute('aria-expanded',open?'true':'false');});
+$('codeCopy').addEventListener('click',ev=>{const b=ev.currentTarget,txt=$('codeShow').textContent;
+  try{navigator.clipboard.writeText(txt).then(()=>{b.textContent='Kopiert ✓';setTimeout(()=>{b.textContent='Kopieren';},1500);},()=>{});}catch(x){}});
+
+/* Beispiel in der Zusammenfassung – mit Pfeilen */
+(function(){const t=build([{f:M(3,{x:1}),t:[M(1,{y:1}),M(-7)],side:'L',op:'·'},{f:M(-5),t:[M(6,{x:1}),M(-3)],side:'L',op:'·'}]);
+  const w=$('sumExpr');w.innerHTML=exprHTML(t);w.dataset.arr=JSON.stringify(t.arrows);
+  $('howto').addEventListener('toggle',()=>requestAnimationFrame(redrawAll));requestAnimationFrame(redrawAll);})();
 
 /* ================= Start ================= */
 makeRound('std');makeRound('ahs');
@@ -817,49 +1438,114 @@ $('pname').focus();
   const touch=window.matchMedia&&matchMedia('(pointer: coarse)').matches;
   let padOnly=touch,closed=false,cur=null;
   try{const s=localStorage.getItem('padOnly');if(s!==null)padOnly=s==='1';}catch(x){}
-  function applyMode(){
-    document.querySelectorAll('#exCard input.pin').forEach(i=>{if(padOnly)i.setAttribute('inputmode','none');else i.removeAttribute('inputmode');});
-    sysBtn.textContent=padOnly?'Handy-Tastatur einblenden':'Handy-Tastatur ausblenden';
-  }
+  function applyMode(){document.querySelectorAll('#exCard input.pin').forEach(i=>{if(padOnly)i.setAttribute('inputmode','none');else i.removeAttribute('inputmode');});
+    sysBtn.textContent=padOnly?'Handy-Tastatur einblenden':'Handy-Tastatur ausblenden';}
   window.padApply=applyMode;applyMode();
-  function setVars(){
-    const e=curEx(),found=[];
-    e.data.terms.forEach(m=>Object.keys(m.v).forEach(k=>{if(!found.includes(k))found.push(k);}));
-    ['x','y','a','b'].forEach(t=>{if(found.length<4&&!found.includes(t))found.push(t);});
-    pad.querySelectorAll('[data-var]').forEach(b=>{b.textContent=found[+b.dataset.var];});
-  }
+  function setVars(){const e=curEx(),found=[];(e.t.kind?[e.t.allm||[]]:e.t.groups.map(g=>[g.f,...g.t])).forEach(L=>L.forEach(m=>Object.keys(m.v).forEach(k=>{if(!found.includes(k))found.push(k);})));
+    ['x','y','a','b'].forEach(t=>{if(found.length<4&&!found.includes(t))found.push(t);});pad.querySelectorAll('[data-var]').forEach(b=>{b.textContent=found[+b.dataset.var];});}
   function show(input){cur=input;setVars();if(closed)return;pad.hidden=false;document.body.classList.add('padon');
     const r=input.getBoundingClientRect();if(r.bottom>window.innerHeight-pad.offsetHeight-10)input.scrollIntoView({block:'center',behavior:'smooth'});}
   function hide(){pad.hidden=true;document.body.classList.remove('padon');}
   document.addEventListener('focusin',ev=>{const t=ev.target;if(t.tagName==='INPUT'&&t.classList.contains('pin')&&!t.readOnly)show(t);});
-  document.addEventListener('focusout',()=>setTimeout(()=>{const a=document.activeElement;
-    if(!(a&&a.tagName==='INPUT'&&a.classList.contains('pin')))hide();},150));
-  function insert(txt){
-    if(!cur||!cur.isConnected)return;
-    const s=cur.selectionStart??cur.value.length,e=cur.selectionEnd??cur.value.length;
-    cur.setRangeText(txt,s,e,'end');cur.dispatchEvent(new Event('input',{bubbles:true}));
-  }
+  document.addEventListener('focusout',()=>setTimeout(()=>{const a=document.activeElement;if(!(a&&a.tagName==='INPUT'&&a.classList.contains('pin')))hide();},150));
+  function insert(txt){if(!cur||!cur.isConnected)return;const s=cur.selectionStart??cur.value.length,e=cur.selectionEnd??cur.value.length;cur.setRangeText(txt,s,e,'end');cur.dispatchEvent(new Event('input',{bubbles:true}));}
+  /* nur pointerdown/mousedown abfangen – nie touchstart, sonst gehen die Tasten am Handy nicht */
   pad.addEventListener('pointerdown',ev=>{if(ev.target.closest('button'))ev.preventDefault();});
   pad.addEventListener('mousedown',ev=>{if(ev.target.closest('button'))ev.preventDefault();});
   pad.addEventListener('click',ev=>{
     const b=ev.target.closest('button');if(!b)return;
     if(b.id==='padHide'){closed=true;hide();return;}
-    if(b.id==='padSys'){padOnly=!padOnly;try{localStorage.setItem('padOnly',padOnly?'1':'0');}catch(x){}applyMode();
-      if(cur&&cur.isConnected){cur.blur();setTimeout(()=>cur.focus(),60);}return;}
+    if(b.id==='padSys'){padOnly=!padOnly;try{localStorage.setItem('padOnly',padOnly?'1':'0');}catch(x){}applyMode();if(cur&&cur.isConnected){cur.blur();setTimeout(()=>cur.focus(),60);}return;}
     if(!cur||!cur.isConnected)return;
     if(b.dataset.ins!==undefined)insert(b.dataset.ins);
     else if(b.dataset.var!==undefined)insert(b.textContent);
     else if(b.dataset.act==='clr'){cur.value='';cur.dispatchEvent(new Event('input',{bubbles:true}));}
     else if(b.dataset.act==='left'){const s=Math.max(0,(cur.selectionStart??cur.value.length)-1);cur.setSelectionRange(s,s);}
     else if(b.dataset.act==='right'){const s=Math.min(cur.value.length,(cur.selectionEnd??cur.value.length)+1);cur.setSelectionRange(s,s);}
-    else if(b.dataset.act==='del'){
-      const s=cur.selectionStart??cur.value.length,e2=cur.selectionEnd??s;
-      if(s!==e2)cur.setRangeText('',s,e2,'end');else if(s>0)cur.setRangeText('',s-1,s,'end');
-      cur.dispatchEvent(new Event('input',{bubbles:true}));}
+    else if(b.dataset.act==='del'){const s=cur.selectionStart??cur.value.length,e2=cur.selectionEnd??s;if(s!==e2)cur.setRangeText('',s,e2,'end');else if(s>0)cur.setRangeText('',s-1,s,'end');cur.dispatchEvent(new Event('input',{bubbles:true}));}
     else if(b.dataset.act==='ok'){cur.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter',bubbles:true,cancelable:true}));}
     if(cur&&cur.isConnected)cur.focus({preventScroll:true});
   });
   document.addEventListener('click',ev=>{if(ev.target.closest('[data-go],[data-act="next"],[data-act="prev"],[data-act="newround"],#newRound2'))closed=false;});
+})();
+/* ================= Spracheingabe: gesprochenen Term in Schreibweise umwandeln ================= */
+const ZAHL={null:0,eins:1,ein:1,eine:1,einen:1,zwei:2,zwo:2,drei:3,vier:4,fünf:5,sechs:6,sieben:7,acht:8,neun:9,zehn:10,elf:11,zwölf:12,
+  dreizehn:13,vierzehn:14,fünfzehn:15,sechzehn:16,siebzehn:17,achtzehn:18,neunzehn:19,zwanzig:20,dreißig:30,vierzig:40,fünfzig:50,sechzig:60,siebzig:70,achtzig:80,neunzig:90,hundert:100};
+function wortZahl(w){
+  if(ZAHL[w]!==undefined)return ZAHL[w];
+  let m=w.match(/^(ein|zwei|drei|vier|fünf|sechs|sieben|acht|neun)und(zwanzig|dreißig|vierzig|fünfzig|sechzig|siebzig|achtzig|neunzig)$/);
+  if(m)return ZAHL[m[1]==='ein'?'eins':m[1]]+ZAHL[m[2]];
+  m=w.match(/^(ein|zwei|drei|vier|fünf|sechs|sieben|acht|neun)?hundert(.*)$/);
+  if(m){const h=m[1]?ZAHL[m[1]==='ein'?'eins':m[1]]:1,r=m[2]?wortZahl(m[2].replace(/^und/,'')):0;if(r!==null)return h*100+r;}
+  return null;
+}
+function speechToTerm(text){
+  let s=' '+String(text).toLowerCase().replace(/[.,!?;]+(?=\s|$)/g,' ').replace(/\s+/g,' ')+' ';
+  const R=(a,b)=>{s=s.replace(a,b);};
+  /* Sonderzeichen, die die Erkennung manchmal schon liefert */
+  R(/×|\*/g,' mal ');R(/÷/g,' durch ');R(/²/g,' hoch 2 ');R(/³/g,' hoch 3 ');R(/−|–/g,' minus ');R(/\+/g,' plus ');R(/(\d)\s*\^\s*(\d)/g,'$1 hoch $2');
+  /* Wörter für Rechenzeichen */
+  R(/ geteilt durch | dividiert durch /g,' durch ');R(/ multipliziert mit /g,' mal ');
+  R(/ zum quadrat | im quadrat | quadrat /g,' hoch 2 ');R(/ hoch zwei /g,' hoch 2 ');R(/ hoch drei /g,' hoch 3 ');
+  R(/ klammer auf | klammer öffnen | offene klammer /g,' ( ');R(/ klammer zu | klammer schließen | geschlossene klammer /g,' ) ');
+  R(/ ist gleich | gleich /g,' = ');R(/ komma /g,' , ');
+  /* Buchstaben, wie sie oft erkannt werden */
+  R(/ ix | iks | x-?mal /g,' x ');R(/ ypsilon | üpsilon | yps | ü /g,' y ');R(/ be | bé | bee /g,' b ');R(/ ce | zeh | tse /g,' c ');R(/ ah | aa /g,' a ');
+  /* Zahlwörter */
+  s=s.replace(/[a-zäöüß]+/g,w=>{const n=wortZahl(w);return n===null?w:String(n);});
+  /* Grundrechenarten */
+  R(/ plus /g,' + ');R(/ minus /g,' - ');R(/ mal /g,' · ');R(/ durch /g,' : ');R(/ hoch (\d+)/g,'^$1');R(/ hoch /g,'^');
+  /* übrig gebliebene Wörter: einzelne Buchstaben behalten, sonst verwerfen */
+  s=s.replace(/[a-zäöüß]{2,}/g,'');
+  /* zusammenschreiben: Zahl + Buchstabe → 3x, Buchstabe + Buchstabe → xy */
+  s=s.replace(/\s+/g,' ').trim();
+  s=s.replace(/(\d)\s+,\s+(\d)/g,'$1,$2').replace(/(\d)\s+(?=[a-z(])/g,'$1').replace(/([a-z])\s+(?=[a-z])/g,'$1').replace(/\s*\^\s*/g,'^').replace(/\(\s+/g,'(').replace(/\s+\)/g,')');
+  s=s.replace(/\s*([+\-·:=])\s*/g,' $1 ').replace(/\s+/g,' ').trim();
+  s=s.replace(/^\+ /,'').replace(/^- /,'-');
+  s=s.replace(/\(\s*-\s*/g,'(-');
+  return s;
+}
+
+
+/* Mikrofon-Knopf + Diktieren mit der iPad-Tastatur */
+const SPOKEN=/\b(plus|minus|mal|durch|geteilt|hoch|quadrat|klammer|komma|gleich|ix|iks|ypsilon|üpsilon|null|eins|zwei|zwo|drei|vier|fünf|sechs|sieben|acht|neun|zehn|elf|zwölf|[a-zäöüß]*zig|[a-zäöüß]*zehn|hundert)\b/i;
+/* Text, den die iPad-Diktierfunktion ins Feld schreibt, in Schreibweise umwandeln (beim Prüfen und beim Verlassen des Feldes) */
+function convField(inp){if(!inp||!SPOKEN.test(inp.value))return false;const c=speechToTerm(inp.value);if(!c)return false;inp.value=c;inp.dispatchEvent(new Event('input',{bubbles:true}));return true;}
+document.addEventListener('keydown',ev=>{if(ev.key==='Enter'&&ev.target.tagName==='INPUT'&&ev.target.classList.contains('pin'))convField(ev.target);},true);
+document.addEventListener('focusout',ev=>{if(ev.target.tagName==='INPUT'&&ev.target.classList.contains('pin'))convField(ev.target);},true);
+document.addEventListener('pointerdown',ev=>{const b=ev.target.closest&&ev.target.closest('button');if(!b)return;document.querySelectorAll('input.pin').forEach(convField);},true);
+(function(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition,btn=$('padMic'),msg=$('micMsg');
+  btn.hidden=false;
+  let last=null,rec=null,busy=false,got=false;
+  document.addEventListener('focusin',ev=>{if(ev.target.tagName==='INPUT'&&ev.target.classList.contains('pin'))last=ev.target;});
+  const show=(t,kind)=>{msg.hidden=false;msg.className='micmsg'+(kind?' '+kind:'');msg.innerHTML=t;};
+  const pretty=t=>esc(t).replace(/\^2/g,'²').replace(/\^3/g,'³').replace(/-/g,'−');
+  const KB='<br><b>So geht es trotzdem:</b> Tippe oben auf „Handy-Tastatur einblenden“ und dann auf der iPad-Tastatur auf das 🎤. Sprich den Term – die Übung wandelt ihn beim Prüfen automatisch um.';
+  function insert(txt){if(!last||!last.isConnected){show('Tippe zuerst in ein Eingabefeld.','bad');return;}
+    const a=last.selectionStart??last.value.length,b=last.selectionEnd??a;last.setRangeText(txt,a,b,'end');
+    last.dispatchEvent(new Event('input',{bubbles:true}));last.focus({preventScroll:true});}
+  function stop(){busy=false;btn.classList.remove('on');btn.textContent='🎤 Sprechen';}
+  btn.addEventListener('pointerdown',ev=>ev.preventDefault());btn.addEventListener('mousedown',ev=>ev.preventDefault());
+  btn.addEventListener('click',()=>{
+    if(!SR){show('Dieser Browser hat keine eingebaute Spracherkennung (z. B. wenn die Übung in einer App statt in Safari geöffnet ist).'+KB,'bad');return;}
+    if(busy){try{rec.stop();}catch(e){}return;}
+    if(!last||!last.isConnected){show('Tippe zuerst in ein Eingabefeld.','bad');return;}
+    try{rec=new SR();}catch(e){show('Die Spracherkennung konnte nicht starten.'+KB,'bad');return;}
+    rec.lang='de-DE';rec.interimResults=false;rec.maxAlternatives=3;rec.continuous=false;got=false;
+    rec.onstart=()=>show('🎤 Ich höre zu … sprich jetzt, z. B. '+'„y mal y plus y mal Klammer auf minus vier Klammer zu“'+'.');
+    rec.onresult=ev=>{const r=ev.results[ev.results.length-1];if(!r)return;got=true;
+      const alts=[...Array(r.length)].map((_,k)=>r[k].transcript),conv=alts.map(speechToTerm);
+      let best=conv.find(c=>c&&typeof parseTerm==='function'&&!parseTerm(c).err)||conv[0]||'';
+      if(!best){show('Das habe ich nicht verstanden („'+esc(alts[0]||'')+'“). Versuch es nochmal – langsam und deutlich.','bad');return;}
+      insert(best);show('Gehört: „'+esc(alts[0])+'“ → <b>'+pretty(best)+'</b><br><span class="small">Kontrolliere den Term und drück dann ✓.</span>','ok');};
+    rec.onerror=ev=>{stop();
+      const t={'not-allowed':'Das Mikrofon ist für Safari nicht erlaubt. Einstellungen → Safari → Mikrofon → „Erlauben“ (oder beim Nachfragen „Erlauben“ tippen).','service-not-allowed':'Die Spracherkennung ist auf diesem iPad gesperrt – meistens, weil <b>Diktieren</b> bzw. <b>Siri & Diktieren</b> ausgeschaltet oder per Geräteverwaltung blockiert ist.','no-speech':'Ich habe nichts gehört. Tippe nochmal auf 🎤 und sprich gleich los.','network':'Für die Spracherkennung braucht das iPad Internet.','audio-capture':'Es wurde kein Mikrofon gefunden.','aborted':'Die Aufnahme wurde abgebrochen.'}[ev.error];
+      show((t||'Die Spracherkennung hat nicht geklappt.')+' <span class="small">(Fehler: '+esc(ev.error||'unbekannt')+')</span>'+KB,'bad');};
+    rec.onend=()=>{if(busy&&!got)show('Ich habe nichts verstanden. Tippe nochmal auf 🎤 und sprich gleich los.'+KB,'bad');stop();};
+    busy=true;btn.classList.add('on');btn.textContent='⏹ Stopp';show('🎤 Mikrofon wird gestartet …');
+    try{rec.start();}catch(e){stop();show('Die Spracherkennung konnte nicht starten ('+esc(e.message||e)+').'+KB,'bad');}
+  });
 })();
 </script>
 </body>
