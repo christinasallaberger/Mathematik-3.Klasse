@@ -1378,10 +1378,10 @@ const ABSALT='hue-terme-4kl';
 /* ===== Abgabe über Microsoft Forms (vorausgefüllter Link) – Felder in der Reihenfolge der Fragen ===== */
 const FORMS={base:'https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=hyt5GHjm2Um1KU8XHYJTE2mSBjgsoSVBsQm5oz7KhRpUNEMyRDE3UFE2NExESTIyVlEwNFdXWERaVi4u',
   uebung:'r30dc7a422a2845778c09ee128addc07f',name:'rd450afb1336f464582352e173892ba54',datum:'r026652e6872641fba676e6bafd43caa7',geloest:'r0fcfe3c40eb0415fa71577443dfccf8f',
-  loesung:'r79cdddb2cdf84565a985b294b6b9008a',fehler:'rbfe284a5d08c4e9aba8f639523f02c55',zeit:'rff93d457d4cf4f35b475b2a3083204fe',code:'r7ca3ea51060d4c04a8b7c95e679a26fc'};
+  loesung:'r79cdddb2cdf84565a985b294b6b9008a',fehler:'rbfe284a5d08c4e9aba8f639523f02c55',zeit:'rff93d457d4cf4f35b475b2a3083204fe',code:'r7ca3ea51060d4c04a8b7c95e679a26fc',erster:'r83f344b1b2dd42ad993eb32de5c76b52'};
 const UEBUNG_NAME='4. Klasse · Terme Hausübung';
 function formsLink(){const g=curG(),ex=g.ex,now=new Date(),done=ex.filter(e=>e.step===DONE&&!e.shown).length,
-  v={uebung:UEBUNG_NAME,name:PUPIL,datum:TODAYH+', '+now.toLocaleTimeString('de-AT',{hour:'2-digit',minute:'2-digit'})+' Uhr',geloest:done+' von '+ex.length,
+  v={uebung:UEBUNG_NAME,name:PUPIL,datum:TODAYH+', '+now.toLocaleTimeString('de-AT',{hour:'2-digit',minute:'2-digit'})+' Uhr',geloest:done+' von '+ex.length,erster:ex.filter(e=>e.step===DONE&&!e.shown&&!e.err).length+' von '+ex.length,
      loesung:String(ex.filter(e=>e.shown).length),fehler:String(ex.reduce((a,e)=>a+e.err,0)),zeit:fmtT(ex.reduce((a,e)=>a+(e.tms||0),0))+' min',code:abgabeCode()};
   return FORMS.base+Object.keys(v).map(k=>'&'+FORMS[k]+'='+encodeURIComponent(v[k])).join('');}
 function abgabeCode(){const g=G[level],ex=g.ex,F=[],f=(v,r)=>F.push([v,r]);
