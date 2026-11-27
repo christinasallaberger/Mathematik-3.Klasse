@@ -429,21 +429,22 @@ const GEN={
     ()=>{const [u,w]=pick(VP),[a,b]=pickCop(2,2,6);return make(MV(fk(),{[u]:1}),[MV(a,{[u]:1}),MV(b,{[w]:1})]);} /* 6x² + 9xy */
   ],
   ahs:[
+    /* nur Binome (zwei Glieder) */
     /* 1–3: man sieht es sofort */
-    ()=>{const [u,w]=pick(VP),k=fk();return make(K(k),[MV(1,{[u]:1}),MV(1,{[w]:1}),K(-1)]);},                  /* 5a + 5b − 5 */
-    ()=>{const [u,w]=pick(VP);const z=u==='x'?'z':'x';return make(MV(1,{[z]:1}),[MV(1,{[u]:1}),MV(-1,{[w]:1}),K(1)]);}, /* ax − bx + x */
-    ()=>{const [u,w]=pick(VP),k=fk();const z=u==='x'?'z':'x';return make(MV(k,{[z]:1}),[MV(1,{[u]:1}),MV(1,{[w]:1})]);}, /* 3ax + 3bx */
+    ()=>{const [u,w]=pick(VP),k=fk();return make(K(k),[MV(1,{[u]:1}),MV(-1,{[w]:1})]);},                              /* 9x − 9y */
+    ()=>{const [u,w]=pick(VP);const z=u==='x'?'z':'x';return make(MV(1,{[z]:1}),[MV(1,{[u]:1}),MV(-1,{[w]:1})]);},       /* mx − nx */
+    ()=>{const [u,w]=pick(VP),k=fk();const z=u==='x'?'z':'x';return make(MV(k,{[z]:1}),[MV(1,{[u]:1}),MV(1,{[w]:1})]);}, /* 5px + 5qx */
     /* 4–9: schwierigere Zahlen, ab jetzt auch x² */
-    ()=>{const [u,w]=pick(VP),[a,b]=pickCop(2,2,7);return make(K(fk()),[MV(a,{[u]:1}),MV(-b,{[w]:1})]);},        /* 14a − 21b */
-    ()=>{const [u,w]=pick(VP),[a,b]=pickCop(2,2,7);return make(MV(fk(),{[u]:1}),[MV(a,{[w]:1}),K(-b)]);},          /* 12ab − 18a */
-    ()=>{const [u]=pick(VP),[a,b]=pickCop(2,2,7);return make(MV(fk(),{[u]:1}),[MV(a,{[u]:1}),K(-b)]);},            /* 5x² − 15x */
-    ()=>{const [u,w]=pick(VP),[a,b,c]=pickCop(3,2,6);return make(K(fk()),[MV(a,{[u]:1}),MV(-b,{[w]:1}),K(c)]);},   /* 6x − 12y + 18 */
-    ()=>{const [u,w]=pick(VP),[a,b]=pickCop(2,2,6);return make(MV(fk(),{[u]:1,[w]:1}),[MV(a,{[u]:1}),MV(b,{[w]:1})]);}, /* 16m²n + 20mn² */
-    ()=>{const [u,w]=pick(VP),[a,b,c]=pickCop(3,2,6);const z=u==='x'?'z':'x';return make(MV(fk(),{[z]:1}),[MV(a,{[u]:1}),MV(b,{[w]:1}),K(-c)]);}, /* 6ab + 9ac − 3a */
+    ()=>{const [u,w]=pick(VP),[a,b]=pickCop(2,2,7);return make(K(fk()),[MV(a,{[u]:1}),MV(-b,{[w]:1})]);},              /* 30p − 70q */
+    ()=>{const [u,w]=pick(VP),[a,b]=pickCop(2,2,7);return make(MV(fk(),{[u]:1}),[MV(a,{[w]:1}),K(-b)]);},               /* 21mn − 15m */
+    ()=>{const [u]=pick(VP),[a,b]=pickCop(2,2,7);return make(MV(fk(),{[u]:1}),[MV(a,{[u]:1}),K(-b)]);},                 /* 14x² − 12x */
+    ()=>{const [u,w]=pick(VP),[a,b]=pickCop(2,2,7);return make(K(fk()),[MV(a,{[u]:1,[w]:1}),K(-b)]);},                  /* 21mn − 35 */
+    ()=>{const [u,w]=pick(VP),[a,b]=pickCop(2,2,6);return make(MV(fk(),{[u]:1,[w]:1}),[MV(a,{[u]:1}),MV(b,{[w]:1})]);},  /* 24a²b + 30ab² */
+    ()=>{const [u,w]=pick(VP),[a,b]=pickCop(2,2,6);const z=u==='x'?'z':'x';return make(MV(fk(),{[z]:1}),[MV(a,{[u]:1}),MV(-b,{[w]:1})]);}, /* 40rx − 24sx */
     /* 10–12: später x³, x⁴, x⁵ */
-    ()=>{const [u]=pick(VP),[a,b,c]=pickCop(3,2,6);return make(MV(fk(),{[u]:1}),[MV(a,{[u]:2}),MV(-b,{[u]:1}),K(c)]);}, /* 4x³ − 8x² + 20x */
-    ()=>{const [u]=pick(VP),[a,b]=pickCop(2,2,6);return make(MV(fk(),{[u]:2}),[MV(a,{[u]:2}),K(b)]);},            /* 16p⁴ + 4p² */
-    ()=>{const [u]=pick(VP),[a,b]=pickCop(2,2,6);return make(MV(fk(),{[u]:3}),[MV(a,{[u]:2}),K(-b)]);}            /* 12x⁵ − 4x³ */
+    ()=>{const [u]=pick(VP),[a,b]=pickCop(2,2,6);return make(MV(fk(),{[u]:1}),[MV(a,{[u]:2}),K(-b)]);},                 /* 24x³ − 20x */
+    ()=>{const [u]=pick(VP),[a,b]=pickCop(2,2,6);return make(MV(fk(),{[u]:2}),[MV(a,{[u]:2}),K(b)]);},                  /* 10p⁴ + 25p² */
+    ()=>{const [u]=pick(VP),[a,b]=pickCop(2,2,6);return make(MV(fk(),{[u]:3}),[MV(a,{[u]:2}),K(-b)]);}                  /* 18a⁵ − 24a³ */
   ]
 };
 
@@ -785,7 +786,7 @@ document.querySelectorAll('.levels button').forEach(b=>b.addEventListener('click
 
 /* ================= Fortschritt: speichern (gleiches Gerät) & Code (anderes Gerät) ================= */
 const ABG_SALT='heraus-4kl',ABG_UEBUNG='4. Klasse · Herausheben';
-const STORE='heraus10:',ALPH='23456789ABCDEFGHJKMNPQRSTUVWXYZ',AL=B(ALPH.length);
+const STORE='heraus11:',ALPH='23456789ABCDEFGHJKMNPQRSTUVWXYZ',AL=B(ALPH.length);
 const normName=s=>s.trim().replace(/\s+/g,' ').toLowerCase();
 function nameHash(n){let h=2166136261;for(const ch of normName(n)){h^=ch.codePointAt(0);h=Math.imul(h,16777619);}return (h>>>0)%1024;}
 function checkChar(s){let c=0;for(let k=0;k<s.length;k++)c=(c+(k+1)*ALPH.indexOf(s[k]))%ALPH.length;return ALPH[c];}
